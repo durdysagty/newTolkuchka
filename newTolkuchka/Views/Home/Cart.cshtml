@@ -1,0 +1,71 @@
+﻿@{
+    DeliveryData deliveryData = ViewBag.DeliveryData;
+    string classes = "mb-3";
+    InputStandart[] inputs = new InputStandart[4] {
+        new InputStandart{
+            Id = "order-name",
+            Name = ConstantsService.NAME,
+            Type = ConstantsService.TEXT,
+            Required = ConstantsService.REQUIRED,
+            OnInput = "inputOrder(event)",
+            OnInvalid = "invalidOrdernHandler(event)",
+            Value = deliveryData?.Name,
+            Label = Localizer["your-name"].Value,
+            Wrong = Localizer[ConstantsService.EMPTY].Value,
+            Classes = classes
+        },
+        new InputStandart{
+            Id = "order-phone",
+            Name = ConstantsService.PHONE,
+            Type = ConstantsService.NUMBER,
+            Required = ConstantsService.REQUIRED,
+            OnInput = "inputOrder(event)",
+            OnInvalid = "invalidOrdernHandler(event)",
+            Value = deliveryData?.Phone,
+            Label = Localizer["phone-number"].Value,
+            Wrong = Localizer[ConstantsService.EMPTY].Value,
+            Classes = classes
+        },
+        new InputStandart{
+            Id =  "order-email",
+            Name = ConstantsService.EMAIL,
+            Type = ConstantsService.EMAIL,
+            Required = null,
+            OnInput = "inputOrder(event)",
+            OnInvalid = "invalidOrdernHandler(event)",
+            Value = deliveryData?.Email,
+            Label = Localizer[ConstantsService.EMAIL].Value,
+            Wrong = Localizer["wrong-email"].Value,
+            Classes = classes
+        },
+        new InputStandart{
+            Id =  "order-address",
+            Name = ConstantsService.ADDRESS,
+            Type = ConstantsService.TEXT,
+            Required = ConstantsService.REQUIRED,
+            OnInput = "inputOrder(event)",
+            OnInvalid = "invalidOrdernHandler(event)",
+            Value = deliveryData?.Address,
+            Label = Localizer[ConstantsService.ADDRESS].Value,
+            Wrong = Localizer[ConstantsService.EMPTY].Value,
+            Classes = classes
+        }
+    };
+}
+
+<div id="cart"></div>
+<div id="delivery" class="d-none row justify-content-end">
+    <form id="orderForm" onsubmit="orderHandler(event)" class="form-order">
+        @foreach (InputStandart input in inputs)
+        {
+            await Html.RenderPartialAsync("_InputStandart", input);
+        }
+        @{
+            await Html.RenderPartialAsync("_ButtonSubmit", (Localizer[ConstantsService.ORDER].Value, "text-end mt-3", ""));
+        }
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/js/cart.js" asp-append-version="true"></script>
+}

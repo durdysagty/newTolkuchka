@@ -1,0 +1,375 @@
+﻿@{
+    bool isAuth = User.Identity.IsAuthenticated;
+    bool filterScript = ViewBag.FilterScript;
+    int? width = ViewBag.WindowWidth;
+    IEnumerable<Category> mainCategories = ViewBag.MainCategories;
+    //href, name
+    IEnumerable<(string, string, string)> mainLinks = new (string, string, string)[6] {
+        ($"tel:{ConstantsService.CURRENTPHONE}", ConstantsService.CURRENTPHONE, null),
+        ($"mailto:{ConstantsService.INFOEMAIL}{CultureProvider.SiteName}", $"{ConstantsService.INFOEMAIL}{CultureProvider.SiteName}", null),
+        (ConstantsService.ABOUT, Localizer[ConstantsService.ABOUT].Value, "d-none d-lg-inline"),
+        (ConstantsService.DELIVERY, Localizer[ConstantsService.DELIVERY].Value, "d-none d-lg-inline"),
+        (ConstantsService.BRANDS, Localizer[ConstantsService.BRANDS].Value, "d-none d-lg-inline"),
+        (ConstantsService.CATEGORIES, Localizer[ConstantsService.CATEGORIES].Value, "d-none d-lg-inline")
+    };
+}
+<!DOCTYPE html>
+<html lang="@CultureProvider.Lang">
+<head>
+    <meta charset="utf-8" />
+    <link type="image/x-icon" href="/favicon.ico" rel="icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@CultureProvider.SiteName@ViewData[ConstantsService.TITLE]</title>
+    <meta name="description" content="@ViewData[ConstantsService.DESCRIPTION]" />
+    <link rel="alternate" hreflang="@ConstantsService.RU" href="@CultureProvider.SiteUrlRu@CultureProvider.Path" />
+    <link rel="alternate" hreflang="@ConstantsService.EN" href="@CultureProvider.SiteUrlEn@CultureProvider.Path" />
+    <link rel="alternate" hreflang="@ConstantsService.TK" href="@CultureProvider.SiteUrlTm@CultureProvider.Path" />
+    <link rel="alternate" hreflang="x-default" href="@CultureProvider.SiteUrlRu@CultureProvider.Path" />
+    <meta property="og:locale" content="@CultureProvider.LangState" />
+    <meta property="og:locale:alternate" content="@ConstantsService.RUST" />
+    <meta property="og:locale:alternate" content="@ConstantsService.ENST" />
+    <meta property="og:locale:alternate" content="@ConstantsService.TMST" />
+    <meta property="og:title" content="@CultureProvider.SiteName@ViewData[ConstantsService.TITLE]" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="@CultureProvider.Host@CultureProvider.Path" />
+    <meta property="og:description" content="@ViewData[ConstantsService.DESCRIPTION]" />
+    <meta property="og:image" content="@ViewData[ConstantsService.IMAGE]" />
+    <meta name="author" content="solutionsTM" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+    <link rel="stylesheet" href="~/lib/mdb/mdb.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/sidenav/sidenav.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <div class="container mt-2 mt-sm-3">
+            <div class="row justify-content-between">
+                <div class="col-auto text-center text-md-start">
+                    @foreach ((string, string, string) l in mainLinks.Take(2))
+                    {
+                        await Html.RenderPartialAsync("_MainLink", l);
+                    }
+                    @if (width == null || width > ConstantsService.MOBILEWIDTH)
+                    {
+                        foreach ((string, string, string) l in mainLinks.Skip(2))
+                        {
+                            await Html.RenderPartialAsync("_MainLink", l);
+                        }
+                    }
+                </div>
+                @if (width == null || width > ConstantsService.PHONEWIDTH)
+                {
+                    <div class="col text-end d-none d-md-inline">
+                        @{
+                            List<List<string>> icoList = new()
+                    {
+                    isAuth ?
+                    new List<string>()
+                    {
+                    ConstantsService.ACCOUNT,
+                    "fa fa-sign-in-alt",
+                    ConstantsService.ACCOUNT
+                    } :
+                    new List<string>()
+                    {
+                    "#",
+                    "fas fa-user-tie",
+                    ConstantsService.LOGIN,
+                    "#loginModal"
+                    },
+                    new List<string>()
+                    {
+                    ConstantsService.CART,
+                    "fas fa-shopping-cart",
+                    ConstantsService.CART
+                    }
+                    };
+                            foreach (List<string> l in icoList)
+                            {
+                                await Html.RenderPartialAsync("_NavIco", l);
+                            }
+                        }
+                    </div>
+                }
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-auto">
+                    <a href="/">
+                        <img class="img-fluid" width="300" height="60" src='~/logo.png' alt="logo" />
+                    </a>
+                </div>
+                <div class="col-12 col-md align-self-center">
+                    <form asp-action="search" method="get">
+                        <div class="input-group justify-content-center justify-content-md-end">
+                            <div class="form-outline w-75" id="search-form">
+                                <input required type="search" id="search" name="search" class="form-control" />
+                                <label class="form-label" for="search">@Localizer[ConstantsService.SEARCH]</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary" title="@Localizer[ConstantsService.SEARCH]">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </header>
+    @if (width == null || width < ConstantsService.MOBILEWIDTH)
+    {
+        <div id="slide-out" class="sidenav">
+            <div class="my-2 px-3 ">
+                @foreach ((string, string) l in mainLinks.Select(m => (m.Item1, m.Item2)))
+                {
+                    await Html.RenderPartialAsync("_SideLink", l);
+                }
+                @foreach (Category c in mainCategories)
+                {
+                    await Html.RenderPartialAsync("_SideLink", (PathService.GetModelUrl(ConstantsService.CATEGORY, c.Id), CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm)));
+                }
+            </div>
+        </div>
+    }
+    <div class="container">
+        <main role="main" class="pb-3 mt-1 mt-md-0">
+            @if (ViewBag.Breadcrumbs != null)
+            {
+                IList<Breadcrumb> breadcrumb = ViewBag.Breadcrumbs;
+                <div class="container-fluid">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            @foreach (Breadcrumb b in breadcrumb)
+                            {
+                                <li class="breadcrumb-item"><a href="/@b.Link">@b.Name</a></li>
+                            }
+                        </ol>
+                    </nav>
+                </div>
+                <h4>
+                    @ViewData["PageName"]
+                </h4>
+            }
+            @RenderBody()
+        </main>
+    </div>
+    <footer class="border-top mb-7 mb-lg-0 py-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-6 col-md-10">
+                    <div class="row">
+                        @{
+                            string col = "col-12 col-md-4";
+                        }
+                        <div class="@col">
+                            <a href="/">
+                                &copy;
+                                <img class="img-fluid" width="300" height="60" style="max-width: 10rem; height: auto" src="/logo.png" alt="logo">
+                                <p>2016 - @DateTime.Now.Year</p>
+                            </a>
+                        </div>
+                        <div class="@col pt-1">
+                            @foreach ((string, string) l in mainLinks.Take(4).Select(m => (m.Item1, m.Item2)))
+                            {
+                                <p>
+                                    @{
+                                        await Html.RenderPartialAsync("_FooterLink", l);
+                                    }
+                                </p>
+                            }
+                        </div>
+                        <div class="@col pt-1">
+                            @foreach ((string, string) l in mainLinks.Skip(4).Take(2).Select(m => (m.Item1, m.Item2)))
+                            {
+                                <p>
+                                    @{
+                                        await Html.RenderPartialAsync("_FooterLink", l);
+                                    }
+                                </p>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div id="social"></div>
+                    <div>
+                        <!-- Yandex.Metrika informer -->
+                        <a href="https://metrika.yandex.ru/stat/?id=69941848&amp;from=informer" target="_blank" rel="noopener">
+                            <img src="https://informer.yandex.ru/informer/69941848/3_1_FFFFFFFF_EFEFEFFF_0_pageviews" style="width:88px; height:31px; border:0;" alt="Яндекс.Метрика" title="Яндекс.Метрика: данные за сегодня (просмотры, визиты и уникальные посетители)" class="ym-advanced-informer" data-cid="69941848" data-lang="ru" />
+                        </a>
+                        <!-- /Yandex.Metrika informer -->
+                        <!-- Yandex.Metrika counter -->
+                        <script type="text/javascript">
+                            (function (m, e, t, r, i, k, a) {
+                                m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments) };
+                                m[i].l = 1 * new Date(); k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(k, a)
+                            })
+                                (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+                            ym(69941848, "init", {
+                                clickmap: true,
+                                trackLinks: true,
+                                accurateTrackBounce: true
+                            });
+                        </script>
+                        <noscript><div><img src="https://mc.yandex.ru/watch/69941848" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+                        <!-- /Yandex.Metrika counter -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </footer>
+    @if (width == null || width < ConstantsService.MOBILEWIDTH)
+    {
+        <nav class="bg-dark fixed-bottom py-1 d-lg-none">
+            <div class="container">
+                <div class="row text-center align-items-center">
+                    @{
+                        List<List<string>> list = new()
+                {
+                new List<string>()
+                {
+                "#",
+                "fas fa-bars",
+                ConstantsService.MENU,
+                "slide-out",
+                "sidenav-trigger"
+                },
+                new List<string>()
+                {
+                ConstantsService.CATEGORIES,
+                "fa fa-align-center",
+                ConstantsService.CATEGORIES
+                },
+                new List<string>()
+                {
+                ConstantsService.BRANDS,
+                "fas fa-cannabis",
+                ConstantsService.BRANDS
+                },
+                isAuth ?
+                new List<string>()
+                {
+                ConstantsService.ACCOUNT,
+                "fa fa-sign-in-alt",
+                ConstantsService.ACCOUNT
+                } :
+                new List<string>()
+                {
+                "#",
+                "fas fa-user-tie",
+                ConstantsService.LOGIN,
+                "#loginModal"
+                },
+                new List<string>()
+                {
+                ConstantsService.CART,
+                "fas fa-shopping-cart",
+                ConstantsService.CART
+                }
+                };
+                        foreach (List<string> l in list)
+                        {
+                            await Html.RenderPartialAsync("_NavCol", l);
+                        }
+                    }
+                </div>
+            </div>
+        </nav>
+    }
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @if (!isAuth)
+    {
+        <div class="modal fade" id="loginModal" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="d-flex justify-content-between mt-2 mx-3">
+                        <h7 class="modal-title">@Localizer["enterorreg"]</h7>
+                        <div>
+                            <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <form id="loginForm" onsubmit="loginHandler(event)">
+                            <div id="logText" class="text-danger"></div>
+                            @{
+                                await Html.RenderPartialAsync("_InputStandart", new InputStandart
+                {
+                    Id = "login-input",
+                    Name = ConstantsService.LOGIN,
+                    Type = ConstantsService.EMAIL,
+                    Required = ConstantsService.REQUIRED,
+                    OnInput = "inputLogin(event)",
+                    OnInvalid = "invalidloginHandler(event)",
+                    Label = Localizer[ConstantsService.EMAIL].Value,
+                    Wrong = Localizer[ConstantsService.EMPTY].Value
+                });
+                                await Html.RenderPartialAsync("_ButtonSubmit", (Localizer[ConstantsService.NEXT].Value, "mt-4 d-flex justify-content-end", "mx-3"));
+                            }
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <span id="pinEvoke" style="display: none" data-mdb-dismiss="modal" data-mdb-toggle="modal" data-mdb-target="#pinModal"></span>
+        </div>
+        <div class="modal fade" id="pinModal" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="d-flex justify-content-between mt-2 mx-3">
+                        <h7 class="modal-title">PIN</h7>
+                        <p id="timer"></p>
+                        <div>
+                            <button id="closePin" type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div id="pinText" class="text-success"></div>
+                        <div id="pinWrong" class="text-danger"></div>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    @for (int i = 0; i < 4; i++)
+                                    {
+                                        <td>
+                                            <div class="form-outline">
+                                                @if (i > 0)
+                                                {
+                                                    <input id="@i" disabled oninput="inputPin(event)" name="@ConstantsService.LOGIN" type="number" class="form-control text-center pin" />
+                                                }
+                                                else
+                                                {
+                                                    <input id="@i" oninput="inputPin(event)" name="@ConstantsService.LOGIN" type="number" class="form-control text-center pin" />
+                                                }
+                                            </div>
+                                        </td>
+                                    }
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="~/js/in.js" asp-append-version="true"></script>
+    }
+    <script src="~/lib/mdb/mdb.min.js"></script>
+    <script src="~/lib/sidenav/cash.js"></script>
+    <script src="~/lib/sidenav/component.js"></script>
+    <script src="~/lib/sidenav/global.js"></script>
+    <script src="~/lib/sidenav/anime.min.js"></script>
+    <script src="~/lib/sidenav/sidenav.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.sidenav').sidenav();
+        });
+    </script>
+    @if (filterScript)
+    {
+        <link rel="stylesheet" href="~/lib/range/ion.rangeSlider.min.css" />
+        <script src="~/lib/range/ion.rangeSlider.min.js" asp-append-version="true"></script>
+        <script src="~/js/filter.js" asp-append-version="true"></script>
+    }
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

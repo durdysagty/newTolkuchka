@@ -1,0 +1,6 @@
+﻿@model InputStandart
+<div class="form-outline @Model.Classes">
+    <input id="@Model.Id" name="@Model.Name" title="@Model.Label" type="@Model.Type" @Model.Required @Model.Disabled oninput="@Model.OnInput" oninvalid="@Model.OnInvalid" value="@Model.Value" @Model.Minlength @Model.Maxlength class="form-control mb-2" />
+    <label class="form-label" for="@Model.Id">@Model.Label</label>
+    <div id="@Model.Name" class="invalid-feedback">@Model.Wrong</div>
+</div>

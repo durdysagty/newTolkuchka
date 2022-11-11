@@ -1,0 +1,9 @@
+﻿@model (string, IEnumerable<string>)
+
+<p class="fs-5 px-3 mb-2 border-bottom border-primary">@Model.Item1</p>
+<div class="row">
+    @foreach (var p in @Model.Item2)
+    {
+        @Html.Raw(p)
+    }
+</div>

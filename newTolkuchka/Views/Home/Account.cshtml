@@ -1,0 +1,167 @@
+﻿@using System.Reflection
+@model User
+@{
+
+    IEnumerable<UserInvoice> invoices = ViewBag.Invoices;
+    // PropertyInfo[] properties = Model.GetType().GetProperties();
+    string classes = "mb-3";
+    InputStandart[] inputs = new InputStandart[] {
+            new InputStandart
+            {
+            Id = null,
+            Name = ConstantsService.NAME,
+            Type = ConstantsService.TEXT,
+            Required = ConstantsService.REQUIRED,
+            OnInput = "inputAccount(event)",
+            OnInvalid = "invalidAccountHandler(event)",
+            Value = Model.Name,
+            Label = Localizer["user-name"].Value,
+            Wrong = Localizer[ConstantsService.EMPTY].Value,
+            Classes = classes
+            },
+            new InputStandart
+            {
+            Id = null,
+            Name = ConstantsService.PHONE,
+            Type = ConstantsService.NUMBER,
+            Required = ConstantsService.REQUIRED,
+            OnInput = "inputAccount(event)",
+            OnInvalid = "invalidAccountHandler(event)",
+            Value = Model.Phone,
+            Label =  Localizer["phone-number"].Value,
+            Wrong = Localizer[ConstantsService.EMPTY].Value,
+            Classes = classes
+            },
+            new InputStandart
+            {
+            Id = null,
+            Name = ConstantsService.ADDRESS,
+            Type = ConstantsService.TEXT,
+            Required = ConstantsService.REQUIRED,
+            OnInput = "inputAccount(event)",
+            OnInvalid = "invalidAccountHandler(event)",
+            Value = Model.Address,
+            Label =  Localizer[ConstantsService.ADDRESS].Value,
+            Wrong = Localizer[ConstantsService.EMPTY].Value,
+            Classes = classes
+            },
+            new InputStandart
+            {
+            Id = null,
+            Name = ConstantsService.BIRTHDAY,
+            Type = ConstantsService.DATE,
+            OnInput = "inputAccount(event)",
+            OnInvalid = "invalidAccountHandler(event)",
+            Value = Model.BirthDay != null ? String.Concat(Model.BirthDay.Value.ToString("u").Take(10)): null,
+            Label =  Localizer[ConstantsService.BIRTHDAY].Value,
+            Classes = classes
+            },
+            new InputStandart
+            {
+            Id = null,
+            Name = ConstantsService.PIN,
+            Type = ConstantsService.PASSWORD,
+            OnInput = "inputAccount(event)",
+            OnInvalid = "invalidAccountHandler(event)",
+            Value = "nnnnnnnn",
+            Label =  Localizer[ConstantsService.PIN].Value,
+            Wrong = Localizer["min-pin"].Value,
+            Classes = classes,
+            Minlength = "minlength=4",
+            Maxlength = "maxlength=4"
+            }
+        };
+}
+
+<ul class="nav nav-tabs mb-3" id="userTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <a class="nav-link active" id="orders-tab" data-mdb-toggle="tab" href="#orders-content" role="tab" aria-controls="orders-content" aria-selected="true">@Localizer["invoices"]</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="user-tab" data-mdb-toggle="tab" href="#user-content" role="tab" aria-controls="user-content" aria-selected="false">@Model.Email</a>
+    </li>
+</ul>
+<div class="tab-content" id="userTabs-content">
+    <div class="tab-pane fade show active" id="orders-content" role="tabpanel" aria-labelledby="orders-tab">
+        <table class="table table-sm table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>@Localizer["recipient"]</th>
+                    <th>@Localizer["date"]</th>
+                    <th>@Localizer["amount"]</th>
+                    <th>@Localizer["payment"]</th>
+                    <th>@Localizer["delivery"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (UserInvoice i in invoices)
+                {
+                    string id = "i" + i.Id;
+                    <tr role="button" data-mdb-toggle="collapse" data-mdb-target="#@id" aria-expanded="true" aria-controls="@id">
+                        <td>@i.Id</td>
+                        <td>@i.Recipient</td>
+                        <td>@i.Date</td>
+                        <td>@i.Amount @i.Currency.CodeName</td>
+                        <td>
+                            @{
+                                await Html.RenderPartialAsync("_IsDone", i.Payment);
+                            }
+                        </td>
+                        <td>
+                            @{
+                                await Html.RenderPartialAsync("_IsDone", i.Delivery);
+                            }
+                        </td>
+                    </tr>
+                    <tr id=@id class="accordion-collapse collapse" data-parent="#accordion">
+                        <td colspan="6">
+                            <div id=@id class="accordion-collapse collapse" data-parent="#accordion">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <th>Наименование</th>
+                                        <th>Гарантия</th>
+                                        <th>Цена ТМТ</th>
+                                        <th>Количество</th>
+                                        <th>Сумма ТМТ</th>
+                                    </tr>
+                                    @foreach (UserOrder o in i.UserOrders)
+                                    {
+                                        <tr>
+                                            <td>@o.ProductName</td>
+                                            <td>@o.Warranty</td>
+                                            <td>@o.Price</td>
+                                            <td>@o.Quantity</td>
+                                            <td>@(o.Price * o.Quantity)</td>
+                                        </tr>
+                                    }
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>Доставка: </td>
+                                        <td>@i.DeliveryCost</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="tab-pane fade" id="user-content" role="tabpanel" aria-labelledby="user-tab">
+        <form id="userForm" method="post" class="form-order">
+            @{
+                foreach (InputStandart input in inputs)
+                {
+                    await Html.RenderPartialAsync("_InputStandart", input);
+                }
+                await Html.RenderPartialAsync("_ButtonSubmit", (Localizer[ConstantsService.ENTER].Value, "text-end mt-3", ""));
+            }
+        </form>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/account.js" asp-append-version="true"></script>
+}

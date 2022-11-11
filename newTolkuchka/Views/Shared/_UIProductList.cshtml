@@ -1,0 +1,47 @@
+﻿@{
+    IEnumerable<Category> categories = ViewBag.Categories;
+    int? width = ViewBag.WindowWidth;
+}
+@if (width == null || width < ConstantsService.MOBILEWIDTH)
+{
+    <div id="slide-filters" class="sidenav px-5 py-3">
+        @if (categories != null && categories.Any())
+        {
+            foreach (Category c in categories)
+            {
+                <a class="d-block" href="/@ConstantsService.CATEGORY/@c.Id">@CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm)</a>
+            }
+        }
+        <div id="slide-range"></div>
+    </div>
+    <button type="button" data-target="slide-filters" class="btn btn-primary btn-floating d-lg-none sidenav-trigger" id="btn-filter">
+        <i class="fas fa-filter"></i>
+    </button>
+}
+<div class="row">
+    @if (width == null || width > ConstantsService.MOBILEWIDTH)
+    {
+        <div class="d-none d-lg-block col-lg-2 col-xl-2 px-0 pe-1">
+            @if (categories != null && categories.Any())
+            {
+                foreach (Category c in categories)
+                {
+                    <a class="d-block" href="/@ConstantsService.CATEGORY/@c.Id">@CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm)</a>
+                }
+            }
+            <div id="filters">
+                <div id="range"></div>
+            </div>
+        </div>
+    }
+    <div class="col-12 col-lg-10 col-xl-10 ps-md-3">
+        <div class="d-flex mb-4">
+            <strong>@Localizer["sort"]</strong>
+            <div class="d-flex" id="sortby"></div>
+        </div>
+        <div class="row me-2 me-md-0" id="products">
+        </div>
+    </div>
+    <div class="text-center" id="pagination">
+    </div>
+</div>

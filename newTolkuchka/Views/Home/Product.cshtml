@@ -1,0 +1,145 @@
+﻿@model IEnumerable<Product>
+@using newTolkuchka.Services.Interfaces
+@inject IPath _pathService
+
+@if (Model != null)
+{
+    // to select specs from
+    IList<ModelWithList<SpecsValue>> specs = ViewBag.Specs;
+    int current = ViewBag.Current;
+    foreach (Product p in Model)
+    {
+        string id = $"pr{p.Id}";
+        string imgId = $"img{p.Id}";
+        string currentProduct = p.Id == current ? "d-block" : "d-none";
+        string tabsId = $"tab{p.Id}";
+        string contentId = $"content{p.Id}";
+        string descTab = $"decTab{p.Id}";
+        string specTab = $"specTab{p.Id}";
+        string descContent = $"decCon{p.Id}";
+        string specContent = $"specCon{p.Id}";
+        <div id="@id" class="@currentProduct">
+            <h4>@IProduct.GetProductName(p)</h4>
+            <div class="row">
+                <div class="col-12 col-md-4">
+                    <img id="@imgId" width="600" height="600" style="width: 100%; height: auto" alt="@p.Brand.Name" src="@PathService.GetImageRelativePath(ConstantsService.PRODUCT, p.Id)" />
+                </div>
+                <div class="col-12 col-md-1 my-2 my-md-0">
+                    <div class="d-flex d-md-block">
+                        @for (int i = 0; i < ConstantsService.PRODUCTMAXIMAGE; i++)
+                        {
+                            if (File.Exists(_pathService.GetImagePath(ConstantsService.PRODUCT + "/small", p.Id, i)))
+                            {
+                                <img role="button" width="200" height="200" style="width: 4rem; height: auto" alt="@p.Brand.Name" src="@PathService.GetImageRelativePath(ConstantsService.PRODUCT + "/small", p.Id, i)" onclick="setImage(@imgId, @i)" />
+                            }
+                            else
+                                break;
+                        }
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 d-flex flex-column justify-content-end">
+                    @if (Model.Count() > 1)
+                    {
+                        <div class="d-flex flex-column justify-content-end align-items-start mb-3">
+                            @foreach (ModelWithList<SpecsValue> s in specs)
+                            {
+                                <div><strong>@s.Name</strong></div>
+                                <div class="d-flex">
+                                    @foreach (SpecsValue sv in s.List)
+                                    {
+                                        // is this specsvalue in current product
+                                        bool isActive = p.ProductSpecsValues.Any(x => x.SpecsValueId == sv.Id);
+                                        string function = null;
+                                        string border = null;
+                                        int? getIp = null;
+                                        if (isActive)
+                                            border = "border-primary";
+                                        else
+                                        {
+                                            // get specsvalues that is in current product but not in this spec
+                                            IList<SpecsValue> currentSV = p.ProductSpecsValues.Select(x => x.SpecsValue).Where(x => x.Spec.NamingOrder != null && x.SpecId != s.Id).ToList();
+                                            // if the sv is not in current product then add sv to currentSV and seek the product that is gor all svs
+                                            currentSV.Add(sv);
+                                            getIp = Model.SingleOrDefault(m => m.ProductSpecsValues.Select(x => x.SpecsValue).Where(x => x.Spec.NamingOrder != null).All(x => currentSV.Any(y => y.Id == x.Id)))?.Id;
+                                            function = getIp != null ? $"role=button onclick=getProduct({getIp})" : null;
+                                        }
+                                        @if (isActive || getIp != null)
+                                        {
+                                            <div class="d-inline-block p-1 me-1 border rounded @border">
+                                                @if (s.Is)
+                                                {
+                                                    <img width="25" height="25" style="width: 1.5rem; height: auto" src="@PathService.GetImageRelativePath(ConstantsService.SPECSVALUE, sv.Id)" title="@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)" alt="@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)" @function />
+                                                }
+                                                else
+                                                {
+                                                    <span @function>@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)</span>
+                                                }
+                                            </div>
+                                        }
+
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                    <div class="d-flex flex-column justify-content-end align-items-center align-items-md-start mb-3">
+                        @if (p.NewPrice != null)
+                        {
+                            <div class="d-block"><h6><s>@CurrencyService.Currency.CodeName @IProduct.GetConvertedPrice((decimal)p.Price)</s></h6></div>
+                            <h4>@CurrencyService.Currency.CodeName @IProduct.GetConvertedPrice((decimal)p.NewPrice)</h4>
+                        }
+                        else
+                        {
+                            <h4>@CurrencyService.Currency.CodeName @IProduct.GetConvertedPrice((decimal)p.Price)</h4>
+                        }
+                        @{
+                            string buttonName = "order" + p.Id;
+                        }
+                        <button name="@buttonName" onclick="order(@p.Id)" type="submit" class="btn btn-primary mx-3">@Localizer["add"]</button>
+                    </div>
+                </div>
+            </div>
+            <ul class="nav nav-tabs mb-3" id="@tabsId" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="@descTab" data-mdb-toggle="tab" href="#@descContent" role="tab" aria-controls="@descContent" aria-selected="true">@Localizer[ConstantsService.DESCRIPTION]</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="@specTab" data-mdb-toggle="tab" href="#@specContent" role="tab" aria-controls="@specContent" aria-selected="false">@Localizer[ConstantsService.SPECIFICATIONS]</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="@contentId">
+                <div class="tab-pane fade show active" id="@descContent" role="tabpanel" aria-labelledby="@descTab">
+                    <p>@CultureProvider.GetLocalName(p.Model.DescRu, p.Model.DescEn, p.Model.DescTm)</p>
+                </div>
+                <div class="tab-pane fade" id="@specContent" role="tabpanel" aria-labelledby="@specTab">
+                    <table class="table table-sm table-striped" style="max-width: 70rem">
+                        <tbody>
+                            @foreach (ModelSpec ms in p.Model.ModelSpecs.OrderBy(s => s.Spec.Order))
+                            {
+                                <tr>
+                                    <td>@CultureProvider.GetLocalName(ms.Spec.NameRu, ms.Spec.NameEn, ms.Spec.NameTm)</td>
+                                    @{
+                                        SpecsValue sv = p.ProductSpecsValues.FirstOrDefault(x => x.SpecsValue.SpecId == ms.SpecId).SpecsValue; // if nulll
+                                        <td>@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)</td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    @section Scripts {
+    <script src="~/js/product.js" asp-append-version="true"></script>
+        }
+}
+else
+{
+    <div style="height: 50vh" class="d-flex justify-content-center align-items-center">
+        <div>
+            <p class="text-center">@Localizer["notAvailable"]</p>
+            <h4 class="text-center"><a href="/categories" class="text-brown">@Localizer["all"]</a></h4>
+        </div>
+    </div>
+}

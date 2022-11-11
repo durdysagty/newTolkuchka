@@ -1,0 +1,318 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="404" xml:space="preserve">
+    <value>Bagyşlaň, bu sahypa ýok!</value>
+  </data>
+  <data name="about" xml:space="preserve">
+    <value>Biz hakynda</value>
+  </data>
+  <data name="account" xml:space="preserve">
+    <value>Akkaunt</value>
+  </data>
+  <data name="account details" xml:space="preserve">
+    <value>akkauntyňyz</value>
+  </data>
+  <data name="add" xml:space="preserve">
+    <value>Sebete goş</value>
+  </data>
+  <data name="add1" xml:space="preserve">
+    <value>sebete goş</value>
+  </data>
+  <data name="address" xml:space="preserve">
+    <value>Salgyňyz</value>
+  </data>
+  <data name="all" xml:space="preserve">
+    <value>Bar bolan önümleri kategoriýalar bölüminde tapyp bilersiňiz.</value>
+  </data>
+  <data name="amount" xml:space="preserve">
+    <value>Jemi</value>
+  </data>
+  <data name="announces" xml:space="preserve">
+    <value>Bildirişler</value>
+  </data>
+  <data name="birthday" xml:space="preserve">
+    <value>Doglan günüňiz</value>
+  </data>
+  <data name="brand" xml:space="preserve">
+    <value>Brend</value>
+  </data>
+  <data name="brands" xml:space="preserve">
+    <value>Brendler</value>
+  </data>
+  <data name="cart" xml:space="preserve">
+    <value>Sebet</value>
+  </data>
+  <data name="categories" xml:space="preserve">
+    <value>Bölümler</value>
+  </data>
+  <data name="commercial" xml:space="preserve">
+    <value>Aksiýa</value>
+  </data>
+  <data name="date" xml:space="preserve">
+    <value>Sene</value>
+  </data>
+  <data name="delivery" xml:space="preserve">
+    <value>Eltip bermek</value>
+  </data>
+  <data name="desc-categories" xml:space="preserve">
+    <value>{0} saýtynyň bölümleri</value>
+  </data>
+  <data name="desc-home" xml:space="preserve">
+    <value>Internet dükan {0}</value>
+  </data>
+  <data name="desc-model" xml:space="preserve">
+    <value>{1} {0} saýtynda!</value>
+  </data>
+  <data name="description" xml:space="preserve">
+    <value>beýany</value>
+  </data>
+  <data name="email" xml:space="preserve">
+    <value>El. poçta</value>
+  </data>
+  <data name="empty" xml:space="preserve">
+    <value>Bu meýdança boş bolmaly däl!</value>
+  </data>
+  <data name="enter" xml:space="preserve">
+    <value>giriz</value>
+  </data>
+  <data name="enter-pin" xml:space="preserve">
+    <value>Şu PIN kody hasabyňyza girmek üçin ulanyň</value>
+  </data>
+  <data name="enterorreg" xml:space="preserve">
+    <value>Gir ya-da agza bol</value>
+  </data>
+  <data name="invoices" xml:space="preserve">
+    <value>hasaplar</value>
+  </data>
+  <data name="login" xml:space="preserve">
+    <value>Girelge</value>
+  </data>
+  <data name="main" xml:space="preserve">
+    <value>Esasy</value>
+  </data>
+  <data name="menu" xml:space="preserve">
+    <value>Menýu</value>
+  </data>
+  <data name="min-pin" xml:space="preserve">
+    <value>PIN kod dört sandan ybarat bolmaly!</value>
+  </data>
+  <data name="name" xml:space="preserve">
+    <value>at</value>
+  </data>
+  <data name="new" xml:space="preserve">
+    <value>täze</value>
+  </data>
+  <data name="new-registered" xml:space="preserve">
+    <value>Haýyş, elektron poçtaňyzy barlaň!</value>
+  </data>
+  <data name="next" xml:space="preserve">
+    <value>giriz</value>
+  </data>
+  <data name="noProduct" xml:space="preserve">
+    <value>Bagyşlaň, saýlawyňyza laýyk önüm ýok!</value>
+  </data>
+  <data name="noProductAbsolutly" xml:space="preserve">
+    <value>Bagyşlaň, bu bölümde önüm ýok!</value>
+  </data>
+  <data name="notAvailable" xml:space="preserve">
+    <value>Bagyşlaň, bu önüm elýeterli däl!</value>
+  </data>
+  <data name="novelties" xml:space="preserve">
+    <value>täzelikler</value>
+  </data>
+  <data name="now" xml:space="preserve">
+    <value>Tiz sargyt</value>
+  </data>
+  <data name="of" xml:space="preserve">
+    <value>jemi</value>
+  </data>
+  <data name="oops" xml:space="preserve">
+    <value>Wii...</value>
+  </data>
+  <data name="order" xml:space="preserve">
+    <value>Tamamla</value>
+  </data>
+  <data name="order-success" xml:space="preserve">
+    <value>Sargydyňyz üçin sag boluň! Ýakyn wagtda Siziň bilen habarlaşarys. Şeýle hem, sargytlaryňyzy hasabyňyzda yzarlap bilersiňiz.</value>
+  </data>
+  <data name="payment" xml:space="preserve">
+    <value>Töleg</value>
+  </data>
+  <data name="personal data" xml:space="preserve">
+    <value>personal data</value>
+  </data>
+  <data name="phone-number" xml:space="preserve">
+    <value>Telefon nomeriňiz</value>
+  </data>
+  <data name="pin" xml:space="preserve">
+    <value>PIN kodyňyz</value>
+  </data>
+  <data name="price" xml:space="preserve">
+    <value>nyrh</value>
+  </data>
+  <data name="recipient" xml:space="preserve">
+    <value>Alyjy</value>
+  </data>
+  <data name="recomended-pin" xml:space="preserve">
+    <value>PIN koduňyzy hasabyňyza gireniňizden soň çalşmagy maslahat berýäris</value>
+  </data>
+  <data name="recommended" xml:space="preserve">
+    <value>maslahatlylar</value>
+  </data>
+  <data name="robot" xml:space="preserve">
+    <value>"Men robot däl" belligini bellemedik bolmagyňyz mümkin.</value>
+  </data>
+  <data name="search" xml:space="preserve">
+    <value>Gözle</value>
+  </data>
+  <data name="send" xml:space="preserve">
+    <value>Iber</value>
+  </data>
+  <data name="soon" xml:space="preserve">
+    <value>Biz siz bilen gysga wagt aralygynda habarlaşarys.</value>
+  </data>
+  <data name="sort" xml:space="preserve">
+    <value>Tertip:</value>
+  </data>
+  <data name="specifications" xml:space="preserve">
+    <value>aýratynlyklar</value>
+  </data>
+  <data name="type" xml:space="preserve">
+    <value>Görnüş</value>
+  </data>
+  <data name="user-name" xml:space="preserve">
+    <value>Adyňyz</value>
+  </data>
+  <data name="write" xml:space="preserve">
+    <value>Bize ýazyň</value>
+  </data>
+  <data name="wrong-email" xml:space="preserve">
+    <value>Siziň elektron poçtaňyz ýalňyş formatda ýazylana meňzeýär.</value>
+  </data>
+  <data name="wrong-pin" xml:space="preserve">
+    <value>Bagyşlaň, PIN nomeriňiz gabat gelmedi!</value>
+  </data>
+  <data name="your-name" xml:space="preserve">
+    <value>Siziň adyňyz</value>
+  </data>
+  <data name="your-pin" xml:space="preserve">
+    <value>Siziň PIN kodyňyz</value>
+  </data>
+</root>

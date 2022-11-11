@@ -1,0 +1,20 @@
+﻿@model List<string>
+
+@if (Model.Count > 3)
+{    
+    <a href="/@Model[0]" data-mdb-toggle="modal" data-mdb-target="@Model[3]">
+        <i class="@Model[1]"></i>
+        <span class="me-1">@Localizer[Model[2]]</span>
+    </a>
+}
+else
+{
+    <a href="/@Model[0]">
+        <i class="@Model[1]"></i>
+        <span class="me-1">@Localizer[Model[2]]</span>
+        @if (Model[0] == ConstantsService.CART)
+        {
+            <span data-test="badge" name="q" class="badge dark badge-dark rounded-pill q">0</span>
+        }
+    </a>
+}

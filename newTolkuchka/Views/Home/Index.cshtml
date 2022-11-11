@@ -1,0 +1,48 @@
+﻿@{
+    IEnumerable<Category> mainCategories = ViewBag.MainCategories;
+    IList<Slide> mainSlides = ViewBag.MainSlides;
+    IEnumerable<string> newProducts = ViewBag.NewProducts;
+    IEnumerable<string> recProducts = ViewBag.RecProducts;
+}
+
+<div class="row justify-content-center">
+    <div class="col-auto d-none d-md-block list-group">
+        @foreach (Category c in mainCategories)
+        {
+            <a href="@PathService.GetModelUrl(ConstantsService.CATEGORY, c.Id)" class="list-group-item list-group-item-action px-3 border-0 text-black fs1">
+                @CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm)
+            </a>
+        }
+    </div>
+    <div class="col-8">
+        <div id="carousel-main" class="carousel slide" data-mdb-ride="carousel">
+            <div class="carousel-inner rounded-4">
+                @{
+                    string cl = "carousel-item";
+                    for (int i = 0; i < mainSlides.Count; i++)
+                    {
+                        if (i == mainSlides.Count - 1)
+                            cl = cl + " active";
+                            <div class="@cl">
+                                <a href="@mainSlides[i].Link">
+                                    <img src="@PathService.GetImageRelativePath(ConstantsService.SLIDE, mainSlides[i].Id, CultureProvider.GetLocalNumberEx())" class="d-block w-100" alt="@Localizer["commercial"]" />
+                                </a>
+                            </div>
+                    }
+                }
+            </div>
+            <button class="carousel-control-prev" type="button" data-mdb-target="#carousel-main" data-mdb-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-mdb-target="#carousel-main" data-mdb-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+</div>
+@{
+    await Html.RenderPartialAsync("_IndexHeader", (Localizer["novelties"].Value, newProducts));
+    await Html.RenderPartialAsync("_IndexHeader", (Localizer["recommended"].Value, recProducts));
+}
