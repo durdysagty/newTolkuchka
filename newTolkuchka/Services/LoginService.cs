@@ -107,7 +107,7 @@ namespace newTolkuchka.Services
         private LoginResponse CreateEmployeeSuccessResult(Employee employee)
         {
             string token = _jwt.GetEmployeeToken(employee);
-            return new LoginResponse { Result = R.Success, Data = token };
+            return new LoginResponse { Result = R.Success, Data = token, Text = Secrets.adminCookie };
         }
         private static LoginResponse CreateFailResult(string text = null) => new() { Result = R.Fail, Text = text };
     }

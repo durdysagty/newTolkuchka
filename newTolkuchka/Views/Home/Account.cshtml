@@ -52,7 +52,7 @@
             Type = ConstantsService.DATE,
             OnInput = "inputAccount(event)",
             OnInvalid = "invalidAccountHandler(event)",
-            Value = Model.BirthDay != null ? String.Concat(Model.BirthDay.Value.ToString("u").Take(10)): null,
+            Value = Model.BirthDay != null ? string.Concat(Model.BirthDay.Value.ToString("u").Take(10)): null,
             Label =  Localizer[ConstantsService.BIRTHDAY].Value,
             Classes = classes
             },

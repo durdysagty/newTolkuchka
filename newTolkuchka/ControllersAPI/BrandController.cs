@@ -56,7 +56,7 @@ namespace newTolkuchka.ControllersAPI
             Brand brand = await _brand.GetModelAsync(id);
             if (brand == null)
                 return Result.Fail;
-            Result result = await _brand.DeleteModel(brand.Id, brand);
+            Result result = await _brand.DeleteModelAsync(brand.Id, brand);
             if (result == Result.Success)
                 await DeleteActAsync(id, brand.Name);
             return result;

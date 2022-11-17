@@ -28,12 +28,13 @@ namespace newTolkuchka.ControllersAPI
             return product;
         }
         [HttpGet]
-        public ModelsFilters<AdminProduct> Get([FromQuery] int[] category, [FromQuery] int[] brand, int page = 0, int pp = 50)
+        public ModelsFilters<AdminProduct> Get([FromQuery] int[] category, [FromQuery] int[] brand, [FromQuery] int? line, [FromQuery] int? model, int page = 0, int pp = 50)
         {
-            IEnumerable<AdminProduct> products = _product.GetAdminProducts(category.Length > 0 ? category : null, brand.Length > 0 ? brand : null, page, pp, out int lastPage, out string pagination);
+            IEnumerable<AdminProduct> products = _product.GetAdminProducts(category.Any() ? category : null, brand.Any() ? brand : null, line, model, page, pp, out int lastPage, out string pagination);
             return new ModelsFilters<AdminProduct>
             {
-                Filters = new string[2] { nameof(category), nameof(brand) }.OrderByDescending(c => c),
+                //Filters = new string[4] { nameof(category), nameof(brand), $"{nameof(brand)}Id {nameof(line)}", $"{nameof(line)}Id {nameof(model)}" }.OrderBy(c => c),
+                Filters = new string[4] { nameof(category), nameof(brand), $"{nameof(brand)}Id {nameof(line)}", $"{nameof(line)}Id {nameof(model)}" }.OrderBy(c => c),
                 Models = products,
                 LastPage = lastPage,
                 Pagination = pagination
@@ -84,7 +85,7 @@ namespace newTolkuchka.ControllersAPI
             Product product = await _product.GetModelAsync(id);
             if (product == null)
                 return Result.Fail;
-            Result result = await _product.DeleteModel(product.Id, product, true);
+            Result result = await _product.DeleteModelAsync(product.Id, product, true);
             if (result == Result.Success)
                 await DeleteActAsync(id, product.Id.ToString());
             return result;

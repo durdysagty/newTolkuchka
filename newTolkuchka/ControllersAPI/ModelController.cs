@@ -23,7 +23,7 @@ namespace newTolkuchka.ControllersAPI
             return model;
         }
         [HttpGet]
-        public IEnumerable<AdminModel> Get(int? brandId, int? lineId)
+        public IEnumerable<AdminModel> Get([FromQuery] int[] brandId, [FromQuery] int?[] lineId)
         {
             IEnumerable<AdminModel> models = _model.GetAdminModels(brandId, lineId);
             return models;
@@ -62,7 +62,7 @@ namespace newTolkuchka.ControllersAPI
             Model model = await _model.GetModelAsync(id);
             if (model == null)
                 return Result.Fail;
-            Result result = await _model.DeleteModel(model.Id, model);
+            Result result = await _model.DeleteModelAsync(model.Id, model);
             if (result == Result.Success)
                 await DeleteActAsync(id, model.Name);
             return result;

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services.Abstracts;
@@ -14,11 +15,13 @@ namespace newTolkuchka.Services
             _product = product;
         }
 
-        public IEnumerable<AdminModel> GetAdminModels(int? brandId, int? lineId)
+        public IEnumerable<AdminModel> GetAdminModels([FromQuery] int[] brandId, [FromQuery] int?[] lineId)
         {
             IQueryable<Model> models = GetModels();
-            if (brandId != null)
-                models = models.Where(l => l.BrandId == brandId && l.LineId == lineId);
+            if (brandId.Any())
+                models = models.Where(m => brandId.Any(b => b == m.BrandId));
+            if (lineId.Any())
+                models = models.Where(m => lineId.Any(l => l == m.LineId));
             IEnumerable<AdminModel> adminModels = models.Select(x => new AdminModel
             {
                 Id = x.Id,

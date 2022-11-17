@@ -55,7 +55,7 @@ namespace newTolkuchka.ControllersAPI
             Type Type = await _type.GetModelAsync(id);
             if (Type == null)
                 return Result.Fail;
-            Result result = await _type.DeleteModel(Type.Id, Type);
+            Result result = await _type.DeleteModelAsync(Type.Id, Type);
             if (result == Result.Success)
                 await DeleteActAsync(id, Type.NameRu);
             return result;

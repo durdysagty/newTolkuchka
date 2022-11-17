@@ -54,7 +54,7 @@ namespace newTolkuchka.ControllersAPI
             Warranty warranty = await _warranty.GetModelAsync(id);
             if (warranty == null)
                 return Result.Fail;
-            Result result = await _warranty.DeleteModel(warranty.Id, warranty);
+            Result result = await _warranty.DeleteModelAsync(warranty.Id, warranty);
             if (result == Result.Success)
                 await DeleteActAsync(id, warranty.NameRu);
             return result;

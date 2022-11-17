@@ -22,7 +22,7 @@ namespace newTolkuchka.Services.Abstracts
             _con.Entry(model).State = EntityState.Modified;
         }
 
-        public async Task<Result> DeleteModel(int id, T model)
+        public async Task<Result> DeleteModelAsync(int id, T model)
         {
             bool isBinded = await IsBinded(id);
             if (isBinded)

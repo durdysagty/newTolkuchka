@@ -114,7 +114,7 @@ namespace newTolkuchka.Controllers
         public async Task<IActionResult> Product(int id)
         {
             //Product product = await _product.GetFullProducts(null, null, null, null, new int[1] { id }).AsNoTracking().FirstOrDefaultAsync();
-            Product product = await _product.GetFullProducts(null, null, null, null, new int[1] { id }).FirstOrDefaultAsync();
+            Product product = await _product.GetFullProducts(null, null, null, null, null, new int[1] { id }).FirstOrDefaultAsync();
             string localName = IProduct.GetProductName(product);
             CreateMetaData(ConstantsService.PRODUCT, await _breadcrumbs.GetProductBreadcrumbs(product.CategoryId), localName, true, false);
             IQueryable<Product> products = _product.GetFullProducts(null, null, null, product.ModelId).Where(p => !p.NotInUse).AsNoTrackingWithIdentityResolution();
@@ -350,7 +350,7 @@ namespace newTolkuchka.Controllers
                 bool isPinChanged = await _user.EditUserAsync(accountUser, user);
                 if (isPinChanged)
                 {
-                    HttpContext.Response.Cookies.Delete(ConstantsService.USERCOOKIE);
+                    HttpContext.Response.Cookies.Delete(Secrets.userCookie);
                     return RedirectToAction("Index");
                 }
             }

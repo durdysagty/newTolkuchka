@@ -1,8 +1,7 @@
 ﻿namespace newTolkuchka.Services
 {
     public static class ConstantsService
-    {
-        public const string USERCOOKIE = "tkbtk";
+    {        
         // lang standarts
         public const string RU = "ru";
         public const string EN = "en";

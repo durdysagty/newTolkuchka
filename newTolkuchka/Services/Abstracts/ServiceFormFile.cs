@@ -76,7 +76,7 @@ namespace newTolkuchka.Services.Abstracts
             }
         }
 
-        public async Task<Result> DeleteModel(int id, T model, bool smallImage)
+        public async Task<Result> DeleteModelAsync(int id, T model, bool smallImage)
         {
             bool isBinded = await IsBinded(id);
             if (isBinded)

@@ -17,7 +17,7 @@ namespace newTolkuchka.Services
             _localizer = localizer;
         }
 
-        public IQueryable<Product> GetProducts(IList<int> categoryIds = null, IList<int> brandIds = null, int? typeId = null, int? modelId = null, IList<int> productIds = null)
+        public IQueryable<Product> GetProducts(IList<int> categoryIds = null, IList<int> brandIds = null, int? typeId = null, int? lineId = null, int? modelId = null, IList<int> productIds = null)
         {
             IQueryable<Product> products = GetModels();
             if (categoryIds != null)
@@ -26,6 +26,8 @@ namespace newTolkuchka.Services
                 products = products.Where(p => brandIds.Any(b => b == p.BrandId));
             if (typeId != null)
                 products = products.Where(p => p.TypeId == typeId);
+            if (lineId != null)
+                products = products.Where(p => p.LineId == lineId);
             if (modelId != null)
                 products = products.Where(p => p.ModelId == modelId);
             if (productIds != null)
@@ -33,9 +35,9 @@ namespace newTolkuchka.Services
             return products;
         }
 
-        public IQueryable<Product> GetFullProducts(IList<int> categoryIds = null, IList<int> brandIds = null, int? typeId = null, int? modelId = null, IList<int> productIds = null)
+        public IQueryable<Product> GetFullProducts(IList<int> categoryIds = null, IList<int> brandIds = null, int? typeId = null, int? lineId = null, int? modelId = null, IList<int> productIds = null)
         {
-            return GetProducts(categoryIds, brandIds, typeId, modelId, productIds).Include(p => p.Type).Include(p => p.Brand).Include(p => p.Line).Include(p => p.Model).ThenInclude(x => x.ModelSpecs).Include(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ThenInclude(x => x.Spec).Include(x => x.ProductSpecsValueMods).ThenInclude(x => x.SpecsValueMod);
+            return GetProducts(categoryIds, brandIds, typeId, lineId, modelId, productIds).Include(p => p.Type).Include(p => p.Brand).Include(p => p.Line).Include(p => p.Model).ThenInclude(x => x.ModelSpecs).Include(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ThenInclude(x => x.Spec).Include(x => x.ProductSpecsValueMods).ThenInclude(x => x.SpecsValueMod);
         }
 
         public async Task<Product> GetFullProductAsync(int id)
@@ -43,9 +45,9 @@ namespace newTolkuchka.Services
             return await GetModels().Include(p => p.Type).Include(p => p.Brand).Include(p => p.Line).Include(p => p.Model).ThenInclude(x => x.ModelSpecs).Include(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ThenInclude(x => x.Spec).Include(x => x.ProductSpecsValueMods).ThenInclude(x => x.SpecsValueMod).Include(x => x.Warranty).FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public IQueryable<AdminProduct> GetAdminProducts(IList<int> categoryIds, IList<int> brandIds, int page, int pp, out int lastPage, out string pagination)
+        public IQueryable<AdminProduct> GetAdminProducts(IList<int> categoryIds, IList<int> brandIds, int? lineId, int? modelId,  int page, int pp, out int lastPage, out string pagination)
         {
-            IQueryable<Product> preProducts = GetFullProducts(categoryIds, brandIds).OrderByDescending(x => x.Id);
+            IQueryable<Product> preProducts = GetFullProducts(categoryIds, brandIds, null, lineId, modelId).OrderByDescending(x => x.Id);
             int toSkip = page * pp;
             IQueryable<AdminProduct> adminProducts = preProducts.Skip(toSkip).Take(pp).Select(p => new AdminProduct
             {
@@ -204,11 +206,11 @@ namespace newTolkuchka.Services
                     Sort.PriceDown => preProducts.OrderByDescending(p => p.NewPrice != null ? p.NewPrice : p.Price).Skip(toSkip).Take(pp).ToList(),
                     _ => preProducts.OrderByDescending(p => p.Id).Skip(toSkip).Take(pp).ToList(),
                 };
-                uiProducts = preProducts.Select(pp => IProduct.GetUIProduct(pp, GetProducts(null, null, null, pp.ModelId).Count())).ToArray();
+                uiProducts = preProducts.Select(pp => IProduct.GetUIProduct(pp, GetProducts(null, null, null, null, pp.ModelId).Count())).ToArray();
             }
             else
             {
-                uiProducts = preProducts.Select(pp => IProduct.GetUIProduct(pp, GetProducts(null, null, null, pp.ModelId).Count())).ToArray();
+                uiProducts = preProducts.Select(pp => IProduct.GetUIProduct(pp, GetProducts(null, null, null, null, pp.ModelId).Count())).ToArray();
                 uiProducts = sort switch
                 {
                     Sort.NameZA => uiProducts.OrderByDescending(p => p.Name).Skip(toSkip).Take(pp).ToList(),
@@ -233,7 +235,7 @@ namespace newTolkuchka.Services
 
         public async Task<bool> CheckProductSpecValues(int modelId, IList<int> specsValues, int productId = 0)
         {
-            IList<Product> products = await GetProducts(null, null, null, modelId).Where(p => p.Id != productId).Include(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ToListAsync();
+            IList<Product> products = await GetProducts(null, null, null, null, modelId).Where(p => p.Id != productId).Include(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ToListAsync();
             if (!products.Any())
                 return false;
             if (!specsValues.Any())
@@ -289,7 +291,7 @@ namespace newTolkuchka.Services
         public void RemoveProductSpecValuesModelSpecRemovedAsync(int modelId, int specId)
         {
             // all products of given model
-            IQueryable<int> productIds = GetProducts(null, null, null, modelId).Select(x => x.Id);
+            IQueryable<int> productIds = GetProducts(null, null, null, null, modelId).Select(x => x.Id);
             foreach (int p in productIds)
             {
                 IQueryable<ProductSpecsValue> productSpecsValues = GetProductSpecValues(p).Include(x => x.SpecsValue).Where(x => x.SpecsValue.SpecId == specId);

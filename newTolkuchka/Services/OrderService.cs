@@ -18,7 +18,7 @@ namespace newTolkuchka.Services
         {
             foreach (var order in orders)
             {
-                Product product = _product.GetFullProducts(null, null, null, null, new[] { order.Id }).FirstOrDefault();
+                Product product = _product.GetFullProducts(null, null, null, null, null, new[] { order.Id }).FirstOrDefault();
                 if (product != null)
                 {
                     order.ProductName = IProduct.GetProductName(product);

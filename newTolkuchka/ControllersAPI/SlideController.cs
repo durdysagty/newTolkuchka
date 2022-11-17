@@ -64,7 +64,7 @@ namespace newTolkuchka.ControllersAPI
             Slide slide = await _slide.GetModelAsync(id);
             if (slide == null)
                 return Result.Fail;
-            Result result = await _slide.DeleteModel(slide.Id, slide);
+            Result result = await _slide.DeleteModelAsync(slide.Id, slide);
             if (result == Result.Success)
                 await DeleteActAsync(id, slide.Name);
             return result;

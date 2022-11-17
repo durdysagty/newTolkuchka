@@ -55,7 +55,7 @@ namespace newTolkuchka.ControllersAPI
             Currency currency = await _currency.GetModelAsync(id);
             if (currency == null)
                 return Result.Fail;
-            Result result = await _currency.DeleteModel(currency.Id, currency);
+            Result result = await _currency.DeleteModelAsync(currency.Id, currency);
             if (result == Result.Success)
                 await DeleteActAsync(id, currency.CodeName);
             return result;

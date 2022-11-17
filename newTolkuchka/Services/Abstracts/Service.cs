@@ -2,6 +2,7 @@
 using newTolkuchka.Models;
 using newTolkuchka.Services.Interfaces;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Type = System.Type;
 
 namespace newTolkuchka.Services.Abstracts
@@ -47,97 +48,56 @@ namespace newTolkuchka.Services.Abstracts
         public async Task<bool> IsBinded(int id)
         {
             string typeName = typeof(T).Name;
-            bool isBinded = false;
             switch (typeName)
             {
-                case "Brand":
-                    isBinded = await _con.Products.Where(p => p.BrandId == id).AnyAsync();
-                    if (isBinded)
+                case "Brand":                    
+                    if (await _con.Products.Where(p => p.BrandId == id).AnyAsync())
                         return true;
-                    isBinded = await _con.Lines.Where(x => x.BrandId == id).AnyAsync();
-                    if (isBinded)
+                    if (await _con.Lines.Where(x => x.BrandId == id).AnyAsync())
                         return true;
-                    isBinded = await _con.Models.Where(x => x.BrandId == id).AnyAsync();
-                    if (isBinded)
+                    if (await _con.Models.Where(x => x.BrandId == id).AnyAsync())
                         return true;
                     break;
                 case "Category":
-                    isBinded = await _con.Categories.Where(p => p.ParentId == id).AnyAsync();
-                    if (isBinded)
+                    if (await _con.Categories.Where(p => p.ParentId == id).AnyAsync())
                         return true;
-                    isBinded = await _con.Products.Where(p => p.CategoryId == id).AnyAsync();
-                    if (isBinded)
+                    if (await _con.Products.Where(p => p.CategoryId == id).AnyAsync())
                         return true;
                     break;
                 case "Line":
-                    isBinded = await _con.Products.Where(p => p.LineId == id).AnyAsync();
-                    if (isBinded)
+                    if (await _con.Products.Where(p => p.LineId == id).AnyAsync())
                         return true;
-                    isBinded = await _con.Models.Where(p => p.LineId == id).AnyAsync();
-                    if (isBinded)
+                    if (await _con.Models.Where(p => p.LineId == id).AnyAsync())
                         return true;
                     break;
                 case "Model":
-                    isBinded = await _con.Products.Where(p => p.ModelId == id).AnyAsync();
-                    if (isBinded)
-                        return true;
-                    break;
+                    return await _con.Products.Where(p => p.ModelId == id).AnyAsync();
                 case "Position":
-                    isBinded = await _con.Employees.Where(p => p.PositionId == id).AnyAsync();
-                    if (isBinded)
+                    return await _con.Employees.Where(p => p.PositionId == id).AnyAsync();
+                case "Product":                    
+                    if (await _con.Purchases.Where(p => p.ProductId == id).AnyAsync())
                         return true;
-                    break;
-                case "Product":
-                    isBinded = await _con.Purchases.Where(p => p.ProductId == id).AnyAsync();
-                    isBinded = await _con.Orders.Where(p => p.ProductId == id).AnyAsync();
-                    if (isBinded)
+                    if (await _con.Orders.Where(p => p.ProductId == id).AnyAsync())
                         return true;
                     break;
                 case "Spec":
-                    isBinded = await _con.SpecsValues.Where(x => x.SpecId == id).AnyAsync();
-                    if (isBinded)
-                        return true;
-                    break;
+                    return await _con.SpecsValues.Where(x => x.SpecId == id).AnyAsync();
                 case "SpecsValue":
-                    isBinded = await _con.ProductSpecsValues.Where(x => x.SpecsValueId == id).AnyAsync();
-                    if (isBinded)
-                        return true;
-                    break;
+                    return await _con.ProductSpecsValues.Where(x => x.SpecsValueId == id).AnyAsync();
                 case "SpecsValueMod":
-                    isBinded = await _con.ProductSpecsValueMods.Where(x => x.SpecsValueModId == id).AnyAsync();
-                    if (isBinded)
-                        return true;
-                    break;
+                    return await _con.ProductSpecsValueMods.Where(x => x.SpecsValueModId == id).AnyAsync();
                 case "Type":
-                    isBinded = await _con.Products.Where(x => x.TypeId == id).AnyAsync();
-                    if (isBinded)
-                        return true;
-                    break;
+                    return await _con.Products.Where(x => x.TypeId == id).AnyAsync();
                 case "Warranty":
-                    isBinded = await _con.Products.Where(x => x.WarrantyId == id).AnyAsync();
-                    if (isBinded)
-                        return true;
-                    break;
+                    return await _con.Products.Where(x => x.WarrantyId == id).AnyAsync();
                 case "Supplier":
-                    isBinded = await _con.PurchaseInvoices.Where(x => x.SupplierId == id).AnyAsync();
-                    if (isBinded)
-                        return true;
-                    break;
+                    return await _con.PurchaseInvoices.Where(x => x.SupplierId == id).AnyAsync();
                 case "PurchaseInvoice":
-                    isBinded = await _con.Purchases.Where(x => x.PurchaseInvoiceId == id).AnyAsync();
-                    if (isBinded)
-                        return true;
-                    break;
+                    return await _con.Purchases.Where(x => x.PurchaseInvoiceId == id).AnyAsync();
                 case "Purchase":
-                    isBinded = await _con.Orders.Where(x => x.PurchaseId == id).AnyAsync();
-                    if (isBinded)
-                        return true;
-                    break;
+                    return await _con.Orders.Where(x => x.PurchaseId == id).AnyAsync();
                 case "Invoice":
-                    isBinded = await _con.Orders.Where(x => x.InvoiceId == id).AnyAsync();
-                    if (isBinded)
-                        return true;
-                    break;
+                    return await _con.Orders.Where(x => x.InvoiceId == id).AnyAsync();
                 case "Currency":
                     // to be corrected
                     return true;

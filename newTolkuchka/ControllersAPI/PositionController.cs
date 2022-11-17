@@ -54,7 +54,7 @@ namespace newTolkuchka.ControllersAPI
             Position position = await _position.GetModelAsync(id);
             if (position == null)
                 return Result.Fail;
-            Result result = await _position.DeleteModel(position.Id, position);
+            Result result = await _position.DeleteModelAsync(position.Id, position);
             if (result == Result.Success)
                 await DeleteActAsync(id, position.Name);
             return result;

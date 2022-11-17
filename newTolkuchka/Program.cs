@@ -81,6 +81,9 @@ builder.Services.AddScoped<ISpecsValueMod, SpecsValueModService>();
 builder.Services.AddScoped<IOrder, OrderService>();
 builder.Services.AddScoped<IInvoice, InvoiceService>();
 builder.Services.AddScoped<IContent, ContentService>();
+builder.Services.AddScoped<ISupplier, SupplierService>();
+builder.Services.AddScoped<IPurchaseInvoice, PurchaseInvoiceService>();
+builder.Services.AddScoped<IPurchase, PurchaseService>();
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
     var supportedCultures = new[]
@@ -110,14 +113,14 @@ app.UseRequestLocalization();
 app.UseCookiePolicy();
 app.Use(async (context, next) =>
 {
-    if (context.Request.Cookies.ContainsKey("adm"))
+    if (context.Request.Cookies.ContainsKey(Secrets.adminCookie))
     {
-        string t = context.Request.Cookies["adm"];
+        string t = context.Request.Cookies[Secrets.adminCookie];
         context.Request.Headers.Add("Authorization", "Bearer " + t);
     }
-    else if (context.Request.Cookies.ContainsKey("tkbtk"))
+    else if (context.Request.Cookies.ContainsKey(Secrets.userCookie))
     {
-        string t = context.Request.Cookies["tkbtk"];
+        string t = context.Request.Cookies[Secrets.userCookie];
         context.Request.Headers.Add("Authorization", "Bearer " + t);
     }
     _ = context.RequestServices.GetService<IActionNoFile<Currency>>();

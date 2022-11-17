@@ -11,11 +11,11 @@ namespace newTolkuchka.Services
         {
         }
 
-        public IEnumerable<AdminLine> GetAdminLines(int? brandId)
+        public IEnumerable<AdminLine> GetAdminLines(int[] brandId)
         {
             IQueryable<Line> lines = GetModels();
-            if (brandId != null)
-                lines = lines.Where(l => l.BrandId == brandId);
+            if (brandId.Any())
+                lines = lines.Where(l => brandId.Any(b => b == l.BrandId));
             IEnumerable<AdminLine> adminLines = lines.Select(x => new AdminLine
             {
                 Id = x.Id,

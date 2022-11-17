@@ -56,7 +56,7 @@ namespace newTolkuchka.ControllersAPI
             SpecsValue SpecsValue = await _specsValue.GetModelAsync(id);
             if (SpecsValue == null)
                 return Result.Fail;
-            Result result = await _specsValue.DeleteModel(SpecsValue.Id, SpecsValue);
+            Result result = await _specsValue.DeleteModelAsync(SpecsValue.Id, SpecsValue);
             if (result == Result.Success)
                 await DeleteActAsync(id, SpecsValue.NameRu);
             return result;

@@ -23,7 +23,7 @@ namespace newTolkuchka.Services
             string userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
             {
-                _contextAccessor.HttpContext.Response.Cookies.Delete(ConstantsService.USERCOOKIE);
+                _contextAccessor.HttpContext.Response.Cookies.Delete(Secrets.userCookie);
                 return null;
 
             }

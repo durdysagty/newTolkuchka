@@ -77,7 +77,7 @@ namespace newTolkuchka.ControllersAPI
             Category category = await _category.GetModelAsync(id);
             if (category == null)
                 return Result.Fail;
-            Result result = await _category.DeleteModel(category.Id, category);
+            Result result = await _category.DeleteModelAsync(category.Id, category);
             if (result == Result.Success)
                 await DeleteActAsync(id, category.NameRu);
             return result;
