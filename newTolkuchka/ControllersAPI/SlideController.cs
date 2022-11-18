@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using newTolkuchka.Models;
+using newTolkuchka.Models.DTO;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 
@@ -26,9 +27,9 @@ namespace newTolkuchka.ControllersAPI
             return slide;
         }
         [HttpGet]
-        public IEnumerable<Slide> Get()
+        public IEnumerable<AdminSlide> Get()
         {
-            IEnumerable<Slide> slides = _slide.GetModels();
+            IEnumerable<AdminSlide> slides = _slide.GetAdminSlides();
             return slides;
         }
         [HttpPost]

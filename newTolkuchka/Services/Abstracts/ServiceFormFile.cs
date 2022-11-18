@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
+using newTolkuchka.Reces;
 using newTolkuchka.Services.Interfaces;
 using Type = System.Type;
 
@@ -11,7 +13,7 @@ namespace newTolkuchka.Services.Abstracts
         private protected readonly IImage _image;
         private protected readonly int _imagesMax;
 
-        public ServiceFormFile(AppDbContext con, IPath path, IImage image, int imagesMax) : base(con)
+        public ServiceFormFile(AppDbContext con, IStringLocalizer<Shared> localizer, IPath path, IImage image, int imagesMax) : base(con, localizer)
         {
             _path = path;
             _image = image;

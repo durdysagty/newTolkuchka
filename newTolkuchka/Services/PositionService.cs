@@ -1,5 +1,7 @@
-﻿using newTolkuchka.Models;
+﻿using Microsoft.Extensions.Localization;
+using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
+using newTolkuchka.Reces;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 
@@ -8,7 +10,7 @@ namespace newTolkuchka.Services
     public class PositionService : ServiceNoFile<Position>, IPosition
     {
         private readonly IEmployee _employee;
-        public PositionService(AppDbContext con, IEmployee employee) : base(con)
+        public PositionService(AppDbContext con, IStringLocalizer<Shared> localizer, IEmployee employee) : base(con, localizer)
         {
             _employee = employee;
         }

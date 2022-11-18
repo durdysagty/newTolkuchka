@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
+using newTolkuchka.Reces;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 using System.Collections.ObjectModel;
@@ -11,7 +13,7 @@ namespace newTolkuchka.Services
     {
 
         private readonly IProduct _product;
-        public InvoiceService(AppDbContext con, IProduct product) : base(con)
+        public InvoiceService(AppDbContext con, IProduct product, IStringLocalizer<Shared> localizer) : base(con, localizer)
         {
             _product = product;
         }

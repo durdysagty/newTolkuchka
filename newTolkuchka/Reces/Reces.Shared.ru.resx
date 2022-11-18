@@ -130,6 +130,9 @@
     <value>учетная запись</value>
   </data>
   <data name="add" xml:space="preserve">
+    <value>Добавлено</value>
+  </data>
+  <data name="add-to-cart" xml:space="preserve">
     <value>в корзину</value>
   </data>
   <data name="address" xml:space="preserve">
@@ -159,11 +162,23 @@
   <data name="categories" xml:space="preserve">
     <value>Категории</value>
   </data>
+  <data name="category" xml:space="preserve">
+    <value>Категория</value>
+  </data>
   <data name="commercial" xml:space="preserve">
     <value>Акция</value>
   </data>
+  <data name="content" xml:space="preserve">
+    <value>Контент</value>
+  </data>
+  <data name="currency" xml:space="preserve">
+    <value>Валюта</value>
+  </data>
   <data name="date" xml:space="preserve">
     <value>Дата</value>
+  </data>
+  <data name="delete" xml:space="preserve">
+    <value>Удалено</value>
   </data>
   <data name="delivery" xml:space="preserve">
     <value>Доставка</value>
@@ -180,8 +195,14 @@
   <data name="description" xml:space="preserve">
     <value>описание</value>
   </data>
+  <data name="edit" xml:space="preserve">
+    <value>Изменено</value>
+  </data>
   <data name="email" xml:space="preserve">
     <value>Эл. почта</value>
+  </data>
+  <data name="employee" xml:space="preserve">
+    <value>Сотрудник</value>
   </data>
   <data name="empty" xml:space="preserve">
     <value>Это поле не должно быть пустым!</value>
@@ -195,8 +216,14 @@
   <data name="enterorreg" xml:space="preserve">
     <value>Вход или регистрация</value>
   </data>
+  <data name="invoice" xml:space="preserve">
+    <value>Инвойс</value>
+  </data>
   <data name="invoices" xml:space="preserve">
     <value>счета</value>
+  </data>
+  <data name="line" xml:space="preserve">
+    <value>Серия</value>
   </data>
   <data name="login" xml:space="preserve">
     <value>Войти</value>
@@ -209,6 +236,9 @@
   </data>
   <data name="min-pin" xml:space="preserve">
     <value>PIN код должен состоять из четырех цифр!</value>
+  </data>
+  <data name="model" xml:space="preserve">
+    <value>Модель</value>
   </data>
   <data name="name" xml:space="preserve">
     <value>наименованию</value>
@@ -258,8 +288,26 @@
   <data name="pin" xml:space="preserve">
     <value>PIN код</value>
   </data>
+  <data name="position" xml:space="preserve">
+    <value>Позиция</value>
+  </data>
   <data name="price" xml:space="preserve">
     <value>цене</value>
+  </data>
+  <data name="price2" xml:space="preserve">
+    <value>Цена</value>
+  </data>
+  <data name="product" xml:space="preserve">
+    <value>Товар</value>
+  </data>
+  <data name="purchase" xml:space="preserve">
+    <value>Приход</value>
+  </data>
+  <data name="purchaseinvoice" xml:space="preserve">
+    <value>Приходный ордер</value>
+  </data>
+  <data name="quantity" xml:space="preserve">
+    <value>Количество</value>
   </data>
   <data name="recipient" xml:space="preserve">
     <value>Получатель</value>
@@ -276,20 +324,44 @@
   <data name="send" xml:space="preserve">
     <value>Отправить</value>
   </data>
+  <data name="slide" xml:space="preserve">
+    <value>Слайд</value>
+  </data>
   <data name="soon" xml:space="preserve">
     <value>Мы с вами свяжемся в скором времени.</value>
   </data>
   <data name="sort" xml:space="preserve">
     <value>Сортировать по:</value>
   </data>
+  <data name="spec" xml:space="preserve">
+    <value>Характеристика</value>
+  </data>
   <data name="specifications" xml:space="preserve">
     <value>характеристики</value>
+  </data>
+  <data name="specsValue" xml:space="preserve">
+    <value>Значение характеристики</value>
+  </data>
+  <data name="specsValueMod" xml:space="preserve">
+    <value>Разновидность значения</value>
+  </data>
+  <data name="sum" xml:space="preserve">
+    <value>Сумма</value>
+  </data>
+  <data name="supplier" xml:space="preserve">
+    <value>Поставщик</value>
   </data>
   <data name="type" xml:space="preserve">
     <value>Тип</value>
   </data>
   <data name="user-name" xml:space="preserve">
     <value>Имя</value>
+  </data>
+  <data name="warranty" xml:space="preserve">
+    <value>Гарантия</value>
+  </data>
+  <data name="wish" xml:space="preserve">
+    <value>Выбор</value>
   </data>
   <data name="write" xml:space="preserve">
     <value>Напишите нам</value>

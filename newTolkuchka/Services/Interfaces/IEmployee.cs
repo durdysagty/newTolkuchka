@@ -7,6 +7,7 @@ namespace newTolkuchka.Services.Interfaces
     {
         Task<EditEmployee> GetEditEmployeeAsync(int id);
         IEnumerable<AdminEmployee> GetAdminEmployees();
+        IQueryable<string> GetEmployeeNames(int[] ids);
         Task EditEmployeeAsync(EditEmployee editEmployee);
         Task<Employee> GetEmployeeWithPositionAsync(string login);
         IQueryable<Employee> GetEmployeesByPosition(int id);

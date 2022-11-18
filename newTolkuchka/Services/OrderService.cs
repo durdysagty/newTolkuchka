@@ -1,5 +1,7 @@
-﻿using newTolkuchka.Models;
+﻿using Microsoft.Extensions.Localization;
+using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
+using newTolkuchka.Reces;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 
@@ -9,7 +11,7 @@ namespace newTolkuchka.Services
     {
 
         private readonly IProduct _product;
-        public OrderService(AppDbContext con, IProduct product) : base(con)
+        public OrderService(AppDbContext con, IStringLocalizer<Shared> localizer, IProduct product) : base(con, localizer)
         {
             _product = product;
         }

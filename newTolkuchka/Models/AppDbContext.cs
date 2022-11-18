@@ -97,6 +97,12 @@ namespace newTolkuchka.Models
                     Id = 3,
                     Name = "Менеджер",
                     Level = 2
+                },
+                new Position
+                {
+                    Id = 4,
+                    Name = "Оператор",
+                    Level = 2
                 });
             builder.Entity<Employee>().HasData(
                 new Employee

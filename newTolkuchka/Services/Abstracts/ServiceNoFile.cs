@@ -1,12 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
+using newTolkuchka.Reces;
 using newTolkuchka.Services.Interfaces;
 
 namespace newTolkuchka.Services.Abstracts
 {
     public abstract class ServiceNoFile<T> : Service<T>, IActionNoFile<T> where T : class
     {
-        public ServiceNoFile(AppDbContext con) : base(con)
+        public ServiceNoFile(AppDbContext con, IStringLocalizer<Shared> localizer) : base(con, localizer)
         {
         }
 

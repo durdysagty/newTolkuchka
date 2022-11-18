@@ -8,7 +8,7 @@ using newTolkuchka.Services.Interfaces;
 
 namespace newTolkuchka.ControllersAPI
 {
-    [Authorize(Policy = "Level1")]
+    [Authorize(Policy = "Level2")]
     public class CurrencyController : AbstractController
     {
         private readonly IActionNoFile<Currency> _currency;

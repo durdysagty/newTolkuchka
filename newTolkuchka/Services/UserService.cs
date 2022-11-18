@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
+using newTolkuchka.Reces;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 using System.Net.NetworkInformation;
@@ -12,7 +14,7 @@ namespace newTolkuchka.Services
     {
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICrypto _crypto;
-        public UserService(AppDbContext con, IHttpContextAccessor contextAccessor, ICrypto crypto) : base(con)
+        public UserService(AppDbContext con, IStringLocalizer<Shared> localizer, IHttpContextAccessor contextAccessor, ICrypto crypto) : base(con, localizer)
         {
             _contextAccessor = contextAccessor;
             _crypto = crypto;

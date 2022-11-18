@@ -47,7 +47,7 @@ namespace newTolkuchka.Services
         }
         public string GetLogo()
         {
-            return "https://tolkuchka.bar/images/home/logo.png";
+            return $"{CultureProvider.SiteName}/logo.png";
         }
         // statics
         public static string GetImageRelativePath(string folder, int id, int imageNumber = 0)

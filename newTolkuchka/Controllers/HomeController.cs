@@ -49,10 +49,10 @@ namespace newTolkuchka.Controllers
             ViewBag.MainSlides = _slide.GetSlidesByLayoutAsync(Layout.Main).ToList();
             IQueryable<Product> newProducts = _product.GetFullProducts().OrderByDescending(p => p.Id).Where(p => p.IsNew && !p.NotInUse).Take(4);
             IEnumerable<UIProduct> newUIProducts = newProducts.Select(p => IProduct.GetUIProduct(p, null));
-            ViewBag.NewProducts = newUIProducts.Select(u => IProduct.GetHtmlProduct(u, _localizer["add"], 3, 6, 6));
+            ViewBag.NewProducts = newUIProducts.Select(u => IProduct.GetHtmlProduct(u, _localizer["add-to-cart"], 3, 6, 6));
             IQueryable<Product> recProducts = _product.GetFullProducts().OrderByDescending(p => p.Id).Where(p => p.IsRecommended && !p.NotInUse).Take(4);
             IEnumerable<UIProduct> recUIProducts = recProducts.Select(p => IProduct.GetUIProduct(p, null));
-            ViewBag.RecProducts = recUIProducts.Select(r => IProduct.GetHtmlProduct(r, _localizer["add"], 3, 6, 6));
+            ViewBag.RecProducts = recUIProducts.Select(r => IProduct.GetHtmlProduct(r, _localizer["add-to-cart"], 3, 6, 6));
             ViewBag.MainCategories = _category.GetCategoriesByParentId(0);
             CreateMetaData();
             return View();
@@ -79,25 +79,7 @@ namespace newTolkuchka.Controllers
         {
             Category category = await _category.GetModelAsync(id);
             string localName = CultureProvider.GetLocalName(category.NameRu, category.NameEn, category.NameTm);
-            ViewBag.Categories = _category.GetCategoriesByParentId(id);
-            #region old version
-            // maybe possibility to optimize
-            //IList<int> categoryIds = _category.GetAllCategoryIdsHaveProductsByParentId(id);
-            //if (!categoryIds.Any())
-            //    return View();
-            //IList<Product> products = new List<Product>();
-            //foreach (int cId in categoryIds)
-            //{
-            //    IQueryable<Product> p = _product.GetFullProducts(cId);
-            //    if (p.Any())
-            //        products = products.Concat(p).ToList();
-            //}
-            //if (!products.Any())
-            //    return View();
-            //IList<UIProduct> uiProducts = _product.GetUIData(products, out IList<Brand> brands, out IList<Filter> filters);
-            //ViewBag.Brands = brands;
-            //ViewBag.Filters = filters;
-            #endregion
+            ViewBag.Categories = _category.GetCategoriesByParentId(id);           
             CreateMetaData(ConstantsService.CATEGORY, await _breadcrumbs.GetCategoryBreadcrumbsAsync(category.ParentId), localName, true);
             return View();
         }
@@ -213,7 +195,7 @@ namespace newTolkuchka.Controllers
                     noProduct = _localizer["noProductAbsolutly"].Value
                 });
             IEnumerable<UIProduct> uiProducts = _product.GetUIData(productsOnly, list, t, b, v, minp, maxp, sort, page, pp, out IList<AdminType> types, out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage);
-            IEnumerable<string> products = uiProducts.Select(p => IProduct.GetHtmlProduct(p, _localizer["add"]));
+            IEnumerable<string> products = uiProducts.Select(p => IProduct.GetHtmlProduct(p, _localizer["add-to-cart"]));
             return new JsonResult(new
             {
                 products,
@@ -294,7 +276,7 @@ namespace newTolkuchka.Controllers
                 });
             Invoice invoice = new()
             {
-                Date = DateTimeOffset.Now,
+                Date = DateTimeOffset.Now.ToUniversalTime(),
                 Buyer = deliveryData.Name,
                 InvoiceAddress = deliveryData.Address,
                 InvoiceEmail = deliveryData.Email,

@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
+using newTolkuchka.Reces;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 
@@ -10,19 +11,20 @@ namespace newTolkuchka.Services
     public class ModelService : ServiceNoFile<Model>, IModel
     {
         private readonly IProduct _product;
-        public ModelService(AppDbContext con, IProduct product) : base(con)
+        public ModelService(AppDbContext con, IProduct product, IStringLocalizer<Shared> localizer) : base(con, localizer)
         {
             _product = product;
         }
 
-        public IEnumerable<AdminModel> GetAdminModels([FromQuery] int[] brandId, [FromQuery] int?[] lineId)
+        public IEnumerable<AdminModel> GetAdminModels(int[] brandId, int?[] lineId, int page, int pp, out int lastPage, out string pagination)
         {
             IQueryable<Model> models = GetModels();
             if (brandId.Any())
                 models = models.Where(m => brandId.Any(b => b == m.BrandId));
             if (lineId.Any())
                 models = models.Where(m => lineId.Any(l => l == m.LineId));
-            IEnumerable<AdminModel> adminModels = models.Select(x => new AdminModel
+            int toSkip = page * pp;
+            IEnumerable<AdminModel> adminModels = models.Skip(toSkip).Take(pp).Select(x => new AdminModel
             {
                 Id = x.Id,
                 Name = x.Name,
@@ -30,6 +32,8 @@ namespace newTolkuchka.Services
                 Line = x.Line.Name,
                 Products = x.Products.Count
             }).OrderBy(x => x.Name);
+            pagination = GetPagination(pp, models.Count(), adminModels.Count(), toSkip, out int lp);
+            lastPage = lp;
             return adminModels;
         }
 

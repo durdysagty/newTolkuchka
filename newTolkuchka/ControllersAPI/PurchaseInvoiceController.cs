@@ -8,7 +8,7 @@ using System.Text.Json;
 
 namespace newTolkuchka.ControllersAPI
 {
-    [Authorize(Policy = "Level1")]
+    [Authorize(Policy = "Level2")]
     public class PurchaseInvoiceController : AbstractController
     {
         private readonly IPurchaseInvoice _purchaseInvoice;
@@ -45,7 +45,7 @@ namespace newTolkuchka.ControllersAPI
             });
             if (!adminPurchases.Any())
                 return Result.Fail;
-            purchaseInvoice.Date = DateTimeOffset.Now;
+            purchaseInvoice.Date = DateTimeOffset.Now.ToUniversalTime();
             await _purchaseInvoice.AddModelAsync(purchaseInvoice);
             await _purchase.AddPurchasesAsync(purchaseInvoice.Id, adminPurchases);
             await AddActAsync(purchaseInvoice.Id, CreateInvoiceName(purchaseInvoice));
@@ -94,7 +94,7 @@ namespace newTolkuchka.ControllersAPI
 
         private static string CreateInvoiceName(PurchaseInvoice purchaseInvoice)
         {
-            return $"#{purchaseInvoice.Id} от {purchaseInvoice.Date.Date}";
+            return $"Приходный ордер #{purchaseInvoice.Id}";
         }
     }
 }

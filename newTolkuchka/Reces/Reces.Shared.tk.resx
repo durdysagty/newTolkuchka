@@ -130,9 +130,9 @@
     <value>akkauntyňyz</value>
   </data>
   <data name="add" xml:space="preserve">
-    <value>Sebete goş</value>
+    <value>Goşulan</value>
   </data>
-  <data name="add1" xml:space="preserve">
+  <data name="add-to-cart" xml:space="preserve">
     <value>sebete goş</value>
   </data>
   <data name="address" xml:space="preserve">
@@ -162,11 +162,23 @@
   <data name="categories" xml:space="preserve">
     <value>Bölümler</value>
   </data>
+  <data name="category" xml:space="preserve">
+    <value>Bölüm</value>
+  </data>
   <data name="commercial" xml:space="preserve">
     <value>Aksiýa</value>
   </data>
+  <data name="content" xml:space="preserve">
+    <value>Mazmun</value>
+  </data>
+  <data name="currency" xml:space="preserve">
+    <value>Walýuta</value>
+  </data>
   <data name="date" xml:space="preserve">
     <value>Sene</value>
+  </data>
+  <data name="delete" xml:space="preserve">
+    <value>Aýrylan</value>
   </data>
   <data name="delivery" xml:space="preserve">
     <value>Eltip bermek</value>
@@ -183,8 +195,14 @@
   <data name="description" xml:space="preserve">
     <value>beýany</value>
   </data>
+  <data name="edit" xml:space="preserve">
+    <value>Üýtgedilen</value>
+  </data>
   <data name="email" xml:space="preserve">
     <value>El. poçta</value>
+  </data>
+  <data name="employee" xml:space="preserve">
+    <value>Işgär</value>
   </data>
   <data name="empty" xml:space="preserve">
     <value>Bu meýdança boş bolmaly däl!</value>
@@ -198,8 +216,14 @@
   <data name="enterorreg" xml:space="preserve">
     <value>Gir ya-da agza bol</value>
   </data>
+  <data name="invoice" xml:space="preserve">
+    <value>Hasap-faktura</value>
+  </data>
   <data name="invoices" xml:space="preserve">
     <value>hasaplar</value>
+  </data>
+  <data name="line" xml:space="preserve">
+    <value>Seriýa</value>
   </data>
   <data name="login" xml:space="preserve">
     <value>Girelge</value>
@@ -212,6 +236,9 @@
   </data>
   <data name="min-pin" xml:space="preserve">
     <value>PIN kod dört sandan ybarat bolmaly!</value>
+  </data>
+  <data name="model" xml:space="preserve">
+    <value>Model</value>
   </data>
   <data name="name" xml:space="preserve">
     <value>at</value>
@@ -264,8 +291,26 @@
   <data name="pin" xml:space="preserve">
     <value>PIN kodyňyz</value>
   </data>
+  <data name="position" xml:space="preserve">
+    <value>Iş ýer</value>
+  </data>
   <data name="price" xml:space="preserve">
     <value>nyrh</value>
+  </data>
+  <data name="price2" xml:space="preserve">
+    <value>Bahasy</value>
+  </data>
+  <data name="product" xml:space="preserve">
+    <value>Haryt</value>
+  </data>
+  <data name="purchase" xml:space="preserve">
+    <value>Geliş</value>
+  </data>
+  <data name="purchaseinvoice" xml:space="preserve">
+    <value>Giriş faktura</value>
+  </data>
+  <data name="quantity" xml:space="preserve">
+    <value>Mukdary</value>
   </data>
   <data name="recipient" xml:space="preserve">
     <value>Alyjy</value>
@@ -285,20 +330,44 @@
   <data name="send" xml:space="preserve">
     <value>Iber</value>
   </data>
+  <data name="slide" xml:space="preserve">
+    <value>Slaýd</value>
+  </data>
   <data name="soon" xml:space="preserve">
     <value>Biz siz bilen gysga wagt aralygynda habarlaşarys.</value>
   </data>
   <data name="sort" xml:space="preserve">
     <value>Tertip:</value>
   </data>
+  <data name="spec" xml:space="preserve">
+    <value>Aýratynlyk</value>
+  </data>
   <data name="specifications" xml:space="preserve">
     <value>aýratynlyklar</value>
+  </data>
+  <data name="specsValue" xml:space="preserve">
+    <value>Aýratynlyk gymmaty</value>
+  </data>
+  <data name="specsValueMod" xml:space="preserve">
+    <value>Gymmatyň görnüşi</value>
+  </data>
+  <data name="sum" xml:space="preserve">
+    <value>Jemi</value>
+  </data>
+  <data name="supplier" xml:space="preserve">
+    <value>Üpjün ediji</value>
   </data>
   <data name="type" xml:space="preserve">
     <value>Görnüş</value>
   </data>
   <data name="user-name" xml:space="preserve">
     <value>Adyňyz</value>
+  </data>
+  <data name="warranty" xml:space="preserve">
+    <value>Kepillik</value>
+  </data>
+  <data name="wish" xml:space="preserve">
+    <value>Halaw</value>
   </data>
   <data name="write" xml:space="preserve">
     <value>Bize ýazyň</value>

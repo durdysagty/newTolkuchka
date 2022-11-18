@@ -12,6 +12,9 @@
         (ConstantsService.BRANDS, Localizer[ConstantsService.BRANDS].Value, "d-none d-lg-inline"),
         (ConstantsService.CATEGORIES, Localizer[ConstantsService.CATEGORIES].Value, "d-none d-lg-inline")
     };
+    string ru = $"https://{CultureProvider.SiteName}";
+    string en = $"https://{ConstantsService.EN}.{CultureProvider.SiteName}";
+    string tk = $"https://{ConstantsService.TM}.{CultureProvider.SiteName}";
 }
 <!DOCTYPE html>
 <html lang="@CultureProvider.Lang">
@@ -43,7 +46,38 @@
 </head>
 <body>
     <header>
-        <div class="container mt-2 mt-sm-3">
+        <div class="container">
+            <div class="d-flex justify-content-end mb-0 mb-md-3">
+                <div>
+                @switch (CultureProvider.Lang)
+                {
+                    case ConstantsService.EN:
+                        <a href="@tk">
+                            <img src="~/turkmen.svg" class="img-fluid align-self-center mx-1" style="width: auto; height: 15px" alt="türkmençe" />
+                        </a>
+                        <a href="@ru">
+                            <img src="~/russian.svg" class="img-fluid align-self-center mx-1" style="width: auto; height: 15px" alt="русский" />
+                        </a>
+                        break;
+                    case ConstantsService.TK:
+                        <a href="@en">
+                            <img src="~/english.svg" class="img-fluid align-self-center mx-1" style="width: auto; height: 15px" alt="english" />
+                        </a>
+                        <a href="@ru">
+                            <img src="~/russian.svg" class="img-fluid align-self-center mx-1" style="width: auto; height: 15px" alt="русский" />
+                        </a>
+                        break;
+                    default:
+                        <a href="@tk">
+                            <img src="~/turkmen.svg" class="img-fluid align-self-center mx-1" style="width: auto; height: 15px" alt="türkmençe" />
+                        </a>
+                        <a href="@en">
+                            <img src="~/english.svg" class="img-fluid align-self-center mx-1" style="width: auto; height: 15px" alt="english" />
+                        </a>
+                        break;
+                }
+                </div>
+            </div>
             <div class="row justify-content-between">
                 <div class="col-auto text-center text-md-start">
                     @foreach ((string, string, string) l in mainLinks.Take(2))

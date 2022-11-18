@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
+using newTolkuchka.Reces;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 
@@ -9,7 +11,7 @@ namespace newTolkuchka.Services
     public class EmployeeService : ServiceNoFile<Employee>, IEmployee
     {
         private readonly ICrypto _crypto;
-        public EmployeeService(AppDbContext con, ICrypto crypto) : base(con)
+        public EmployeeService(AppDbContext con, IStringLocalizer<Shared> localizer, ICrypto crypto) : base(con, localizer)
         {
             _crypto = crypto;
         }
@@ -30,11 +32,17 @@ namespace newTolkuchka.Services
             IEnumerable<AdminEmployee> employees = GetModels().Select(x => new AdminEmployee
             {
                 Id = x.Id,
-                Login = x.Login,
+                Name = x.Login,
                 Position = x.Position.Name,
                 Level = x.Position.Level
             }).OrderBy(x => x.Id);
             return employees;
+        }
+
+        public IQueryable<string> GetEmployeeNames(int[] ids)
+        {
+            IQueryable<string> names = GetModels().Where(e => ids.Any(i => i == e.Id)).Select(e => e.Login);
+            return names;
         }
 
         public override bool IsExist(Employee employee, IEnumerable<Employee> list)

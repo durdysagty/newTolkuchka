@@ -28,7 +28,7 @@ namespace newTolkuchka.ControllersAPI
             return product;
         }
         [HttpGet]
-        public ModelsFilters<AdminProduct> Get([FromQuery] int[] category, [FromQuery] int[] brand, [FromQuery] int? line, [FromQuery] int? model, int page = 0, int pp = 50)
+        public ModelsFilters<AdminProduct> Get([FromQuery] int[] category, [FromQuery] int[] brand, [FromQuery] int? line, [FromQuery] int? model, [FromQuery] int page = 0, [FromQuery] int pp = 50)
         {
             IEnumerable<AdminProduct> products = _product.GetAdminProducts(category.Any() ? category : null, brand.Any() ? brand : null, line, model, page, pp, out int lastPage, out string pagination);
             return new ModelsFilters<AdminProduct>

@@ -119,11 +119,11 @@
                             <div id=@id class="accordion-collapse collapse" data-parent="#accordion">
                                 <table class="table table-sm">
                                     <tr>
-                                        <th>Наименование</th>
-                                        <th>Гарантия</th>
-                                        <th>Цена ТМТ</th>
-                                        <th>Количество</th>
-                                        <th>Сумма ТМТ</th>
+                                        <th>@Localizer["product"]</th>
+                                        <th>@Localizer["warranty"]</th>
+                                        <th>@Localizer["price2"] @i.Currency.CodeName</th>
+                                        <th>@Localizer["quantity"]</th>
+                                        <th>@Localizer["sum"] @i.Currency.CodeName</th>
                                     </tr>
                                     @foreach (UserOrder o in i.UserOrders)
                                     {

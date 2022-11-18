@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
+using newTolkuchka.Reces;
 using newTolkuchka.Services.Interfaces;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -8,10 +10,10 @@ using Type = System.Type;
 namespace newTolkuchka.Services.Abstracts
 {
     //public enum LanVersion { Ru, En, Tm }
-    public abstract class Service<T> : IAction<T> where T : class
+    public abstract class Service<T> : BaseService, IAction<T> where T : class
     {
         private protected readonly AppDbContext _con;
-        public Service(AppDbContext con)
+        public Service(AppDbContext con, IStringLocalizer<Shared> localizer): base(localizer)
         {
             _con = con;
         }

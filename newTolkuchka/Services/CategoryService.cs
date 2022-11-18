@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
+using newTolkuchka.Reces;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 
@@ -10,7 +12,7 @@ namespace newTolkuchka.Services
     {
         private const int PADDING = 2;
         private readonly IProduct _product;
-        public CategoryService(AppDbContext con, IProduct product) : base(con)
+        public CategoryService(AppDbContext con, IStringLocalizer<Shared> localizer, IProduct product) : base(con, localizer)
         {
             _product = product;
         }

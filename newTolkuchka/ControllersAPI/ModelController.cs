@@ -23,10 +23,16 @@ namespace newTolkuchka.ControllersAPI
             return model;
         }
         [HttpGet]
-        public IEnumerable<AdminModel> Get([FromQuery] int[] brandId, [FromQuery] int?[] lineId)
+        public ModelsFilters<AdminModel> Get([FromQuery] int[] brand, [FromQuery] int?[] line, [FromQuery] int page = 0, [FromQuery] int pp = 50)
         {
-            IEnumerable<AdminModel> models = _model.GetAdminModels(brandId, lineId);
-            return models;
+            IEnumerable<AdminModel> models = _model.GetAdminModels(brand, line, page, pp, out int lastPage, out string pagination);
+            return new ModelsFilters<AdminModel>
+            {
+                Filters = new string[2] { nameof(brand), $"{nameof(brand)}Id {nameof(line)}" }.OrderBy(c => c),
+                Models = models,
+                LastPage = lastPage,
+                Pagination = pagination
+            };
         }
         [HttpGet("specs/{id}")]
         public async Task<IList<int[]>> GetModelSpecs(int id)

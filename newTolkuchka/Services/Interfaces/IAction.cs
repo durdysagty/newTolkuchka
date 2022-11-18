@@ -9,5 +9,6 @@
         Task<bool> IsBinded(int id);
         Type GetModelType();
         int GetModelId(Type type, T model);
+        string GetPagination(int pp, int total, int pageCount, int toSkip, out int lastPage);
     }
 }
