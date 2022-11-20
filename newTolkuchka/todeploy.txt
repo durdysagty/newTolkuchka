@@ -1,0 +1,26 @@
+﻿change allow origin in startup
+
+remove or edit appsettings connection string
+remove webconfig V2
+remove wwwroot or image folder
+DO NOT CHANGE IMAGE FOLDER, OR DO NOT CHANGE WWWROOT FOLDER
+delete unnessasary folders and files
+edit or change web.config file to restart app
+
+
+
+﻿<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <location path="." inheritInChildApplications="false">
+    <system.webServer>
+      <handlers>
+        <add name="aspNetCore" path="*" verb="*" modules="AspNetCoreModule" resourceType="Unspecified" />
+      </handlers>
+      <aspNetCore processPath="dotnet" arguments=".\newTolkuchka.dll" stdoutLogEnabled="false" stdoutLogFile=".\logs\stdout" hostingModel="inprocess" />
+	  <modules runAllManagedModulesForAllRequests="false">
+        <remove name="WebDAVModule" />
+      </modules>
+    </system.webServer>
+  </location>
+</configuration>
+<!--ProjectGuid: E45E6A7E-3BDE-4352-B100-19D99C589285-->

@@ -20,7 +20,8 @@ builder.Services.AddCors(o => o.AddPolicy("Policy", p =>
 {
     p.AllowAnyMethod()
      .AllowAnyHeader()
-     .WithOrigins("http://localhost:3000", "https://localhost:3000")
+     //.WithOrigins("http://localhost:3000", "https://localhost:3000")
+     .WithOrigins("http://localhost:3000", "https://localhost:3000", "http://cms.tolkuchka.bar", "https://cms.tolkuchka.bar")
      .AllowCredentials();
 }));
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

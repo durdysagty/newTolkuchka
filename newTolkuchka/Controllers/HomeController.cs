@@ -79,7 +79,7 @@ namespace newTolkuchka.Controllers
         {
             Category category = await _category.GetModelAsync(id);
             string localName = CultureProvider.GetLocalName(category.NameRu, category.NameEn, category.NameTm);
-            ViewBag.Categories = _category.GetCategoriesByParentId(id);           
+            ViewBag.Categories = _category.GetCategoriesByParentId(id);
             CreateMetaData(ConstantsService.CATEGORY, await _breadcrumbs.GetCategoryBreadcrumbsAsync(category.ParentId), localName, true);
             return View();
         }
@@ -99,7 +99,7 @@ namespace newTolkuchka.Controllers
             Product product = await _product.GetFullProducts(null, null, null, null, null, new int[1] { id }).FirstOrDefaultAsync();
             string localName = IProduct.GetProductName(product);
             CreateMetaData(ConstantsService.PRODUCT, await _breadcrumbs.GetProductBreadcrumbs(product.CategoryId), localName, true, false);
-            IQueryable<Product> products = _product.GetFullProducts(null, null, null, product.ModelId).Where(p => !p.NotInUse).AsNoTrackingWithIdentityResolution();
+            IQueryable<Product> products = _product.GetFullProducts(null, null, null, null, product.ModelId).Where(p => !p.NotInUse).AsNoTrackingWithIdentityResolution();
             if (!products.Any())
                 return View();
             // to select Specs from any of product for change products by specs value
@@ -139,12 +139,13 @@ namespace newTolkuchka.Controllers
         {
             string p = CultureProvider.Path.TrimStart(new char[] { '/' });
             string content = null;
-            switch (p) {
+            switch (p)
+            {
                 case ConstantsService.ABOUT:
                     CreateMetaData(ConstantsService.ABOUT, _breadcrumbs.GetBreadcrumbs(), _localizer[ConstantsService.ABOUT].Value, true);
                     content = await System.IO.File.ReadAllTextAsync(_path.GetHtmlAboutBodyPath(CultureProvider.Lang));
                     break;
-                    case ConstantsService.DELIVERY:
+                case ConstantsService.DELIVERY:
                     CreateMetaData(ConstantsService.DELIVERY, _breadcrumbs.GetBreadcrumbs(), _localizer[ConstantsService.DELIVERY].Value, true);
                     content = await System.IO.File.ReadAllTextAsync(_path.GetHtmlDeliveryBodyPath(CultureProvider.Lang));
                     break;
