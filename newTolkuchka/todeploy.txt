@@ -1,6 +1,8 @@
 ﻿change allow origin in startup
 
-remove or edit appsettings connection string
+change target
+Program.cs comment caching
+remove or edit connection string
 remove webconfig V2
 remove wwwroot or image folder
 DO NOT CHANGE IMAGE FOLDER, OR DO NOT CHANGE WWWROOT FOLDER

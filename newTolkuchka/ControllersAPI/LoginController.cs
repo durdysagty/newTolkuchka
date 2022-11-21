@@ -28,7 +28,12 @@ namespace newTolkuchka.ControllersAPI
             LoginResponse loginResponse = await _login.LoginSecondStepAsync(pins);
             if (loginResponse.Result == LoginResponse.R.Success)
             {
-                HttpContext.Response.Cookies.Append(Secrets.userCookie, loginResponse.Data, new CookieOptions { MaxAge = new TimeSpan(10, 0, 0, 0) });
+                HttpContext.Response.Cookies.Append(Secrets.userCookie, loginResponse.Data, new CookieOptions
+                {
+                    MaxAge = new TimeSpan(10, 0, 0, 0),
+                    SameSite = SameSiteMode.Strict,
+                    Domain = CultureProvider.Host
+                });
             }
             return loginResponse;
         }

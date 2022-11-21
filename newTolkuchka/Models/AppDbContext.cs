@@ -102,7 +102,7 @@ namespace newTolkuchka.Models
                 {
                     Id = 4,
                     Name = "Оператор",
-                    Level = 2
+                    Level = 1
                 });
             builder.Entity<Employee>().HasData(
                 new Employee

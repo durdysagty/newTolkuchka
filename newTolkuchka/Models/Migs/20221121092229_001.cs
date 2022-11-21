@@ -673,7 +673,8 @@ namespace newTolkuchka.Models.Migs
                 {
                     { 1, 3, "Владелец" },
                     { 2, 3, "Программист" },
-                    { 3, 2, "Менеджер" }
+                    { 3, 2, "Менеджер" },
+                    { 4, 1, "Оператор" }
                 });
 
             migrationBuilder.InsertData(
@@ -726,13 +727,9 @@ namespace newTolkuchka.Models.Migs
             migrationBuilder.InsertData(
                 table: "Warranties",
                 columns: new[] { "Id", "NameEn", "NameRu", "NameTm" },
-                values: new object[] { 1, "1 week", "1 неделя", "1 hepde" });
-
-            migrationBuilder.InsertData(
-                table: "Warranties",
-                columns: new[] { "Id", "NameEn", "NameRu", "NameTm" },
                 values: new object[,]
                 {
+                    { 1, "1 week", "1 неделя", "1 hepde" },
                     { 2, "1 month", "1 месяц", "1 aý" },
                     { 3, "3 months", "3 месяца", "3 aý" },
                     { 4, "6 months", "6 месяцев", "6 aý" },

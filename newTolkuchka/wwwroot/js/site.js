@@ -1,4 +1,4 @@
-﻿document.cookie = `w=${window.innerWidth}; max-age=2592000; samesite=none; secure; path=/`
+﻿document.cookie = `w=${window.innerWidth}; max-age=2592000; samesite=strict; secure; path=/`
 const stringList = {
     // add: 'в корзину',
     added: 'в корзине',

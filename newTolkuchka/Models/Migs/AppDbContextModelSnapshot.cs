@@ -953,6 +953,12 @@ namespace newTolkuchka.Models.Migs
                             Id = 3,
                             Level = 2,
                             Name = "Менеджер"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Level = 1,
+                            Name = "Оператор"
                         });
                 });
 

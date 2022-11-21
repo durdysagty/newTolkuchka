@@ -21,7 +21,7 @@ builder.Services.AddCors(o => o.AddPolicy("Policy", p =>
     p.AllowAnyMethod()
      .AllowAnyHeader()
      //.WithOrigins("http://localhost:3000", "https://localhost:3000")
-     .WithOrigins("http://localhost:3000", "https://localhost:3000", "http://cms.tolkuchka.bar", "https://cms.tolkuchka.bar")
+     .WithOrigins("http://localhost:3000", "https://localhost:3000", "http://cms.tolkuchka.bar", "https://cms.tolkuchka.bar", "http://www.cms.tolkuchka.bar", "https://www.cms.tolkuchka.bar")
      .AllowCredentials();
 }));
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -114,15 +114,13 @@ app.UseRequestLocalization();
 app.UseCookiePolicy();
 app.Use(async (context, next) =>
 {
-    if (context.Request.Cookies.ContainsKey(Secrets.adminCookie))
-    {
-        string t = context.Request.Cookies[Secrets.adminCookie];
-        context.Request.Headers.Add("Authorization", "Bearer " + t);
-    }
-    else if (context.Request.Cookies.ContainsKey(Secrets.userCookie))
+    if (!context.Request.Headers.Authorization.Any())
     {
         string t = context.Request.Cookies[Secrets.userCookie];
-        context.Request.Headers.Add("Authorization", "Bearer " + t);
+        if (!string.IsNullOrEmpty(t))
+        {
+            context.Request.Headers.Add("Authorization", "Bearer " + t);
+        }
     }
     _ = context.RequestServices.GetService<IActionNoFile<Currency>>();
     await next();
@@ -132,11 +130,11 @@ app.UseStaticFiles(new StaticFileOptions()
 {
     OnPrepareResponse = ctx =>
     {
-        // remove when upload
-        if (ctx.Context.Request.Host.Value.Contains("localhost"))
-            ctx.Context.Response.Headers.Add("Cache-Control", "no-cache");
-        else
-            ctx.Context.Response.Headers.Add("Cache-Control", "public,max-age=8640000");
+        // comment when upload
+        //if (ctx.Context.Request.Host.Value.Contains("localhost"))
+        //    ctx.Context.Response.Headers.Add("Cache-Control", "no-cache");
+        //else
+        ctx.Context.Response.Headers.Add("Cache-Control", "public,max-age=8640000");
     }
 });
 

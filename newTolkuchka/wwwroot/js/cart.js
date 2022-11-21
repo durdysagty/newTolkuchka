@@ -67,12 +67,12 @@ async function getOrderProducts() {
                         <th></th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="cartBody">
                 </tbody>
             </table>`)
                 result.orders.forEach(o => {
                     const tr = $(`<tr><td class='align-middle p-0'><a href='/product/${o.id}'><img class='img-fluid' style='max-height: 50px' src='${o.image}' /></a></td><td class='align-middle'><a href='/product/${o.id}'>${o.productName}</a></td><td class='align-middle'>${o.price}</td><td class='align-middle text-center'><span role="button" class='pointer px-2' onclick='quantity(${o.id}, false)'>-</span><span id='${'q' + o.id}'>${o.quantity}</span><span role="button" class='pointer px-2' onclick='quantity(${o.id}, true)'>+</span></td><td class='align-middle'><span id='${'s' + o.id}'>${o.amount}</span></td><td class='align-middle'><button class='btn btn-primary py-1 px-3' onclick='removeOrder(${o.id})'>X</button></td></tr> `)
-                    $('tbody').append(tr)
+                    $('#cartBody').append(tr)
                     sum = ((sum * 10) + (((o.price * 10 * o.quantity * 10) / 100) * 10)) / 10
                 })
                 if (sum < stringListCart.deliveryFree) {
@@ -80,7 +80,7 @@ async function getOrderProducts() {
                     sum = sum + stringListCart.deliveryPrice
                 }
                 const summary = $(`<tr><th></th><th></th><th></th><th class='text-right'>${stringListCart.delivery}: </th><th><span id='delivery'>${delivery}</span> тмт</th><th></th></tr><tr><th></th><th></th><th></th><th class='text-right'>${stringListCart.summary}: </th><th><span id='sum'>${sum}</span> ${stringList.currency}</th><th></th></tr>`)
-                $('tbody').append(summary)
+                $('#cartBody').append(summary)
             }
         }
         else

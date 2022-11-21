@@ -12,7 +12,7 @@ using newTolkuchka.Models;
 namespace newTolkuchka.Models.Migs
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20221102085911_001")]
+    [Migration("20221121092229_001")]
     partial class _001
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -955,6 +955,12 @@ namespace newTolkuchka.Models.Migs
                             Id = 3,
                             Level = 2,
                             Name = "Менеджер"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Level = 1,
+                            Name = "Оператор"
                         });
                 });
 
