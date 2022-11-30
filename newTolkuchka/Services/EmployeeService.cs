@@ -32,7 +32,7 @@ namespace newTolkuchka.Services
             IEnumerable<AdminEmployee> employees = GetModels().Select(x => new AdminEmployee
             {
                 Id = x.Id,
-                Name = x.Login,
+                HumanName = x.Login,
                 Position = x.Position.Name,
                 Level = x.Position.Level
             }).OrderBy(x => x.Id);
@@ -54,10 +54,13 @@ namespace newTolkuchka.Services
             return exist;
         }
 
-        public override async Task AddModelAsync(Employee employee, bool save)
+        public override async Task AddModelAsync(Employee employee, bool save = true)
         {
             EncryptPassword(employee);
+            employee.Hash = "1";
             await _con.Employees.AddAsync(employee);
+            if (save)
+                _ = await _con.SaveChangesAsync();
         }
         public async Task EditEmployeeAsync(EditEmployee editEmployee)
         {

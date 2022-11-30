@@ -9,6 +9,7 @@ namespace newTolkuchka.Services.Interfaces
         IQueryable<Product> GetProducts(IList<int> categoryIds = null, IList<int> brandIds = null, int? typeId = null, int? lineId = null, int? modelId = null, IList<int> productIds = null);
         IQueryable<Product> GetFullProducts(IList<int> categoryIds = null, IList<int> brandIds = null, int? typeId = null, int? lineId = null, int? modelId = null, IList<int> productIds = null);
         Task<Product> GetFullProductAsync(int id);
+        Task<Product> GetFullProductAsNoTrackingWithIdentityResolutionAsync(int id);
         IQueryable<AdminProduct> GetAdminProducts(IList<int> categoryIds, IList<int> brandIds, int? lineId, int? modelId, int page, int pp, out int lastPage, out string pagination);
         IList<UIProduct> GetUIData(bool productsOnly, IList<Product> products, int[] t, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp, out IList<AdminType> types, out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage);
         Task<bool> CheckProductSpecValues(int modelId, IList<int> specsValues, int productId = 0);

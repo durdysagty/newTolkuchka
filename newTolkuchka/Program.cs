@@ -9,7 +9,7 @@ using System.Globalization;
 using System.Text;
 
 string con = Secrets.dbConnection;
-int accessLevels = 3;
+int accessLevels = 4;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -56,6 +56,7 @@ builder.Services.AddAuthorization(options =>
 });
 builder.Services.AddMemoryCache();
 builder.Services.AddHttpContextAccessor();
+#region myservices
 builder.Services.AddScoped<ICategory, CategoryService>();
 builder.Services.AddScoped<IBrand, BrandService>();
 builder.Services.AddScoped<ICrypto, CryptoService>();
@@ -85,6 +86,8 @@ builder.Services.AddScoped<IContent, ContentService>();
 builder.Services.AddScoped<ISupplier, SupplierService>();
 builder.Services.AddScoped<IPurchaseInvoice, PurchaseInvoiceService>();
 builder.Services.AddScoped<IPurchase, PurchaseService>();
+builder.Services.AddScoped<IReport, ReportService>();
+#endregion
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
     var supportedCultures = new[]
@@ -100,7 +103,6 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.AddInitialRequestCultureProvider(new CultureProvider());
 });
 builder.Services.AddLocalization(op => op.ResourcesPath = "Reces");
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -131,13 +133,12 @@ app.UseStaticFiles(new StaticFileOptions()
     OnPrepareResponse = ctx =>
     {
         // comment when upload
-        //if (ctx.Context.Request.Host.Value.Contains("localhost"))
-        //    ctx.Context.Response.Headers.Add("Cache-Control", "no-cache");
-        //else
-        ctx.Context.Response.Headers.Add("Cache-Control", "public,max-age=8640000");
+        if (ctx.Context.Request.Host.Value.Contains("localhost"))
+            ctx.Context.Response.Headers.Add("cache-control", "no-cache");
+        else
+            ctx.Context.Response.Headers.Add("Cache-Control", "public,max-age=8640000");
     }
 });
-
 app.UseRouting();
 app.UseCors("Policy");
 app.UseAuthentication();

@@ -36,6 +36,7 @@ namespace newTolkuchka.Services.Abstracts
                 await SetModelImages(model, images, width, height, divider);
             else
             {
+                // if no files are downloaded, then copy the files of sposor model
                 string[] files = Directory.GetFiles($"{_path.GetImagesFolder()}/{type.Name}", $"{simId}-*", SearchOption.AllDirectories);
                 id = GetModelId(type, model);
                 int n = 0;
@@ -94,6 +95,10 @@ namespace newTolkuchka.Services.Abstracts
             }
             _image.DeleteImages(paths);
             return Result.Success;
+        }
+        public async Task SaveChangesAsync()
+        {
+            await _con.SaveChangesAsync();
         }
     }
 }

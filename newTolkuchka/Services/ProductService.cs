@@ -43,6 +43,11 @@ namespace newTolkuchka.Services
             return await GetModels().Include(p => p.Type).Include(p => p.Brand).Include(p => p.Line).Include(p => p.Model).ThenInclude(x => x.ModelSpecs).Include(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ThenInclude(x => x.Spec).Include(x => x.ProductSpecsValueMods).ThenInclude(x => x.SpecsValueMod).Include(x => x.Warranty).FirstOrDefaultAsync(p => p.Id == id);
         }
 
+        public async Task<Product> GetFullProductAsNoTrackingWithIdentityResolutionAsync(int id)
+        {
+            return await GetModels().Include(p => p.Type).Include(p => p.Brand).Include(p => p.Line).Include(p => p.Model).ThenInclude(x => x.ModelSpecs).Include(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ThenInclude(x => x.Spec).Include(x => x.ProductSpecsValueMods).ThenInclude(x => x.SpecsValueMod).Include(x => x.Warranty).AsNoTrackingWithIdentityResolution().FirstOrDefaultAsync(p => p.Id == id);
+        }
+
         public IQueryable<AdminProduct> GetAdminProducts(IList<int> categoryIds, IList<int> brandIds, int? lineId, int? modelId, int page, int pp, out int lastPage, out string pagination)
         {
             IQueryable<Product> preProducts = GetFullProducts(categoryIds, brandIds, null, lineId, modelId).OrderByDescending(x => x.Id);

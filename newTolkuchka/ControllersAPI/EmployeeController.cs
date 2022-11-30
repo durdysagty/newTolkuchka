@@ -39,10 +39,11 @@ namespace newTolkuchka.ControllersAPI
             return Result.Success;
         }
         [HttpPut]
-        public async Task Put(EditEmployee employee)
+        public async Task<Result> Put(EditEmployee employee)
         {
             await _employee.EditEmployeeAsync(employee);            
             await EditActAsync(employee.Id, employee.Login);
+            return Result.Success;
         }
         [HttpDelete("{id}")]
         public async Task<Result> Delete(int id)

@@ -12,7 +12,7 @@ namespace newTolkuchka.Services.Abstracts
         {
         }
 
-        public virtual async Task AddModelAsync(T model, bool save)
+        public virtual async Task AddModelAsync(T model, bool save = false)
         {
             await _con.Set<T>().AddAsync(model);
             if (save)

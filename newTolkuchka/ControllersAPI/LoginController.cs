@@ -31,8 +31,9 @@ namespace newTolkuchka.ControllersAPI
                 HttpContext.Response.Cookies.Append(Secrets.userCookie, loginResponse.Data, new CookieOptions
                 {
                     MaxAge = new TimeSpan(10, 0, 0, 0),
-                    SameSite = SameSiteMode.Strict,
-                    Domain = CultureProvider.Host
+                    // remove on publish
+                    //SameSite = SameSiteMode.Strict,
+                    //Domain = CultureProvider.Host
                 });
             }
             return loginResponse;

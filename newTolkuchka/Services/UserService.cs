@@ -27,7 +27,6 @@ namespace newTolkuchka.Services
             {
                 _contextAccessor.HttpContext.Response.Cookies.Delete(Secrets.userCookie);
                 return null;
-
             }
             User user = await GetModelAsync(int.Parse(userId));
             return user;

@@ -284,7 +284,8 @@ namespace newTolkuchka.Controllers
                 InvoicePhone = deliveryData.Phone,
                 CurrencyRate = CurrencyService.Currency.RealRate,
                 CurrencyId = CurrencyService.Currency.Id,
-                UserId = _user.GetCurrentUser()?.Result.Id,
+                UserId = _user.GetCurrentUser().Result?.Id,
+                Language = CultureProvider.Lang == ConstantsService.TK ? ConstantsService.TM: CultureProvider.Lang,
             };
             await _invoice.AddModelAsync(invoice);
             decimal sum = 0;

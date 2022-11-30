@@ -11,11 +11,28 @@ namespace newTolkuchka.Services
 {
     public class InvoiceService : ServiceNoFile<Invoice>, IInvoice
     {
-
         private readonly IProduct _product;
         public InvoiceService(AppDbContext con, IProduct product, IStringLocalizer<Shared> localizer) : base(con, localizer)
         {
             _product = product;
+        }
+
+        public AdminInvoice GetAdminInvoice(int id)
+        {
+            return GetModels().Where(i => i.Id == id).Select(x => new AdminInvoice
+            {
+                Id = x.Id,
+                Date = x.Date,
+                User = x.UserId == null ? null : x.User.Email,
+                Buyer = x.Buyer,
+                Address = x.InvoiceAddress,
+                Phone = x.InvoicePhone,
+                Language = x.Language,
+                CurrencyCodeName = x.Currency.CodeName,
+                DeliveryCost = x.DeliveryCost,
+                IsDelivered= x.IsDelivered,
+                IsPaid = x.IsPaid
+            }).FirstOrDefault();
         }
 
         public async Task<IEnumerable<UserInvoice>> GetUserInvoicesAsync(int userId)
@@ -48,7 +65,7 @@ namespace newTolkuchka.Services
                 {
                     Id = i.Id,
                     Recipient = $"{i.Buyer}, {i.InvoiceAddress}, {i.InvoicePhone}{(i.InvoiceEmail != null ? $", {i.InvoiceEmail}" : "")}",
-                    Date = i.Date.DateTime,
+                    Date = i.Date,
                     Amount = i.Orders.Select(o => o.OrderPrice).Sum() + i.DeliveryCost,
                     Currency = i.Currency,
                     Payment = i.IsPaid,
@@ -71,6 +88,25 @@ namespace newTolkuchka.Services
                 userInvoices.Add(userInvoice);
             }
             return userInvoices;
+        }
+
+        public IEnumerable<AdminInvoice> GetAdminInvoices()
+        {
+            IEnumerable<AdminInvoice> invoices = GetModels().Select(x => new AdminInvoice
+            {
+                Id = x.Id,
+                Date = x.Date,
+                User = x.UserId == null ? null : x.User.Email,
+                Buyer= x.Buyer,
+                Address = x.InvoiceAddress,
+                Phone = x.InvoicePhone,
+                CurrencyCodeName = x.Currency.CodeName,
+                CurrencyRate = x.CurrencyRate,
+                Orders = x.Orders.Count,
+                IsDelivered= x.IsDelivered,
+                IsPaid= x.IsPaid
+            }).OrderByDescending(x => x.Id);
+            return invoices;
         }
     }
 }

@@ -277,7 +277,7 @@
     <value>Оформить</value>
   </data>
   <data name="order-success" xml:space="preserve">
-    <value>Спасибо за Ваш заказ! Мы с Вами свяжемся в скором времени. Также, Вы можете отслеживать за Вашими заказами кабинете.</value>
+    <value>Спасибо за Ваш заказ! Мы с Вами свяжемся в скором времени. Также, Вы можете отслеживать Ваши заказы в кабинете.</value>
   </data>
   <data name="payment" xml:space="preserve">
     <value>Оплата</value>
@@ -313,7 +313,7 @@
     <value>Получатель</value>
   </data>
   <data name="recomended-pin" xml:space="preserve">
-    <value>Рекомендуем сменить PIN код после досутпа в кабинет</value>
+    <value>Рекомендуем сменить PIN код после доступа в кабинет</value>
   </data>
   <data name="recommended" xml:space="preserve">
     <value>рекомендуемые</value>

@@ -12,9 +12,9 @@
         (ConstantsService.BRANDS, Localizer[ConstantsService.BRANDS].Value, "d-none d-lg-inline"),
         (ConstantsService.CATEGORIES, Localizer[ConstantsService.CATEGORIES].Value, "d-none d-lg-inline")
     };
-    string ru = $"https://{CultureProvider.SiteName}";
-    string en = $"https://{ConstantsService.EN}.{CultureProvider.SiteName}";
-    string tk = $"https://{ConstantsService.TM}.{CultureProvider.SiteName}";
+    string ru = $"{CultureProvider.SiteUrlRu}{CultureProvider.Path}";
+    string en = $"{CultureProvider.SiteUrlEn}{CultureProvider.Path}";
+    string tk = $"{CultureProvider.SiteUrlTm}{CultureProvider.Path}";
 }
 <!DOCTYPE html>
 <html lang="@CultureProvider.Lang">
@@ -24,9 +24,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@CultureProvider.SiteName@ViewData[ConstantsService.TITLE]</title>
     <meta name="description" content="@ViewData[ConstantsService.DESCRIPTION]" />
-    <link rel="alternate" hreflang="@ConstantsService.RU" href="@CultureProvider.SiteUrlRu@CultureProvider.Path" />
-    <link rel="alternate" hreflang="@ConstantsService.EN" href="@CultureProvider.SiteUrlEn@CultureProvider.Path" />
-    <link rel="alternate" hreflang="@ConstantsService.TK" href="@CultureProvider.SiteUrlTm@CultureProvider.Path" />
+    <link rel="alternate" hreflang="@ConstantsService.RU" href="@ru" />
+    <link rel="alternate" hreflang="@ConstantsService.EN" href="@en" />
+    <link rel="alternate" hreflang="@ConstantsService.TK" href="@tk" />
     <link rel="alternate" hreflang="x-default" href="@CultureProvider.SiteUrlRu@CultureProvider.Path" />
     <meta property="og:locale" content="@CultureProvider.LangState" />
     <meta property="og:locale:alternate" content="@ConstantsService.RUST" />

@@ -3,10 +3,14 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace newTolkuchka.Models.Migs
 {
+    /// <inheritdoc />
     public partial class _001 : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -671,7 +675,7 @@ namespace newTolkuchka.Models.Migs
                 columns: new[] { "Id", "Level", "Name" },
                 values: new object[,]
                 {
-                    { 1, 3, "Владелец" },
+                    { 1, 4, "Владелец" },
                     { 2, 3, "Программист" },
                     { 3, 2, "Менеджер" },
                     { 4, 1, "Оператор" }
@@ -800,14 +804,7 @@ namespace newTolkuchka.Models.Migs
                     { 27, "512GB", "512ГБ", "512GB", 3 },
                     { 28, "1TB", "1ТБ", "1TB", 3 },
                     { 29, "2TB", "2ТБ", "2TB", 3 },
-                    { 30, "3TB", "3ТБ", "3TB", 3 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "SpecsValues",
-                columns: new[] { "Id", "NameEn", "NameRu", "NameTm", "SpecId" },
-                values: new object[,]
-                {
+                    { 30, "3TB", "3ТБ", "3TB", 3 },
                     { 31, "4TB", "4ТБ", "4TB", 3 },
                     { 32, "5TB", "5ТБ", "5TB", 3 },
                     { 33, "6TB", "6ТБ", "6TB", 3 },
@@ -932,14 +929,7 @@ namespace newTolkuchka.Models.Migs
                     { 11, 1, 11, false, false, 1, 2, null, false, false, null, 1155.00m, 1, 2 },
                     { 12, 1, 11, false, false, 1, 2, null, false, false, null, 1155.00m, 1, 2 },
                     { 13, 1, 11, false, false, 1, 2, null, false, false, null, 1155.00m, 1, 2 },
-                    { 14, 1, 11, false, false, 1, 3, null, false, false, null, 1150.00m, 1, 2 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Products",
-                columns: new[] { "Id", "BrandId", "CategoryId", "IsNew", "IsRecommended", "LineId", "ModelId", "NewPrice", "NotInUse", "OnOrder", "PartNo", "Price", "TypeId", "WarrantyId" },
-                values: new object[,]
-                {
+                    { 14, 1, 11, false, false, 1, 3, null, false, false, null, 1150.00m, 1, 2 },
                     { 15, 1, 11, false, false, 1, 3, null, false, false, null, 1150.00m, 1, 2 },
                     { 16, 1, 11, false, false, 1, 3, null, false, false, null, 1150.00m, 1, 2 },
                     { 17, 1, 11, false, false, 1, 3, null, false, false, null, 1150.00m, 1, 2 },
@@ -1008,14 +998,7 @@ namespace newTolkuchka.Models.Migs
                     { 7, 5 },
                     { 7, 13 },
                     { 7, 25 },
-                    { 7, 43 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ProductSpecsValues",
-                columns: new[] { "ProductId", "SpecsValueId" },
-                values: new object[,]
-                {
+                    { 7, 43 },
                     { 7, 48 },
                     { 8, 9 },
                     { 8, 13 },
@@ -1057,14 +1040,7 @@ namespace newTolkuchka.Models.Migs
                     { 15, 25 },
                     { 15, 44 },
                     { 15, 48 },
-                    { 16, 9 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ProductSpecsValues",
-                columns: new[] { "ProductId", "SpecsValueId" },
-                values: new object[,]
-                {
+                    { 16, 9 },
                     { 16, 13 },
                     { 16, 25 },
                     { 16, 44 },
@@ -1106,14 +1082,7 @@ namespace newTolkuchka.Models.Migs
                     { 24, 52 },
                     { 25, 15 },
                     { 25, 27 },
-                    { 25, 48 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ProductSpecsValues",
-                columns: new[] { "ProductId", "SpecsValueId" },
-                values: new object[,]
-                {
+                    { 25, 48 },
                     { 25, 52 },
                     { 25, 53 },
                     { 26, 6 },
@@ -1393,6 +1362,7 @@ namespace newTolkuchka.Models.Migs
                 column: "ProductId");
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

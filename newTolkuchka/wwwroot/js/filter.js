@@ -29,7 +29,6 @@ $(window).on("popstate", function () {
     }
     prepareSearchObj()
     const inputs = $("input[name*='fil']")
-    const names = $("img[name='filv']")
     inputs.each(function () {
         if (this.name == 'filt') {
             const i = searchObj.t.includes(this.value)

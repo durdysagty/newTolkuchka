@@ -101,7 +101,7 @@
                     <tr role="button" data-mdb-toggle="collapse" data-mdb-target="#@id" aria-expanded="true" aria-controls="@id">
                         <td>@i.Id</td>
                         <td>@i.Recipient</td>
-                        <td>@i.Date</td>
+                        <td name="psdate">@i.Date.ToString("o")</td>
                         <td>@i.Amount @i.Currency.CodeName</td>
                         <td>
                             @{

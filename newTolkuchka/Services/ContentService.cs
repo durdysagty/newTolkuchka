@@ -30,10 +30,10 @@ namespace newTolkuchka.Services
         {
             await File.WriteAllTextAsync(_path.GetHtmlAboutBodyPath(ConstantsService.EN), content.AboutEn);
             await File.WriteAllTextAsync(_path.GetHtmlAboutBodyPath(ConstantsService.RU), content.AboutRu);
-            await File.WriteAllTextAsync(_path.GetHtmlAboutBodyPath(ConstantsService.TM), content.AboutTk);
+            await File.WriteAllTextAsync(_path.GetHtmlAboutBodyPath(ConstantsService.TK), content.AboutTk);
             await File.WriteAllTextAsync(_path.GetHtmlDeliveryBodyPath(ConstantsService.EN), content.DeliveryEn);
             await File.WriteAllTextAsync(_path.GetHtmlDeliveryBodyPath(ConstantsService.RU), content.DeliveryRu);
-            await File.WriteAllTextAsync(_path.GetHtmlDeliveryBodyPath(ConstantsService.TM), content.DeliveryTk);
+            await File.WriteAllTextAsync(_path.GetHtmlDeliveryBodyPath(ConstantsService.TK), content.DeliveryTk);
         }
     }
 }

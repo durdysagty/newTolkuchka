@@ -32,12 +32,17 @@ namespace newTolkuchka.ControllersAPI
             return purchaseInvoices;
         }
         [HttpGet("purchases/{id}")]
-        public async Task<IEnumerable<AdminPurchase>> GetPurchaseInvoicePurchases(int id)
+        public async Task<IEnumerable<AdminPurchase>> GetAdminPurchasesByPurchaseInvoiceId(int id)
         {
-            return await _purchase.GetPurchaseInvoicePurchases(id);
+            return await _purchase.GetAdminPurchasesByPurchaseInvoiceId(id);
+        }
+        [HttpGet("store")]
+        public IEnumerable<AdminStorePurchase> GetAdminStorePurchases([FromQuery] int[] ids, [FromQuery] int[] usedIds)
+        {
+            return _purchase.GetAdminStorePurchases(ids, usedIds);
         }
         [HttpPost]
-        public async Task<Result> Post([FromForm]PurchaseInvoice purchaseInvoice, [FromForm] string jsonPurchases)
+        public async Task<Result> Post([FromForm] PurchaseInvoice purchaseInvoice, [FromForm] string jsonPurchases)
         {
             IList<AdminPurchase> adminPurchases = JsonSerializer.Deserialize<List<AdminPurchase>>(jsonPurchases, new JsonSerializerOptions
             {
@@ -89,7 +94,7 @@ namespace newTolkuchka.ControllersAPI
         {
             // result will not to be saved, becouse result can be Fail
             Result result = await _purchase.RemovePurchaseInvoicePurchases(purchaseInvoiceId);
-                return result;
+            return result;
         }
 
         private static string CreateInvoiceName(PurchaseInvoice purchaseInvoice)

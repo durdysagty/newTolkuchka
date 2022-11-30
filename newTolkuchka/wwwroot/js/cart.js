@@ -36,7 +36,7 @@ else if (window.location.hostname.includes('tm')) {
 let sum = 0
 let delivery = 0
 async function getOrderProducts() {
-    console.log(orders)
+    // console.log(orders)
     try {
         const response = await fetch('/cart/data', {
             method: 'POST',
@@ -48,7 +48,7 @@ async function getOrderProducts() {
         })
         if (response.ok) {
             const result = await response.json()
-            console.log(result)
+            // console.log(result)
             if (result.noOrders)
                 setOrderResult(stringListCart.empty)
             else {
@@ -56,20 +56,7 @@ async function getOrderProducts() {
                 orders = result.orders
                 stringListCart.deliveryFree = result.deliveryFree
                 stringListCart.deliveryPrice = result.deliveryPrice
-                $('#cart').append(`<table class="table table-hover table-sm">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>${stringListCart.name}</th>
-                        <th>${stringListCart.price}, ${stringList.currency}</th>
-                        <th class='text-center'>${stringListCart.quantity}</th>
-                        <th>${stringListCart.amount}, ${stringList.currency}</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody id="cartBody">
-                </tbody>
-            </table>`)
+                $('#cart').append(`<table class="table table-hover table-sm"><thead><tr><th></th><th>${stringListCart.name}</th><th>${stringListCart.price}, ${stringList.currency}</th><th class='text-center'>${stringListCart.quantity}</th><th>${stringListCart.amount}, ${stringList.currency}</th><th></th></tr></thead><tbody id="cartBody"></tbody></table>`)
                 result.orders.forEach(o => {
                     const tr = $(`<tr><td class='align-middle p-0'><a href='/product/${o.id}'><img class='img-fluid' style='max-height: 50px' src='${o.image}' /></a></td><td class='align-middle'><a href='/product/${o.id}'>${o.productName}</a></td><td class='align-middle'>${o.price}</td><td class='align-middle text-center'><span role="button" class='pointer px-2' onclick='quantity(${o.id}, false)'>-</span><span id='${'q' + o.id}'>${o.quantity}</span><span role="button" class='pointer px-2' onclick='quantity(${o.id}, true)'>+</span></td><td class='align-middle'><span id='${'s' + o.id}'>${o.amount}</span></td><td class='align-middle'><button class='btn btn-primary py-1 px-3' onclick='removeOrder(${o.id})'>X</button></td></tr> `)
                     $('#cartBody').append(tr)
@@ -146,7 +133,7 @@ async function orderHandler(e) {
     inputs.each(function () {
         deliveryData[$(this).attr('name')] = $(this).val()
     })
-    console.log(orders)
+    //console.log(orders)
     const formData = new FormData()
     formData.append('orders', JSON.stringify(orders))
     for (let key in deliveryData) {
@@ -166,7 +153,8 @@ async function orderHandler(e) {
                 setOrderResult(result.success)
             $('#delivery').addClass('d-none')
             sessionStorage.removeItem('orders')
-            orders = null
+            orders = []
+            setQ()
         }
         else
             setOrderResult(stringList.wrong)

@@ -1,4 +1,10 @@
-﻿function inputAccount(e) {
+﻿function toLcalTime() {
+    $("td[name='psdate']").each(function () {
+        const l = new Date($(this).text()).toLocaleString()
+        $(this).text(l)
+    })
+} 
+function inputAccount(e) {
     if (e.target.name === 'phone')
         if (/^\d+$|^$|^\+?$|^\+?\d+$/.test(e.target.value))
             e.target.value = e.target.value
@@ -13,3 +19,4 @@ function invalidAccountHandler(e) {
     e.preventDefault()
     $('#userForm').addClass('was-validated')
 }
+toLcalTime()

@@ -55,8 +55,8 @@ namespace newTolkuchka.Services
                 DateTime = DateTimeOffset.UtcNow.ToUniversalTime(),
                 EntityName = entityName
             };
-            await _con.Entries.AddAsync(entry);
-            await _con.SaveChangesAsync();
+            _ = await _con.Entries.AddAsync(entry);
+            _ = await _con.SaveChangesAsync();
         }
     }
 }

@@ -32,7 +32,7 @@ namespace newTolkuchka.Services
                 }
             }
         }
-        public async Task<IEnumerable<AdminPurchase>> GetPurchaseInvoicePurchases(int id)
+        public async Task<IEnumerable<AdminPurchase>> GetAdminPurchasesByPurchaseInvoiceId(int id)
         {
             IEnumerable<Purchase> purchases = GetPurchasesByPurchaseInvoiceId(id);
             IList<AdminPurchase> adminPurchases = new List<AdminPurchase>();
@@ -61,6 +61,20 @@ namespace newTolkuchka.Services
                 }
             }
             return adminPurchases;
+        }
+
+        public IEnumerable<AdminStorePurchase> GetAdminStorePurchases(int[] ids, int[] usedIds)
+        {
+            IEnumerable<AdminStorePurchase> purchases = GetModels().Where(p => (ids.Contains(p.ProductId) && p.Order == null) || usedIds.Contains(p.Id)).Select(p => new AdminStorePurchase
+            {
+                Id = p.Id,
+                ProductId = p.ProductId,
+                SerialNumber = p.SerialNumber,
+                PurchasePrice = p.PurchasePrice,
+                PurchaseInvoiceId = p.PurchaseInvoice.Id,
+                CurrencyCodeName = p.PurchaseInvoice.Currency.CodeName
+            });
+            return purchases;
         }
 
         public async Task<Result> RemovePurchaseInvoicePurchases(int id)

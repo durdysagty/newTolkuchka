@@ -20,7 +20,10 @@ namespace newTolkuchka.Models
         public decimal DeliveryCost { get; set; }
         [Required, Column(TypeName = "decimal(18,2)")]
         public decimal CurrencyRate { get; set; }
+        [Required, MaxLength(5)]
+        public string Language { get; set; }
         public bool IsPaid { get; set; }
+        public DateTimeOffset? PaidDate { get; set; }
         public bool IsDelivered { get; set; }
 
         public int CurrencyId { get; set; }

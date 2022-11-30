@@ -63,7 +63,9 @@ namespace newTolkuchka.ControllersAPI
                 await _product.AddProductSpecValueModsAsync(product.Id, specsValueMods);
             if (adLinks.Any())
                 await _category.AddCategoryProductAdLinksAsync(product.Id, adLinks);
-            await AddActAsync(product.Id, null);
+            await _product.SaveChangesAsync();
+            product = await _product.GetFullProductAsNoTrackingWithIdentityResolutionAsync(product.Id);
+            await AddActAsync(product.Id, IProduct.GetProductName(product));
             return Result.Success;
         }
         [HttpPut]
@@ -76,7 +78,9 @@ namespace newTolkuchka.ControllersAPI
             await _product.AddProductSpecValuesAsync(product.Id, specsValues);
             await _product.AddProductSpecValueModsAsync(product.Id, specsValueMods);
             await _category.AddCategoryProductAdLinksAsync(product.Id, adLinks);
-            await EditActAsync(product.Id, null);
+            await _product.SaveChangesAsync();
+            product = await _product.GetFullProductAsNoTrackingWithIdentityResolutionAsync(product.Id);
+            await EditActAsync(product.Id, IProduct.GetProductName(product));
             return Result.Success;
         }
         [HttpDelete("{id}")]
@@ -87,7 +91,10 @@ namespace newTolkuchka.ControllersAPI
                 return Result.Fail;
             Result result = await _product.DeleteModelAsync(product.Id, product, true);
             if (result == Result.Success)
-                await DeleteActAsync(id, product.Id.ToString());
+            {
+                product = await _product.GetFullProductAsNoTrackingWithIdentityResolutionAsync(product.Id);
+                await DeleteActAsync(id, IProduct.GetProductName(product));
+            }
             return result;
         }
     }

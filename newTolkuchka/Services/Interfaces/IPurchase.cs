@@ -6,7 +6,8 @@ namespace newTolkuchka.Services.Interfaces
     public interface IPurchase : IActionNoFile<Purchase>
     {
         Task AddPurchasesAsync(int purchaseInvoiceId, IList<AdminPurchase> adminPurchases);
-        Task<IEnumerable<AdminPurchase>> GetPurchaseInvoicePurchases(int id);
+        Task<IEnumerable<AdminPurchase>> GetAdminPurchasesByPurchaseInvoiceId(int id);
+        IEnumerable<AdminStorePurchase> GetAdminStorePurchases(int[] ids, int[] usedIds);
         Task<Result> RemovePurchaseInvoicePurchases(int id);
     }
 }
