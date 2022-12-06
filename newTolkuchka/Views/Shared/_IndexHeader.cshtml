@@ -1,8 +1,11 @@
-﻿@model (string, IEnumerable<string>)
-
-<p class="fs-5 px-3 mb-2 border-bottom border-primary">@Model.Item1</p>
+﻿@model (string, int, string, IEnumerable<string>)
+@{
+    string href = Model.Item2 != 0 ? PathService.GetModelUrl(Model.Item1, Model.Item2) : $"{Model.Item1}";
+    string value = Model.Item2 != 0 ? Model.Item3 : Localizer[Model.Item1].Value;
+}
+<p class="fs-5 px-3 mb-2 border-bottom border-primary"><a href="@href">@value</a></p>
 <div class="row">
-    @foreach (var p in @Model.Item2)
+    @foreach (var p in @Model.Item4)
     {
         @Html.Raw(p)
     }

@@ -20,7 +20,7 @@
         string specContent = $"specCon{p.Id}";
         <div id="@id" class="@currentProduct">
             <h4>@IProduct.GetProductName(p)</h4>
-            <div class="row">
+            <div class="row justify-content-center">
                 <div class="col-12 col-md-4">
                     <img id="@imgId" width="600" height="600" style="width: 100%; height: auto" alt="@p.Brand.Name" src="@PathService.GetImageRelativePath(ConstantsService.PRODUCT, p.Id)" />
                 </div>
@@ -37,7 +37,7 @@
                         }
                     </div>
                 </div>
-                <div class="col-12 col-md-6 d-flex flex-column justify-content-end">
+                <div class="col-auto d-flex flex-column justify-content-end">
                     @if (Model.Count() > 1)
                     {
                         <div class="d-flex flex-column justify-content-end align-items-start mb-3">
@@ -95,8 +95,13 @@
                         @{
                             string buttonName = "order" + p.Id;
                         }
-                        <button name="@buttonName" onclick="order(@p.Id)" type="submit" class="btn btn-primary mx-3">@Localizer["add-to-cart"]</button>
+                        <button name="@buttonName" onclick="order(@p.Id)" type="submit" class="btn btn-primary">@Localizer["add-to-cart"]</button>
                     </div>
+                </div>
+                <div class="col-auto d-flex justify-content-center align-items-center">
+                    <a href="@PathService.GetModelUrl($"https://{CultureProvider.Host}/{ConstantsService.BRAND}", p.BrandId)" class="d-flex justify-content-center align-items-center">
+                        <img role="button" width="180" height="60" style="width: 12rem; height: auto" alt="@p.Brand.Name" src="@PathService.GetImageRelativePath($"{ConstantsService.BRAND}", p.BrandId)" />
+                    </a>
                 </div>
             </div>
             <ul class="nav nav-tabs mb-3" id="@tabsId" role="tablist">

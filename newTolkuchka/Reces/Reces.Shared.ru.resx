@@ -249,6 +249,9 @@
   <data name="new-registered" xml:space="preserve">
     <value>Пожалуйста, проверьте эл. почту!</value>
   </data>
+  <data name="newed" xml:space="preserve">
+    <value>новинка</value>
+  </data>
   <data name="next" xml:space="preserve">
     <value>дальше</value>
   </data>
@@ -262,7 +265,7 @@
     <value>К сожалению, данного товара нет!</value>
   </data>
   <data name="novelties" xml:space="preserve">
-    <value>новинки</value>
+    <value>Новинки</value>
   </data>
   <data name="now" xml:space="preserve">
     <value>Быстрый заказ</value>
@@ -312,11 +315,14 @@
   <data name="recipient" xml:space="preserve">
     <value>Получатель</value>
   </data>
+  <data name="recod" xml:space="preserve">
+    <value>рекомендуем</value>
+  </data>
   <data name="recomended-pin" xml:space="preserve">
     <value>Рекомендуем сменить PIN код после доступа в кабинет</value>
   </data>
   <data name="recommended" xml:space="preserve">
-    <value>рекомендуемые</value>
+    <value>Рекомендуемые</value>
   </data>
   <data name="search" xml:space="preserve">
     <value>Поиск</value>

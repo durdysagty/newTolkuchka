@@ -249,6 +249,9 @@
   <data name="new-registered" xml:space="preserve">
     <value>Haýyş, elektron poçtaňyzy barlaň!</value>
   </data>
+  <data name="newed" xml:space="preserve">
+    <value>täze</value>
+  </data>
   <data name="next" xml:space="preserve">
     <value>giriz</value>
   </data>
@@ -262,7 +265,7 @@
     <value>Bagyşlaň, bu önüm elýeterli däl!</value>
   </data>
   <data name="novelties" xml:space="preserve">
-    <value>täzelikler</value>
+    <value>Täzelikler</value>
   </data>
   <data name="now" xml:space="preserve">
     <value>Tiz sargyt</value>
@@ -315,11 +318,14 @@
   <data name="recipient" xml:space="preserve">
     <value>Alyjy</value>
   </data>
+  <data name="recod" xml:space="preserve">
+    <value>maslahat</value>
+  </data>
   <data name="recomended-pin" xml:space="preserve">
     <value>PIN koduňyzy hasabyňyza gireniňizden soň çalşmagy maslahat berýäris</value>
   </data>
   <data name="recommended" xml:space="preserve">
-    <value>maslahatlylar</value>
+    <value>Maslahatlylar</value>
   </data>
   <data name="robot" xml:space="preserve">
     <value>"Men robot däl" belligini bellemedik bolmagyňyz mümkin.</value>

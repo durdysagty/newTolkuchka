@@ -294,5 +294,29 @@ function setFilters() {
     history.pushState(null, null, `${window.location.pathname}?${search}`)
     setProducts(true)
 }
+function changeImage(id, ids) {
+    console.log(id)
+    console.log(ids)
+    ids.forEach(i => { $(i).addClass('d-none').removeClass('d-block') })
+    $(id).addClass('d-block').removeClass('d-none')
+
+}
+//function changeImage(img, btn, id) {
+//    let src = $(img).attr('src')
+//    src = src.replace(/[0-9]+-/, `${id}-`)
+//    $(img).attr('src', src)
+//    let btnName = $(btn).attr('name')
+//    btnName = btnName.replace(/[0-9]+/, `${id}`)
+//    $(btn).attr('name', btnName)
+//}
+//function orderByImage(img) {
+//    const src = $(img).attr('src')
+//    const number = /[0-9]+-/.exec(src)
+//    const id = parseInt(number)
+//    console.log(src)
+//    console.log(number[0])
+//    console.log(id)
+//    order(id)
+//}
 setProducts(false)
 prepareSearchObj()

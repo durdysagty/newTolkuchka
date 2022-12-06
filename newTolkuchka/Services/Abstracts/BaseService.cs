@@ -11,7 +11,7 @@ namespace newTolkuchka.Services.Abstracts
 {
     public abstract class BaseService
     {
-        private readonly IStringLocalizer<Shared> _localizer;
+        public readonly IStringLocalizer<Shared> _localizer;
         public BaseService(IStringLocalizer<Shared> localizer)
         {
             _localizer = localizer;

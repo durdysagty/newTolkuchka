@@ -11,6 +11,9 @@ namespace newTolkuchka.Models.DTO
         [Column(TypeName = "decimal(18,2)")]
         public decimal? NewPrice { get; set; }
         public string ImageMain { get; set; }
-        //public string[] ImagePaths { get; set; }
+        public string Recommended { get; set; }
+        public string New { get; set; }
+        // used for colored options of Product (id, price, newPrice)
+        public IEnumerable<(int, decimal, decimal)> Others { get; set; }
     }
 }

@@ -12,13 +12,11 @@ namespace newTolkuchka.Services
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly AppDbContext _con;
         private readonly IEmployee _employee;
-        private readonly IStringLocalizer<Shared> _localizer;
         public EntryService(IHttpContextAccessor contextAccessor, AppDbContext con, IEmployee employee,  IStringLocalizer<Shared> localizer) : base(localizer)
         {
             _contextAccessor = contextAccessor;
             _con = con;
             _employee = employee;
-            _localizer = localizer;
         }
         public IQueryable<AdminEntry> GetEntries(int[] employeeId, int page, int pp, out int lastPage, out string pagination)
         {

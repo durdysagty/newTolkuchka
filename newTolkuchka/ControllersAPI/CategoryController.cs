@@ -52,7 +52,7 @@ namespace newTolkuchka.ControllersAPI
         [HttpPost]
         public async Task<Result> Post([FromForm] Category category, [FromForm] int[] adLinks)
         {
-            bool isExist = _category.IsExist(category, _category.GetModels());
+            bool isExist = _category.IsExist(category, _category.GetCategoriesByParentId(category.ParentId));
             if (isExist)
                 return Result.Already;
             await _category.AddModelAsync(category);

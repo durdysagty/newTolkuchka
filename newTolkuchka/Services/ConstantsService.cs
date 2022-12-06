@@ -55,6 +55,9 @@
         public const string DELIVERY = "delivery";
         public const string MENU = "menu";
         public const string SPECSVALUE = "specsvalue";
+        public const string NOVELTIES = "novelties";
+        public const string RECOMMENDED = "recommended";
+        public const string NEW = "new";
         // images
         public const int PRODUCTMAXIMAGE = 5;
         public const int BRANDMAXIMAGE = 1;

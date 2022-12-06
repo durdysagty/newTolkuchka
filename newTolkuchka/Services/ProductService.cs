@@ -66,10 +66,10 @@ namespace newTolkuchka.Services
             return adminProducts;
         }
 
-        public IList<UIProduct> GetUIData(bool productsOnly, IList<Product> products, int[] t, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp, out IList<AdminType> types, out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage)
+        public IList<IEnumerable<UIProduct>> /*IList<UIProduct>*/ GetUIData(bool productsOnly, IList<Product> products, int[] t, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp, out IList<AdminType> types, out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage)
         {
             IList<Product> preProducts = new List<Product>();
-            IList<UIProduct> uiProducts = new List<UIProduct>();
+            IList<IEnumerable<UIProduct>> uiProducts = new List<IEnumerable<UIProduct>>();
             types = productsOnly ? null : new List<AdminType>();
             #region for test
             //if (!productsOnly)
@@ -198,26 +198,33 @@ namespace newTolkuchka.Services
                 }
                 preProducts.Add(p);
             }
-            preProducts = preProducts.OrderBy(p => p.NewPrice != null ? p.NewPrice : p.Price).DistinctBy(p => p.ModelId).ToList();
+            //preProducts = preProducts.OrderBy(p => p.NewPrice != null ? p.NewPrice : p.Price).DistinctBy(p => p.ModelId).ToList();
+            // to get minimal price products first
+            preProducts = preProducts.OrderBy(p => p.NewPrice != null ? p.NewPrice : p.Price).ToList();
+            IList<Product> preProductsDistinct = preProducts.DistinctBy(p => p.ModelId).ToList();
             int toSkip = page * pp;
-            int q = preProducts.Count;
+            int q = preProductsDistinct.Count;
             if (sort != Sort.NameAZ && sort != Sort.NameZA)
             {
-                preProducts = sort switch
+                preProductsDistinct = sort switch
                 {
-                    Sort.PriceUp => preProducts.Skip(toSkip).Take(pp).ToList(),
-                    Sort.PriceDown => preProducts.OrderByDescending(p => p.NewPrice != null ? p.NewPrice : p.Price).Skip(toSkip).Take(pp).ToList(),
-                    _ => preProducts.OrderByDescending(p => p.Id).Skip(toSkip).Take(pp).ToList(),
+                    Sort.PriceUp => preProductsDistinct.Skip(toSkip).Take(pp).ToList(),
+                    Sort.PriceDown => preProductsDistinct.OrderByDescending(p => p.NewPrice != null ? p.NewPrice : p.Price).Skip(toSkip).Take(pp).ToList(),
+                    _ => preProductsDistinct.OrderByDescending(p => p.Id).Skip(toSkip).Take(pp).ToList(),
                 };
-                uiProducts = preProducts.Select(pp => IProduct.GetUIProduct(pp, GetProducts(null, null, null, null, pp.ModelId).Count())).ToArray();
+                //uiProducts = preProducts.Select(pp => GetUIProduct(pp, GetProducts(null, null, null, null, pp.ModelId).Count())).ToArray();
+                //uiProducts = preProductsDistinct.Select(pp => GetUIProduct(pp, pp.ModelId)).ToArray();
+                uiProducts = preProductsDistinct.Select(pp => GetUIProduct2(preProducts.Where(p => p.ModelId == pp.ModelId).ToList())).ToArray();
             }
             else
             {
-                uiProducts = preProducts.Select(pp => IProduct.GetUIProduct(pp, GetProducts(null, null, null, null, pp.ModelId).Count())).ToArray();
+                //uiProducts = preProducts.Select(pp => GetUIProduct(pp, GetProducts(null, null, null, null, pp.ModelId).Count())).ToArray();
+                //uiProducts = preProductsDistinct.Select(pp => GetUIProduct(pp, p.ModelId)).ToArray();
+                uiProducts = preProductsDistinct.Select(pp => GetUIProduct2(preProducts.Where(p => p.ModelId == pp.ModelId).ToList())).ToArray();
                 uiProducts = sort switch
                 {
-                    Sort.NameZA => uiProducts.OrderByDescending(p => p.Name).Skip(toSkip).Take(pp).ToList(),
-                    _ => uiProducts.OrderBy(p => p.Name).Skip(toSkip).Take(pp).ToList()
+                    Sort.NameZA => uiProducts.OrderByDescending(p => p.FirstOrDefault().Name).Skip(toSkip).Take(pp).ToList(),
+                    _ => uiProducts.OrderBy(p => p.FirstOrDefault().Name).Skip(toSkip).Take(pp).ToList()
                 };
             }
             int q2 = uiProducts.Count;
@@ -321,6 +328,54 @@ namespace newTolkuchka.Services
             }
         }
 
+        //public UIProduct GetUIProduct(Product p, int? modelCount)
+        //{
+        //    return new UIProduct()
+        //    {
+        //        Id = p.Id,
+        //        Name = modelCount != null ? IProduct.GetProductName(p, modelCount) : IProduct.GetProductName(p),
+        //        Price = IProduct.GetConvertedPrice(p.Price),
+        //        NewPrice = p.NewPrice == null ? null : IProduct.GetConvertedPrice((decimal)p.NewPrice),
+        //        ImageMain = PathService.GetImageRelativePath(ConstantsService.PRODUCT + "/small", p.Id),
+        //        Recommended = p.IsRecommended ? _localizer["recod"] : null,
+        //        New = p.IsNew ? _localizer["newed"] : null
+        //    };
+        //}
+
+        public UIProduct GetUIProduct(Product p, IList<Product> sameModels)
+        {
+            //IEnumerable<Product> products = GetProducts(null, null, null, null, sameModels);
+            //an only one imaged specsvalue in a product is expected
+            // if multiple images specasvalues are expected, then not firstordefault and sequenceeauale coulde be used
+            IEnumerable<(int, decimal, decimal)> imagedProductsIds = sameModels?.DistinctBy(p => p.ProductSpecsValues.Where(psv => psv.SpecsValue.Spec.IsImaged).Select(psv => psv.SpecsValue.Id).FirstOrDefault()).Select(p => (p.Id, IProduct.GetConvertedPrice(p.Price), p.NewPrice == null ? 0 : IProduct.GetConvertedPrice((decimal)p.NewPrice)));
+            return new UIProduct()
+            {
+                Id = p.Id,
+                Name = sameModels != null ? IProduct.GetProductName(p, sameModels.Count) : IProduct.GetProductName(p),
+                Price = IProduct.GetConvertedPrice(p.Price),
+                NewPrice = p.NewPrice == null ? null : IProduct.GetConvertedPrice((decimal)p.NewPrice),
+                ImageMain = PathService.GetImageRelativePath(ConstantsService.PRODUCT + "/small", p.Id),
+                Recommended = p.IsRecommended ? _localizer["recod"] : null,
+                New = p.IsNew ? _localizer["newed"] : null,
+                Others = sameModels != null ? imagedProductsIds : null
+            };
+        }
+
+        public IEnumerable<UIProduct> GetUIProduct2(IList<Product> sameModels)
+        {
+            IEnumerable<Product> distinct = sameModels.DistinctBy(p => p.ProductSpecsValues.Where(psv => psv.SpecsValue.Spec.IsImaged).Select(psv => psv.SpecsValue.Id).FirstOrDefault());
+            return distinct.Select(p =>  new UIProduct()
+            {
+                Id = p.Id,
+                Name = sameModels != null ? IProduct.GetProductName(p, sameModels.Count) : IProduct.GetProductName(p),
+                Price = IProduct.GetConvertedPrice(p.Price),
+                NewPrice = p.NewPrice == null ? null : IProduct.GetConvertedPrice((decimal)p.NewPrice),
+                ImageMain = PathService.GetImageRelativePath(ConstantsService.PRODUCT + "/small", p.Id),
+                Recommended = p.IsRecommended ? _localizer["recod"] : null,
+                New = p.IsNew ? _localizer["newed"] : null
+            });
+        }
+
         private IQueryable<ProductSpecsValue> GetProductSpecValues(int id)
         {
             return _con.ProductSpecsValues.Where(x => x.ProductId == id);
@@ -330,5 +385,6 @@ namespace newTolkuchka.Services
         {
             return _con.ProductSpecsValueMods.Include(x => x.SpecsValueMod).Where(x => x.ProductId == id);
         }
+
     }
 }

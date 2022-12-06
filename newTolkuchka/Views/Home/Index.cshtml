@@ -1,5 +1,6 @@
 ﻿@{
     IEnumerable<Category> mainCategories = ViewBag.MainCategories;
+    IList<(Category, IEnumerable<string>)> categories = ViewBag.MainCategoriesProducts;
     IList<Slide> mainSlides = ViewBag.MainSlides;
     IEnumerable<string> newProducts = ViewBag.NewProducts;
     IEnumerable<string> recProducts = ViewBag.RecProducts;
@@ -23,11 +24,11 @@
                     {
                         if (i == mainSlides.Count - 1)
                             cl = cl + " active";
-                            <div class="@cl">
-                                <a href="@mainSlides[i].Link">
-                                    <img src="@PathService.GetImageRelativePath(ConstantsService.SLIDE, mainSlides[i].Id, CultureProvider.GetLocalNumberEx())" class="d-block w-100" alt="@Localizer["commercial"]" />
-                                </a>
-                            </div>
+                        <div class="@cl">
+                            <a href="@mainSlides[i].Link">
+                                <img src="@PathService.GetImageRelativePath(ConstantsService.SLIDE, mainSlides[i].Id, CultureProvider.GetLocalNumberEx())" class="d-block w-100" alt="@Localizer["commercial"]" />
+                            </a>
+                        </div>
                     }
                 }
             </div>
@@ -43,6 +44,10 @@
     </div>
 </div>
 @{
-    await Html.RenderPartialAsync("_IndexHeader", (Localizer["novelties"].Value, newProducts));
-    await Html.RenderPartialAsync("_IndexHeader", (Localizer["recommended"].Value, recProducts));
+    await Html.RenderPartialAsync("_IndexHeader", (ConstantsService.NOVELTIES, 0, "", newProducts));
+    await Html.RenderPartialAsync("_IndexHeader", (ConstantsService.RECOMMENDED, 0, "",recProducts));
+    foreach (var c in categories)
+    {
+        await Html.RenderPartialAsync("_IndexHeader", (ConstantsService.CATEGORY, c.Item1.Id, CultureProvider.GetLocalName(c.Item1.NameRu, c.Item1.NameEn, c.Item1.NameTm), c.Item2));
+    }
 }

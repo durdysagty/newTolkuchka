@@ -6,6 +6,7 @@ using newTolkuchka.Models.DTO;
 using newTolkuchka.Reces;
 using newTolkuchka.Services;
 using newTolkuchka.Services.Interfaces;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text.Json;
@@ -44,21 +45,36 @@ namespace newTolkuchka.Controllers
         #endregion
         [Route(ConstantsService.SLASH)]
         [Route(ConstantsService.HOME)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 10800)]
         public IActionResult Index()
         {
             ViewBag.MainSlides = _slide.GetSlidesByLayoutAsync(Layout.Main).ToList();
             IQueryable<Product> newProducts = _product.GetFullProducts().OrderByDescending(p => p.Id).Where(p => p.IsNew && !p.NotInUse).Take(4);
-            IEnumerable<UIProduct> newUIProducts = newProducts.Select(p => IProduct.GetUIProduct(p, null));
-            ViewBag.NewProducts = newUIProducts.Select(u => IProduct.GetHtmlProduct(u, _localizer["add-to-cart"], 3, 6, 6));
+            IEnumerable<UIProduct> newUIProducts = newProducts.Select(p => _product.GetUIProduct(p, null));
+            ViewBag.NewProducts = newUIProducts.Select(u => IProduct.GetHtmlProduct(new UIProduct[1] { u }, _localizer["add-to-cart"], 3, 6, 6));
             IQueryable<Product> recProducts = _product.GetFullProducts().OrderByDescending(p => p.Id).Where(p => p.IsRecommended && !p.NotInUse).Take(4);
-            IEnumerable<UIProduct> recUIProducts = recProducts.Select(p => IProduct.GetUIProduct(p, null));
-            ViewBag.RecProducts = recUIProducts.Select(r => IProduct.GetHtmlProduct(r, _localizer["add-to-cart"], 3, 6, 6));
-            ViewBag.MainCategories = _category.GetCategoriesByParentId(0);
+            IEnumerable<UIProduct> recUIProducts = recProducts.Select(p => _product.GetUIProduct(p, null));
+            ViewBag.RecProducts = recUIProducts.Select(r => IProduct.GetHtmlProduct(new UIProduct[1] { r }, _localizer["add-to-cart"], 3, 6, 6));
+            IQueryable<Category> mainCategories = _category.GetCategoriesByParentId(0);
+            IList<(Category, IEnumerable<string>)> categories = new List<(Category, IEnumerable<string>)>();
+            foreach (Category category in mainCategories)
+            {
+                IList<int> categoryIds = _category.GetAllCategoryIdsHaveProductsByParentId(category.Id);
+                if (categoryIds.Any())
+                {
+                    IEnumerable<UIProduct> products = _product.GetFullProducts(categoryIds).OrderByDescending(p => p.Id).Where(p => !p.NotInUse).Take(4).Select(p => _product.GetUIProduct(p, null));
+                    (Category, IEnumerable<string>) mainCategory = (category, products.Select(p => IProduct.GetHtmlProduct(new UIProduct[1] { p }, _localizer["add-to-cart"], 3, 6, 6)));
+                    categories.Add(mainCategory);
+                }
+            }
+            ViewBag.MainCategories = mainCategories;
+            ViewBag.MainCategoriesProducts = categories;
             CreateMetaData();
             return View();
         }
 
         [Route(ConstantsService.CATEGORIES)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
         public async Task<IActionResult> Categories()
         {
             IEnumerable<CategoryTree> categories = await _category.GetCategoryTree();
@@ -67,6 +83,7 @@ namespace newTolkuchka.Controllers
         }
 
         [Route(ConstantsService.BRANDS)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
         public IActionResult Brands()
         {
             IQueryable<Brand> brands = _brand.GetModels();
@@ -75,6 +92,7 @@ namespace newTolkuchka.Controllers
         }
 
         [Route($"{ConstantsService.CATEGORY}/{{id}}")]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
         public async Task<IActionResult> Category(int id)
         {
             Category category = await _category.GetModelAsync(id);
@@ -85,6 +103,7 @@ namespace newTolkuchka.Controllers
         }
 
         [Route($"{ConstantsService.BRAND}/{{id}}")]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
         public async Task<IActionResult> Brand(int id)
         {
             Brand brand = await _brand.GetModelAsync(id);
@@ -93,6 +112,7 @@ namespace newTolkuchka.Controllers
         }
 
         [Route($"{ConstantsService.PRODUCT}/{{id}}")]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 10800)]
         public async Task<IActionResult> Product(int id)
         {
             //Product product = await _product.GetFullProducts(null, null, null, null, new int[1] { id }).AsNoTracking().FirstOrDefaultAsync();
@@ -125,16 +145,26 @@ namespace newTolkuchka.Controllers
         }
 
         [Route(ConstantsService.SEARCH)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
         public IActionResult Search(string search)
         {
             if (string.IsNullOrEmpty(search))
                 return RedirectToAction("");
-            CreateMetaData("search", _breadcrumbs.GetBreadcrumbs(), _localizer["search"].Value, true);
+            CreateMetaData(ConstantsService.SEARCH, _breadcrumbs.GetBreadcrumbs(), _localizer["search"].Value, true);
+            return View();
+        }
+
+        [Route($"{{special}}")]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
+        public IActionResult Special(string special)
+        {
+            CreateMetaData(special, _breadcrumbs.GetBreadcrumbs(), null, true);
             return View();
         }
 
         [Route(ConstantsService.ABOUT)]
         [Route($"{ConstantsService.DELIVERY}")]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 259200)]
         public async Task<IActionResult> Content()
         {
             string p = CultureProvider.Path.TrimStart(new char[] { '/' });
@@ -154,6 +184,7 @@ namespace newTolkuchka.Controllers
         }
 
         [Route($"{ConstantsService.PRODUCTS}")]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 7200)]
         public async Task<JsonResult> Products(string model, int id, bool productsOnly, int[] t, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp = 20, string search = null)
         {
             IList<Product> list = new List<Product>();
@@ -188,6 +219,12 @@ namespace newTolkuchka.Controllers
                         }
                     }
                     break;
+                case ConstantsService.NOVELTIES:
+                    list = await _product.GetFullProducts().Where(p => p.IsNew && !p.NotInUse).ToListAsync();
+                    break;
+                case ConstantsService.RECOMMENDED:
+                    list = await _product.GetFullProducts().Where(p => p.IsRecommended && !p.NotInUse).ToListAsync();
+                    break;
             }
             if (!list.Any())
                 return new JsonResult(new
@@ -195,7 +232,7 @@ namespace newTolkuchka.Controllers
                     products = list,
                     noProduct = _localizer["noProductAbsolutly"].Value
                 });
-            IEnumerable<UIProduct> uiProducts = _product.GetUIData(productsOnly, list, t, b, v, minp, maxp, sort, page, pp, out IList<AdminType> types, out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage);
+            IList<IEnumerable<UIProduct>> /*IEnumerable<UIProduct>*/ uiProducts = _product.GetUIData(productsOnly, list, t, b, v, minp, maxp, sort, page, pp, out IList<AdminType> types, out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage);
             IEnumerable<string> products = uiProducts.Select(p => IProduct.GetHtmlProduct(p, _localizer["add-to-cart"]));
             return new JsonResult(new
             {
@@ -285,7 +322,7 @@ namespace newTolkuchka.Controllers
                 CurrencyRate = CurrencyService.Currency.RealRate,
                 CurrencyId = CurrencyService.Currency.Id,
                 UserId = _user.GetCurrentUser().Result?.Id,
-                Language = CultureProvider.Lang == ConstantsService.TK ? ConstantsService.TM: CultureProvider.Lang,
+                Language = CultureProvider.Lang == ConstantsService.TK ? ConstantsService.TM : CultureProvider.Lang,
             };
             await _invoice.AddModelAsync(invoice);
             decimal sum = 0;
