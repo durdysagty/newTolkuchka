@@ -21,7 +21,7 @@ namespace newTolkuchka.Services
             {
                 Id = x.Id,
                 Name = x.Name,
-                 IsInUse = !x.NotInUse
+                 NotInUse = !x.NotInUse
             }).OrderByDescending(x => x.Id);
             return slides;
         }

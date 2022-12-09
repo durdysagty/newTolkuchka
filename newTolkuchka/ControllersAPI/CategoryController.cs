@@ -8,10 +8,10 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level1")]
-    public class CategoryController : AbstractController
+    public class CategoryController : AbstractController<Category, ICategory>
     {
         private readonly ICategory _category;
-        public CategoryController(IEntry entry, ICategory category) : base(entry, Entity.Category)
+        public CategoryController(IEntry entry, ICategory category) : base(entry, Entity.Category, category)
         {
             _category = category;
         }

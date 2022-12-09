@@ -18,8 +18,8 @@ namespace newTolkuchka.Services.Interfaces
         Task AddProductSpecValuesAsync(int id, IList<int> productSpecsValues);
         void RemoveProductSpecValuesModelSpecRemovedAsync(int modelId, int specId);
         Task AddProductSpecValueModsAsync(int id, IList<int> productSpecsValueMods);
-        UIProduct GetUIProduct(Product p, IList<Product> sameModels);
-        IEnumerable<UIProduct> GetUIProduct2(IList<Product> sameModels);
+        //UIProduct GetUIProduct(Product p, IList<Product> sameModels);
+        IEnumerable<UIProduct> GetUIProduct(IList<Product> sameModels);
 
         static decimal GetConvertedPrice(decimal price)
         {

@@ -8,10 +8,10 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level1")]
-    public class ModelController : AbstractController
+    public class ModelController : AbstractController<Model, IModel>
     {
         private readonly IModel _model;
-        public ModelController(IEntry entry, IModel model) : base(entry, Entity.Model)
+        public ModelController(IEntry entry, IModel model) : base(entry, Entity.Model, model)
         {
             _model = model;
         }

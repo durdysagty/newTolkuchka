@@ -8,10 +8,10 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level1")]
-    public class LineController : AbstractController
+    public class LineController : AbstractController<Line, ILine>
     {
         private readonly ILine _line;
-        public LineController(IEntry entry, ILine line) : base(entry, Entity.Line)
+        public LineController(IEntry entry, ILine line) : base(entry, Entity.Line, line)
         {
             _line = line;
         }

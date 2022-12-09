@@ -165,18 +165,12 @@ async function setProducts(productsOnly) {
                     f.filterValues.map(fv => {
                         const id = `filVal${fv.id}`
                         const i = searchObj.v.includes(`${f.id},${fv.id}`)
-                        return `<span class="my-2">
-                <input name="filv" ${i ? `checked` : null} class="d-none" onclick="setFilters()" type="checkbox" value="${f.id},${fv.id}" id="${id}" />
-                <img name="img${f.id},${fv.id}" width="25" height="25" style="width: 25px; height: auto; cursor: pointer; padding: 1px" onclick="clickInput(event, ${id})" title="${fv.name}" alt="${fv.name}" src="${fv.image}" class="my-1 border-1 ${i ? `border border-black` : null}" />
-            </span>`
+                        return `<span class="my-2"><input name="filv" ${i ? `checked` : null} class="d-none" onclick="setFilters()" type="checkbox" value="${f.id},${fv.id}" id="${id}" /><img name="img${f.id},${fv.id}" width="25" height="25" style="width: 25px; height: auto; cursor: pointer; padding: 1px" onclick="clickInput(event, ${id})" title="${fv.name}" alt="${fv.name}" src="${fv.image}" class="my-1 border-1 ${i ? `border border-black` : null}" /></span>`
                     }) :
                     f.filterValues.map(fv => {
                         const id = `filVal${fv.id}`
                         const i = searchObj.v.includes(`${f.id},${fv.id}`)
-                        return `<div class="form-check d-flex">
-                <input class="form-check-input" name="filv" ${i ? `checked` : null} onclick="setFilters()" type="checkbox" value="${f.id},${fv.id}" id="${id}" />
-                <label class="form-check-label align-self-end" for="${id}">${fv.name}</label>
-            </div>`
+                        return `<div class="form-check d-flex"><input class="form-check-input" name="filv" ${i ? `checked` : null} onclick="setFilters()" type="checkbox" value="${f.id},${fv.id}" id="${id}" /><label class="form-check-label align-self-end" for="${id}">${fv.name}</label></div>`
                     })
                 let filter = `<div><strong>${f.name}</strong></div>`
                 filterValues.forEach(fv => filter += fv)
@@ -215,13 +209,7 @@ async function setProducts(productsOnly) {
 }
 function noProduct(text) {
     $("#products").text('')
-    $("#products").html(`<div>
-                <div class="row justify-content-center justify-content-md-start">
-                    <div style="height: 50vh" class="d-flex justify-content-center align-items-center">
-                        <p class="text-center">${text}</p>
-                    </div>
-                </div>
-            </div>`)
+    $("#products").html(`<div><div class="row justify-content-center justify-content-md-start"><div style="height: 50vh" class="d-flex justify-content-center align-items-center"><p class="text-center">${text}</p></div></div></div>`)
 }
 function clickInput(e, id) {
     id.click()

@@ -8,10 +8,10 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level3")]
-    public class EmployeeController : AbstractController
+    public class EmployeeController : AbstractController<Employee, IEmployee>
     {
         private readonly IEmployee _employee;
-        public EmployeeController(IEntry entry, IEmployee employee): base(entry, Entity.Employee)
+        public EmployeeController(IEntry entry, IEmployee employee) : base(entry, Entity.Employee, employee)
         {
             _employee = employee;
         }

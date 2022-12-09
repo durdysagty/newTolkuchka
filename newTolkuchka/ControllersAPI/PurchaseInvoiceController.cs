@@ -9,13 +9,13 @@ using System.Text.Json;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level2")]
-    public class PurchaseInvoiceController : AbstractController
+    public class PurchaseInvoiceController : AbstractController<PurchaseInvoice, IPurchaseInvoice>
     {
         private readonly IPurchaseInvoice _purchaseInvoice;
         private readonly IPurchase _purchase;
-        public PurchaseInvoiceController(IEntry entry, IPurchaseInvoice PurchaseInvoice, IPurchase purchase) : base(entry, Entity.PurchaseInvoice)
+        public PurchaseInvoiceController(IEntry entry, IPurchaseInvoice purchaseInvoice, IPurchase purchase) : base(entry, Entity.PurchaseInvoice, purchaseInvoice)
         {
-            _purchaseInvoice = PurchaseInvoice;
+            _purchaseInvoice = purchaseInvoice;
             _purchase = purchase;
         }
 

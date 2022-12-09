@@ -46,15 +46,15 @@ namespace newTolkuchka.Controllers
         [Route(ConstantsService.SLASH)]
         [Route(ConstantsService.HOME)]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 10800)]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             ViewBag.MainSlides = _slide.GetSlidesByLayoutAsync(Layout.Main).ToList();
             IQueryable<Product> newProducts = _product.GetFullProducts().OrderByDescending(p => p.Id).Where(p => p.IsNew && !p.NotInUse).Take(4);
-            IEnumerable<UIProduct> newUIProducts = newProducts.Select(p => _product.GetUIProduct(p, null));
-            ViewBag.NewProducts = newUIProducts.Select(u => IProduct.GetHtmlProduct(new UIProduct[1] { u }, _localizer["add-to-cart"], 3, 6, 6));
+            IList<IEnumerable<UIProduct>> newUIProducts = await newProducts.Select(p => _product.GetUIProduct(new Product[1] { p })).ToListAsync();
+            ViewBag.NewProducts = newUIProducts.Select(u => IProduct.GetHtmlProduct(u, _localizer["add-to-cart"], 3, 6, 6));
             IQueryable<Product> recProducts = _product.GetFullProducts().OrderByDescending(p => p.Id).Where(p => p.IsRecommended && !p.NotInUse).Take(4);
-            IEnumerable<UIProduct> recUIProducts = recProducts.Select(p => _product.GetUIProduct(p, null));
-            ViewBag.RecProducts = recUIProducts.Select(r => IProduct.GetHtmlProduct(new UIProduct[1] { r }, _localizer["add-to-cart"], 3, 6, 6));
+            IList<IEnumerable<UIProduct>> recUIProducts = await recProducts.Select(p => _product.GetUIProduct(new Product[1] { p })).ToListAsync();
+            ViewBag.RecProducts = recUIProducts.Select(r => IProduct.GetHtmlProduct(r, _localizer["add-to-cart"], 3, 6, 6));
             IQueryable<Category> mainCategories = _category.GetCategoriesByParentId(0);
             IList<(Category, IEnumerable<string>)> categories = new List<(Category, IEnumerable<string>)>();
             foreach (Category category in mainCategories)
@@ -62,8 +62,8 @@ namespace newTolkuchka.Controllers
                 IList<int> categoryIds = _category.GetAllCategoryIdsHaveProductsByParentId(category.Id);
                 if (categoryIds.Any())
                 {
-                    IEnumerable<UIProduct> products = _product.GetFullProducts(categoryIds).OrderByDescending(p => p.Id).Where(p => !p.NotInUse).Take(4).Select(p => _product.GetUIProduct(p, null));
-                    (Category, IEnumerable<string>) mainCategory = (category, products.Select(p => IProduct.GetHtmlProduct(new UIProduct[1] { p }, _localizer["add-to-cart"], 3, 6, 6)));
+                    IList<IEnumerable<UIProduct>> products = await _product.GetFullProducts(categoryIds).OrderByDescending(p => p.Id).Where(p => !p.NotInUse).Take(4).Select(p => _product.GetUIProduct(new Product[1] { p })).ToListAsync();
+                    (Category, IEnumerable<string>) mainCategory = (category, products.Select(p => IProduct.GetHtmlProduct(p, _localizer["add-to-cart"], 3, 6, 6)));
                     categories.Add(mainCategory);
                 }
             }

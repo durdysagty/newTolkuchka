@@ -9,12 +9,12 @@ using Type = newTolkuchka.Models.Type;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level1")]
-    public class TypeController : AbstractController
+    public class TypeController : AbstractController<Type, IType>
     {
         private readonly IType _type;
-        public TypeController(IEntry entry, IType Type) : base(entry, Entity.Type)
+        public TypeController(IEntry entry, IType type) : base(entry, Entity.Type, type)
         {
-            _type = Type;
+            _type = type;
         }
 
         [HttpGet("{id}")]

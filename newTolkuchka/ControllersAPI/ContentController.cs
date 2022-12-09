@@ -8,10 +8,10 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level3")]
-    public class ContentController : AbstractController
+    public class ContentController : AbstractController<Content, IContent>
     {
         private readonly IContent _content;
-        public ContentController(IEntry entry, IContent content) : base(entry, Entity.Content)
+        public ContentController(IEntry entry, IContent content) : base(entry, Entity.Content, content)
         {
             _content = content;
         }

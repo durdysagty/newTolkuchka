@@ -8,12 +8,12 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level1")]
-    public class BrandController : AbstractController
+    public class BrandController : AbstractController<Brand, IBrand>
     {
         private const int WIDTH = 180;
         private const int HEIGHT = 60;
         private readonly IBrand _brand;
-        public BrandController(IEntry entry, IBrand brand) : base(entry, Entity.Brand)
+        public BrandController(IEntry entry, IBrand brand) : base(entry, Entity.Brand, brand)
         {
             _brand = brand;
         }

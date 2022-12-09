@@ -20,23 +20,40 @@
         string specContent = $"specCon{p.Id}";
         <div id="@id" class="@currentProduct">
             <h4>@IProduct.GetProductName(p)</h4>
-            <div class="row justify-content-center">
+            <div class="row justify-content-between justify-content-lg-start">
                 <div class="col-12 col-md-4">
-                    <img id="@imgId" width="600" height="600" style="width: 100%; height: auto" alt="@p.Brand.Name" src="@PathService.GetImageRelativePath(ConstantsService.PRODUCT, p.Id)" />
-                </div>
-                <div class="col-12 col-md-1 my-2 my-md-0">
-                    <div class="d-flex d-md-block">
-                        @for (int i = 0; i < ConstantsService.PRODUCTMAXIMAGE; i++)
-                        {
-                            if (File.Exists(_pathService.GetImagePath(ConstantsService.PRODUCT + "/small", p.Id, i)))
-                            {
-                                <img role="button" width="200" height="200" style="width: 4rem; height: auto" alt="@p.Brand.Name" src="@PathService.GetImageRelativePath(ConstantsService.PRODUCT + "/small", p.Id, i)" onclick="setImage(@imgId, @i)" />
-                            }
-                            else
-                                break;
-                        }
+                    <div class="row">
+                        <div class="col-auto col-sm-11 col-md-12 col-lg-10">
+                            <img id="@imgId" width="600" height="600" style="width: 100%; height: auto" alt="@p.Brand.Name" src="@PathService.GetImageRelativePath(ConstantsService.PRODUCT, p.Id)" />
+                        </div>
+                        <div class="col-auto col-sm-1 col-md-auto col-lg-2 my-2 my-md-0 px-0 pt-1">
+                            <div class="d-flex d-md-block">
+                                @for (int i = 0; i < ConstantsService.PRODUCTMAXIMAGE; i++)
+                                {
+                                    if (File.Exists(_pathService.GetImagePath(ConstantsService.PRODUCT + "/small", p.Id, i)))
+                                    {
+                                        <img role="button" width="200" height="200" style="width: 100%; height: auto; max-width: 4rem" alt="@p.Brand.Name" src="@PathService.GetImageRelativePath(ConstantsService.PRODUCT + "/small", p.Id, i)" onclick="setImage(@imgId, @i)" />
+                                    }
+                                    else
+                                        break;
+                                }
+                            </div>
+                        </div>
                     </div>
                 </div>
+                @*<div class="col-12 col-md-1 my-2 my-md-0">
+        <div class="d-flex d-md-block">
+        @for (int i = 0; i < ConstantsService.PRODUCTMAXIMAGE; i++)
+        {
+        if (File.Exists(_pathService.GetImagePath(ConstantsService.PRODUCT + "/small", p.Id, i)))
+        {
+        <img role="button" width="200" height="200" style="width: 4rem; height: auto" alt="@p.Brand.Name" src="@PathService.GetImageRelativePath(ConstantsService.PRODUCT + "/small", p.Id, i)" onclick="setImage(@imgId, @i)" />
+        }
+        else
+        break;
+        }
+        </div>
+        </div>*@
                 <div class="col-auto d-flex flex-column justify-content-end">
                     @if (Model.Count() > 1)
                     {
@@ -98,8 +115,14 @@
                         <button name="@buttonName" onclick="order(@p.Id)" type="submit" class="btn btn-primary">@Localizer["add-to-cart"]</button>
                     </div>
                 </div>
-                <div class="col-auto d-flex justify-content-center align-items-center">
-                    <a href="@PathService.GetModelUrl($"https://{CultureProvider.Host}/{ConstantsService.BRAND}", p.BrandId)" class="d-flex justify-content-center align-items-center">
+                <div class="col-auto d-flex flex-column justify-content-start align-items-start pt-2">
+                    @if (p.IsRecommended){
+                        <div class="badge badge-primary me-1">@Localizer["recod"]</div>
+                    }
+                    @if (p.IsNew){
+                        <div class="badge badge-secondary me-1">@Localizer["newed"]</div>
+                    }
+                    <a href="@PathService.GetModelUrl($"https://{CultureProvider.Host}/{ConstantsService.BRAND}", p.BrandId)">
                         <img role="button" width="180" height="60" style="width: 12rem; height: auto" alt="@p.Brand.Name" src="@PathService.GetImageRelativePath($"{ConstantsService.BRAND}", p.BrandId)" />
                     </a>
                 </div>

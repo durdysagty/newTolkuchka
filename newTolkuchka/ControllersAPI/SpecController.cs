@@ -8,10 +8,10 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level1")]
-    public class SpecController : AbstractController
+    public class SpecController : AbstractController<Spec, ISpec>
     {
         private readonly ISpec _spec;
-        public SpecController(IEntry entry, ISpec spec) : base(entry, Entity.Spec)
+        public SpecController(IEntry entry, ISpec spec) : base(entry, Entity.Spec, spec)
         {
             _spec = spec;
         }

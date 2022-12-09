@@ -2,20 +2,21 @@
 using Microsoft.AspNetCore.Mvc;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
+using newTolkuchka.Services;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level1")]
-    public class ProductController : AbstractController
+    public class ProductController : AbstractController<Product, IProduct>
     {
         private const int WIDTH = 600;
         private const int HEIGHT = 600;
         private const int DIVIDER = 3;
         private readonly IProduct _product;
         private readonly ICategory _category;
-        public ProductController(IEntry entry, IProduct product, ICategory category) : base(entry, Entity.Product)
+        public ProductController(IEntry entry, IProduct product, ICategory category) : base(entry, Entity.Product, product)
         {
             _product = product;
             _category = category;
@@ -97,5 +98,16 @@ namespace newTolkuchka.ControllersAPI
             }
             return result;
         }
+
+        //[HttpGet($"{ConstantsService.NOTINUSE}/{{id}}")]
+        //public async Task<Result> ChangeNotInUse(int id)
+        //{
+        //    Product product = await _product.GetFullProductAsync(id);
+        //    if (product == null)
+        //        return Result.Fail;
+        //    product.NotInUse = !product.NotInUse;
+        //    await EditActAsync(product.Id, IProduct.GetProductName(product));
+        //    return Result.Success;
+        //}
     }
 }

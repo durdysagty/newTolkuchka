@@ -8,10 +8,10 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level2")]
-    public class SupplierController : AbstractController
+    public class SupplierController : AbstractController<Supplier, ISupplier>
     {
         private readonly ISupplier _supplier;
-        public SupplierController(IEntry entry, ISupplier supplier) : base(entry, Entity.Supplier)
+        public SupplierController(IEntry entry, ISupplier supplier) : base(entry, Entity.Supplier, supplier)
         {
             _supplier = supplier;
         }

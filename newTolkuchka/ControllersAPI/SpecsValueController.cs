@@ -8,14 +8,14 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level1")]
-    public class SpecsValueController : AbstractController
+    public class SpecsValueController : AbstractController<SpecsValue, ISpecsValue>
     {
         private const int WIDTH = 25;
         private const int HEIGHT = 25;
         private readonly ISpecsValue _specsValue;
-        public SpecsValueController(IEntry entry, ISpecsValue SpecsValue) : base(entry, Entity.SpecsValue)
+        public SpecsValueController(IEntry entry, ISpecsValue specsValue) : base(entry, Entity.SpecsValue, specsValue)
         {
-            _specsValue = SpecsValue;
+            _specsValue = specsValue;
         }
 
         [HttpGet("{id}")]

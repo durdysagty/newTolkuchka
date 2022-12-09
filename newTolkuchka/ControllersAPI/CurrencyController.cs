@@ -9,10 +9,10 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level2")]
-    public class CurrencyController : AbstractController
+    public class CurrencyController : AbstractController<Currency, IActionNoFile<Currency>>
     {
         private readonly IActionNoFile<Currency> _currency;
-        public CurrencyController(IEntry entry, IActionNoFile<Currency> currency) : base(entry, Entity.Currency)
+        public CurrencyController(IEntry entry, IActionNoFile<Currency> currency) : base(entry, Entity.Currency, currency)
         {
             _currency = currency;
         }

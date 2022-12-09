@@ -8,10 +8,10 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level1")]
-    public class WarrantyController : AbstractController
+    public class WarrantyController : AbstractController<Warranty, IWarranty>
     {
         private readonly IWarranty _warranty;
-        public WarrantyController(IEntry entry, IWarranty warranty) : base(entry, Entity.Warranty)
+        public WarrantyController(IEntry entry, IWarranty warranty) : base(entry, Entity.Warranty, warranty)
         {
             _warranty = warranty;
         }

@@ -8,10 +8,10 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level3")]
-    public class PositionController : AbstractController
+    public class PositionController : AbstractController<Position, IPosition>
     {
         private readonly IPosition _position;
-        public PositionController(IEntry entry, IPosition position): base(entry, Entity.Position)
+        public PositionController(IEntry entry, IPosition position): base(entry, Entity.Position, position)
         {
             _position = position;
         }

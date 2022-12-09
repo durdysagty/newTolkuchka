@@ -2,20 +2,21 @@
 using Microsoft.AspNetCore.Mvc;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
+using newTolkuchka.Services;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level1")]
-    public class SlideController : AbstractController
+    public class SlideController : AbstractController<Slide, ISlide>
     {
         private const int WIDTH = 990;
         private const int HEIGHT = 450;
         private const int LEFTWIDTH = 220;
         private const int LEFTHEIGHT = 300;
         private readonly ISlide _slide;
-        public SlideController(IEntry entry, ISlide slide) : base(entry, Entity.Slide)
+        public SlideController(IEntry entry, ISlide slide) : base(entry, Entity.Slide, slide)
         {
             _slide = slide;
         }
@@ -70,5 +71,15 @@ namespace newTolkuchka.ControllersAPI
                 await DeleteActAsync(id, slide.Name);
             return result;
         }
+        //[HttpGet($"{ConstantsService.NOTINUSE}/{{id}}")]
+        //public async Task<Result> ChangeNotInUse(int id)
+        //{
+        //    Slide slide = await _slide.GetModelAsync(id);
+        //    if (slide == null)
+        //        return Result.Fail;
+        //    slide.NotInUse = !slide.NotInUse;
+        //    await EditActAsync(slide.Id, slide.Name);
+        //    return Result.Success;
+        //}
     }
 }

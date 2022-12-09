@@ -12,6 +12,6 @@ namespace newTolkuchka.Models.DTO
         [Column(TypeName = "decimal(18,2)")]
         public decimal? NewPrice { get; set; }
         [Column(TypeName = "decimal(18,2)")]
-        public bool IsInUse { get; set; }
+        public bool NotInUse { get; set; }
     }
 }

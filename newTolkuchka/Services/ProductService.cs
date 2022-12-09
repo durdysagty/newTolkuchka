@@ -59,7 +59,7 @@ namespace newTolkuchka.Services
                 Category = p.Category.NameRu,
                 Price = p.Price,
                 NewPrice = p.NewPrice,
-                IsInUse = !p.NotInUse
+                NotInUse = !p.NotInUse
             });
             pagination = GetPagination(pp, preProducts.Count(), adminProducts.Count(), toSkip, out int lp);
             lastPage = lp;
@@ -214,13 +214,13 @@ namespace newTolkuchka.Services
                 };
                 //uiProducts = preProducts.Select(pp => GetUIProduct(pp, GetProducts(null, null, null, null, pp.ModelId).Count())).ToArray();
                 //uiProducts = preProductsDistinct.Select(pp => GetUIProduct(pp, pp.ModelId)).ToArray();
-                uiProducts = preProductsDistinct.Select(pp => GetUIProduct2(preProducts.Where(p => p.ModelId == pp.ModelId).ToList())).ToArray();
+                uiProducts = preProductsDistinct.Select(pp => GetUIProduct(preProducts.Where(p => p.ModelId == pp.ModelId).ToList())).ToArray();
             }
             else
             {
                 //uiProducts = preProducts.Select(pp => GetUIProduct(pp, GetProducts(null, null, null, null, pp.ModelId).Count())).ToArray();
                 //uiProducts = preProductsDistinct.Select(pp => GetUIProduct(pp, p.ModelId)).ToArray();
-                uiProducts = preProductsDistinct.Select(pp => GetUIProduct2(preProducts.Where(p => p.ModelId == pp.ModelId).ToList())).ToArray();
+                uiProducts = preProductsDistinct.Select(pp => GetUIProduct(preProducts.Where(p => p.ModelId == pp.ModelId).ToList())).ToArray();
                 uiProducts = sort switch
                 {
                     Sort.NameZA => uiProducts.OrderByDescending(p => p.FirstOrDefault().Name).Skip(toSkip).Take(pp).ToList(),
@@ -341,27 +341,25 @@ namespace newTolkuchka.Services
         //        New = p.IsNew ? _localizer["newed"] : null
         //    };
         //}
-
-        public UIProduct GetUIProduct(Product p, IList<Product> sameModels)
-        {
-            //IEnumerable<Product> products = GetProducts(null, null, null, null, sameModels);
-            //an only one imaged specsvalue in a product is expected
-            // if multiple images specasvalues are expected, then not firstordefault and sequenceeauale coulde be used
-            IEnumerable<(int, decimal, decimal)> imagedProductsIds = sameModels?.DistinctBy(p => p.ProductSpecsValues.Where(psv => psv.SpecsValue.Spec.IsImaged).Select(psv => psv.SpecsValue.Id).FirstOrDefault()).Select(p => (p.Id, IProduct.GetConvertedPrice(p.Price), p.NewPrice == null ? 0 : IProduct.GetConvertedPrice((decimal)p.NewPrice)));
-            return new UIProduct()
-            {
-                Id = p.Id,
-                Name = sameModels != null ? IProduct.GetProductName(p, sameModels.Count) : IProduct.GetProductName(p),
-                Price = IProduct.GetConvertedPrice(p.Price),
-                NewPrice = p.NewPrice == null ? null : IProduct.GetConvertedPrice((decimal)p.NewPrice),
-                ImageMain = PathService.GetImageRelativePath(ConstantsService.PRODUCT + "/small", p.Id),
-                Recommended = p.IsRecommended ? _localizer["recod"] : null,
-                New = p.IsNew ? _localizer["newed"] : null,
-                Others = sameModels != null ? imagedProductsIds : null
-            };
-        }
-
-        public IEnumerable<UIProduct> GetUIProduct2(IList<Product> sameModels)
+        //public UIProduct GetUIProduct(Product p, IList<Product> sameModels)
+        //{
+        //    //IEnumerable<Product> products = GetProducts(null, null, null, null, sameModels);
+        //    //an only one imaged specsvalue in a product is expected
+        //    // if multiple images specasvalues are expected, then not firstordefault and sequenceeauale coulde be used
+        //    IEnumerable<(int, decimal, decimal)> imagedProductsIds = sameModels?.DistinctBy(p => p.ProductSpecsValues.Where(psv => psv.SpecsValue.Spec.IsImaged).Select(psv => psv.SpecsValue.Id).FirstOrDefault()).Select(p => (p.Id, IProduct.GetConvertedPrice(p.Price), p.NewPrice == null ? 0 : IProduct.GetConvertedPrice((decimal)p.NewPrice)));
+        //    return new UIProduct()
+        //    {
+        //        Id = p.Id,
+        //        Name = sameModels != null ? IProduct.GetProductName(p, sameModels.Count) : IProduct.GetProductName(p),
+        //        Price = IProduct.GetConvertedPrice(p.Price),
+        //        NewPrice = p.NewPrice == null ? null : IProduct.GetConvertedPrice((decimal)p.NewPrice),
+        //        ImageMain = PathService.GetImageRelativePath(ConstantsService.PRODUCT + "/small", p.Id),
+        //        Recommended = p.IsRecommended ? _localizer["recod"] : null,
+        //        New = p.IsNew ? _localizer["newed"] : null,
+        //        Others = sameModels != null ? imagedProductsIds : null
+        //    };
+        //}
+        public IEnumerable<UIProduct> GetUIProduct(IList<Product> sameModels)
         {
             IEnumerable<Product> distinct = sameModels.DistinctBy(p => p.ProductSpecsValues.Where(psv => psv.SpecsValue.Spec.IsImaged).Select(psv => psv.SpecsValue.Id).FirstOrDefault());
             return distinct.Select(p =>  new UIProduct()
