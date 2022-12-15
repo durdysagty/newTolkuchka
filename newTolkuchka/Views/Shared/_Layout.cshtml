@@ -1,6 +1,6 @@
 ﻿@{
     bool isAuth = User.Identity.IsAuthenticated;
-    bool filterScript = ViewBag.FilterScript;
+    bool? filterScript = ViewBag.FilterScript;
     int? width = ViewBag.WindowWidth;
     IEnumerable<Category> mainCategories = ViewBag.MainCategories;
     //href, name
@@ -400,7 +400,7 @@
             $('.sidenav').sidenav();
         });
     </script>
-    @if (filterScript)
+    @if ((bool)filterScript)
     {
         <link rel="stylesheet" href="~/lib/range/ion.rangeSlider.min.css" />
         <script src="~/lib/range/ion.rangeSlider.min.js" asp-append-version="true"></script>

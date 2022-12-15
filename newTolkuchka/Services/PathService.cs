@@ -17,7 +17,7 @@ namespace newTolkuchka.Services
         }
         public string GetImagePath(string folder, int id, int imageNumber = 0)
         {
-            return Path.Combine(GetImagesFolder(), folder, $"{id}-{imageNumber}.jpg");
+            return Path.Combine(GetImagesFolder(), folder.ToLower(), $"{id}-{imageNumber}.jpg");
         }
         public string GetHtmlBodyPath()
         {
@@ -47,12 +47,12 @@ namespace newTolkuchka.Services
         }
         public string GetLogo()
         {
-            return $"{CultureProvider.SiteName}/logo.png";
+            return $"{CultureProvider.SiteUrlRu}/logo.png";
         }
         // statics
         public static string GetImageRelativePath(string folder, int id, int imageNumber = 0)
         {
-            return Path.Combine($"/images/{folder}/{id}-{imageNumber}.jpg");
+            return Path.Combine($"/images/{folder.ToLower()}/{id}-{imageNumber}.jpg");
         }
         public static string GetModelUrl(string modelName, int id)
         {

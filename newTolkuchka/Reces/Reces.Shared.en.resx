@@ -348,10 +348,10 @@
   <data name="specifications" xml:space="preserve">
     <value>specifications</value>
   </data>
-  <data name="specsValue" xml:space="preserve">
+  <data name="specsvalue" xml:space="preserve">
     <value>SpecsValue</value>
   </data>
-  <data name="specsValueMod" xml:space="preserve">
+  <data name="specsvaluemod" xml:space="preserve">
     <value>SpecsValueMod</value>
   </data>
   <data name="sum" xml:space="preserve">

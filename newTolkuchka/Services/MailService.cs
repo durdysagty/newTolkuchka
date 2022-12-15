@@ -34,7 +34,7 @@ namespace newTolkuchka.Services
 
                 using var client = new SmtpClient();
                 await client.ConnectAsync("smtp.mail.ru", 465, true);
-                await client.AuthenticateAsync(box, "3Id*pYioMf4U");
+                await client.AuthenticateAsync(box, Secrets.mailPas);
                 await client.SendAsync(emailMessage);
 
                 await client.DisconnectAsync(true);

@@ -59,6 +59,7 @@
         public const string RECOMMENDED = "recommended";
         public const string NEW = "new";
         public const string NOTINUSE = "notinuse";
+        public const string N404 = "404";
         // images
         public const int PRODUCTMAXIMAGE = 5;
         public const int BRANDMAXIMAGE = 1;

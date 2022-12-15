@@ -59,7 +59,9 @@ namespace newTolkuchka.Services
                 Category = p.Category.NameRu,
                 Price = p.Price,
                 NewPrice = p.NewPrice,
-                NotInUse = !p.NotInUse
+                NotInUse = !p.NotInUse,
+                IsRecommended = p.IsRecommended,
+                IsNew = p.IsNew
             });
             pagination = GetPagination(pp, preProducts.Count(), adminProducts.Count(), toSkip, out int lp);
             lastPage = lp;

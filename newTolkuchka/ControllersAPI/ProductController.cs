@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services;
@@ -98,16 +99,19 @@ namespace newTolkuchka.ControllersAPI
             }
             return result;
         }
-
-        //[HttpGet($"{ConstantsService.NOTINUSE}/{{id}}")]
-        //public async Task<Result> ChangeNotInUse(int id)
-        //{
-        //    Product product = await _product.GetFullProductAsync(id);
-        //    if (product == null)
-        //        return Result.Fail;
-        //    product.NotInUse = !product.NotInUse;
-        //    await EditActAsync(product.Id, IProduct.GetProductName(product));
-        //    return Result.Success;
-        //}
+        [HttpPost("changeprice")]
+        public async Task<Result> Post([FromForm] decimal price, [FromForm] int[] priceIds, [FromForm] int[] newPriceIds)
+        {
+            IList<Product> products = await _product.GetFullProducts(null, null, null, null, null, priceIds.Concat(newPriceIds).Distinct().ToList()).ToListAsync();
+            foreach (Product product in products)
+            {
+                if (priceIds.Contains(product.Id))
+                    product.Price = price;
+                if (newPriceIds.Contains(product.Id))
+                    product.NewPrice = price == 0 ? null : price;
+                await EditActAsync(product.Id, IProduct.GetProductName(product));
+            }
+            return Result.Success;
+        }
     }
 }

@@ -60,7 +60,7 @@ namespace newTolkuchka.Services.Abstracts
         public async Task EditModelAsync(T model, IFormFile[] images, int width, int height, int? divider = null)
         {
             _con.Entry(model).State = EntityState.Modified;
-            if (images.Any(i => i.Length > 0))
+            if (images.Any(i => i.Length > 0) || images.Any(i => i.FileName == "delete"))
                 await SetModelImages(model, images, width, height, divider);
         }
 
@@ -75,6 +75,12 @@ namespace newTolkuchka.Services.Abstracts
                     await _image.SetImage(_path.GetImagePath(type.Name, id, i), images[i], width, height);
                     if (divider != null)
                         await _image.SetImage(_path.GetImagePath($"{type.Name}/small", id, i), images[i], width / (int)divider, height / (int)divider);
+                }
+                if (images[i].FileName == "delete")
+                {
+                    _image.DeleteImages(new Stack<string>(new string[] {_path.GetImagePath(type.Name, id, i)}));
+                    if (divider != null)
+                        _image.DeleteImages(new Stack<string>(new string[] { _path.GetImagePath($"{type.Name}/small", id, i) }));
                 }
             }
         }

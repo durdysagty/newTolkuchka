@@ -345,10 +345,10 @@
   <data name="specifications" xml:space="preserve">
     <value>характеристики</value>
   </data>
-  <data name="specsValue" xml:space="preserve">
+  <data name="specsvalue" xml:space="preserve">
     <value>Значение характеристики</value>
   </data>
-  <data name="specsValueMod" xml:space="preserve">
+  <data name="specsvaluemod" xml:space="preserve">
     <value>Разновидность значения</value>
   </data>
   <data name="sum" xml:space="preserve">

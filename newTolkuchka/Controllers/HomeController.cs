@@ -51,10 +51,10 @@ namespace newTolkuchka.Controllers
             ViewBag.MainSlides = _slide.GetSlidesByLayoutAsync(Layout.Main).ToList();
             IQueryable<Product> newProducts = _product.GetFullProducts().OrderByDescending(p => p.Id).Where(p => p.IsNew && !p.NotInUse).Take(4);
             IList<IEnumerable<UIProduct>> newUIProducts = await newProducts.Select(p => _product.GetUIProduct(new Product[1] { p })).ToListAsync();
-            ViewBag.NewProducts = newUIProducts.Select(u => IProduct.GetHtmlProduct(u, _localizer["add-to-cart"], 3, 6, 6));
+            ViewBag.NewProducts = newUIProducts.Select(u => IProduct.GetHtmlProduct(u, _localizer["add-to-cart"], 3, 3, 4, 4, 6, 6, 6, 12));
             IQueryable<Product> recProducts = _product.GetFullProducts().OrderByDescending(p => p.Id).Where(p => p.IsRecommended && !p.NotInUse).Take(4);
             IList<IEnumerable<UIProduct>> recUIProducts = await recProducts.Select(p => _product.GetUIProduct(new Product[1] { p })).ToListAsync();
-            ViewBag.RecProducts = recUIProducts.Select(r => IProduct.GetHtmlProduct(r, _localizer["add-to-cart"], 3, 6, 6));
+            ViewBag.RecProducts = recUIProducts.Select(r => IProduct.GetHtmlProduct(r, _localizer["add-to-cart"], 3, 3, 4, 4, 6, 6, 6, 12));
             IQueryable<Category> mainCategories = _category.GetCategoriesByParentId(0);
             IList<(Category, IEnumerable<string>)> categories = new List<(Category, IEnumerable<string>)>();
             foreach (Category category in mainCategories)
@@ -63,7 +63,7 @@ namespace newTolkuchka.Controllers
                 if (categoryIds.Any())
                 {
                     IList<IEnumerable<UIProduct>> products = await _product.GetFullProducts(categoryIds).OrderByDescending(p => p.Id).Where(p => !p.NotInUse).Take(4).Select(p => _product.GetUIProduct(new Product[1] { p })).ToListAsync();
-                    (Category, IEnumerable<string>) mainCategory = (category, products.Select(p => IProduct.GetHtmlProduct(p, _localizer["add-to-cart"], 3, 6, 6)));
+                    (Category, IEnumerable<string>) mainCategory = (category, products.Select(p => IProduct.GetHtmlProduct(p, _localizer["add-to-cart"], 3, 3, 4, 4, 6, 6, 6, 12)));
                     categories.Add(mainCategory);
                 }
             }
@@ -72,7 +72,6 @@ namespace newTolkuchka.Controllers
             CreateMetaData();
             return View();
         }
-
         [Route(ConstantsService.CATEGORIES)]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
         public async Task<IActionResult> Categories()
@@ -81,7 +80,6 @@ namespace newTolkuchka.Controllers
             CreateMetaData(ConstantsService.CATEGORIES, _breadcrumbs.GetBreadcrumbs());
             return View(categories);
         }
-
         [Route(ConstantsService.BRANDS)]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
         public IActionResult Brands()
@@ -90,12 +88,13 @@ namespace newTolkuchka.Controllers
             CreateMetaData(ConstantsService.BRANDS, _breadcrumbs.GetBreadcrumbs());
             return View(brands);
         }
-
         [Route($"{ConstantsService.CATEGORY}/{{id}}")]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
         public async Task<IActionResult> Category(int id)
         {
             Category category = await _category.GetModelAsync(id);
+            if (category == null)
+                return GetNotFoundPage();
             string localName = CultureProvider.GetLocalName(category.NameRu, category.NameEn, category.NameTm);
             ViewBag.Categories = _category.GetCategoriesByParentId(id);
             CreateMetaData(ConstantsService.CATEGORY, await _breadcrumbs.GetCategoryBreadcrumbsAsync(category.ParentId), localName, true);
@@ -107,18 +106,23 @@ namespace newTolkuchka.Controllers
         public async Task<IActionResult> Brand(int id)
         {
             Brand brand = await _brand.GetModelAsync(id);
+            if (brand == null)
+                return GetNotFoundPage();
             CreateMetaData(ConstantsService.BRAND, _breadcrumbs.GetBrandBreadcrumbs(), brand.Name, true);
             return View();
         }
-
         [Route($"{ConstantsService.PRODUCT}/{{id}}")]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 10800)]
         public async Task<IActionResult> Product(int id)
         {
             //Product product = await _product.GetFullProducts(null, null, null, null, new int[1] { id }).AsNoTracking().FirstOrDefaultAsync();
             Product product = await _product.GetFullProducts(null, null, null, null, null, new int[1] { id }).FirstOrDefaultAsync();
+            if (product == null)
+                return GetNotFoundPage();
             string localName = IProduct.GetProductName(product);
             CreateMetaData(ConstantsService.PRODUCT, await _breadcrumbs.GetProductBreadcrumbs(product.CategoryId), localName, true, false);
+            if (product.NotInUse)
+                return View();
             IQueryable<Product> products = _product.GetFullProducts(null, null, null, null, product.ModelId).Where(p => !p.NotInUse).AsNoTrackingWithIdentityResolution();
             if (!products.Any())
                 return View();
@@ -143,7 +147,6 @@ namespace newTolkuchka.Controllers
             ViewBag.Current = product.Id;
             return View(products);
         }
-
         [Route(ConstantsService.SEARCH)]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
         public IActionResult Search(string search)
@@ -153,15 +156,15 @@ namespace newTolkuchka.Controllers
             CreateMetaData(ConstantsService.SEARCH, _breadcrumbs.GetBreadcrumbs(), _localizer["search"].Value, true);
             return View();
         }
-
-        [Route($"{{special}}")]
+        //[Route($"{{special}}")]
+        [Route(ConstantsService.NOVELTIES)]
+        [Route(ConstantsService.RECOMMENDED)]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
         public IActionResult Special(string special)
         {
             CreateMetaData(special, _breadcrumbs.GetBreadcrumbs(), null, true);
             return View();
         }
-
         [Route(ConstantsService.ABOUT)]
         [Route($"{ConstantsService.DELIVERY}")]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 259200)]
@@ -182,7 +185,6 @@ namespace newTolkuchka.Controllers
             }
             return View(null, content);
         }
-
         [Route($"{ConstantsService.PRODUCTS}")]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 7200)]
         public async Task<JsonResult> Products(string model, int id, bool productsOnly, int[] t, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp = 20, string search = null)
@@ -233,7 +235,7 @@ namespace newTolkuchka.Controllers
                     noProduct = _localizer["noProductAbsolutly"].Value
                 });
             IList<IEnumerable<UIProduct>> /*IEnumerable<UIProduct>*/ uiProducts = _product.GetUIData(productsOnly, list, t, b, v, minp, maxp, sort, page, pp, out IList<AdminType> types, out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage);
-            IEnumerable<string> products = uiProducts.Select(p => IProduct.GetHtmlProduct(p, _localizer["add-to-cart"]));
+            IEnumerable<string> products = uiProducts.Select(p => IProduct.GetHtmlProduct(p, _localizer["add-to-cart"], 3, 4, 4, 4, 6, 6, 6, 12));
             return new JsonResult(new
             {
                 products,
@@ -261,7 +263,6 @@ namespace newTolkuchka.Controllers
                 noProduct = uiProducts.Any() ? null : _localizer["noProduct"].Value
             });
         }
-
         [Route($"{ConstantsService.CART}")]
         public async Task<IActionResult> Cart()
         {
@@ -277,7 +278,6 @@ namespace newTolkuchka.Controllers
                 };
             return View();
         }
-
         [Route($"{ConstantsService.CART}/data"), HttpPost]
         public JsonResult CartData([FromBody] CartOrder[] orders)
         {
@@ -299,7 +299,6 @@ namespace newTolkuchka.Controllers
                 deliveryPrice = _deliveryPrice
             });
         }
-
         [Route($"{ConstantsService.ORDER}"), HttpPost]
         public async Task<JsonResult> Order([FromForm] string orders, [FromForm] DeliveryData deliveryData)
         {
@@ -351,7 +350,7 @@ namespace newTolkuchka.Controllers
                 success = _localizer["order-success"].Value
             });
         }
-
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 3600)]
         [Route($"{ConstantsService.ACCOUNT}")]
         public async Task<IActionResult> Account()
         {
@@ -376,6 +375,17 @@ namespace newTolkuchka.Controllers
                 }
             }
             return await AccountGeneric(user);
+        }
+        [Route($"{ConstantsService.N404}")]
+        public IActionResult NotFoundPage()
+        {
+            CreateMetaData();
+            return View();
+        }
+        private IActionResult GetNotFoundPage()
+        {
+            CreateMetaData();
+            return View("NotFoundPage");
         }
         private async Task<IActionResult> AccountGeneric(User user)
         {
@@ -406,7 +416,6 @@ namespace newTolkuchka.Controllers
                     ViewBag.MainCategories = _category.GetCategoriesByParentId(0);
             }
         }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

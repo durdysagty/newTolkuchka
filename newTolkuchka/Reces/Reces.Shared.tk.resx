@@ -351,10 +351,10 @@
   <data name="specifications" xml:space="preserve">
     <value>aýratynlyklar</value>
   </data>
-  <data name="specsValue" xml:space="preserve">
+  <data name="specsvalue" xml:space="preserve">
     <value>Aýratynlyk gymmaty</value>
   </data>
-  <data name="specsValueMod" xml:space="preserve">
+  <data name="specsvaluemod" xml:space="preserve">
     <value>Gymmatyň görnüşi</value>
   </data>
   <data name="sum" xml:space="preserve">

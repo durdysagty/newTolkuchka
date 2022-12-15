@@ -75,24 +75,73 @@
                                         {
                                             // get specsvalues that is in current product but not in this spec
                                             IList<SpecsValue> currentSV = p.ProductSpecsValues.Select(x => x.SpecsValue).Where(x => x.Spec.NamingOrder != null && x.SpecId != s.Id).ToList();
-                                            // if the sv is not in current product then add sv to currentSV and seek the product that is gor all svs
+                                            // the sv is not in current product thus add sv to currentSV and seek the product that is got all svs
                                             currentSV.Add(sv);
                                             getIp = Model.SingleOrDefault(m => m.ProductSpecsValues.Select(x => x.SpecsValue).Where(x => x.Spec.NamingOrder != null).All(x => currentSV.Any(y => y.Id == x.Id)))?.Id;
-                                            function = getIp != null ? $"role=button onclick=getProduct({getIp})" : null;
-                                        }
-                                        @if (isActive || getIp != null)
-                                        {
-                                            <div class="d-inline-block p-1 me-1 border rounded @border">
-                                                @if (s.Is)
+                                            // if there is no product that matchs with given spec values (with current product specs values)
+                                            if (getIp == null)
+                                            {
+                                                // is any products of given model has ProductsSpecsValue with given SpecsValue
+                                                IList<Product> seekingProducts = Model.Where(m => m.Id != p.Id && m.ProductSpecsValues.Any(psv => psv.SpecsValueId == sv.Id)).ToList();
+                                                // if more than one product has given SpecsValue
+                                                if (seekingProducts.Count > 1)
                                                 {
-                                                    <img width="25" height="25" style="width: 1.5rem; height: auto" src="@PathService.GetImageRelativePath(ConstantsService.SPECSVALUE, sv.Id)" title="@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)" alt="@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)" @function />
+                                                    // get all specsvalues by specs list except looped spec and specsvalues except actual product specsvalues
+                                                    IEnumerable<IEnumerable<SpecsValue>> specsValuesList = specs.Where(x => x.Id != s.Id).Select(s => s.List.Where(v => p.ProductSpecsValues.Any(psv => psv.SpecsValueId != v.Id)));
+                                                    // loop all specs
+                                                    foreach (IEnumerable<SpecsValue> specsValues in specsValuesList)
+                                                    {
+                                                        // loop all specs value of given spec
+                                                        foreach (SpecsValue specsValue in specsValues)
+                                                        {
+                                                            IList<Product> testProducts = seekingProducts.Where(s => s.ProductSpecsValues.Any(psv => psv.SpecsValueId == specsValue.Id)).ToList();
+                                                            // if we got any products we need to constrict seekingproducts, no need if we did not get any product
+                                                            if (testProducts.Any())
+                                                                seekingProducts = testProducts;
+                                                            // if count constricted to 1, then break, we got that son of a bitch
+                                                            if (seekingProducts.Count == 1)
+                                                                break;
+                                                        }
+                                                        // if count constricted to 1, no need to continue
+                                                        if (seekingProducts.Count == 1)
+                                                            break;
+                                                    }
                                                 }
-                                                else
-                                                {
-                                                    <span @function>@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)</span>
-                                                }
-                                            </div>
+                                                getIp = seekingProducts.FirstOrDefault().Id;
+                                                @*  // we start to seek the product that not correspond with actual ptoduct specs values
+                    foreach (ModelWithList<SpecsValue> s2 in specs.Where(x => x.Id != s.Id))
+                    {
+                    SpecsValue toRemove = currentSV.FirstOrDefault(x => s2.List.Any(y => y.Id == x.Id));
+                    currentSV.Remove(toRemove);
+                    foreach(var sv2 in s2.List.Where(x => x.Id != toRemove.Id))
+                    {
+                    // SpecsValue toRemove = currentSV.FirstOrDefault(x => x.Id == s2.Id);
+                    // currentSV.Remove(toRemove);
+                    currentSV.Add(sv2);
+                    getIp = Model.SingleOrDefault(m => m.ProductSpecsValues.Select(x => x.SpecsValue).Where(x => x.Spec.NamingOrder != null).All(x => currentSV.Any(y => y.Id == x.Id)))?.Id;
+                    if (getIp != null)
+                    break;
+                    currentSV.Remove(sv2);
+
+                    }
+                    if (getIp != null)
+                    break;
+                    currentSV.Add(toRemove);
+                    }*@
+                                            }
+                                            function = $"role=button onclick=getProduct({getIp})";
                                         }
+
+                                        <div class="d-inline-block p-1 me-1 border rounded @border">
+                                            @if (s.Is)
+                                            {
+                                                <img width="25" height="25" style="width: 1.5rem; height: auto" src="@PathService.GetImageRelativePath(ConstantsService.SPECSVALUE, sv.Id)" title="@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)" alt="@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)" @function />
+                                            }
+                                            else
+                                            {
+                                                <span @function>@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)</span>
+                                            }
+                                        </div>
 
                                     }
                                 </div>
@@ -116,10 +165,12 @@
                     </div>
                 </div>
                 <div class="col-auto d-flex flex-column justify-content-start align-items-start pt-2">
-                    @if (p.IsRecommended){
+                    @if (p.IsRecommended)
+                    {
                         <div class="badge badge-primary me-1">@Localizer["recod"]</div>
                     }
-                    @if (p.IsNew){
+                    @if (p.IsNew)
+                    {
                         <div class="badge badge-secondary me-1">@Localizer["newed"]</div>
                     }
                     <a href="@PathService.GetModelUrl($"https://{CultureProvider.Host}/{ConstantsService.BRAND}", p.BrandId)">
