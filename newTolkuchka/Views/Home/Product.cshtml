@@ -77,7 +77,7 @@
                                             IList<SpecsValue> currentSV = p.ProductSpecsValues.Select(x => x.SpecsValue).Where(x => x.Spec.NamingOrder != null && x.SpecId != s.Id).ToList();
                                             // the sv is not in current product thus add sv to currentSV and seek the product that is got all svs
                                             currentSV.Add(sv);
-                                            getIp = Model.SingleOrDefault(m => m.ProductSpecsValues.Select(x => x.SpecsValue).Where(x => x.Spec.NamingOrder != null).All(x => currentSV.Any(y => y.Id == x.Id)))?.Id;
+                                            getIp = Model.FirstOrDefault(m => m.ProductSpecsValues.Select(x => x.SpecsValue).Where(x => x.Spec.NamingOrder != null).All(x => currentSV.Any(y => y.Id == x.Id)))?.Id;
                                             // if there is no product that matchs with given spec values (with current product specs values)
                                             if (getIp == null)
                                             {
@@ -198,8 +198,15 @@
                                 <tr>
                                     <td>@CultureProvider.GetLocalName(ms.Spec.NameRu, ms.Spec.NameEn, ms.Spec.NameTm)</td>
                                     @{
-                                        SpecsValue sv = p.ProductSpecsValues.FirstOrDefault(x => x.SpecsValue.SpecId == ms.SpecId).SpecsValue; // if nulll
-                                        <td>@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)</td>
+                                        SpecsValue sv = p.ProductSpecsValues.FirstOrDefault(x => x.SpecsValue.SpecId == ms.SpecId)?.SpecsValue; // if null
+                                        @if (sv != null)
+                                        {
+                                            <td>@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)</td>
+                                        }
+                                        else
+                                        {
+                                            <td> - </td>
+                                        }
                                     }
                                 </tr>
                             }

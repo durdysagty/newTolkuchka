@@ -5,6 +5,7 @@ using newTolkuchka.Models.DTO;
 using newTolkuchka.Reces;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
+using System.Text.RegularExpressions;
 
 namespace newTolkuchka.Services
 {
@@ -161,10 +162,6 @@ namespace newTolkuchka.Services
                                 });
                         }
                     }
-                    // ordering filters & filter values
-                    foreach (var f in filters)
-                        f.FilterValues = f.FilterValues.OrderBy(fv => fv.Name).ToList();
-                    filters = filters.OrderBy(f => f.Order).ToList();
                     if (min != 0)
                     {
                         min = (int)(p.NewPrice != null ? min > p.NewPrice ? p.NewPrice : min : min > p.Price ? p.Price : min);
@@ -199,6 +196,17 @@ namespace newTolkuchka.Services
                         continue;
                 }
                 preProducts.Add(p);
+            }
+            if (!productsOnly)
+            {
+                // ordering filters & filter values
+                foreach (var f in filters)
+                {
+                    //Regex regex = new Regex(f.Name);
+                    f.FilterValues = f.FilterValues.OrderBy(f => f, new CompareService()).ToList();
+                    //f.FilterValues = f.FilterValues.OrderBy(fv => fv.Name).ToList();
+                }
+                filters = filters.OrderBy(f => f.Order).ToList();
             }
             //preProducts = preProducts.OrderBy(p => p.NewPrice != null ? p.NewPrice : p.Price).DistinctBy(p => p.ModelId).ToList();
             // to get minimal price products first

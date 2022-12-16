@@ -36,24 +36,25 @@ namespace newTolkuchka.Services.Abstracts
                 await SetModelImages(model, images, width, height, divider);
             else
             {
-                // if no files are downloaded, then copy the files of sposor model
-                string[] files = Directory.GetFiles($"{_path.GetImagesFolder()}/{type.Name}", $"{simId}-*", SearchOption.AllDirectories);
+                // if no files are downloaded, then copy the files of sponsor model
+                string[] files = Directory.GetFiles($"{_path.GetImagesFolder()}/{type.Name.ToLower()}", $"{simId}-*", SearchOption.AllDirectories);
                 id = GetModelId(type, model);
                 int n = 0;
                 int s = 0;
-                foreach (string f in files)
-                {
-                    if (f.Contains("small"))
+                if (files.Any())
+                    foreach (string f in files)
                     {
-                        File.Copy(f, _path.GetImagePath($"{type.Name}/small", id, s));
-                        s++;
+                        if (f.Contains("small"))
+                        {
+                            File.Copy(f, _path.GetImagePath($"{type.Name}/small", id, s));
+                            s++;
+                        }
+                        else
+                        {
+                            File.Copy(f, _path.GetImagePath(type.Name, id, n));
+                            n++;
+                        }
                     }
-                    else
-                    {
-                        File.Copy(f, _path.GetImagePath(type.Name, id, n));
-                        n++;
-                    }
-                }
             }
         }
 
@@ -78,7 +79,7 @@ namespace newTolkuchka.Services.Abstracts
                 }
                 if (images[i].FileName == "delete")
                 {
-                    _image.DeleteImages(new Stack<string>(new string[] {_path.GetImagePath(type.Name, id, i)}));
+                    _image.DeleteImages(new Stack<string>(new string[] { _path.GetImagePath(type.Name, id, i) }));
                     if (divider != null)
                         _image.DeleteImages(new Stack<string>(new string[] { _path.GetImagePath($"{type.Name}/small", id, i) }));
                 }
