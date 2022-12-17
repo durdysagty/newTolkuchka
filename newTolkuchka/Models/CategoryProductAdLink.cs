@@ -1,4 +1,4 @@
-﻿namespace newTolkuchka.Models
+﻿namespace newTolkuchka.Models // to remove
 {
     public class CategoryProductAdLink
     {

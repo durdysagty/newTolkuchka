@@ -15,7 +15,8 @@ namespace newTolkuchka.Models
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<CategoryAdLink> CategoryAdLinks { get; set; }
-        public DbSet<CategoryProductAdLink> CategoryProductAdLinks { get; set; }
+        public DbSet<CategoryModelAdLink> CategoryModelAdLinks { get; set; }
+        public DbSet<CategoryProductAdLink> CategoryProductAdLinks { get; set; } // to remove
         public DbSet<Currency> Currencies { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Entry> Entries { get; set; }
@@ -73,8 +74,10 @@ namespace newTolkuchka.Models
             builder.Entity<Warranty>().HasIndex(i => i.NameEn).IsUnique();
             builder.Entity<Warranty>().HasIndex(i => i.NameTm).IsUnique();
             builder.Entity<CategoryAdLink>().HasKey(x => new { x.CategoryId, x.StepParentId });
-            builder.Entity<CategoryProductAdLink>().HasKey(x => new { x.CategoryId, x.ProductId });
-            builder.Entity<CategoryProductAdLink>().HasOne(x => x.Product).WithMany(x => x.CategoryProductAdLinks).OnDelete(DeleteBehavior.ClientCascade);
+            builder.Entity<CategoryModelAdLink>().HasKey(x => new { x.CategoryId, x.ModelId });
+            builder.Entity<CategoryModelAdLink>().HasOne(x => x.Model).WithMany(x => x.CategoryModelAdLinks).OnDelete(DeleteBehavior.ClientCascade);
+            builder.Entity<CategoryProductAdLink>().HasKey(x => new { x.CategoryId, x.ProductId }); // toremove
+            builder.Entity<CategoryProductAdLink>().HasOne(x => x.Product).WithMany(x => x.CategoryProductAdLinks).OnDelete(DeleteBehavior.ClientCascade); // toremove
             builder.Entity<ModelSpec>().HasKey(x => new { x.ModelId, x.SpecId });
             builder.Entity<ProductSpecsValue>().HasKey(x => new { x.ProductId, x.SpecsValueId });
             builder.Entity<ProductSpecsValueMod>().HasKey(x => new { x.ProductId, x.SpecsValueModId });

@@ -132,12 +132,12 @@ namespace newTolkuchka.Services
             }
         }
 
-        public async Task<string[]> GetProductAdLinksAsync(int id)
+        public async Task<string[]> GetProductAdLinksAsync(int id) //toremove
         {
             return await GetCategoryProductAdLinks(id).Select(x => x.CategoryId.ToString()).ToArrayAsync();
         }
 
-        public async Task AddCategoryProductAdLinksAsync(int id, IList<int> adLinks)
+        public async Task AddCategoryProductAdLinksAsync(int id, IList<int> adLinks) //to remove
         {
             IList<CategoryProductAdLink> categoryProductAdLinks = await GetCategoryProductAdLinks(id).ToListAsync();
             IList<CategoryProductAdLink> toRemove = categoryProductAdLinks.Where(x => !adLinks.Contains(x.CategoryId)).ToList();
@@ -157,14 +157,44 @@ namespace newTolkuchka.Services
             }
         }
 
+        public async Task<string[]> GetModelAdLinksAsync(int id)
+        {
+            return await GetCategoryModelAdLinks(id).Select(x => x.CategoryId.ToString()).ToArrayAsync();
+        }
+
+        public async Task AddCategoryModelAdLinksAsync(int id, IList<int> adLinks)
+        {
+            IList<CategoryModelAdLink> categoryModelAdLinks = await GetCategoryModelAdLinks(id).ToListAsync();
+            IList<CategoryModelAdLink> toRemove = categoryModelAdLinks.Where(x => !adLinks.Contains(x.CategoryId)).ToList();
+            foreach (var adLink in toRemove)
+            {
+                _con.CategoryModelAdLinks.Remove(adLink);
+            }
+            IList<int> toAdds = adLinks.Where(x => !categoryModelAdLinks.Select(y => y.CategoryId).Contains(x)).ToList();
+            foreach (var toAdd in toAdds)
+            {
+                CategoryModelAdLink categoryModelAdLink = new()
+                {
+                    ModelId = id,
+                    CategoryId = toAdd
+                };
+                await _con.CategoryModelAdLinks.AddAsync(categoryModelAdLink);
+            }
+        }
+
         private IQueryable<CategoryAdLink> GetCategoryAdLinks(int id)
         {
             return _con.CategoryAdLinks.Where(x => x.CategoryId == id);
         }
 
-        private IQueryable<CategoryProductAdLink> GetCategoryProductAdLinks(int id)
+        private IQueryable<CategoryProductAdLink> GetCategoryProductAdLinks(int id) //to remove
         {
             return _con.CategoryProductAdLinks.Where(x => x.ProductId == id);
+
+        }
+        private IQueryable<CategoryModelAdLink> GetCategoryModelAdLinks(int id)
+        {
+            return _con.CategoryModelAdLinks.Where(x => x.ModelId == id);
 
         }
 

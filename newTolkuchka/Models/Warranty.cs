@@ -12,6 +12,7 @@ namespace newTolkuchka.Models
         [Required, MaxLength(100)]
         public string NameTm { get; set; }
 
-        public ICollection<Product> Products { get; set; }
+        public ICollection<Model> Models { get; set; }
+        public ICollection<Product> Products { get; set; } // to remove
     }
 }

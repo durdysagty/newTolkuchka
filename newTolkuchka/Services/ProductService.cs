@@ -372,7 +372,7 @@ namespace newTolkuchka.Services
         public IEnumerable<UIProduct> GetUIProduct(IList<Product> sameModels)
         {
             IEnumerable<Product> distinct = sameModels.DistinctBy(p => p.ProductSpecsValues.Where(psv => psv.SpecsValue.Spec.IsImaged).Select(psv => psv.SpecsValue.Id).FirstOrDefault());
-            return distinct.Select(p =>  new UIProduct()
+            return distinct.Select(p => new UIProduct()
             {
                 Id = p.Id,
                 Name = sameModels != null ? IProduct.GetProductName(p, sameModels.Count) : IProduct.GetProductName(p),

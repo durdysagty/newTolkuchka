@@ -17,19 +17,19 @@ namespace newTolkuchka.Models
         public bool IsNew { get; set; }
         public bool OnOrder { get; set; }
 
-        public int CategoryId { get; set; }
-        public Category Category { get; set; }
-        public int TypeId { get; set; }
-        public Type Type { get; set; }
-        public int BrandId { get; set; }
-        public Brand Brand { get; set; }
-        public int? LineId { get; set; }
-        public Line Line { get; set; }
+        public int CategoryId { get; set; } // to remove
+        public Category Category { get; set; } // to remove
+        public int TypeId { get; set; } // to remove
+        public Type Type { get; set; } // to remove
+        public int BrandId { get; set; } // to remove
+        public Brand Brand { get; set; } // to remove
+        public int? LineId { get; set; } // to remove
+        public Line Line { get; set; } // to remove
         public int? ModelId { get; set; }
         public Model Model { get; set; }
-        public int? WarrantyId { get; set; }
-        public Warranty Warranty { get; set; }
-        public ICollection<CategoryProductAdLink> CategoryProductAdLinks { get; set; }
+        public int? WarrantyId { get; set; } // to remove
+        public Warranty Warranty { get; set; } // to remove
+        public ICollection<CategoryProductAdLink> CategoryProductAdLinks { get; set; } // to remove
         public ICollection<ProductSpecsValue> ProductSpecsValues { get; set; }
         public ICollection<ProductSpecsValueMod> ProductSpecsValueMods { get; set; }
         public ICollection<Purchase> Purchases { get; set; }

@@ -28,6 +28,8 @@ namespace newTolkuchka.Services
             {
                 Id = x.Id,
                 Name = x.Name,
+                Category = x.Category.NameRu,
+                Type = x.Type.NameRu,
                 Brand = x.Brand.Name,
                 Line = x.Line.Name,
                 Products = x.Products.Count

@@ -11,9 +11,11 @@ namespace newTolkuchka.ControllersAPI
     public class ModelController : AbstractController<Model, IModel>
     {
         private readonly IModel _model;
-        public ModelController(IEntry entry, IModel model) : base(entry, Entity.Model, model)
+        private readonly ICategory _category;
+        public ModelController(IEntry entry, IModel model, ICategory category) : base(entry, Entity.Model, model)
         {
             _model = model;
+            _category = category;
         }
 
         [HttpGet("{id}")]
@@ -40,7 +42,7 @@ namespace newTolkuchka.ControllersAPI
             return await _model.GetModelSpecsForAdminAsync(id);
         }
         [HttpPost]
-        public async Task<Result> Post([FromForm] Model model, [FromForm] IList<int[]> specs)
+        public async Task<Result> Post([FromForm] Model model, [FromForm] IList<int[]> specs, [FromForm] int[] adLinks)
         {
             bool isExist = _model.IsExist(model, _model.GetModels().Where(x => x.LineId == model.LineId));
             if (isExist)
@@ -48,17 +50,20 @@ namespace newTolkuchka.ControllersAPI
             await _model.AddModelAsync(model);
             if (specs.Any())
                 await _model.AddModelSpecsAsync(model.Id, specs);
+            if (adLinks.Any())
+                await _category.AddCategoryModelAdLinksAsync(model.Id, adLinks);
             await AddActAsync(model.Id, model.Name);
             return Result.Success;
         }
         [HttpPut]
-        public async Task<Result> Put([FromForm] Model model, [FromForm] IList<int[]> specs)
+        public async Task<Result> Put([FromForm] Model model, [FromForm] IList<int[]> specs, [FromForm] int[] adLinks)
         {
             bool isExist = _model.IsExist(model, _model.GetModels().Where(x => x.LineId == model.LineId && x.Id != model.Id));
             if (isExist)
                 return Result.Already;
             _model.EditModel(model);
             await _model.AddModelSpecsAsync(model.Id, specs);
+            await _category.AddCategoryModelAdLinksAsync(model.Id, adLinks);
             await EditActAsync(model.Id, model.Name);
             return Result.Success;
         }

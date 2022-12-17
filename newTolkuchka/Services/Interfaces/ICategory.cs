@@ -13,7 +13,9 @@ namespace newTolkuchka.Services.Interfaces
         IList<int> GetAllCategoryIdsHaveProductsByParentId(int parentId);
         Task<string[]> GetAdLinksAsync(int id);
         Task AddCategoryAdLinksAsync(int id, IList<int> adLinks);
-        Task<string[]> GetProductAdLinksAsync(int id);
-        Task AddCategoryProductAdLinksAsync(int id, IList<int> adLinks);
+        Task<string[]> GetProductAdLinksAsync(int id); // to remove
+        Task AddCategoryProductAdLinksAsync(int id, IList<int> adLinks); // to remove
+        Task<string[]> GetModelAdLinksAsync(int id);
+        Task AddCategoryModelAdLinksAsync(int id, IList<int> adLinks);
     }
 }
