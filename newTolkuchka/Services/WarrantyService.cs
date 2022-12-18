@@ -18,7 +18,7 @@ namespace newTolkuchka.Services
             IEnumerable<AdminWarranty> warranties = GetModels().Select(x => new AdminWarranty
             {
                 Id = x.Id,
-                Name = x.NameRu,
+                Name = x.NameRu
             }).OrderBy(x => x.Name);
             return warranties;
         }

@@ -20,8 +20,6 @@ namespace newTolkuchka.Models
         // to create additional conttections of categories
         public ICollection<CategoryAdLink> CategoryAdLinks { get; set; }
         public ICollection<Model> Models { get; set; }
-        public ICollection<Product> Products { get; set; } // to remove
         public ICollection<CategoryModelAdLink> CategoryModelAdLinks { get; set; }
-        public ICollection<CategoryProductAdLink> CategoryProductAdLinks { get; set; } // to remove
     }
 }

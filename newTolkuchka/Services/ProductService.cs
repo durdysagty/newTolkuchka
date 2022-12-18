@@ -16,17 +16,36 @@ namespace newTolkuchka.Services
         {
         }
 
+        public EditProduct GetEditProduct(int id)
+        {
+            EditProduct editProduct = GetModels().Where(p => p.Id == id).Select(p => new EditProduct
+            {
+                Id= id,
+                PartNo=p.PartNo,
+                Price=p.Price,
+                NewPrice=p.NewPrice,
+                NotInUse=p.NotInUse,
+                IsRecommended=p.IsRecommended,
+                IsNew=p.IsNew,
+                OnOrder=p.OnOrder,
+                BrandId = p.Model.BrandId,
+                LineId = p.Model.LineId,
+                ModelId = p.ModelId
+            }).FirstOrDefault();
+            return editProduct;
+        }
+
         public IQueryable<Product> GetProducts(IList<int> categoryIds = null, IList<int> brandIds = null, int? typeId = null, int? lineId = null, int? modelId = null, IList<int> productIds = null)
         {
             IQueryable<Product> products = GetModels();
             if (categoryIds != null)
-                products = products.Where(p => categoryIds.Any(c => c == p.CategoryId) || p.CategoryProductAdLinks.Any(x => categoryIds.Any(c => c == x.CategoryId)));
+                products = products.Where(p => categoryIds.Any(c => c == p.Model.CategoryId) || p.Model.CategoryModelAdLinks.Any(x => categoryIds.Any(c => c == x.CategoryId)));
             if (brandIds != null)
-                products = products.Where(p => brandIds.Any(b => b == p.BrandId));
+                products = products.Where(p => brandIds.Any(b => b == p.Model.BrandId));
             if (typeId != null)
-                products = products.Where(p => p.TypeId == typeId);
+                products = products.Where(p => p.Model.TypeId == typeId);
             if (lineId != null)
-                products = products.Where(p => p.LineId == lineId);
+                products = products.Where(p => p.Model.LineId == lineId);
             if (modelId != null)
                 products = products.Where(p => p.ModelId == modelId);
             if (productIds != null)
@@ -36,17 +55,17 @@ namespace newTolkuchka.Services
 
         public IQueryable<Product> GetFullProducts(IList<int> categoryIds = null, IList<int> brandIds = null, int? typeId = null, int? lineId = null, int? modelId = null, IList<int> productIds = null)
         {
-            return GetProducts(categoryIds, brandIds, typeId, lineId, modelId, productIds).Include(p => p.Type).Include(p => p.Brand).Include(p => p.Line).Include(p => p.Model).ThenInclude(x => x.ModelSpecs).Include(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ThenInclude(x => x.Spec).Include(x => x.ProductSpecsValueMods).ThenInclude(x => x.SpecsValueMod);
+            return GetProducts(categoryIds, brandIds, typeId, lineId, modelId, productIds).Include(p => p.Model).ThenInclude(m => m.Type).Include(p => p.Model).ThenInclude(m => m.Brand).Include(p => p.Model).ThenInclude(m => m.Line).Include(p => p.Model).ThenInclude(x => x.ModelSpecs).Include(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ThenInclude(x => x.Spec).Include(x => x.ProductSpecsValueMods).ThenInclude(x => x.SpecsValueMod);
         }
 
         public async Task<Product> GetFullProductAsync(int id)
         {
-            return await GetModels().Include(p => p.Type).Include(p => p.Brand).Include(p => p.Line).Include(p => p.Model).ThenInclude(x => x.ModelSpecs).Include(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ThenInclude(x => x.Spec).Include(x => x.ProductSpecsValueMods).ThenInclude(x => x.SpecsValueMod).Include(x => x.Warranty).FirstOrDefaultAsync(p => p.Id == id);
+            return await GetModels().Include(p => p.Model).ThenInclude(m => m.Type).Include(p => p.Model).ThenInclude(m => m.Brand).Include(p => p.Model).ThenInclude(m => m.Line).Include(p => p.Model).ThenInclude(x => x.ModelSpecs).Include(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ThenInclude(x => x.Spec).Include(x => x.ProductSpecsValueMods).ThenInclude(x => x.SpecsValueMod).Include(p => p.Model).ThenInclude(m => m.Warranty).FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<Product> GetFullProductAsNoTrackingWithIdentityResolutionAsync(int id)
         {
-            return await GetModels().Include(p => p.Type).Include(p => p.Brand).Include(p => p.Line).Include(p => p.Model).ThenInclude(x => x.ModelSpecs).Include(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ThenInclude(x => x.Spec).Include(x => x.ProductSpecsValueMods).ThenInclude(x => x.SpecsValueMod).Include(x => x.Warranty).AsNoTrackingWithIdentityResolution().FirstOrDefaultAsync(p => p.Id == id);
+            return await GetModels().Include(p => p.Model).ThenInclude(m => m.Type).Include(p => p.Model).ThenInclude(m => m.Brand).Include(p => p.Model).ThenInclude(m => m.Line).Include(p => p.Model).ThenInclude(x => x.ModelSpecs).Include(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ThenInclude(x => x.Spec).Include(x => x.ProductSpecsValueMods).ThenInclude(x => x.SpecsValueMod).Include(p => p.Model).ThenInclude(m => m.Warranty).AsNoTrackingWithIdentityResolution().FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public IQueryable<AdminProduct> GetAdminProducts(IList<int> categoryIds, IList<int> brandIds, int? lineId, int? modelId, int page, int pp, out int lastPage, out string pagination)
@@ -57,7 +76,7 @@ namespace newTolkuchka.Services
             {
                 Id = p.Id,
                 Name = IProduct.GetProductName(p, 1),
-                Category = p.Category.NameRu,
+                Category = p.Model.Category.NameRu,
                 Price = p.Price,
                 NewPrice = p.NewPrice,
                 NotInUse = !p.NotInUse,
@@ -114,23 +133,23 @@ namespace newTolkuchka.Services
                 if (!productsOnly)
                 {
                     // prepare types for filter
-                    if (!types.Any(t => t.Id == p.TypeId))
+                    if (!types.Any(t => t.Id == p.Model.TypeId))
                     {
                         AdminType type = new()
                         {
-                            Id = p.TypeId,
-                            Name = CultureProvider.GetLocalName(p.Type.NameRu, p.Type.NameEn, p.Type.NameTm)
+                            Id = p.Model.TypeId,
+                            Name = CultureProvider.GetLocalName(p.Model.Type.NameRu, p.Model.Type.NameEn, p.Model.Type.NameTm)
                         };
                         types.Add(type);
                     }
                     types = types.OrderBy(x => x.Name).ToList();
                     // prepare brands for filter
-                    if (!brands.Any(b => b.Id == p.BrandId))
+                    if (!brands.Any(b => b.Id == p.Model.BrandId))
                     {
                         Brand brand = new()
                         {
-                            Id = p.BrandId,
-                            Name = p.Brand.Name
+                            Id = p.Model.BrandId,
+                            Name = p.Model.Brand.Name
                         };
                         brands.Add(brand);
                     }
@@ -176,12 +195,12 @@ namespace newTolkuchka.Services
                 }
                 if (t.Any())
                 {
-                    if (!t.Any(x => p.TypeId == x))
+                    if (!t.Any(x => p.Model.TypeId == x))
                         continue;
                 }
                 if (b.Any())
                 {
-                    if (!b.Any(x => p.BrandId == x))
+                    if (!b.Any(x => p.Model.BrandId == x))
                         continue;
                 }
                 if (v.Any())

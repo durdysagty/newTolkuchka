@@ -6,6 +6,7 @@ namespace newTolkuchka.Services.Interfaces
     public enum Sort { Id = 0, PriceUp = 1, PriceDown = -1, NameAZ = 2, NameZA = -2 }
     public interface IProduct : IActionFormFile<Product>
     {
+        EditProduct GetEditProduct(int id);
         IQueryable<Product> GetProducts(IList<int> categoryIds = null, IList<int> brandIds = null, int? typeId = null, int? lineId = null, int? modelId = null, IList<int> productIds = null);
         IQueryable<Product> GetFullProducts(IList<int> categoryIds = null, IList<int> brandIds = null, int? typeId = null, int? lineId = null, int? modelId = null, IList<int> productIds = null);
         Task<Product> GetFullProductAsync(int id);
@@ -28,8 +29,8 @@ namespace newTolkuchka.Services.Interfaces
         static string GetProductName(Product product, int? productsInModel = 1)
         {
             // have to opimize
-            string name = CultureProvider.GetLocalName(product.Type.NameRu, product.Type.NameEn, product.Type.NameTm);
-            name += ' ' + product.Brand.Name + ' ' + product.Line?.Name + ' ' + product.Model.Name;
+            string name = CultureProvider.GetLocalName(product.Model.Type.NameRu, product.Model.Type.NameEn, product.Model.Type.NameTm);
+            name += ' ' + product.Model.Brand.Name + ' ' + product.Model.Line?.Name + ' ' + product.Model.Name;
             if (productsInModel > 1)
             {
                 name += $" ({productsInModel} {CultureProvider.GetLocalName("м.", "m.", "m.")})";

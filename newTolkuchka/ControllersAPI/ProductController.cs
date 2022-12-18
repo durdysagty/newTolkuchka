@@ -16,17 +16,15 @@ namespace newTolkuchka.ControllersAPI
         private const int HEIGHT = 600;
         private const int DIVIDER = 3;
         private readonly IProduct _product;
-        private readonly ICategory _category;
-        public ProductController(IEntry entry, IProduct product, ICategory category) : base(entry, Entity.Product, product)
+        public ProductController(IEntry entry, IProduct product) : base(entry, Entity.Product, product)
         {
             _product = product;
-            _category = category;
         }
 
         [HttpGet("{id}")]
-        public async Task<Product> Get(int id)
+        public EditProduct Get(int id)
         {
-            Product product = await _product.GetModelAsync(id);
+            EditProduct product = _product.GetEditProduct(id);
             return product;
         }
         [HttpGet]
@@ -53,7 +51,7 @@ namespace newTolkuchka.ControllersAPI
             return await _product.GetSpecValueModsAsync(id);
         }
         [HttpPost]
-        public async Task<Result> Post([FromForm] Product product, [FromForm] IFormFile[] images, [FromForm] IList<int> specsValues, [FromForm] IList<int> specsValueMods, [FromForm] int[] adLinks)
+        public async Task<Result> Post([FromForm] Product product, [FromForm] IFormFile[] images, [FromForm] IList<int> specsValues, [FromForm] IList<int> specsValueMods)
         {
             bool isEqual = await _product.CheckProductSpecValues((int)product.ModelId, specsValues);
             if (isEqual)
@@ -63,15 +61,13 @@ namespace newTolkuchka.ControllersAPI
                 await _product.AddProductSpecValuesAsync(product.Id, specsValues);
             if (specsValueMods.Any())
                 await _product.AddProductSpecValueModsAsync(product.Id, specsValueMods);
-            if (adLinks.Any())
-                await _category.AddCategoryProductAdLinksAsync(product.Id, adLinks);
             await _product.SaveChangesAsync();
             product = await _product.GetFullProductAsNoTrackingWithIdentityResolutionAsync(product.Id);
             await AddActAsync(product.Id, IProduct.GetProductName(product));
             return Result.Success;
         }
         [HttpPut]
-        public async Task<Result> Put([FromForm] Product product, [FromForm] IFormFile[] images, [FromForm] IList<int> specsValues, [FromForm] IList<int> specsValueMods, [FromForm] int[] adLinks)
+        public async Task<Result> Put([FromForm] Product product, [FromForm] IFormFile[] images, [FromForm] IList<int> specsValues, [FromForm] IList<int> specsValueMods)
         {
             bool isEqual = await _product.CheckProductSpecValues((int)product.ModelId, specsValues, product.Id);
             if (isEqual)
@@ -79,7 +75,6 @@ namespace newTolkuchka.ControllersAPI
             await _product.EditModelAsync(product, images, WIDTH, HEIGHT, DIVIDER);
             await _product.AddProductSpecValuesAsync(product.Id, specsValues);
             await _product.AddProductSpecValueModsAsync(product.Id, specsValueMods);
-            await _category.AddCategoryProductAdLinksAsync(product.Id, adLinks);
             await _product.SaveChangesAsync();
             product = await _product.GetFullProductAsNoTrackingWithIdentityResolutionAsync(product.Id);
             await EditActAsync(product.Id, IProduct.GetProductName(product));

@@ -16,7 +16,6 @@ namespace newTolkuchka.Models
         public DbSet<Category> Categories { get; set; }
         public DbSet<CategoryAdLink> CategoryAdLinks { get; set; }
         public DbSet<CategoryModelAdLink> CategoryModelAdLinks { get; set; }
-        public DbSet<CategoryProductAdLink> CategoryProductAdLinks { get; set; } // to remove
         public DbSet<Currency> Currencies { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Entry> Entries { get; set; }
@@ -76,8 +75,6 @@ namespace newTolkuchka.Models
             builder.Entity<CategoryAdLink>().HasKey(x => new { x.CategoryId, x.StepParentId });
             builder.Entity<CategoryModelAdLink>().HasKey(x => new { x.CategoryId, x.ModelId });
             builder.Entity<CategoryModelAdLink>().HasOne(x => x.Model).WithMany(x => x.CategoryModelAdLinks).OnDelete(DeleteBehavior.ClientCascade);
-            builder.Entity<CategoryProductAdLink>().HasKey(x => new { x.CategoryId, x.ProductId }); // toremove
-            builder.Entity<CategoryProductAdLink>().HasOne(x => x.Product).WithMany(x => x.CategoryProductAdLinks).OnDelete(DeleteBehavior.ClientCascade); // toremove
             builder.Entity<ModelSpec>().HasKey(x => new { x.ModelId, x.SpecId });
             builder.Entity<ProductSpecsValue>().HasKey(x => new { x.ProductId, x.SpecsValueId });
             builder.Entity<ProductSpecsValueMod>().HasKey(x => new { x.ProductId, x.SpecsValueModId });
@@ -294,6 +291,9 @@ namespace newTolkuchka.Models
                    Name = "SE 2022",
                    BrandId = 1,
                    LineId = 1,
+                   CategoryId = 11,
+                   TypeId = 1,
+                   WarrantyId = 2,
                    DescRu = "Мощный процессор, элегантный дизайн, расширенный цветовой диапазон экрана, возможность подключения двух пар наушников одновременно, и многое другое — все это вы получите с невероятно производительным Apple iPhone SE 32-го поколения! В нём есть все что вы любите — и даже больше! Apple iPhone SE 3 оснащен самым быстрым процессором A15 Bionic, который выполняет любые поставленные задачи быстро и эффективно! Это настоящая технология будущего, которая совмещает в себе низкую энергозатратность при высокой работоспособности. Apple iPhone SE 3 создан, чтобы стать вашим идеальным смартфоном!",
                    DescEn = "Powerful processor, elegant design, extended screen color range, the ability to connect two pairs of headphones at the same time, and much more - you get it all with the incredible performance of the 32nd generation Apple iPhone SE! It has everything you love - and more! Apple iPhone SE 3 is equipped with the fastest A15 Bionic processor, which performs any tasks quickly and efficiently! This is a real technology of the future, which combines low energy consumption with high performance. Apple iPhone SE 3 is designed to be your ideal smartphone!",
                    DescTm = "Güýçli prosessor, ajaýyp dizaýn, giňeldilen ekran reňk diapazony, bir wagtyň özünde iki jübüt nauşnik birikdirmek ukyby we başga-da köp zat - hemmesini 32-nji nesil Apple iPhone SE-niň ajaýyp öndürijiligi bilen alarsyňyz! Onda siziň söýýän zatlaryňyzyň hemmesi we başgalar bar! Apple iPhone SE 3, islendik meseläni çalt we netijeli ýerine ýetirýän iň çalt A15 Bionic prosessor bilen enjamlaşdyrylandyr! Bu, pes energiýa sarp edilişini ýokary öndürijilik bilen birleşdirýän geljegiň hakyky tehnologiýasy. Apple iPhone SE 3 ideal smartfon siziň üçin döredildi!"
@@ -303,6 +303,9 @@ namespace newTolkuchka.Models
                    Name = "13 Pro",
                    BrandId = 1,
                    LineId = 1,
+                   CategoryId = 11,
+                   TypeId = 1,
+                   WarrantyId = 2,
                    DescRu = "Дисплей Super Retina XDR с технологией ProMotion и быстрым, плавным откликом. Грандиозный апгрейд системы камер, открывающий совершенно новые возможности. Исключительная прочность. A15 Bionic — самый быстрый чип для iPhone. И впечатляющее время работы без подзарядки. Всё это Pro. Хирургическая нержавеющая сталь, панель Ceramic Shield, надёжная защита от воды (IP68) — всё это невероятно красиво и исключительно прочно. Встречайте дисплей Super Retina XDR с технологией ProMotion. У него адаптивная частота обновления до 120 Гц и великолепная графическая производительность — прикоснитесь и удивитесь.",
                    DescEn = "Super Retina XDR display with ProMotion technology and fast, smooth response. A massive upgrade to the camera system that opens up completely new possibilities. Exceptional strength. A15 Bionic is the fastest iPhone chip. And impressive battery life. Everything is Pro. Surgical stainless steel, Ceramic Shield panel, reliable water protection (IP68) - all this is incredibly beautiful and exceptionally durable. Meet the Super Retina XDR display with ProMotion technology. It has an adaptive refresh rate up to 120Hz and amazing graphics performance - touch and be amazed.",
                    DescTm = "ProMotion tehnologiýasy we çalt, rahat seslenme bilen Super Retina XDR displeýi. Doly täze mümkinçilikleri açýan kamera ulgamyna köpçülikleýin täzeleniş. Adatdan daşary güýç. “A15 Bionic” iň çalt “iPhone” çipidir. Batareýanyň täsirli ömri. Hemme zat Pro. Hirurgiki poslamaýan polat, keramiki galkan paneli, ygtybarly suw goragy (IP68) - bularyň hemmesi ajaýyp owadan we ajaýyp. ProMotion tehnologiýasy bilen Super Retina XDR ekrany bilen tanyşyň. 120Hz-a çenli uýgunlaşdyrylan täzeleniş tizligi we ajaýyp grafiki öndürijiligi bar - degiň we haýran galyň."
@@ -313,6 +316,9 @@ namespace newTolkuchka.Models
                    Name = "13 Pro Max",
                    BrandId = 1,
                    LineId = 1,
+                   CategoryId = 11,
+                   TypeId = 1,
+                   WarrantyId = 2,
                    DescRu = "Дисплей Super Retina XDR с технологией ProMotion и быстрым, плавным откликом. Грандиозный апгрейд системы камер, открывающий совершенно новые возможности. Исключительная прочность. A15 Bionic — самый быстрый чип для iPhone. И впечатляющее время работы без подзарядки. Всё это Pro. Хирургическая нержавеющая сталь, панель Ceramic Shield, надёжная защита от воды (IP68) — всё это невероятно красиво и исключительно прочно. В этом апгрейде значительно обновлены и аппаратная часть, и программное обеспечение. Теперь для сверхширокоугольной камеры доступен режим макросъёмки, для телефотокамеры — трёхкратный оптический зум, а ночной режим поддерживается на всех трёх камерах.",
                    DescEn = "Super Retina XDR display with ProMotion technology and fast, smooth response. A massive upgrade to the camera system that opens up completely new possibilities. Exceptional strength. A15 Bionic is the fastest iPhone chip. And impressive battery life. Everything is Pro. Surgical stainless steel, Ceramic Shield panel, reliable water protection (IP68) - all this is incredibly beautiful and exceptionally durable. This upgrade significantly upgrades both the hardware and the software. Macro mode is now available for the ultra-wide camera, 3x optical zoom for the telephoto camera, and night mode is supported on all three cameras.",
                    DescTm = "ProMotion tehnologiýasy we çalt, rahat seslenme bilen Super Retina XDR displeýi.Doly täze mümkinçilikleri açýan kamera ulgamyna köpçülikleýin täzeleniş.Adatdan daşary güýç. “A15 Bionic” iň çalt “iPhone” çipidir.Batareýanyň täsirli ömri.Hemme zat Pro.Hirurgiki poslamaýan polat, keramiki galkan paneli, ygtybarly suw goragy(IP68) - bularyň hemmesi ajaýyp owadan we ajaýyp.Bu täzelenme enjamlary we programma üpjünçiligini ep - esli ýokarlandyrýar.Ultra giň kamera üçin makro re modeimi, telefon kamerasy üçin 3x optiki ýakynlaşdyrma we üç kameranyň hemmesinde gijeki re modeim goldanýar."
@@ -323,6 +329,9 @@ namespace newTolkuchka.Models
                 Name = "13",
                 BrandId = 1,
                 LineId = 1,
+                CategoryId = 11,
+                TypeId = 1,
+                WarrantyId = 2,
                 DescRu = "Дисплей OLED стал на 28% ярче — до 800 кд/ м². На нём всё хорошо видно даже в самый солнечный день. А яркость при просмотре контента в HDR достигает 1200 кд/ м². Вы сможете различить мельчайшие оттенки чёрного и белого — как и всех остальных цветов. При этом дисплей расходует заряд аккумулятора ещё более экономно, чем прежде. Дисплей Super Retina XDR отличается невероятно высокой плотностью пикселей — фотографии, видео и текст выглядят поразительно чётко. А благодаря уменьшенной площади камеры TrueDepth на дисплее теперь больше места для изображения. iPhone 13 работает от аккумулятора до 2,5 часов дольше. Процессор A15 Bionic и камера TrueDepth также обеспечивают работу Face ID, невероятно надёжной технологии аутентификации. Сверхбыстрый чип A15 Bionic обеспечивает работу режима «Киноэффект», фотографических стилей и других функций. Secure Enclave защищает персональные данные, в том числе Face ID и контакты. А ещё новый чип увеличивает время работы от аккумулятора.",
                 DescEn = "The OLED display has become 28% brighter - up to 800 cd/ m². Everything is clearly visible on it even on the sunniest day. And the brightness when viewing content in HDR reaches 1200 cd/ m². You will be able to distinguish the smallest shades of black and white - as well as all other colors. At the same time, the display consumes battery power even more economically than before. The Super Retina XDR display features an incredibly high pixel density, making photos, videos and text look amazingly crisp. And thanks to the smaller area of ​​the TrueDepth camera, there is now more room for the image on the display.iPhone 13 has up to 2.5 hours longer battery life.The A15 Bionic processor and TrueDepth camera also power Face ID, an incredibly secure authentication technology.The ultra - fast A15 Bionic chip powers Cinema Effect, Photo Styles and more.Secure Enclave protects personal data, including Face ID and contacts.And the new chip increases the battery life.",
                 DescTm = "OLED ekrany 28 % ýagtylandy - 800 cd / m² çenli.Everythinghli zat iň güneşli günlerde - de aýdyň görünýär.HDR - de mazmuny göreniňde ýagtylygy 1200 cd / m² ýetýär.Gara we ak reňkleriň iň kiçi kölegelerini - beýleki reňkler ýaly tapawutlandyryp bilersiňiz.Şol bir wagtyň özünde, displeý batareýanyň güýjüni öňküsinden has tygşytly sarp edýär. “Super Retina XDR” displeýinde ajaýyp ýokary piksel dykyzlygy bar, suratlar, wideolar we tekst ajaýyp görünýär. “TrueDepth” kamerasynyň kiçi meýdany sebäpli indi ekranda şekil üçin has köp ýer bar. “iPhone 13” -iň batareýasynyň ömri 2, 5 sagada çenli.A15 Bionic prosessor we TrueDepth kamerasy, şeýle hem ygtybarly ygtybarly tanamak tehnologiýasy Face ID - i güýçlendirýär.Ultra çalt A15 Bionic çipi Kino effekti, Surat stilleri we ş.m.Howpsuz Enklaw, Face ID we aragatnaşyklary goşmak bilen şahsy maglumatlary goraýar.Täze çip bolsa batareýanyň ömrüni artdyrýar."
@@ -333,6 +342,9 @@ namespace newTolkuchka.Models
                 Name = "B2152B",
                 BrandId = 6,
                 LineId = null,
+                CategoryId = 178,
+                TypeId = 5,
+                WarrantyId = 1,
                 DescRu = "Запатентованная система SmartFit позволяет настраивать высоту и угол экрана вашего ноутбука с помощью прилагаемой ручной диаграммы, чтобы найти свой личный цвет комфорта, уменьшая напряжение шеи и напряжение глаз. Easy Riser снимает ваш ноутбук со своего рабочего стола, способствуя воздушному потоку, чтобы улучшить работу аккумулятора и облегчить нагрузку на внутренние компоненты.",
                 DescEn = "The patented SmartFit system allows you to adjust the height and angle of your laptop screen using the included hand chart to find your personal comfort color while reducing neck strain and eye strain.The Easy Riser lifts your laptop off its desktop, promoting airflow to improve battery performance and ease stress on internal components.",
                 DescTm = "Patentlenen SmartFit ulgamy, boýnuň süzülmesini we gözüň dartylmagyny azaltmak bilen şahsy rahatlyk reňkini tapmak üçin goşulan el diagrammasyny ulanyp, noutbuk ekranyňyzyň beýikligini we burçuny sazlamaga mümkinçilik berýär. “Easy Riser”, batareýanyň işleýşini gowulandyrmak we içerki böleklere edilýän stresleri ýeňilleşdirmek üçin noutbukyňyzy iş stolundan çykarýar."
@@ -343,6 +355,9 @@ namespace newTolkuchka.Models
                 Name = "Z Fold 4",
                 BrandId = 2,
                 LineId = 4,
+                CategoryId = 11,
+                TypeId = 1,
+                WarrantyId = 1,
                 DescRu = "Samsung Galaxy Fold — смартфон, меняющий наше представление о смартфонах. Девайс сочетает огромный складной экран с исключительно мощным «железом». Многооконный режим отображает сразу 3 приложения. 7 - нанометровый процессор Snapdragon 855 усилен 12 ГБ оперативной памяти.Флэш - накопитель 512 ГБ построен на молниеносных чипах UFS 3.0.Популярные 3D - игры — PUBG, WoT: Blitz, Asphalt 9 и другие — здесь просто «летают». Удовольствие максимальное.Уникальный механизм позволят экрану складываться.Надежность шарнира проверена 200 000 раз.Девайс открывается естественно, плавно — как книга.Раскрытое положение четко фиксируется.Соединительный модуль превращает этот смартфон в компактный гаджет, который удобно носить с собой.Samsung Galaxy Fold — завтрашний день технологий, доступный уже сегодня.",
                 DescEn = "The Samsung Galaxy Fold is a smartphone that is changing the way we think about smartphones. The device combines a huge foldable screen with exceptionally powerful hardware.Multi - window mode displays 3 applications at once.The 7nm Snapdragon 855 processor is boosted by 12GB of RAM.The 512 GB flash drive is built with lightning - fast UFS 3.0 chips.Popular 3D games - PUBG, WoT: Blitz, Asphalt 9 and others - just “fly” here.Maximum pleasure.The unique mechanism will allow the screen to be folded.The reliability of the hinge has been tested 200,000 times.The device opens naturally,smoothly - like a book.The open position is clearly fixed. The connector module turns this smartphone into a compact gadget that is easy to carry around. Samsung Galaxy Fold is tomorrow's technology, available today.	Samsung Galaxy Fold, smartfonlar baradaky pikirimizi üýtgedýän smartfondyr.",
                 DescTm = "Enjam ullakan bukulýan ekrany gaty güýçli enjam bilen birleşdirýär. Köp penjire re modeimi birbada 3 programmany görkezýär. 7nm Snapdragon 855 prosessor 12 Gb RAM bilen güýçlendirilýär. 512 Gb fleş disk ýyldyrym çalt UFS 3.0 çipleri bilen gurlupdyr. Meşhur 3D oýunlary - PUBG, WoT: Blits, Asfalt 9 we başgalar - diňe şu ýerde “uçuň”. Iň ýokary lezzet. Üýtgeşik mehanizm ekrany bukmaga mümkinçilik berer. Çeňňegiň ygtybarlylygy 200,000 gezek synag edildi. Enjam kitap ýaly tebigy, rahat açylýar. Açyk pozisiýa anyk kesgitlenendir. Birikdiriji modul, bu smartfony daşamak aňsat bolan ykjam gadgeta öwürýär. Samsung Galaxy Fold, şu gün elýeterli ertirki tehnologiýa."
@@ -1242,12 +1257,7 @@ namespace newTolkuchka.Models
                     IsRecommended = true,
                     IsNew = true,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 1,
-                    LineId = 1,
-                    ModelId = 1,
-                    WarrantyId = 2
+                    ModelId = 1
                 },
                 new Product
                 {
@@ -1259,12 +1269,7 @@ namespace newTolkuchka.Models
                     IsRecommended = true,
                     IsNew = true,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 1,
-                    LineId = 1,
-                    ModelId = 1,
-                    WarrantyId = 2
+                    ModelId = 1
                 },
                 new Product
                 {
@@ -1276,12 +1281,7 @@ namespace newTolkuchka.Models
                     IsRecommended = false,
                     IsNew = false,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 1,
-                    LineId = 1,
-                    ModelId = 4,
-                    WarrantyId = 2
+                    ModelId = 4
                 },
                 new Product
                 {
@@ -1293,12 +1293,7 @@ namespace newTolkuchka.Models
                     IsRecommended = false,
                     IsNew = false,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 1,
-                    LineId = 1,
-                    ModelId = 4,
-                    WarrantyId = 2
+                    ModelId = 4
                 },
                 new Product
                 {
@@ -1310,12 +1305,7 @@ namespace newTolkuchka.Models
                     IsRecommended = false,
                     IsNew = false,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 1,
-                    LineId = 1,
-                    ModelId = 4,
-                    WarrantyId = 2
+                    ModelId = 4
                 },
                 new Product
                 {
@@ -1327,12 +1317,7 @@ namespace newTolkuchka.Models
                     IsRecommended = false,
                     IsNew = false,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 1,
-                    LineId = 1,
-                    ModelId = 2,
-                    WarrantyId = 2
+                    ModelId = 2
                 },
                 new Product
                 {
@@ -1344,12 +1329,7 @@ namespace newTolkuchka.Models
                     IsRecommended = false,
                     IsNew = false,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 1,
-                    LineId = 1,
-                    ModelId = 2,
-                    WarrantyId = 2
+                    ModelId = 2
                 },
                 new Product
                 {
@@ -1361,12 +1341,7 @@ namespace newTolkuchka.Models
                     IsRecommended = false,
                     IsNew = false,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 1,
-                    LineId = 1,
-                    ModelId = 2,
-                    WarrantyId = 2
+                    ModelId = 2
                 },
                 new Product
                 {
@@ -1378,12 +1353,7 @@ namespace newTolkuchka.Models
                     IsRecommended = false,
                     IsNew = false,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 1,
-                    LineId = 1,
-                    ModelId = 2,
-                    WarrantyId = 2
+                    ModelId = 2
                 },
                 new Product
                 {
@@ -1395,12 +1365,7 @@ namespace newTolkuchka.Models
                     IsRecommended = false,
                     IsNew = false,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 1,
-                    LineId = 1,
-                    ModelId = 2,
-                    WarrantyId = 2
+                    ModelId = 2
                 },
                 new Product
                 {
@@ -1412,12 +1377,7 @@ namespace newTolkuchka.Models
                     IsRecommended = false,
                     IsNew = false,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 1,
-                    LineId = 1,
-                    ModelId = 2,
-                    WarrantyId = 2
+                    ModelId = 2
                 },
                 new Product
                 {
@@ -1429,12 +1389,7 @@ namespace newTolkuchka.Models
                     IsRecommended = false,
                     IsNew = false,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 1,
-                    LineId = 1,
-                    ModelId = 2,
-                    WarrantyId = 2
+                    ModelId = 2
                 },
                 new Product
                 {
@@ -1446,12 +1401,7 @@ namespace newTolkuchka.Models
                     IsRecommended = false,
                     IsNew = false,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 1,
-                    LineId = 1,
-                    ModelId = 2,
-                    WarrantyId = 2
+                    ModelId = 2
                 },
                 new Product
                 {
@@ -1463,12 +1413,7 @@ namespace newTolkuchka.Models
                     IsRecommended = false,
                     IsNew = false,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 1,
-                    LineId = 1,
-                    ModelId = 3,
-                    WarrantyId = 2
+                    ModelId = 3
                 },
                 new Product
                 {
@@ -1480,12 +1425,7 @@ namespace newTolkuchka.Models
                     IsRecommended = false,
                     IsNew = false,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 1,
-                    LineId = 1,
-                    ModelId = 3,
-                    WarrantyId = 2
+                    ModelId = 3
                 },
                 new Product
                 {
@@ -1497,12 +1437,7 @@ namespace newTolkuchka.Models
                     IsRecommended = false,
                     IsNew = false,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 1,
-                    LineId = 1,
-                    ModelId = 3,
-                    WarrantyId = 2
+                    ModelId = 3
                 },
                 new Product
                 {
@@ -1514,12 +1449,7 @@ namespace newTolkuchka.Models
                     IsRecommended = false,
                     IsNew = false,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 1,
-                    LineId = 1,
-                    ModelId = 3,
-                    WarrantyId = 2
+                    ModelId = 3
                 },
                 new Product
                 {
@@ -1531,12 +1461,7 @@ namespace newTolkuchka.Models
                     IsRecommended = false,
                     IsNew = false,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 1,
-                    LineId = 1,
-                    ModelId = 3,
-                    WarrantyId = 2
+                    ModelId = 3
                 },
                 new Product
                 {
@@ -1548,12 +1473,7 @@ namespace newTolkuchka.Models
                     IsRecommended = false,
                     IsNew = false,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 1,
-                    LineId = 1,
-                    ModelId = 3,
-                    WarrantyId = 2
+                    ModelId = 3
                 },
                 new Product
                 {
@@ -1565,12 +1485,7 @@ namespace newTolkuchka.Models
                     IsRecommended = false,
                     IsNew = false,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 1,
-                    LineId = 1,
-                    ModelId = 3,
-                    WarrantyId = 2
+                    ModelId = 3
                 },
                 new Product
                 {
@@ -1582,12 +1497,7 @@ namespace newTolkuchka.Models
                     IsRecommended = false,
                     IsNew = false,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 1,
-                    LineId = 1,
-                    ModelId = 3,
-                    WarrantyId = 2
+                    ModelId = 3
                 },
                 new Product
                 {
@@ -1599,12 +1509,7 @@ namespace newTolkuchka.Models
                     IsRecommended = true,
                     IsNew = true,
                     OnOrder = false,
-                    CategoryId = 15,
-                    TypeId = 5,
-                    BrandId = 6,
-                    LineId = null,
-                    ModelId = 5,
-                    WarrantyId = 2
+                    ModelId = 5
                 },
                 new Product
                 {
@@ -1616,12 +1521,7 @@ namespace newTolkuchka.Models
                     IsRecommended = true,
                     IsNew = true,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 2,
-                    LineId = 4,
-                    ModelId = 6,
-                    WarrantyId = 1
+                    ModelId = 6
                 },
                 new Product
                 {
@@ -1633,12 +1533,7 @@ namespace newTolkuchka.Models
                     IsRecommended = true,
                     IsNew = true,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 2,
-                    LineId = 4,
-                    ModelId = 6,
-                    WarrantyId = 1
+                    ModelId = 6
                 },
                 new Product
                 {
@@ -1650,12 +1545,7 @@ namespace newTolkuchka.Models
                     IsRecommended = true,
                     IsNew = true,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 2,
-                    LineId = 4,
-                    ModelId = 6,
-                    WarrantyId = 1
+                    ModelId = 6
                 },
                 new Product
                 {
@@ -1667,12 +1557,7 @@ namespace newTolkuchka.Models
                     IsRecommended = true,
                     IsNew = true,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 2,
-                    LineId = 4,
-                    ModelId = 6,
-                    WarrantyId = 1
+                    ModelId = 6
                 },
                 new Product
                 {
@@ -1684,12 +1569,7 @@ namespace newTolkuchka.Models
                     IsRecommended = true,
                     IsNew = true,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 2,
-                    LineId = 4,
-                    ModelId = 6,
-                    WarrantyId = 1
+                    ModelId = 6
                 },
                 new Product
                 {
@@ -1701,12 +1581,7 @@ namespace newTolkuchka.Models
                     IsRecommended = true,
                     IsNew = true,
                     OnOrder = false,
-                    CategoryId = 11,
-                    TypeId = 1,
-                    BrandId = 2,
-                    LineId = 4,
-                    ModelId = 6,
-                    WarrantyId = 1
+                    ModelId = 6
                 });
             builder.Entity<ProductSpecsValue>().HasData(
                 new ProductSpecsValue

@@ -24,7 +24,7 @@
                 <div class="col-12 col-md-4">
                     <div class="row">
                         <div class="col-auto col-sm-11 col-md-12 col-lg-10">
-                            <img id="@imgId" width="600" height="600" style="width: 100%; height: auto" alt="@p.Brand.Name" src="@PathService.GetImageRelativePath(ConstantsService.PRODUCT, p.Id)" />
+                            <img id="@imgId" width="600" height="600" style="width: 100%; height: auto" alt="@p.Model.Brand.Name" src="@PathService.GetImageRelativePath(ConstantsService.PRODUCT, p.Id)" />
                         </div>
                         <div class="col-auto col-sm-1 col-md-auto col-lg-2 my-2 my-md-0 px-0 pt-1">
                             <div class="d-flex d-md-block">
@@ -32,7 +32,7 @@
                                 {
                                     if (File.Exists(_pathService.GetImagePath(ConstantsService.PRODUCT + "/small", p.Id, i)))
                                     {
-                                        <img role="button" width="200" height="200" style="width: 100%; height: auto; max-width: 4rem" alt="@p.Brand.Name" src="@PathService.GetImageRelativePath(ConstantsService.PRODUCT + "/small", p.Id, i)" onclick="setImage(@imgId, @i)" />
+                                        <img role="button" width="200" height="200" style="width: 100%; height: auto; max-width: 4rem" alt="@p.Model.Brand.Name" src="@PathService.GetImageRelativePath(ConstantsService.PRODUCT + "/small", p.Id, i)" onclick="setImage(@imgId, @i)" />
                                     }
                                     else
                                         break;
@@ -173,8 +173,8 @@
                     {
                         <div class="badge badge-secondary me-1">@Localizer["newed"]</div>
                     }
-                    <a href="@PathService.GetModelUrl($"https://{CultureProvider.Host}/{ConstantsService.BRAND}", p.BrandId)">
-                        <img role="button" width="180" height="60" style="width: 12rem; height: auto" alt="@p.Brand.Name" src="@PathService.GetImageRelativePath($"{ConstantsService.BRAND}", p.BrandId)" />
+                    <a href="@PathService.GetModelUrl($"https://{CultureProvider.Host}/{ConstantsService.BRAND}", p.Model.BrandId)">
+                        <img role="button" width="180" height="60" style="width: 12rem; height: auto" alt="@p.Model.Brand.Name" src="@PathService.GetImageRelativePath($"{ConstantsService.BRAND}", p.Model.BrandId)" />
                     </a>
                 </div>
             </div>

@@ -23,7 +23,7 @@ namespace newTolkuchka.Services
                 Id = x.Id,
                 Name = x.Name,
                 Brand = x.Brand.Name,
-                Products = x.Products.Count
+                Models = x.Models.Count
             }).OrderBy(x => x.Name);
             return adminLines;
         }

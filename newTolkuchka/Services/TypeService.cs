@@ -20,7 +20,7 @@ namespace newTolkuchka.Services
             {
                 Id = x.Id,
                 Name = x.NameRu,
-                Products = x.Products.Count
+                Models = x.Models.Count
             }).OrderBy(x => x.Name);
             return types;
         }

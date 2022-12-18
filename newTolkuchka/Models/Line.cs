@@ -11,6 +11,5 @@ namespace newTolkuchka.Models
         public int BrandId { get; set; }
         public Brand Brand { get; set; }
         public ICollection<Model> Models { get; set; }
-        public ICollection<Product> Products { get; set; }
     }
 }

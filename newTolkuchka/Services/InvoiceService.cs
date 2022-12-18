@@ -79,7 +79,7 @@ namespace newTolkuchka.Services
                     UserOrder userOrder = new()
                     {
                         ProductName = IProduct.GetProductName(p, null),
-                        Warranty = CultureProvider.GetLocalName(p.Warranty.NameRu, p.Warranty.NameEn, p.Warranty.NameTm),
+                        Warranty = CultureProvider.GetLocalName(p.Model.Warranty.NameRu, p.Model.Warranty.NameEn, p.Model.Warranty.NameTm),
                         Price = o.OrderPrice,
                         Quantity = i.Orders.Count(c => c.ProductId == o.ProductId)
                     };

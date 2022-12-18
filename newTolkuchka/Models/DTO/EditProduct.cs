@@ -3,10 +3,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace newTolkuchka.Models
 {
-    public class Product
+    public class EditProduct
     {
         public int Id { get; set; }
-        [MaxLength(50)]
         public string PartNo { get; set; }
         [Required, Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
@@ -16,11 +15,8 @@ namespace newTolkuchka.Models
         public bool IsRecommended { get; set; }
         public bool IsNew { get; set; }
         public bool OnOrder { get; set; }
+        public int BrandId { get; set; }
+        public int? LineId { get; set; }
         public int? ModelId { get; set; }
-        public Model Model { get; set; }
-        public ICollection<ProductSpecsValue> ProductSpecsValues { get; set; }
-        public ICollection<ProductSpecsValueMod> ProductSpecsValueMods { get; set; }
-        public ICollection<Purchase> Purchases { get; set; }
-        public ICollection<Wish> Wishes { get; set; }
     }
 }

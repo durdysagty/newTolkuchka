@@ -52,34 +52,30 @@ namespace newTolkuchka.Services.Abstracts
             string typeName = typeof(T).Name;
             switch (typeName)
             {
-                case "Brand":                    
-                    if (await _con.Products.Where(p => p.BrandId == id).AnyAsync())
-                        return true;
+                case "Brand":
                     if (await _con.Lines.Where(x => x.BrandId == id).AnyAsync())
                         return true;
                     if (await _con.Models.Where(x => x.BrandId == id).AnyAsync())
                         return true;
                     break;
                 case "Category":
-                    if (await _con.Categories.Where(p => p.ParentId == id).AnyAsync())
+                    if (await _con.Categories.Where(x => x.ParentId == id).AnyAsync())
                         return true;
-                    if (await _con.Products.Where(p => p.CategoryId == id).AnyAsync())
+                    if (await _con.Models.Where(x => x.CategoryId == id).AnyAsync())
                         return true;
                     break;
                 case "Line":
-                    if (await _con.Products.Where(p => p.LineId == id).AnyAsync())
-                        return true;
-                    if (await _con.Models.Where(p => p.LineId == id).AnyAsync())
+                    if (await _con.Models.Where(x => x.LineId == id).AnyAsync())
                         return true;
                     break;
                 case "Model":
-                    return await _con.Products.Where(p => p.ModelId == id).AnyAsync();
+                    return await _con.Products.Where(x => x.ModelId == id).AnyAsync();
                 case "Position":
-                    return await _con.Employees.Where(p => p.PositionId == id).AnyAsync();
+                    return await _con.Employees.Where(x => x.PositionId == id).AnyAsync();
                 case "Product":                    
-                    if (await _con.Purchases.Where(p => p.ProductId == id).AnyAsync())
+                    if (await _con.Purchases.Where(x => x.ProductId == id).AnyAsync())
                         return true;
-                    if (await _con.Orders.Where(p => p.ProductId == id).AnyAsync())
+                    if (await _con.Orders.Where(x => x.ProductId == id).AnyAsync())
                         return true;
                     break;
                 case "Spec":
@@ -89,9 +85,9 @@ namespace newTolkuchka.Services.Abstracts
                 case "SpecsValueMod":
                     return await _con.ProductSpecsValueMods.Where(x => x.SpecsValueModId == id).AnyAsync();
                 case "Type":
-                    return await _con.Products.Where(x => x.TypeId == id).AnyAsync();
+                    return await _con.Models.Where(x => x.TypeId == id).AnyAsync();
                 case "Warranty":
-                    return await _con.Products.Where(x => x.WarrantyId == id).AnyAsync();
+                    return await _con.Models.Where(x => x.WarrantyId == id).AnyAsync();
                 case "Supplier":
                     return await _con.PurchaseInvoices.Where(x => x.SupplierId == id).AnyAsync();
                 case "PurchaseInvoice":

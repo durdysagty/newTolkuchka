@@ -44,11 +44,6 @@ namespace newTolkuchka.ControllersAPI
         {
             return await _category.GetAdLinksAsync(id);
         }
-        [HttpGet("productadlinks/{id}")]
-        public async Task<string[]> GetProductAdLinks(int id)
-        {
-            return await _category.GetProductAdLinksAsync(id);
-        }
         [HttpGet("modeladlinks/{id}")]
         public async Task<string[]> GetModelAdLinks(int id)
         {

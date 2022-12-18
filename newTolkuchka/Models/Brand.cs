@@ -12,6 +12,5 @@ namespace newTolkuchka.Models
         // this property is only a hint for the lines of products included into the brands they are in
         public ICollection<Line> Lines { get; set; }
         public ICollection<Model> Models { get; set; }
-        public ICollection<Product> Products { get; set; }
     }
 }
