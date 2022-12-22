@@ -8,35 +8,12 @@ using newTolkuchka.Services.Interfaces;
 
 namespace newTolkuchka.Services
 {
-    public class ModelService : ServiceNoFile<Model>, IModel
+    public class ModelService : ServiceNoFile<Model, AdminModel>, IModel
     {
         private readonly IProduct _product;
         public ModelService(AppDbContext con, IProduct product, IStringLocalizer<Shared> localizer) : base(con, localizer)
         {
             _product = product;
-        }
-
-        public IEnumerable<AdminModel> GetAdminModels(int[] brandId, int?[] lineId, int page, int pp, out int lastPage, out string pagination)
-        {
-            IQueryable<Model> models = GetModels();
-            if (brandId.Any())
-                models = models.Where(m => brandId.Any(b => b == m.BrandId));
-            if (lineId.Any())
-                models = models.Where(m => lineId.Any(l => l == m.LineId));
-            int toSkip = page * pp;
-            IEnumerable<AdminModel> adminModels = models.Skip(toSkip).Take(pp).Select(x => new AdminModel
-            {
-                Id = x.Id,
-                Name = x.Name,
-                Category = x.Category.NameRu,
-                Type = x.Type.NameRu,
-                Brand = x.Brand.Name,
-                Line = x.Line.Name,
-                Products = x.Products.Count
-            }).OrderBy(x => x.Name);
-            pagination = GetPagination(pp, models.Count(), adminModels.Count(), toSkip, out int lp);
-            lastPage = lp;
-            return adminModels;
         }
 
         public async Task<IList<int[]>> GetModelSpecsForAdminAsync(int id)

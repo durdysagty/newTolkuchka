@@ -8,7 +8,7 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level1")]
-    public class BrandController : AbstractController<Brand, IBrand>
+    public class BrandController : AbstractController<Brand, AdminBrand, IBrand>
     {
         private const int WIDTH = 180;
         private const int HEIGHT = 60;
@@ -24,12 +24,12 @@ namespace newTolkuchka.ControllersAPI
             Brand brand = await _brand.GetModelAsync(id);
             return brand;
         }
-        [HttpGet]
-        public IEnumerable<AdminBrand> Get()
-        {
-            IEnumerable<AdminBrand> brands = _brand.GetAdminBrands();
-            return brands;
-        }
+        //[HttpGet]
+        //public IEnumerable<AdminBrand> Get()
+        //{
+        //    IEnumerable<AdminBrand> brands = _brand.GetAdminBrands();
+        //    return brands;
+        //}
         [HttpPost]
         public async Task<Result> Post([FromForm]Brand brand, [FromForm] IFormFile[] images)
         {

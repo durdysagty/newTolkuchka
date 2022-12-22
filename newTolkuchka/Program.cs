@@ -4,7 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using newTolkuchka;
 using newTolkuchka.Models;
+using newTolkuchka.Models.DTO;
 using newTolkuchka.Services;
+using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 using System.Globalization;
 using System.Text;
@@ -58,36 +60,36 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddMemoryCache();
 builder.Services.AddHttpContextAccessor();
 #region myservices
-builder.Services.AddScoped<ICategory, CategoryService>();
 builder.Services.AddScoped<IBrand, BrandService>();
+builder.Services.AddScoped<IBreadcrumbs, BreadcrumbsService>();
+builder.Services.AddScoped<ICategory, CategoryService>();
+builder.Services.AddScoped<IContent, ContentService>();
 builder.Services.AddScoped<ICrypto, CryptoService>();
-builder.Services.AddScoped<IEmployee, EmployeeService>();
+builder.Services.AddScoped<IActionNoFile<Currency, AdminCurrency>, CurrencyService>();
 builder.Services.AddScoped<IEntry, EntryService>();
+builder.Services.AddScoped<IEmployee, EmployeeService>();
+builder.Services.AddScoped<IInvoice, InvoiceService>();
 builder.Services.AddScoped<IImage, ImageService>();
 builder.Services.AddScoped<IJwt, JwtService>();
 builder.Services.AddScoped<ILine, LineService>();
 builder.Services.AddScoped<ILogin, LoginService>();
+builder.Services.AddScoped<IMail, MailService>();
 builder.Services.AddScoped<IModel, ModelService>();
+builder.Services.AddScoped<IOrder, OrderService>();
 builder.Services.AddScoped<IPath, PathService>();
 builder.Services.AddScoped<IPosition, PositionService>();
+builder.Services.AddScoped<IPurchase, PurchaseService>();
+builder.Services.AddScoped<IPurchaseInvoice, PurchaseInvoiceService>();
 builder.Services.AddScoped<IProduct, ProductService>();
-builder.Services.AddScoped<IType, TypeService>();
+builder.Services.AddScoped<IReport, ReportService>();
+builder.Services.AddScoped<ISlide, SlideService>();
 builder.Services.AddScoped<ISpec, SpecService>();
 builder.Services.AddScoped<ISpecsValue, SpecsValueService>();
-builder.Services.AddScoped<IWarranty, WarrantyService>();
-builder.Services.AddScoped<ISlide, SlideService>();
-builder.Services.AddScoped<IUser, UserService>();
-builder.Services.AddScoped<IMail, MailService>();
-builder.Services.AddScoped<IBreadcrumbs, BreadcrumbsService>();
-builder.Services.AddScoped<IActionNoFile<Currency>, CurrencyService>();
 builder.Services.AddScoped<ISpecsValueMod, SpecsValueModService>();
-builder.Services.AddScoped<IOrder, OrderService>();
-builder.Services.AddScoped<IInvoice, InvoiceService>();
-builder.Services.AddScoped<IContent, ContentService>();
 builder.Services.AddScoped<ISupplier, SupplierService>();
-builder.Services.AddScoped<IPurchaseInvoice, PurchaseInvoiceService>();
-builder.Services.AddScoped<IPurchase, PurchaseService>();
-builder.Services.AddScoped<IReport, ReportService>();
+builder.Services.AddScoped<IType, TypeService>();
+builder.Services.AddScoped<IUser, UserService>();
+builder.Services.AddScoped<IWarranty, WarrantyService>();
 #endregion
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
@@ -129,7 +131,7 @@ app.Use(async (context, next) =>
             context.Request.Headers.Add("Authorization", "Bearer " + t);
         }
     }
-    _ = context.RequestServices.GetService<IActionNoFile<Currency>>();
+    _ = context.RequestServices.GetService<IActionNoFile<Currency, AdminCurrency>>();
     await next();
     if (context.Response.StatusCode == 404 && !context.Response.HasStarted)
     {

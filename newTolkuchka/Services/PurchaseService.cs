@@ -7,7 +7,7 @@ using newTolkuchka.Services.Interfaces;
 
 namespace newTolkuchka.Services
 {
-    public class PurchaseService : ServiceNoFile<Purchase>, IPurchase
+    public class PurchaseService : ServiceNoFile<Purchase, AdminPurchase>, IPurchase
     {
         private readonly IProduct _product;
         public PurchaseService(AppDbContext con, IStringLocalizer<Shared> localizer, IProduct product) : base(con, localizer)

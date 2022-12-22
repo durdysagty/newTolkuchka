@@ -8,36 +8,13 @@ using newTolkuchka.Services.Interfaces;
 
 namespace newTolkuchka.Services
 {
-    public class CategoryService : ServiceNoFile<Category>, ICategory
+    public class CategoryService : ServiceNoFile<Category, AdminCategory>, ICategory
     {
         private const int PADDING = 2;
         private readonly IProduct _product;
         public CategoryService(AppDbContext con, IStringLocalizer<Shared> localizer, IProduct product) : base(con, localizer)
         {
             _product = product;
-        }
-
-        public async Task<IEnumerable<AdminCategory>> GetAdminCategories()
-        {
-            IEnumerable<Category> list = await GetModels().ToArrayAsync();
-            List<AdminCategory> categories = new();
-            void GetCategoriesByOrder(IEnumerable<Category> parentList, int level)
-            {
-
-                foreach (var c in parentList)
-                {
-                    categories.Add(new AdminCategory
-                    {
-                        Padding = level * PADDING,
-                        Id = c.Id,
-                        Name = c.Order + " " + c.NameRu,
-                        Products = GetProducts(c.Id).Count()
-                    });
-                    GetCategoriesByOrder(list.Where(x => x.ParentId == c.Id).OrderBy(x => x.Order), level + 1);
-                }
-            }
-            GetCategoriesByOrder(list.Where(x => x.ParentId == 0).OrderBy(x => x.Order), 0);
-            return categories;
         }
 
         public async Task<bool> HasProduct(int id)
@@ -169,7 +146,7 @@ namespace newTolkuchka.Services
 
         private IQueryable<Product> GetProducts(int id)
         {
-            return _product.GetProducts(new[] { id });
+            return _product.GetModels(new Dictionary<string, object>() { { ConstantsService.CATEGORY, new[] { id } } });
         }
     }
 }

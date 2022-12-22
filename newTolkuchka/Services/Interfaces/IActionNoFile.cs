@@ -1,6 +1,6 @@
 ﻿namespace newTolkuchka.Services.Interfaces
 {
-    public interface IActionNoFile<T>: IAction<T>
+    public interface IActionNoFile<T, TAdmin> : IAction<T, TAdmin>
     {
         Task AddModelAsync(T model, bool save = true);
         void EditModel(T model);

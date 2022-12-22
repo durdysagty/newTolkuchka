@@ -8,7 +8,7 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level3")]
-    public class PositionController : AbstractController<Position, IPosition>
+    public class PositionController : AbstractController<Position, AdminPosition, IPosition>
     {
         private readonly IPosition _position;
         public PositionController(IEntry entry, IPosition position): base(entry, Entity.Position, position)
@@ -22,12 +22,12 @@ namespace newTolkuchka.ControllersAPI
             Position position = await _position.GetModelAsync(id);
             return position;
         }
-        [HttpGet]
-        public IEnumerable<AdminPosition> Get()
-        {
-            IEnumerable<AdminPosition> positions = _position.GetAdminPositions();
-            return positions;
-        }
+        //[HttpGet]
+        //public IEnumerable<AdminPosition> Get()
+        //{
+        //    IEnumerable<AdminPosition> positions = _position.GetAdminPositions();
+        //    return positions;
+        //}
         [HttpPost]
         public async Task<Result> Post(Position position)
         {

@@ -10,7 +10,7 @@ using System.Security.Claims;
 
 namespace newTolkuchka.Services
 {
-    public class UserService : ServiceNoFile<User>, IUser
+    public class UserService : ServiceNoFile<User, User>, IUser
     {
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICrypto _crypto;

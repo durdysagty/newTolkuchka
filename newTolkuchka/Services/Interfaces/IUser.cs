@@ -3,7 +3,7 @@ using newTolkuchka.Models.DTO;
 
 namespace newTolkuchka.Services.Interfaces
 {
-    public interface IUser : IActionNoFile<User>
+    public interface IUser : IActionNoFile<User, User>
     {
         Task<User> GetCurrentUser();
         Task<User> GetUserByLoginAsync(string login);

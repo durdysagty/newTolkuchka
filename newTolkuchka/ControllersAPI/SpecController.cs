@@ -8,7 +8,7 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level1")]
-    public class SpecController : AbstractController<Spec, ISpec>
+    public class SpecController : AbstractController<Spec, AdminSpec, ISpec>
     {
         private readonly ISpec _spec;
         public SpecController(IEntry entry, ISpec spec) : base(entry, Entity.Spec, spec)
@@ -22,12 +22,12 @@ namespace newTolkuchka.ControllersAPI
             Spec spec = await _spec.GetModelAsync(id);
             return spec;
         }
-        [HttpGet]
-        public IEnumerable<AdminSpec> Get()
-        {
-            IEnumerable<AdminSpec> specs = _spec.GetAdminSpecs();
-            return specs;
-        }
+        //[HttpGet]
+        //public IEnumerable<AdminSpec> Get()
+        //{
+        //    IEnumerable<AdminSpec> specs = _spec.GetAdminSpecs();
+        //    return specs;
+        //}
         [HttpGet("value")]
         public IEnumerable<ModelWithList<ModelWithList<AdminSpecsValueMod>>> GetSpecsWithValues(int modelId = 0)
         {

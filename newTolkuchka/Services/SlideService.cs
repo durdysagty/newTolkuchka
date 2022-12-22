@@ -8,22 +8,11 @@ using newTolkuchka.Services.Interfaces;
 
 namespace newTolkuchka.Services
 {
-    public class SlideService : ServiceFormFile<Slide>, ISlide
+    public class SlideService : ServiceFormFile<Slide, AdminSlide>, ISlide
     {
         //private const int IMAGESMAX = 3;
         public SlideService(AppDbContext con, IStringLocalizer<Shared> localizer, IPath path, IImage image) : base(con, localizer, path, image, ConstantsService.SLIDEMAXIMAGE)
         {
-        }
-
-        public IEnumerable<AdminSlide> GetAdminSlides()
-        {
-            IEnumerable<AdminSlide> slides = GetModels().Select(x => new AdminSlide
-            {
-                Id = x.Id,
-                Name = x.Name,
-                 NotInUse = !x.NotInUse
-            }).OrderByDescending(x => x.Id);
-            return slides;
         }
 
         public IQueryable<Slide> GetSlidesByLayoutAsync(Layout layout)

@@ -8,7 +8,7 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level2")]
-    public class SupplierController : AbstractController<Supplier, ISupplier>
+    public class SupplierController : AbstractController<Supplier, AdminSupplier, ISupplier>
     {
         private readonly ISupplier _supplier;
         public SupplierController(IEntry entry, ISupplier supplier) : base(entry, Entity.Supplier, supplier)
@@ -22,12 +22,12 @@ namespace newTolkuchka.ControllersAPI
             Supplier supplier = await _supplier.GetModelAsync(id);
             return supplier;
         }
-        [HttpGet]
-        public IEnumerable<AdminSupplier> Get()
-        {
-            IEnumerable<AdminSupplier> suppliers = _supplier.GetAdminSuppliers();
-            return suppliers;
-        }
+        //[HttpGet]
+        //public IEnumerable<AdminSupplier> Get()
+        //{
+        //    IEnumerable<AdminSupplier> suppliers = _supplier.GetAdminSuppliers();
+        //    return suppliers;
+        //}
         [HttpPost]
         public async Task<Result> Post(Supplier supplier)
         {

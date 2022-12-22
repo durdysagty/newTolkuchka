@@ -3,8 +3,7 @@ using newTolkuchka.Models.DTO;
 
 namespace newTolkuchka.Services.Interfaces
 {
-    public interface ILine : IActionNoFile<Line>
+    public interface ILine : IActionNoFile<Line, AdminLine>
     {
-        IEnumerable<AdminLine> GetAdminLines(int[] brandId);
     }
 }

@@ -8,7 +8,7 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level1")]
-    public class WarrantyController : AbstractController<Warranty, IWarranty>
+    public class WarrantyController : AbstractController<Warranty, AdminWarranty, IWarranty>
     {
         private readonly IWarranty _warranty;
         public WarrantyController(IEntry entry, IWarranty warranty) : base(entry, Entity.Warranty, warranty)
@@ -22,12 +22,12 @@ namespace newTolkuchka.ControllersAPI
             Warranty warranty = await _warranty.GetModelAsync(id);
             return warranty;
         }
-        [HttpGet]
-        public IEnumerable<AdminWarranty> Get()
-        {
-            IEnumerable<AdminWarranty> warranties = _warranty.GetAdminWarranties();
-            return warranties;
-        }
+        //[HttpGet]
+        //public IEnumerable<AdminWarranty> Get()
+        //{
+        //    IEnumerable<AdminWarranty> warranties = _warranty.GetAdminWarranties();
+        //    return warranties;
+        //}
         [HttpPost]
         public async Task<Result> Post(Warranty warranty)
         {

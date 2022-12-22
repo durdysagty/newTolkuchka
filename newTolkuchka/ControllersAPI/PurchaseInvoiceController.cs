@@ -9,7 +9,7 @@ using System.Text.Json;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level2")]
-    public class PurchaseInvoiceController : AbstractController<PurchaseInvoice, IPurchaseInvoice>
+    public class PurchaseInvoiceController : AbstractController<PurchaseInvoice, AdminPurchaseInvoice, IPurchaseInvoice>
     {
         private readonly IPurchaseInvoice _purchaseInvoice;
         private readonly IPurchase _purchase;
@@ -25,12 +25,12 @@ namespace newTolkuchka.ControllersAPI
             PurchaseInvoice PurchaseInvoice = await _purchaseInvoice.GetModelAsync(id);
             return PurchaseInvoice;
         }
-        [HttpGet]
-        public IEnumerable<AdminPurchaseInvoice> Get()
-        {
-            IEnumerable<AdminPurchaseInvoice> purchaseInvoices = _purchaseInvoice.GetAdminPurchaseInvoices();
-            return purchaseInvoices;
-        }
+        //[HttpGet]
+        //public IEnumerable<AdminPurchaseInvoice> Get()
+        //{
+        //    IEnumerable<AdminPurchaseInvoice> purchaseInvoices = _purchaseInvoice.GetAdminPurchaseInvoices();
+        //    return purchaseInvoices;
+        //}
         [HttpGet("purchases/{id}")]
         public async Task<IEnumerable<AdminPurchase>> GetAdminPurchasesByPurchaseInvoiceId(int id)
         {

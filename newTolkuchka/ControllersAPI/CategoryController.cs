@@ -8,7 +8,7 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level1")]
-    public class CategoryController : AbstractController<Category, ICategory>
+    public class CategoryController : AbstractController<Category, AdminCategory, ICategory>
     {
         private readonly ICategory _category;
         public CategoryController(IEntry entry, ICategory category) : base(entry, Entity.Category, category)
@@ -22,12 +22,17 @@ namespace newTolkuchka.ControllersAPI
             Category category = await _category.GetModelAsync(id);
             return category;
         }
-        [HttpGet]
-        public async Task<IEnumerable<AdminCategory>> Get()
-        {
-            IEnumerable<AdminCategory> categories = await _category.GetAdminCategories();
-            return categories;
-        }
+        //[HttpGet]
+        //public ModelsFilters<AdminCategory> Get([FromQuery] int page = 0, [FromQuery] int pp = 50)
+        //{
+        //    IEnumerable<AdminCategory> categories = _category.GetAdminModels(page, pp, out int lastPage, out string pagination);
+        //    return new ModelsFilters<AdminCategory>
+        //    {
+        //        Models = categories,
+        //        LastPage = lastPage,
+        //        Pagination = pagination
+        //    };
+        //}
         [HttpGet("hasproduct/{id}")]
         public async Task<bool> HasProduct(int id)
         {

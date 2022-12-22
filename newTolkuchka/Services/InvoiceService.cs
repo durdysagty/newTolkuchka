@@ -9,30 +9,12 @@ using System.Collections.ObjectModel;
 
 namespace newTolkuchka.Services
 {
-    public class InvoiceService : ServiceNoFile<Invoice>, IInvoice
+    public class InvoiceService : ServiceNoFile<Invoice, AdminInvoice>, IInvoice
     {
         private readonly IProduct _product;
         public InvoiceService(AppDbContext con, IProduct product, IStringLocalizer<Shared> localizer) : base(con, localizer)
         {
             _product = product;
-        }
-
-        public AdminInvoice GetAdminInvoice(int id)
-        {
-            return GetModels().Where(i => i.Id == id).Select(x => new AdminInvoice
-            {
-                Id = x.Id,
-                Date = x.Date,
-                User = x.UserId == null ? null : x.User.Email,
-                Buyer = x.Buyer,
-                Address = x.InvoiceAddress,
-                Phone = x.InvoicePhone,
-                Language = x.Language,
-                CurrencyCodeName = x.Currency.CodeName,
-                DeliveryCost = x.DeliveryCost,
-                IsDelivered= x.IsDelivered,
-                IsPaid = x.IsPaid
-            }).FirstOrDefault();
         }
 
         public async Task<IEnumerable<UserInvoice>> GetUserInvoicesAsync(int userId)

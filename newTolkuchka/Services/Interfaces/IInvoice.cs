@@ -3,9 +3,8 @@ using newTolkuchka.Models.DTO;
 
 namespace newTolkuchka.Services.Interfaces
 {
-    public interface IInvoice : IActionNoFile<Invoice>
+    public interface IInvoice : IActionNoFile<Invoice, AdminInvoice>
     {
-        AdminInvoice GetAdminInvoice(int id);
         Task<IEnumerable<UserInvoice>> GetUserInvoicesAsync(int userId);
         IEnumerable<AdminInvoice> GetAdminInvoices();
     }

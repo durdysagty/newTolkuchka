@@ -4,8 +4,7 @@ using Type = newTolkuchka.Models.Type;
 
 namespace newTolkuchka.Services.Interfaces
 {
-    public interface IType : IActionNoFile<Type>
+    public interface IType : IActionNoFile<Type, AdminType>
     {
-        IEnumerable<AdminType> GetAdminTypes();
     }
 }

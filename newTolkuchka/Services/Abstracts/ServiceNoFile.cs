@@ -6,7 +6,7 @@ using newTolkuchka.Services.Interfaces;
 
 namespace newTolkuchka.Services.Abstracts
 {
-    public abstract class ServiceNoFile<T> : Service<T>, IActionNoFile<T> where T : class
+    public abstract class ServiceNoFile<T, TAdmin> : Service<T, TAdmin>, IActionNoFile<T, TAdmin> where T : class where TAdmin : class
     {
         public ServiceNoFile(AppDbContext con, IStringLocalizer<Shared> localizer) : base(con, localizer)
         {

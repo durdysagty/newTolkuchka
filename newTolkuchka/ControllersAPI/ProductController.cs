@@ -10,7 +10,7 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level1")]
-    public class ProductController : AbstractController<Product, IProduct>
+    public class ProductController : AbstractController<Product, AdminProduct, IProduct>
     {
         private const int WIDTH = 600;
         private const int HEIGHT = 600;
@@ -27,19 +27,30 @@ namespace newTolkuchka.ControllersAPI
             EditProduct product = _product.GetEditProduct(id);
             return product;
         }
-        [HttpGet]
-        public ModelsFilters<AdminProduct> Get([FromQuery] int[] category, [FromQuery] int[] brand, [FromQuery] int? line, [FromQuery] int? model, [FromQuery] int page = 0, [FromQuery] int pp = 50)
-        {
-            IEnumerable<AdminProduct> products = _product.GetAdminProducts(category.Any() ? category : null, brand.Any() ? brand : null, line, model, page, pp, out int lastPage, out string pagination);
-            return new ModelsFilters<AdminProduct>
-            {
-                //Filters = new string[4] { nameof(category), nameof(brand), $"{nameof(brand)}Id {nameof(line)}", $"{nameof(line)}Id {nameof(model)}" }.OrderBy(c => c),
-                Filters = new string[4] { nameof(category), nameof(brand), $"{nameof(brand)}Id {nameof(line)}", $"{nameof(line)}Id {nameof(model)}" }.OrderBy(c => c),
-                Models = products,
-                LastPage = lastPage,
-                Pagination = pagination
-            };
-        }
+        //[HttpGet]
+        //public ModelsFilters<AdminProduct> Get([FromQuery] int[] category, [FromQuery] int[] brand, [FromQuery] int? line, [FromQuery] int? model, [FromQuery] int page = 0, [FromQuery] int pp = 50)
+        //{
+        //    IEnumerable<AdminProduct> products = _product.GetAdminProducts(category.Any() ? category : null, brand.Any() ? brand : null, line, model, page, pp, out int lastPage, out string pagination);
+        //    return new ModelsFilters<AdminProduct>
+        //    {
+        //        //Filters = new string[4] { nameof(category), nameof(brand), $"{nameof(brand)}Id {nameof(line)}", $"{nameof(line)}Id {nameof(model)}" }.OrderBy(c => c),
+        //        Filters = new string[4] { nameof(category), nameof(brand), $"{nameof(brand)}Id {nameof(line)}", $"{nameof(line)}Id {nameof(model)}" }.OrderBy(c => c),
+        //        Models = products,
+        //        LastPage = lastPage,
+        //        Pagination = pagination
+        //    };
+        //}
+        //[HttpGet]
+        //public ModelsFilters<AdminProduct> Get([FromQuery] int page = 0, [FromQuery] int pp = 50)
+        //{
+        //    IEnumerable<AdminProduct> products = _product.GetAdminModels(page, pp, out int lastPage, out string pagination);
+        //    return new ModelsFilters<AdminProduct>
+        //    {
+        //        Models = products,
+        //        LastPage = lastPage,
+        //        Pagination = pagination
+        //    };
+        //}
         [HttpGet("specvalues/{id}")]
         public async Task<string[]> GetSpecValues(int id)
         {
@@ -97,7 +108,7 @@ namespace newTolkuchka.ControllersAPI
         [HttpPost("changeprice")]
         public async Task<Result> Post([FromForm] decimal price, [FromForm] int[] priceIds, [FromForm] int[] newPriceIds)
         {
-            IList<Product> products = await _product.GetFullProducts(null, null, null, null, null, priceIds.Concat(newPriceIds).Distinct().ToList()).ToListAsync();
+            IList<Product> products = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, priceIds.Concat(newPriceIds).Distinct().ToList() } }).ToListAsync();
             foreach (Product product in products)
             {
                 if (priceIds.Contains(product.Id))

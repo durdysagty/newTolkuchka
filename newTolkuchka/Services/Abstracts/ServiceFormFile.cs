@@ -7,7 +7,7 @@ using Type = System.Type;
 
 namespace newTolkuchka.Services.Abstracts
 {
-    public abstract class ServiceFormFile<T> : Service<T>, IActionFormFile<T> where T : class
+    public abstract class ServiceFormFile<T, TAdmin> : Service<T, TAdmin>, IActionFormFile<T, TAdmin> where T : class where TAdmin : class
     {
         private protected readonly IPath _path;
         private protected readonly IImage _image;
@@ -23,7 +23,7 @@ namespace newTolkuchka.Services.Abstracts
         public async Task AddModelAsync(T model, IFormFile[] images, int width, int height, int? divider = null)
         {
             int? simId = null;
-            Type type = GetModelType();
+            Type type = typeof(T);
             int id = GetModelId(type, model);
             if (id != 0)
             {
@@ -67,7 +67,7 @@ namespace newTolkuchka.Services.Abstracts
 
         public async Task SetModelImages(T model, IFormFile[] images, int width, int height, int? divider = null)
         {
-            Type type = GetModelType();
+            Type type = typeof(T);
             int id = GetModelId(type, model);
             for (int i = 0; i < images.Length; i++)
             {
@@ -92,7 +92,7 @@ namespace newTolkuchka.Services.Abstracts
             if (isBinded)
                 return Result.Fail;
             _con.Set<T>().Remove(model);
-            Type type = GetModelType();
+            Type type = typeof(T);
             Stack<string> paths = new(smallImage ? _imagesMax * 2 : _imagesMax);
             for (int i = 0; i < _imagesMax; i++)
             {

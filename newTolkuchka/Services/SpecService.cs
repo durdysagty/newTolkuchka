@@ -8,23 +8,10 @@ using newTolkuchka.Services.Interfaces;
 
 namespace newTolkuchka.Services
 {
-    public class SpecService : ServiceNoFile<Spec>, ISpec
+    public class SpecService : ServiceNoFile<Spec, AdminSpec>, ISpec
     {
         public SpecService(AppDbContext con, IStringLocalizer<Shared> localizer) : base(con, localizer)
         {
-        }
-
-        public IEnumerable<AdminSpec> GetAdminSpecs()
-        {
-            IEnumerable<AdminSpec> specs = GetModels().OrderBy(x => x.Order).Select(x => new AdminSpec
-            {
-                Id = x.Id,
-                Name = x.NameRu,
-                Order = x.Order,
-                NamingOrder = x.NamingOrder,
-                SpecsValues = x.SpecsValues.Count
-            });
-            return specs;
         }
         public IEnumerable<ModelWithList<ModelWithList<AdminSpecsValueMod>>> GetSpecWithValues(int modelId = 0)
         {

@@ -3,8 +3,7 @@ using newTolkuchka.Models.DTO;
 
 namespace newTolkuchka.Services.Interfaces
 {
-    public interface IWarranty : IActionNoFile<Warranty>
+    public interface IWarranty : IActionNoFile<Warranty, AdminWarranty>
     {
-        IEnumerable<AdminWarranty> GetAdminWarranties();
     }
 }

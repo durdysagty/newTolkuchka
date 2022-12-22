@@ -8,7 +8,7 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level1")]
-    public class ModelController : AbstractController<Model, IModel>
+    public class ModelController : AbstractController<Model, AdminModel, IModel>
     {
         private readonly IModel _model;
         private readonly ICategory _category;
@@ -24,18 +24,18 @@ namespace newTolkuchka.ControllersAPI
             Model model = await _model.GetModelAsync(id);
             return model;
         }
-        [HttpGet]
-        public ModelsFilters<AdminModel> Get([FromQuery] int[] brand, [FromQuery] int?[] line, [FromQuery] int page = 0, [FromQuery] int pp = 50)
-        {
-            IEnumerable<AdminModel> models = _model.GetAdminModels(brand, line, page, pp, out int lastPage, out string pagination);
-            return new ModelsFilters<AdminModel>
-            {
-                Filters = new string[2] { nameof(brand), $"{nameof(brand)}Id {nameof(line)}" }.OrderBy(c => c),
-                Models = models,
-                LastPage = lastPage,
-                Pagination = pagination
-            };
-        }
+        //[HttpGet]
+        //public ModelsFilters<AdminModel> Get(/*[FromQuery] int[] brand, [FromQuery] int?[] line, */[FromQuery] int page = 0, [FromQuery] int pp = 50)
+        //{
+        //    IEnumerable<AdminModel> models = _model.GetAdminModels(/*brand, line, */page, pp, out int lastPage, out string pagination);
+        //    return new ModelsFilters<AdminModel>
+        //    {
+        //        //Filters = new string[2] { nameof(brand), $"{nameof(brand)}Id {nameof(line)}" }.OrderBy(c => c),
+        //        Models = models,
+        //        LastPage = lastPage,
+        //        Pagination = pagination
+        //    };
+        //}
         [HttpGet("specs/{id}")]
         public async Task<IList<int[]>> GetModelSpecs(int id)
         {

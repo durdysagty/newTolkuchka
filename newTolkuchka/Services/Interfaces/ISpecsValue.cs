@@ -3,8 +3,7 @@ using newTolkuchka.Models.DTO;
 
 namespace newTolkuchka.Services.Interfaces
 {
-    public interface ISpecsValue : IActionFormFile<SpecsValue>
+    public interface ISpecsValue : IActionFormFile<SpecsValue, AdminSpecsValue>
     {
-        IEnumerable<AdminSpecsValue> GetAdminSpecsValues(int specId);
     }
 }

@@ -3,8 +3,7 @@ using newTolkuchka.Models.DTO;
 
 namespace newTolkuchka.Services.Interfaces
 {
-    public interface IBrand : IActionFormFile<Brand>
+    public interface IBrand : IActionFormFile<Brand, AdminBrand>
     {
-        IEnumerable<AdminBrand> GetAdminBrands();
     }
 }

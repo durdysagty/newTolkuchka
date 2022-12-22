@@ -8,7 +8,7 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level1")]
-    public class LineController : AbstractController<Line, ILine>
+    public class LineController : AbstractController<Line, AdminLine, ILine>
     {
         private readonly ILine _line;
         public LineController(IEntry entry, ILine line) : base(entry, Entity.Line, line)
@@ -22,12 +22,12 @@ namespace newTolkuchka.ControllersAPI
             Line line = await _line.GetModelAsync(id);
             return line;
         }
-        [HttpGet]
-        public IEnumerable<AdminLine> Get([FromQuery] int[] brandId)
-        {
-            IEnumerable<AdminLine> lines = _line.GetAdminLines(brandId);
-            return lines;
-        }
+        //[HttpGet]
+        //public IEnumerable<AdminLine> Get([FromQuery] int[] brandId)
+        //{
+        //    IEnumerable<AdminLine> lines = _line.GetAdminLines(brandId);
+        //    return lines;
+        //}
         [HttpPost]
         public async Task<Result> Post(Line line)
         {

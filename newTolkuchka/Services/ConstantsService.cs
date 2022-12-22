@@ -1,7 +1,7 @@
 ﻿namespace newTolkuchka.Services
 {
     public static class ConstantsService
-    {        
+    {
         // lang standarts
         public const string RU = "ru";
         public const string EN = "en";
@@ -39,14 +39,44 @@
         // routes models
         public const string SLASH = "/";
         public const string HOME = "home";
-        public const string CATEGORIES = "categories";
-        public const string CATEGORY = "category";
         public const string BRANDS = "brands";
         public const string BRAND = "brand";
+        public const string CATEGORIES = "categories";
+        public const string CATEGORY = "category";
+        public const string CURRENCIES = "currencies";
+        public const string CURRENCY = "currency";
+        public const string EMPLOYEES = "employees";
+        public const string EMPLOYEE = "employee";
+        public const string ENTRIES = "entries";
+        public const string ENTRY = "entry";
+        public const string INVOICES = "invoices";
+        public const string INVOICE = "invoice";
+        public const string LINES = "lines";
+        public const string LINE = "line";
+        public const string MODELS = "models";
+        public const string MODEL = "model";
+        public const string POSITIONS = "positions";
+        public const string POSITION = "position";
         public const string PRODUCTS = "products";
         public const string PRODUCT = "product";
+        public const string PURCHASEINVOICES = "purchaseinvoices";
+        public const string PURCHASEINVOICE = "purchaseinvoice";
+        public const string PURCHASES = "purchases";
+        public const string PURCHASE = "purchase";
         public const string SLIDES = "slides";
         public const string SLIDE = "slide";
+        public const string SPECS = "specs";
+        public const string SPEC = "spec";
+        public const string SPECSVALUEMODS = "specsvaluemods";
+        public const string SPECSVALUEMOD = "specsvaluemod";
+        public const string SPECSVALUES = "specsvalues";
+        public const string SPECSVALUE = "specsvalue";
+        public const string SUPPLIERS = "suppliers";
+        public const string SUPPLIER = "supplier";
+        public const string TYPES = "types";
+        public const string TYPE = "type";
+        public const string WARRANTIES = "warranties";
+        public const string WARRANTY = "warranty";
         public const string ACCOUNT = "account";
         public const string LOGIN = "login";
         public const string CART = "cart";
@@ -54,7 +84,6 @@
         public const string ABOUT = "about";
         public const string DELIVERY = "delivery";
         public const string MENU = "menu";
-        public const string SPECSVALUE = "specsvalue";
         public const string NOVELTIES = "novelties";
         public const string RECOMMENDED = "recommended";
         public const string NEW = "new";

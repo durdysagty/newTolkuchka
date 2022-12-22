@@ -2,13 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
+using newTolkuchka.Services;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level1")]
-    public class SpecsValueController : AbstractController<SpecsValue, ISpecsValue>
+    public class SpecsValueController : AbstractController<SpecsValue, AdminSpecsValue, ISpecsValue>
     {
         private const int WIDTH = 25;
         private const int HEIGHT = 25;
@@ -24,11 +25,16 @@ namespace newTolkuchka.ControllersAPI
             SpecsValue specsValue = await _specsValue.GetModelAsync(id);
             return specsValue;
         }
-        [HttpGet("spec/{specId}")]
-        public IEnumerable<AdminSpecsValue> GetBySpec(int specId)
+        [HttpGet($"{ConstantsService.SPEC}/{{specId}}")]
+        public ModelsFilters<AdminSpecsValue> GetBySpec(int specId, [FromQuery] int page = 0, [FromQuery] int pp = 50)
         {
-            IEnumerable<AdminSpecsValue> specsValues = _specsValue.GetAdminSpecsValues(specId);
-            return specsValues;
+            IEnumerable<AdminSpecsValue> specsValues = _specsValue.GetAdminModels(page, pp, out int lastPage, out string pagination, new Dictionary<string, object> { { ConstantsService.SPEC, specId } });
+            return new ModelsFilters<AdminSpecsValue>
+            {
+                Models = specsValues,
+                LastPage = lastPage,
+                Pagination = pagination
+            };
         }
         [HttpPost]
         public async Task<Result> Post([FromForm] SpecsValue specsValue, [FromForm] IFormFile[] images)

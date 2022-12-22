@@ -3,7 +3,7 @@ using newTolkuchka.Models.DTO;
 
 namespace newTolkuchka.Services.Interfaces
 {
-    public interface IOrder : IActionNoFile<Order>
+    public interface IOrder : IActionNoFile<Order, AdminOrder>
     {
         void CreateCartOrders(IList<CartOrder> orders);
         IEnumerable<Order> GetOrdersByInvoiceId(int id);

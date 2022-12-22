@@ -8,7 +8,7 @@ using newTolkuchka.Services.Interfaces;
 
 namespace newTolkuchka.Services
 {
-    public class EmployeeService : ServiceNoFile<Employee>, IEmployee
+    public class EmployeeService : ServiceNoFile<Employee, AdminEmployee>, IEmployee
     {
         private readonly ICrypto _crypto;
         public EmployeeService(AppDbContext con, IStringLocalizer<Shared> localizer, ICrypto crypto) : base(con, localizer)
@@ -27,23 +27,11 @@ namespace newTolkuchka.Services
             return employee;
         }
 
-        public IEnumerable<AdminEmployee> GetAdminEmployees()
-        {
-            IEnumerable<AdminEmployee> employees = GetModels().Select(x => new AdminEmployee
-            {
-                Id = x.Id,
-                HumanName = x.Login,
-                Position = x.Position.Name,
-                Level = x.Position.Level
-            }).OrderBy(x => x.Id);
-            return employees;
-        }
-
-        public IQueryable<string> GetEmployeeNames(int[] ids)
-        {
-            IQueryable<string> names = GetModels().Where(e => ids.Any(i => i == e.Id)).Select(e => e.Login);
-            return names;
-        }
+        //public IQueryable<string> GetEmployeeNames(int[] ids)
+        //{
+        //    IQueryable<string> names = GetModels().Where(e => ids.Any(i => i == e.Id)).Select(e => e.Login);
+        //    return names;
+        //}
 
         public override bool IsExist(Employee employee, IEnumerable<Employee> list)
         {

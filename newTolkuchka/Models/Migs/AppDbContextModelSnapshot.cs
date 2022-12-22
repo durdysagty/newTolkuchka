@@ -40,7 +40,7 @@ namespace newTolkuchka.Models.Migs
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Brands");
+                    b.ToTable("Brands", (string)null);
 
                     b.HasData(
                         new
@@ -121,7 +121,7 @@ namespace newTolkuchka.Models.Migs
                     b.HasIndex("ParentId", "NameTm")
                         .IsUnique();
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
 
                     b.HasData(
                         new
@@ -301,7 +301,7 @@ namespace newTolkuchka.Models.Migs
 
                     b.HasKey("CategoryId", "StepParentId");
 
-                    b.ToTable("CategoryAdLinks");
+                    b.ToTable("CategoryAdLinks", (string)null);
                 });
 
             modelBuilder.Entity("newTolkuchka.Models.CategoryModelAdLink", b =>
@@ -316,7 +316,7 @@ namespace newTolkuchka.Models.Migs
 
                     b.HasIndex("ModelId");
 
-                    b.ToTable("CategoryModelAdLinks");
+                    b.ToTable("CategoryModelAdLinks", (string)null);
                 });
 
             modelBuilder.Entity("newTolkuchka.Models.Currency", b =>
@@ -343,7 +343,7 @@ namespace newTolkuchka.Models.Migs
                         .IsUnique()
                         .HasFilter("[CodeName] IS NOT NULL");
 
-                    b.ToTable("Currencies");
+                    b.ToTable("Currencies", (string)null);
 
                     b.HasData(
                         new
@@ -393,7 +393,7 @@ namespace newTolkuchka.Models.Migs
 
                     b.HasIndex("PositionId");
 
-                    b.ToTable("Employees");
+                    b.ToTable("Employees", (string)null);
 
                     b.HasData(
                         new
@@ -445,7 +445,7 @@ namespace newTolkuchka.Models.Migs
 
                     b.HasKey("Id");
 
-                    b.ToTable("Entries");
+                    b.ToTable("Entries", (string)null);
                 });
 
             modelBuilder.Entity("newTolkuchka.Models.Invoice", b =>
@@ -510,7 +510,7 @@ namespace newTolkuchka.Models.Migs
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Invoices");
+                    b.ToTable("Invoices", (string)null);
                 });
 
             modelBuilder.Entity("newTolkuchka.Models.Line", b =>
@@ -534,7 +534,7 @@ namespace newTolkuchka.Models.Migs
                     b.HasIndex("BrandId", "Name")
                         .IsUnique();
 
-                    b.ToTable("Lines");
+                    b.ToTable("Lines", (string)null);
 
                     b.HasData(
                         new
@@ -650,7 +650,7 @@ namespace newTolkuchka.Models.Migs
                         .IsUnique()
                         .HasFilter("[LineId] IS NOT NULL");
 
-                    b.ToTable("Models");
+                    b.ToTable("Models", (string)null);
 
                     b.HasData(
                         new
@@ -747,7 +747,7 @@ namespace newTolkuchka.Models.Migs
 
                     b.HasIndex("SpecId");
 
-                    b.ToTable("ModelSpecs");
+                    b.ToTable("ModelSpecs", (string)null);
 
                     b.HasData(
                         new
@@ -950,7 +950,7 @@ namespace newTolkuchka.Models.Migs
                         .IsUnique()
                         .HasFilter("[PurchaseId] IS NOT NULL");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("newTolkuchka.Models.Position", b =>
@@ -974,7 +974,7 @@ namespace newTolkuchka.Models.Migs
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Positions");
+                    b.ToTable("Positions", (string)null);
 
                     b.HasData(
                         new
@@ -1040,7 +1040,7 @@ namespace newTolkuchka.Models.Migs
 
                     b.HasIndex("ModelId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
 
                     b.HasData(
                         new
@@ -1344,7 +1344,7 @@ namespace newTolkuchka.Models.Migs
 
                     b.HasIndex("SpecsValueId");
 
-                    b.ToTable("ProductSpecsValues");
+                    b.ToTable("ProductSpecsValues", (string)null);
 
                     b.HasData(
                         new
@@ -2051,7 +2051,7 @@ namespace newTolkuchka.Models.Migs
 
                     b.HasIndex("SpecsValueModId");
 
-                    b.ToTable("ProductSpecsValueMods");
+                    b.ToTable("ProductSpecsValueMods", (string)null);
 
                     b.HasData(
                         new
@@ -2123,7 +2123,7 @@ namespace newTolkuchka.Models.Migs
 
                     b.HasIndex("PurchaseInvoiceId");
 
-                    b.ToTable("Purchases");
+                    b.ToTable("Purchases", (string)null);
                 });
 
             modelBuilder.Entity("newTolkuchka.Models.PurchaseInvoice", b =>
@@ -2152,7 +2152,7 @@ namespace newTolkuchka.Models.Migs
 
                     b.HasIndex("SupplierId");
 
-                    b.ToTable("PurchaseInvoices");
+                    b.ToTable("PurchaseInvoices", (string)null);
                 });
 
             modelBuilder.Entity("newTolkuchka.Models.Slide", b =>
@@ -2179,7 +2179,7 @@ namespace newTolkuchka.Models.Migs
 
                     b.HasKey("Id");
 
-                    b.ToTable("Slides");
+                    b.ToTable("Slides", (string)null);
 
                     b.HasData(
                         new
@@ -2246,7 +2246,7 @@ namespace newTolkuchka.Models.Migs
                     b.HasIndex("NameTm")
                         .IsUnique();
 
-                    b.ToTable("Specs");
+                    b.ToTable("Specs", (string)null);
 
                     b.HasData(
                         new
@@ -2340,7 +2340,7 @@ namespace newTolkuchka.Models.Migs
                     b.HasIndex("SpecId", "NameTm")
                         .IsUnique();
 
-                    b.ToTable("SpecsValues");
+                    b.ToTable("SpecsValues", (string)null);
 
                     b.HasData(
                         new
@@ -2799,7 +2799,7 @@ namespace newTolkuchka.Models.Migs
 
                     b.HasIndex("SpecsValueId");
 
-                    b.ToTable("SpecsValueMods");
+                    b.ToTable("SpecsValueMods", (string)null);
 
                     b.HasData(
                         new
@@ -2873,7 +2873,7 @@ namespace newTolkuchka.Models.Migs
 
                     b.HasKey("Id");
 
-                    b.ToTable("Suppliers");
+                    b.ToTable("Suppliers", (string)null);
 
                     b.HasData(
                         new
@@ -2927,7 +2927,7 @@ namespace newTolkuchka.Models.Migs
                     b.HasIndex("NameTm")
                         .IsUnique();
 
-                    b.ToTable("Types");
+                    b.ToTable("Types", (string)null);
 
                     b.HasData(
                         new
@@ -3011,7 +3011,7 @@ namespace newTolkuchka.Models.Migs
                         .IsUnique()
                         .HasFilter("[Phone] IS NOT NULL");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
 
                     b.HasData(
                         new
@@ -3061,7 +3061,7 @@ namespace newTolkuchka.Models.Migs
                     b.HasIndex("NameTm")
                         .IsUnique();
 
-                    b.ToTable("Warranties");
+                    b.ToTable("Warranties", (string)null);
 
                     b.HasData(
                         new
@@ -3113,7 +3113,7 @@ namespace newTolkuchka.Models.Migs
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Wishes");
+                    b.ToTable("Wishes", (string)null);
                 });
 
             modelBuilder.Entity("newTolkuchka.Models.CategoryAdLink", b =>

@@ -8,7 +8,7 @@ using Org.BouncyCastle.Asn1.X509;
 
 namespace newTolkuchka.Services
 {
-    public class OrderService : ServiceNoFile<Order>, IOrder
+    public class OrderService : ServiceNoFile<Order, AdminOrder>, IOrder
     {
 
         private readonly IProduct _product;
@@ -22,7 +22,7 @@ namespace newTolkuchka.Services
         {
             foreach (var order in orders)
             {
-                Product product = _product.GetFullProducts(null, null, null, null, null, new[] { order.Id }).FirstOrDefault();
+                Product product = _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, new[] { order.Id } } }).FirstOrDefault();
                 if (product != null)
                 {
                     order.ProductName = IProduct.GetProductName(product);

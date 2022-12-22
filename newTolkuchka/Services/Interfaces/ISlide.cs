@@ -4,9 +4,8 @@ using newTolkuchka.Services.Abstracts;
 
 namespace newTolkuchka.Services.Interfaces
 {
-    public interface ISlide : IActionFormFile<Slide>
+    public interface ISlide : IActionFormFile<Slide, AdminSlide>
     {
-        IEnumerable<AdminSlide> GetAdminSlides();
         IQueryable<Slide> GetSlidesByLayoutAsync(Layout layout);
     }
 }

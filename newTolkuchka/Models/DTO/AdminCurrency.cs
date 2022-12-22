@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace newTolkuchka.Models
+namespace newTolkuchka.Models.DTO
 {
-    public class Currency
+    public class AdminCurrency
     {
         public int Id { get; set; }
         [MaxLength(10)]
@@ -13,7 +14,7 @@ namespace newTolkuchka.Models
         [Required, Column(TypeName = "decimal(18,2)")]
         public decimal RealRate { get; set; }
 
-        public ICollection<Invoice> Invoices { get; set; }
-        public ICollection<PurchaseInvoice> PurchaseInvoices { get; set; }
+        //public int Invoices { get; set; }
+        //public int PurchaseInvoices { get; set; }
     }
 }

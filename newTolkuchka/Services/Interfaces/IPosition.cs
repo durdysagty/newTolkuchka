@@ -3,9 +3,8 @@ using newTolkuchka.Models.DTO;
 
 namespace newTolkuchka.Services.Interfaces
 {
-    public interface IPosition: IActionNoFile<Position>
+    public interface IPosition: IActionNoFile<Position, AdminPosition>
     {
-        IEnumerable<AdminPosition> GetAdminPositions();
         void EditPosition(Position position);
     }
 }

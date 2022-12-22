@@ -9,7 +9,7 @@ using System.Text.Json;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level2")]
-    public class InvoiceController : AbstractController<Invoice, IInvoice>
+    public class InvoiceController : AbstractController<Invoice, AdminInvoice, IInvoice>
     {
         private readonly IInvoice _invoice;
         private readonly IOrder _order;
@@ -31,12 +31,12 @@ namespace newTolkuchka.ControllersAPI
             AdminInvoice invoice = _invoice.GetAdminInvoice(id);
             return invoice;
         }
-        [HttpGet]
-        public IEnumerable<AdminInvoice> Get()
-        {
-            IEnumerable<AdminInvoice> invoices = _invoice.GetAdminInvoices();
-            return invoices;
-        }
+        //[HttpGet]
+        //public IEnumerable<AdminInvoice> Get()
+        //{
+        //    IEnumerable<AdminInvoice> invoices = _invoice.GetAdminInvoices();
+        //    return invoices;
+        //}
         [HttpGet("orders/{id}")]
         public async Task<IEnumerable<AdminOrder>> GetInvoiceAdminOrders(int id)
         {

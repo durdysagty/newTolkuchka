@@ -9,7 +9,7 @@ using Type = newTolkuchka.Models.Type;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level1")]
-    public class TypeController : AbstractController<Type, IType>
+    public class TypeController : AbstractController<Type, AdminType, IType>
     {
         private readonly IType _type;
         public TypeController(IEntry entry, IType type) : base(entry, Entity.Type, type)
@@ -23,12 +23,12 @@ namespace newTolkuchka.ControllersAPI
             Type Type = await _type.GetModelAsync(id);
             return Type;
         }
-        [HttpGet]
-        public IEnumerable<AdminType> Get()
-        {
-            IEnumerable<AdminType> types = _type.GetAdminTypes();
-            return types;
-        }
+        //[HttpGet]
+        //public IEnumerable<AdminType> Get()
+        //{
+        //    IEnumerable<AdminType> types = _type.GetAdminTypes();
+        //    return types;
+        //}
         [HttpPost]
         public async Task<Result> Post(Type type)
         {

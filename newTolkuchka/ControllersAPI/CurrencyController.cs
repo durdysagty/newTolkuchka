@@ -9,10 +9,10 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level2")]
-    public class CurrencyController : AbstractController<Currency, IActionNoFile<Currency>>
+    public class CurrencyController : AbstractController<Currency, AdminCurrency, IActionNoFile<Currency, AdminCurrency>>
     {
-        private readonly IActionNoFile<Currency> _currency;
-        public CurrencyController(IEntry entry, IActionNoFile<Currency> currency) : base(entry, Entity.Currency, currency)
+        private readonly IActionNoFile<Currency, AdminCurrency> _currency;
+        public CurrencyController(IEntry entry, IActionNoFile<Currency, AdminCurrency> currency) : base(entry, Entity.Currency, currency)
         {
             _currency = currency;
         }
@@ -23,12 +23,12 @@ namespace newTolkuchka.ControllersAPI
             Currency currency = await _currency.GetModelAsync(id);
             return currency;
         }
-        [HttpGet]
-        public IEnumerable<Currency> Get()
-        {
-            IEnumerable<Currency> currencies = _currency.GetModels();
-            return currencies;
-        }
+        //[HttpGet]
+        //public IEnumerable<Currency> Get()
+        //{
+        //    IEnumerable<Currency> currencies = _currency.GetModels();
+        //    return currencies;
+        //}
         [HttpPost]
         public async Task<Result> Post(Currency currency)
         {

@@ -3,8 +3,7 @@ using newTolkuchka.Models.DTO;
 
 namespace newTolkuchka.Services.Interfaces
 {
-    public interface ISupplier : IActionNoFile<Supplier>
+    public interface ISupplier : IActionNoFile<Supplier, AdminSupplier>
     {
-        IEnumerable<AdminSupplier> GetAdminSuppliers();
     }
 }

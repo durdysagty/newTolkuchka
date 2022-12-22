@@ -2,13 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
+using newTolkuchka.Services;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level1")]
-    public class SpecsValueModController : AbstractController<SpecsValueMod, ISpecsValueMod>
+    public class SpecsValueModController : AbstractController<SpecsValueMod, AdminSpecsValueMod, ISpecsValueMod>
     {
         private readonly ISpecsValueMod _specsValueMod;
         public SpecsValueModController(IEntry entry, ISpecsValueMod specsValueMod) : base(entry, Entity.SpecsValueMod, specsValueMod)
@@ -22,11 +23,22 @@ namespace newTolkuchka.ControllersAPI
             SpecsValueMod specsValueMod = await _specsValueMod.GetModelAsync(id);
             return specsValueMod;
         }
-        [HttpGet("specsvalue/{specValueId}")]
-        public IEnumerable<AdminSpecsValueMod> GetBySpecsValue(int specValueId)
+        //[HttpGet("specsvalue/{specValueId}")]
+        //public IEnumerable<AdminSpecsValueMod> GetBySpecsValue(int specValueId)
+        //{
+        //    IEnumerable<AdminSpecsValueMod> specsValueMods = _specsValueMod.GetAdminSpecsValueMods(specValueId);
+        //    return specsValueMods;
+        //}
+        [HttpGet($"{ConstantsService.SPECSVALUEMOD}/{{specValueId}}")]
+        public ModelsFilters<AdminSpecsValueMod> GetBySpec(int specValueId, [FromQuery] int page = 0, [FromQuery] int pp = 50)
         {
-            IEnumerable<AdminSpecsValueMod> specsValueMods = _specsValueMod.GetAdminSpecsValueMods(specValueId);
-            return specsValueMods;
+            IEnumerable<AdminSpecsValueMod> specsValueMods = _specsValueMod.GetAdminModels(page, pp, out int lastPage, out string pagination, new Dictionary<string, object> { { ConstantsService.SPECSVALUE, specValueId } });
+            return new ModelsFilters<AdminSpecsValueMod>
+            {
+                Models = specsValueMods,
+                LastPage = lastPage,
+                Pagination = pagination
+            };
         }
         [HttpPost]
         public async Task<Result> Post(SpecsValueMod specsValueMod)

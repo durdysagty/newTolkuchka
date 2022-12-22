@@ -3,9 +3,8 @@ using newTolkuchka.Models.DTO;
 
 namespace newTolkuchka.Services.Interfaces
 {
-    public interface ICategory : IActionNoFile<Category>
+    public interface ICategory : IActionNoFile<Category, AdminCategory>
     {
-        Task<IEnumerable<AdminCategory>> GetAdminCategories();
         Task<bool> HasProduct(int id);
         Task<IEnumerable<AdminCategoryTree>> GetAdminCategoryTree(int startId = 0);
         Task<IEnumerable<CategoryTree>> GetCategoryTree(int depth = 3);

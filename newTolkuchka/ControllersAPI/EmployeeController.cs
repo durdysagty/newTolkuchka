@@ -8,7 +8,7 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level3")]
-    public class EmployeeController : AbstractController<Employee, IEmployee>
+    public class EmployeeController : AbstractController<Employee, AdminEmployee, IEmployee>
     {
         private readonly IEmployee _employee;
         public EmployeeController(IEntry entry, IEmployee employee) : base(entry, Entity.Employee, employee)
@@ -22,12 +22,12 @@ namespace newTolkuchka.ControllersAPI
             EditEmployee employee = await _employee.GetEditEmployeeAsync(id);
             return employee;
         }
-        [HttpGet]
-        public IEnumerable<AdminEmployee> Get()
-        {
-            IEnumerable<AdminEmployee> employees = _employee.GetAdminEmployees();
-            return employees;
-        }
+        //[HttpGet]
+        //public IEnumerable<AdminEmployee> Get()
+        //{
+        //    IEnumerable<AdminEmployee> employees = _employee.GetAdminEmployees();
+        //    return employees;
+        //}
         [HttpPost]
         public async Task<Result> Post(Employee employee)
         {

@@ -9,7 +9,7 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level1")]
-    public class SlideController : AbstractController<Slide, ISlide>
+    public class SlideController : AbstractController<Slide, AdminSlide, ISlide>
     {
         private const int WIDTH = 990;
         private const int HEIGHT = 450;
@@ -27,12 +27,12 @@ namespace newTolkuchka.ControllersAPI
             Slide slide = await _slide.GetModelAsync(id);
             return slide;
         }
-        [HttpGet]
-        public IEnumerable<AdminSlide> Get()
-        {
-            IEnumerable<AdminSlide> slides = _slide.GetAdminSlides();
-            return slides;
-        }
+        //[HttpGet]
+        //public IEnumerable<AdminSlide> Get()
+        //{
+        //    IEnumerable<AdminSlide> slides = _slide.GetAdminSlides();
+        //    return slides;
+        //}
         [HttpPost]
         public async Task<Result> Post([FromForm] Slide slide, [FromForm] IFormFile[] images)
         {
