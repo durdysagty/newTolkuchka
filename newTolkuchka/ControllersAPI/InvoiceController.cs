@@ -28,7 +28,7 @@ namespace newTolkuchka.ControllersAPI
         [HttpGet("currency/{id}")]
         public AdminInvoice GetCurrencyIncluded(int id)
         {
-            AdminInvoice invoice = _invoice.GetAdminInvoice(id);
+            AdminInvoice invoice = _invoice.GetAdminInvoices().FirstOrDefault(i => i.Id == id);
             return invoice;
         }
         //[HttpGet]

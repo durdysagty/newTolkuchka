@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using newTolkuchka.Models;
-using newTolkuchka.Models.DTO;
 using newTolkuchka.Services.Interfaces;
 using System.Reflection;
 using Type = System.Type;
@@ -22,11 +21,18 @@ namespace newTolkuchka.Services.Abstracts
         }
 
         [HttpGet]
-        public ModelsFilters<TAdminModel> Get([FromQuery] int page = 0, [FromQuery] int pp = 50)
+        public ModelsFilters<TAdminModel> Get([FromQuery] string[] keys, [FromQuery] int?[] values, [FromQuery] int page = 0, [FromQuery] int pp = 50)
         {
+            Dictionary<string, object> paramsList = null;
+            if (keys.Any())
+            {
+                paramsList = new();
+                for (int i = 0; i < keys.Length; i++)
+                    paramsList.Add(keys[i], values[i]);
+            }
             Type serviceType = typeof(TService);
             MethodInfo method = serviceType.GetInterface("IAction`2").GetMethod("GetAdminModels", new Type[5] { typeof(int), typeof(int), typeof(int).MakeByRefType(), typeof(string).MakeByRefType(), typeof(Dictionary<string, object>) });
-            object[] args = new object[5] { page, pp, null, null, null };
+            object[] args = new object[5] { page, pp, null, null, paramsList };
             object result = method.Invoke(_service, args);
             IEnumerable<TAdminModel> models = (IEnumerable<TAdminModel>)result;
             return new ModelsFilters<TAdminModel>

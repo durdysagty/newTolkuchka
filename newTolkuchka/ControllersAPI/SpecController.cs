@@ -29,7 +29,7 @@ namespace newTolkuchka.ControllersAPI
         //    return specs;
         //}
         [HttpGet("value")]
-        public IEnumerable<ModelWithList<ModelWithList<AdminSpecsValueMod>>> GetSpecsWithValues(int modelId = 0)
+        public IEnumerable<ModelWithList<ModelWithList<AdminSpecsValueMod>>> GetSpecsWithValues([FromQuery] int modelId = 0)
         {
             IEnumerable<ModelWithList<ModelWithList<AdminSpecsValueMod>>> specWithValues = _spec.GetSpecWithValues(modelId);
             return specWithValues;

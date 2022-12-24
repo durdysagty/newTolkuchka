@@ -36,10 +36,33 @@ namespace newTolkuchka.Services.Abstracts
                 Type modelType = typeof(T);
                 switch (modelType.Name.ToLower())
                 {
+                    case ConstantsService.LINE:
+                        IQueryable<Line> lines = models as IQueryable<Line>;
+                        if (paramsList.TryGetValue(ConstantsService.BRAND, out object value))
+                        {
+                            int brandId = (int)value;
+                            lines = lines.Where(x => x.BrandId == brandId);
+                        }
+                        models = (IQueryable<T>)lines;
+                        break;
+                    case ConstantsService.MODEL:
+                        IQueryable<Model> models2 = models as IQueryable<Model>;
+                        if (paramsList.TryGetValue(ConstantsService.BRAND, out value))
+                        {
+                            int brandId = (int)value;
+                            models2 = models2.Where(x => x.BrandId == brandId);
+                        }
+                        if (paramsList.TryGetValue(ConstantsService.LINE, out value))
+                        {
+                            int? lineId = (int?)value;
+                            models2 = models2.Where(x => x.LineId == lineId);
+                        }
+                        models = (IQueryable<T>)models2;
+                        break;
                     case ConstantsService.PRODUCT:
                         // start filtering products
                         IQueryable<Product> products = models as IQueryable<Product>;
-                        if (paramsList.TryGetValue(ConstantsService.CATEGORY, out object value))
+                        if (paramsList.TryGetValue(ConstantsService.CATEGORY, out value))
                         {
                             IList<int> categoryIds = (IList<int>)value;
                             if (categoryIds != null)
@@ -180,12 +203,13 @@ namespace newTolkuchka.Services.Abstracts
             Type type = typeof(T);
             int toSkip = page * pp;
             IEnumerable<TAdmin> adminModels = null;
+            bool isPaged = false;
             switch (type.Name.ToLower())
             {
                 case ConstantsService.BRAND:
                     IQueryable<Brand> preBrands = preModels as IQueryable<Brand>;
                     preBrands = preBrands.OrderBy(x => x.Name);
-                    adminModels = (IEnumerable<TAdmin>)preBrands.Skip(toSkip).Take(pp).Select(x => new AdminBrand
+                    adminModels = (IEnumerable<TAdmin>)preBrands.Select(x => new AdminBrand
                     {
                         Id = x.Id,
                         Name = x.Name,
@@ -248,6 +272,7 @@ namespace newTolkuchka.Services.Abstracts
                         EntityName = x.EntityName,
                         Date = x.DateTime,
                     });
+                    isPaged = true;
                     break;
                 case ConstantsService.INVOICE:
                     IQueryable<Invoice> preInvoices = preModels as IQueryable<Invoice>;
@@ -266,7 +291,9 @@ namespace newTolkuchka.Services.Abstracts
                         IsDelivered = x.IsDelivered,
                         IsPaid = x.IsPaid
                     });
+                    isPaged = true;
                     break;
+                    // dependent from a brand, expected no more than 50 lines in the one brand, else skip will confuse
                 case ConstantsService.LINE:
                     IQueryable<Line> preLines = preModels as IQueryable<Line>;
                     preLines = preLines.OrderBy(x => x.Name);
@@ -277,6 +304,7 @@ namespace newTolkuchka.Services.Abstracts
                         Brand = x.Brand.Name,
                         Models = x.Models.Count
                     });
+                    isPaged = true;
                     break;
                 case ConstantsService.MODEL:
                     IQueryable<Model> preModels2 = preModels as IQueryable<Model>;
@@ -291,6 +319,7 @@ namespace newTolkuchka.Services.Abstracts
                         Line = x.Line.Name,
                         Products = x.Products.Count
                     });
+                    isPaged = true;
                     break;
                 case ConstantsService.POSITION:
                     IQueryable<Position> prePositions = preModels as IQueryable<Position>;
@@ -316,6 +345,7 @@ namespace newTolkuchka.Services.Abstracts
                         IsRecommended = p.IsRecommended,
                         IsNew = p.IsNew
                     });
+                    isPaged = true;
                     break;
                 case ConstantsService.PURCHASEINVOICE:
                     IQueryable<PurchaseInvoice> prePurchaseInvoices = preModels as IQueryable<PurchaseInvoice>;
@@ -329,6 +359,7 @@ namespace newTolkuchka.Services.Abstracts
                         CurrencyRate = x.CurrencyRate,
                         Purchases = x.Purchases.Count
                     });
+                    isPaged = true;
                     break;
                 case ConstantsService.SLIDE:
                     IQueryable<Slide> preSlides = preModels as IQueryable<Slide>;
@@ -339,11 +370,12 @@ namespace newTolkuchka.Services.Abstracts
                         Name = x.Name,
                         NotInUse = !x.NotInUse
                     });
+                    isPaged = true;
                     break;
                 case ConstantsService.SPEC:
                     IQueryable<Spec> preSpecs = preModels as IQueryable<Spec>;
                     preSpecs = preSpecs.OrderBy(x => x.Order);
-                    adminModels = (IEnumerable<TAdmin>)preSpecs.Skip(toSkip).Take(pp).Select(x => new AdminSpec
+                    adminModels = (IEnumerable<TAdmin>)preSpecs.Select(x => new AdminSpec
                     {
                         Id = x.Id,
                         Name = x.NameRu,
@@ -355,7 +387,7 @@ namespace newTolkuchka.Services.Abstracts
                 case ConstantsService.SPECSVALUE:
                     IQueryable<SpecsValue> preSpecsValues = preModels as IQueryable<SpecsValue>;
                     preSpecsValues = preSpecsValues.OrderBy(x => x.NameRu);
-                    adminModels = (IEnumerable<TAdmin>)preSpecsValues.Skip(toSkip).Take(pp).Select(x => new AdminSpecsValue
+                    adminModels = (IEnumerable<TAdmin>)preSpecsValues.Select(x => new AdminSpecsValue
                     {
                         Id = x.Id,
                         Name = x.NameRu,
@@ -365,7 +397,7 @@ namespace newTolkuchka.Services.Abstracts
                 case ConstantsService.SPECSVALUEMOD:
                     IQueryable<SpecsValueMod> preSpecsValueMods = preModels as IQueryable<SpecsValueMod>;
                     preSpecsValueMods = preSpecsValueMods.OrderBy(x => x.NameRu);
-                    adminModels = (IEnumerable<TAdmin>)preSpecsValueMods.Skip(toSkip).Take(pp).Select(x => new AdminSpecsValueMod
+                    adminModels = (IEnumerable<TAdmin>)preSpecsValueMods.Select(x => new AdminSpecsValueMod
                     {
                         Id = x.Id,
                         Name = x.NameRu,
@@ -375,7 +407,7 @@ namespace newTolkuchka.Services.Abstracts
                 case ConstantsService.SUPPLIER:
                     IQueryable<Supplier> preSuppliers = preModels as IQueryable<Supplier>;
                     preSuppliers = preSuppliers.OrderBy(x => x.Name);
-                    adminModels = (IEnumerable<TAdmin>)preSuppliers.Skip(toSkip).Take(pp).Select(x => new AdminSupplier
+                    adminModels = (IEnumerable<TAdmin>)preSuppliers.Select(x => new AdminSupplier
                     {
                         Id = x.Id,
                         Name = x.Name,
@@ -386,7 +418,7 @@ namespace newTolkuchka.Services.Abstracts
                 case ConstantsService.TYPE:
                     IQueryable<ModelsType> preTypes = preModels as IQueryable<ModelsType>;
                     preTypes = preTypes.OrderBy(x => x.NameRu);
-                    adminModels = (IEnumerable<TAdmin>)preTypes.Skip(toSkip).Take(pp).Select(x => new AdminType
+                    adminModels = (IEnumerable<TAdmin>)preTypes.Select(x => new AdminType
                     {
                         Id = x.Id,
                         Name = x.NameRu,
@@ -396,7 +428,7 @@ namespace newTolkuchka.Services.Abstracts
                 case ConstantsService.WARRANTY:
                     IQueryable<Warranty> preWarranties = preModels as IQueryable<Warranty>;
                     preWarranties = preWarranties.OrderBy(x => x.NameRu);
-                    adminModels = (IEnumerable<TAdmin>)preWarranties.Skip(toSkip).Take(pp).Select(x => new AdminWarranty
+                    adminModels = (IEnumerable<TAdmin>)preWarranties.Select(x => new AdminWarranty
                     {
                         Id = x.Id,
                         Name = x.NameRu
@@ -407,15 +439,15 @@ namespace newTolkuchka.Services.Abstracts
                     break;
                     //throw new ArgumentOutOfRangeException(type.Name, $"Not expected type name: {type.Name}");
             }
-            if (type.Name.ToLower() is ConstantsService.CATEGORY or ConstantsService.CURRENCY or ConstantsService.EMPLOYEE or ConstantsService.POSITION)
-            {
-                pagination = null;
-                lastPage = 0;
-            }
-            else
+            if (isPaged)
             {
                 pagination = GetPagination(pp, preModels.Count(), adminModels.Count(), toSkip, out int lp);
                 lastPage = lp;
+            }
+            else
+            {
+                pagination = null;
+                lastPage = 0;
             }
             return adminModels;
         }

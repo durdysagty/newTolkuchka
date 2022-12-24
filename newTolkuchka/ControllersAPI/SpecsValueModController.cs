@@ -29,7 +29,7 @@ namespace newTolkuchka.ControllersAPI
         //    IEnumerable<AdminSpecsValueMod> specsValueMods = _specsValueMod.GetAdminSpecsValueMods(specValueId);
         //    return specsValueMods;
         //}
-        [HttpGet($"{ConstantsService.SPECSVALUEMOD}/{{specValueId}}")]
+        [HttpGet($"{ConstantsService.SPECSVALUE}/{{specValueId}}")]
         public ModelsFilters<AdminSpecsValueMod> GetBySpec(int specValueId, [FromQuery] int page = 0, [FromQuery] int pp = 50)
         {
             IEnumerable<AdminSpecsValueMod> specsValueMods = _specsValueMod.GetAdminModels(page, pp, out int lastPage, out string pagination, new Dictionary<string, object> { { ConstantsService.SPECSVALUE, specValueId } });

@@ -15,6 +15,7 @@ namespace newTolkuchka.Services
         }
         public IEnumerable<ModelWithList<ModelWithList<AdminSpecsValueMod>>> GetSpecWithValues(int modelId = 0)
         {
+            // may be GetFullModels in include all stuff & Dictionary instead of modelId
             IQueryable<Spec> specs = GetModels().Include(s => s.SpecsValues).ThenInclude(sv => sv.SpecsValueMods).Include(s=> s.ModelSpecs);
             if (modelId != 0)
                 specs = specs.Where(s => s.ModelSpecs.Where(x => x.ModelId == modelId).Any());
