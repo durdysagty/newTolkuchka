@@ -108,7 +108,7 @@ namespace newTolkuchka.ControllersAPI
         [HttpPost("changeprice")]
         public async Task<Result> Post([FromForm] decimal price, [FromForm] int[] priceIds, [FromForm] int[] newPriceIds)
         {
-            IList<Product> products = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, priceIds.Concat(newPriceIds).Distinct().ToList() } }).ToListAsync();
+            IEnumerable<Product> products = _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, priceIds.Concat(newPriceIds).Distinct().ToList() } });
             foreach (Product product in products)
             {
                 if (priceIds.Contains(product.Id))

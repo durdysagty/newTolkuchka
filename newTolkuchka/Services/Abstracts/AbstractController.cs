@@ -21,7 +21,7 @@ namespace newTolkuchka.Services.Abstracts
         }
 
         [HttpGet]
-        public ModelsFilters<TAdminModel> Get([FromQuery] string[] keys, [FromQuery] int?[] values, [FromQuery] int page = 0, [FromQuery] int pp = 50)
+        public ModelsFilters<TAdminModel> Get([FromQuery] string search, [FromQuery] string[] keys, [FromQuery] string[] values, [FromQuery] int page = 0, [FromQuery] int pp = 50)
         {
             Dictionary<string, object> paramsList = null;
             if (keys.Any())
@@ -29,6 +29,11 @@ namespace newTolkuchka.Services.Abstracts
                 paramsList = new();
                 for (int i = 0; i < keys.Length; i++)
                     paramsList.Add(keys[i], values[i]);
+            }
+            if (search != null)
+            {
+                paramsList ??= new();
+                paramsList.Add(nameof(search), search);
             }
             Type serviceType = typeof(TService);
             MethodInfo method = serviceType.GetInterface("IAction`2").GetMethod("GetAdminModels", new Type[5] { typeof(int), typeof(int), typeof(int).MakeByRefType(), typeof(string).MakeByRefType(), typeof(Dictionary<string, object>) });

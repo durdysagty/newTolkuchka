@@ -7,7 +7,6 @@ using newTolkuchka.Services.Interfaces;
 
 namespace newTolkuchka.ControllersAPI
 {
-    [ApiController, Route("api/[controller]")]
     [Authorize(Policy = "Level3")]
     public class EntryController : AbstractController<Entry, AdminEntry, IEntry>
     {

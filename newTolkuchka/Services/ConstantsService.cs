@@ -63,6 +63,7 @@
         public const string PURCHASEINVOICE = "purchaseinvoice";
         public const string PURCHASES = "purchases";
         public const string PURCHASE = "purchase";
+        public const string REPORT = "report";
         public const string SLIDES = "slides";
         public const string SLIDE = "slide";
         public const string SPECS = "specs";
@@ -87,6 +88,8 @@
         public const string NOVELTIES = "novelties";
         public const string RECOMMENDED = "recommended";
         public const string NEW = "new";
+        public const string START = "start";
+        public const string END = "end";
         public const string NOTINUSE = "notinuse";
         public const string N404 = "404";
         // images
