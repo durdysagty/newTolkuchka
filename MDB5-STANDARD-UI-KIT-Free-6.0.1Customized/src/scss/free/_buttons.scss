@@ -9,10 +9,6 @@
   --#{$prefix}btn-border-width: 0;
   --#{$prefix}btn-border-color: none;
   --#{$prefix}btn-border-radius: #{$btn-border-radius};
-  --#{$prefix}btn-box-shadow: #{$btn-box-shadow};
-  --#{$prefix}btn-hover-box-shadow: #{$btn-hover-box-shadow};
-  --#{$prefix}btn-focus-box-shadow: #{$btn-focus-box-shadow};
-  --#{$prefix}btn-active-box-shadow: #{$btn-active-box-shadow};
   // scss-docs-end btn-css-vars
 
   padding-top: var(--#{$prefix}btn-padding-top);
@@ -21,38 +17,6 @@
   vertical-align: bottom;
   border: 0;
   @include border-radius(var(--#{$prefix}btn-border-radius));
-  box-shadow: var(--#{$prefix}btn-box-shadow);
-
-  :not(.btn-check) + &:hover,
-  &:first-child:hover,
-  &:focus-visible,
-  &:hover {
-    box-shadow: var(--#{$prefix}btn-hover-box-shadow);
-  }
-
-  .btn-check:focus-visible + &,
-  .btn-check:focus + &,
-  &:focus {
-    box-shadow: var(--#{$prefix}btn-focus-box-shadow);
-  }
-
-  .btn-check:checked + &,
-  .btn-check:active + &,
-  &:active,
-  &.active,
-  &.show {
-    box-shadow: var(--#{$prefix}btn-active-box-shadow);
-
-    &:focus {
-      box-shadow: var(--#{$prefix}btn-focus-box-shadow);
-    }
-  }
-
-  &:disabled,
-  &.disabled,
-  fieldset:disabled & {
-    box-shadow: var(--#{$prefix}btn-box-shadow);
-  }
 }
 
 //
@@ -68,61 +32,24 @@
   --#{$prefix}btn-line-height: #{$btn-line-height};
   // scss-docs-end btn-outline-css-vars
 
-  padding: var(--#{$prefix}btn-padding-top) var(--#{$prefix}btn-padding-x)
-    var(--#{$prefix}btn-padding-bottom);
+  padding: var(--#{$prefix}btn-padding-top) var(--#{$prefix}btn-padding-x) var(--#{$prefix}btn-padding-bottom);
   border-width: var(--#{$prefix}btn-border-width);
   border-style: solid;
-  box-shadow: none;
-
-  :not(.btn-check) + &:hover,
-  &:first-child:hover,
-  &:focus-visible,
-  &:hover {
-    box-shadow: none;
-  }
-
-  .btn-check:focus-visible + &,
-  .btn-check:focus + &,
-  &:focus {
-    box-shadow: none;
-  }
-
-  .btn-check:checked + &,
-  .btn-check:active + &,
-  &:active,
-  &.active,
-  &.show {
-    box-shadow: none;
-
-    &:focus {
-      box-shadow: none;
-    }
-  }
-
-  &:disabled,
-  &.disabled,
-  fieldset:disabled & {
-    box-shadow: none;
-  }
 
   &.btn-lg {
-    @include button-outline-size(
-      $btn-outline-padding-top-lg,
+    @include button-outline-size($btn-outline-padding-top-lg,
       $btn-outline-padding-bottom-lg,
       $btn-outline-padding-x-lg,
       $btn-outline-font-size-lg,
-      $btn-outline-line-height-lg
-    );
+      $btn-outline-line-height-lg );
   }
 
   &.btn-sm {
-    @include button-outline-size(
-      $btn-outline-padding-top-sm,
+    @include button-outline-size($btn-outline-padding-top-sm,
       $btn-outline-padding-bottom-sm,
       $btn-outline-padding-x-sm,
       $btn-outline-font-size-sm,
-      $btn-outline-line-height-sm
-    );
+      $btn-outline-line-height-sm );
   }
 }
 
@@ -131,137 +58,71 @@
 //
 
 // scss-docs-start btn-secondary
-.btn-secondary {
-  box-shadow: none;
 
-  :not(.btn-check) + &:hover,
-  &:first-child:hover,
-  &:focus-visible,
-  &:hover {
-    box-shadow: none !important;
-  }
-
-  .btn-check:focus-visible + &,
-  .btn-check:focus + &,
-  &:focus {
-    box-shadow: none;
-  }
-
-  .btn-check:checked + &,
-  .btn-check:active + &,
-  &:active,
-  &.active,
-  &.show {
-    box-shadow: none;
-
-    &:focus {
-      box-shadow: none;
-    }
-  }
-
-  &:disabled,
-  &.disabled,
-  fieldset:disabled & {
-    box-shadow: none;
-  }
-}
 // scss-docs-end btn-secondary
 
 // scss-docs-start btn-variant-loop
-@each $color, $value in $buttons {
+@each $color,
+$value in $buttons {
   .btn-#{$color} {
-    @include button-variant(
-      map-get($value, 'background-color'),
+    @include button-variant(map-get($value, 'background-color'),
       map-get($value, 'text-color'),
-      $btn-contextual-box-shadow map-get($value, 'shadow-color'),
+      map-get($value, 'shadow-color'),
       shade-color(map-get($value, 'background-color'), $btn-hover-bg-shade-amount),
       map-get($value, 'text-color'),
       shade-color(map-get($value, 'background-color'), $btn-focus-bg-shade-amount),
       map-get($value, 'text-color'),
       shade-color(map-get($value, 'background-color'), $btn-active-bg-shade-amount),
-      map-get($value, 'text-color')
-    );
+      map-get($value, 'text-color'));
 
-    :not(.btn-check) + &:hover,
-    &:first-child:hover,
-    &:focus-visible,
-    &:hover {
-      box-shadow: $btn-contextual-box-shadow-state-first-part
-          rgba(map-get($value, shadow-color), 0.3),
-        $btn-contextual-box-shadow-state-second-part rgba(map-get($value, shadow-color), 0.2);
-    }
-
-    .btn-check:focus-visible + &,
-    .btn-check:focus + &,
+    .btn-check:focus-visible+&,
+    .btn-check:focus+&,
     &:focus {
-      box-shadow: $btn-contextual-box-shadow-state-first-part
-          rgba(map-get($value, shadow-color), 0.3),
-        $btn-contextual-box-shadow-state-second-part rgba(map-get($value, shadow-color), 0.2);
-      background-color: shade-color(
-        map-get($value, 'background-color'),
-        $btn-focus-bg-shade-amount
-      );
+      background-color: shade-color(map-get($value, 'background-color'),
+          $btn-focus-bg-shade-amount );
     }
 
-    .btn-check:checked + &,
-    .btn-check:active + &,
+    .btn-check:checked+&,
+    .btn-check:active+&,
     &:active,
     &.active,
     &.show {
-      box-shadow: $btn-contextual-box-shadow-state-first-part
-          rgba(map-get($value, shadow-color), 0.3),
-        $btn-contextual-box-shadow-state-second-part rgba(map-get($value, shadow-color), 0.2);
-
-      &:focus {
-        box-shadow: $btn-contextual-box-shadow-state-first-part
-            rgba(map-get($value, shadow-color), 0.3),
-          $btn-contextual-box-shadow-state-second-part rgba(map-get($value, shadow-color), 0.2);
-      }
-
       &:hover {
-        background-color: shade-color(
-          map-get($value, 'background-color'),
-          $btn-active-bg-shade-amount
-        );
+        background-color: shade-color(map-get($value, 'background-color'),
+            $btn-active-bg-shade-amount );
       }
-    }
-
-    &:disabled,
-    &.disabled,
-    fieldset:disabled & {
-      box-shadow: $btn-contextual-box-shadow map-get($value, shadow-color);
     }
   }
 }
+
 // scss-docs-end btn-variant-loop
 
 // scss-docs-start btn-outline-variant-loop
-@each $color, $value in $buttons-outline {
+@each $color,
+$value in $buttons-outline {
   .btn-outline-#{$color} {
-    @include button-outline-variant(
-      map-get($value, 'text-color'),
+    @include button-outline-variant(map-get($value, 'text-color'),
       shade-color(map-get($value, 'text-color'), $btn-hover-bg-shade-amount),
       shade-color(map-get($value, 'text-color'), $btn-focus-bg-shade-amount),
-      shade-color(map-get($value, 'text-color'), $btn-active-bg-shade-amount)
-    );
+      shade-color(map-get($value, 'text-color'), $btn-active-bg-shade-amount));
 
     border-color: map-get(map-get($buttons-outline, $color), 'border-color');
 
-    :not(.btn-check) + &:hover,
+    :not(.btn-check)+&:hover,
     &:first-child:hover,
     &:focus-visible,
     &:hover {
       border-color: shade-color(map-get($value, 'border-color'), $btn-hover-bg-shade-amount);
     }
 
-    .btn-check:focus-visible + &,
-    .btn-check:focus + &,
+    .btn-check:focus-visible+&,
+    .btn-check:focus+&,
     &:focus {
       border-color: shade-color(map-get($value, 'border-color'), $btn-focus-bg-shade-amount);
     }
 
-    .btn-check:checked + &,
-    .btn-check:active + &,
+    .btn-check:checked+&,
+    .btn-check:active+&,
     &:active,
     &.active,
     &.show {
@@ -279,6 +140,7 @@
     }
   }
 }
+
 // scss-docs-end btn-outline-variant-loop
 
 //
@@ -294,44 +156,33 @@
   --#{$prefix}btn-focus-color: #{$btn-link-focus-color};
   --#{$prefix}btn-active-color: #{$btn-link-active-color};
   --#{$prefix}btn-disabled-color: #{$btn-link-disabled-color};
-  --#{$prefix}btn-box-shadow: none;
 
   text-decoration: $link-decoration;
   box-shadow: var(--#{$prefix}btn-box-shadow);
 
-  :not(.btn-check) + &:hover,
+  :not(.btn-check)+&:hover,
   &:first-child:hover,
   &:focus-visible,
   &:hover {
     text-decoration: $link-hover-decoration;
-    box-shadow: var(--#{$prefix}btn-box-shadow);
   }
 
-  .btn-check:focus-visible + &,
-  .btn-check:focus + &,
+  .btn-check:focus-visible+&,
+  .btn-check:focus+&,
   &:focus {
     color: var(--#{$prefix}btn-focus-color);
-    box-shadow: var(--#{$prefix}btn-box-shadow);
   }
 
-  .btn-check:checked + &,
-  .btn-check:active + &,
+  .btn-check:checked+&,
+  .btn-check:active+&,
   &:active,
   &.active,
   &.show {
     color: var(--#{$prefix}btn-active-color);
-    box-shadow: var(--#{$prefix}btn-box-shadow);
 
     &:focus {
       color: var(--#{$prefix}btn-focus-color);
-      box-shadow: var(--#{$prefix}btn-box-shadow);
     }
-  }
-
-  &:disabled,
-  &.disabled,
-  fieldset:disabled & {
-    box-shadow: var(--#{$prefix}btn-box-shadow);
   }
 }
 
@@ -343,46 +194,34 @@
   --#{$prefix}btn-focus-color: #{$btn-link-focus-color};
   --#{$prefix}btn-active-color: #{$btn-link-active-color};
   --#{$prefix}btn-disabled-color: #{$btn-link-disabled-color};
-  --#{$prefix}btn-box-shadow: none;
 
   padding-left: 0px;
   padding-right: 0px;
   text-decoration: $link-decoration;
-  box-shadow: var(--#{$prefix}btn-box-shadow);
 
-  :not(.btn-check) + &:hover,
+  :not(.btn-check)+&:hover,
   &:first-child:hover,
   &:focus-visible,
   &:hover {
     text-decoration: $link-hover-decoration;
-    box-shadow: var(--#{$prefix}btn-box-shadow);
   }
 
-  .btn-check:focus-visible + &,
-  .btn-check:focus + &,
+  .btn-check:focus-visible+&,
+  .btn-check:focus+&,
   &:focus {
     color: var(--#{$prefix}btn-focus-color);
-    box-shadow: var(--#{$prefix}btn-box-shadow);
   }
 
-  .btn-check:checked + &,
-  .btn-check:active + &,
+  .btn-check:checked+&,
+  .btn-check:active+&,
   &:active,
   &.active,
   &.show {
     color: var(--#{$prefix}btn-active-color);
-    box-shadow: var(--#{$prefix}btn-box-shadow);
 
     &:focus {
       color: var(--#{$prefix}btn-focus-color);
-      box-shadow: var(--#{$prefix}btn-box-shadow);
     }
-  }
-
-  &:disabled,
-  &.disabled,
-  fieldset:disabled & {
-    box-shadow: var(--#{$prefix}btn-box-shadow);
   }
 }
 
@@ -391,23 +230,19 @@
 //
 
 .btn-lg {
-  @include button-size(
-    $btn-padding-top-lg,
+  @include button-size($btn-padding-top-lg,
     $btn-padding-bottom-lg,
     $btn-padding-x-lg,
     $btn-font-size-lg,
-    $btn-line-height-lg
-  );
+    $btn-line-height-lg );
 }
 
 .btn-sm {
-  @include button-size(
-    $btn-padding-top-sm,
+  @include button-size($btn-padding-top-sm,
     $btn-padding-bottom-sm,
     $btn-padding-x-sm,
     $btn-font-size-sm,
-    $btn-line-height-sm
-  );
+    $btn-line-height-sm );
 }
 
 //
@@ -498,6 +333,7 @@
   }
 
   &.btn-lg {
+
     .fas,
     .far,
     .fab {
@@ -507,6 +343,7 @@
   }
 
   &.btn-sm {
+
     .fas,
     .far,
     .fab {
@@ -536,13 +373,12 @@
   display: flex;
   flex-flow: column-reverse nowrap;
   align-items: center;
-  padding: var(--#{$prefix}btn-padding-top) var(--#{$prefix}btn-padding-x)
-    var(--#{$prefix}btn-padding-bottom);
+  padding: var(--#{$prefix}btn-padding-top) var(--#{$prefix}btn-padding-x) var(--#{$prefix}btn-padding-bottom);
   margin-bottom: 0;
   height: auto;
   overflow: hidden;
 
-  & > .btn-floating {
+  &>.btn-floating {
     position: relative;
     transform: scale(1.2);
     z-index: 10;
@@ -603,7 +439,7 @@
   width: 100%;
 
   // Vertically space out multiple block buttons
-  + .btn-block {
+  +.btn-block {
     margin-top: var(--#{$prefix}btn-margin-top);
   }
 }

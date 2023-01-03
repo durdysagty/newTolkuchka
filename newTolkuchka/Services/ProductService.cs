@@ -115,14 +115,6 @@ namespace newTolkuchka.Services
             IList<Product> preProducts = new List<Product>();
             IList<IEnumerable<UIProduct>> uiProducts = new List<IEnumerable<UIProduct>>();
             types = productsOnly ? null : new List<AdminType>();
-            #region for test
-            //if (!productsOnly)
-            //    types.Add(new AdminType
-            //    {
-            //        Id = 3,
-            //        Name = "Какашка"
-            //    });
-            #endregion
             brands = productsOnly ? null : new List<Brand>();
             filters = productsOnly ? null : new List<Filter>();
             min = 0;

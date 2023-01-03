@@ -39,6 +39,7 @@
         // routes models
         public const string SLASH = "/";
         public const string HOME = "home";
+        public const string INDEX = "index";
         public const string BRANDS = "brands";
         public const string BRAND = "brand";
         public const string CATEGORIES = "categories";

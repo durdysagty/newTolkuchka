@@ -1,9 +1,9 @@
 ﻿@{
     IEnumerable<Category> mainCategories = ViewBag.MainCategories;
-    IList<(Category, IEnumerable<string>)> categories = ViewBag.MainCategoriesProducts;
+    //IList<(Category, IEnumerable<string>)> categories = ViewBag.MainCategoriesProducts;
     IList<Slide> mainSlides = ViewBag.MainSlides;
-    IEnumerable<string> newProducts = ViewBag.NewProducts;
-    IEnumerable<string> recProducts = ViewBag.RecProducts;
+    //IEnumerable<string> newProducts = ViewBag.NewProducts;
+    //IEnumerable<string> recProducts = ViewBag.RecProducts;
 }
 
 <div class="row justify-content-center">
@@ -35,11 +35,6 @@
         </div>
     </div>
 </div>
-@{
-    await Html.RenderPartialAsync("_IndexHeader", (ConstantsService.NOVELTIES, 0, "", newProducts));
-    await Html.RenderPartialAsync("_IndexHeader", (ConstantsService.RECOMMENDED, 0, "",recProducts));
-    foreach (var c in categories)
-    {
-        await Html.RenderPartialAsync("_IndexHeader", (ConstantsService.CATEGORY, c.Item1.Id, CultureProvider.GetLocalName(c.Item1.NameRu, c.Item1.NameEn, c.Item1.NameTm), c.Item2));
-    }
-}
+<div id="items">
+</div>
+<script src="~/js/index.js"></script>

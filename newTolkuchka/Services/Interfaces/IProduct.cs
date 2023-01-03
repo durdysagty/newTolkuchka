@@ -41,7 +41,7 @@ namespace newTolkuchka.Services.Interfaces
             return name;
         }
 
-        static string GetHtmlProduct(IEnumerable<UIProduct> products, string add, int xxxl, int xxl, int xl, int lg, int md, int sm, int xs, int col)
+        static string GetHtmlProduct(IEnumerable<UIProduct> products, int col, int xs, int sm, int md, int lg, int xl, int xxl, int xxxl)
         {
             string htmlProducts = string.Empty;
             string i = string.Empty;
@@ -51,14 +51,14 @@ namespace newTolkuchka.Services.Interfaces
                     string id = $"prod{p.Id}";
                     string[] ids = products.Where(x => x.Id != p.Id).Select(x => $"prod{x.Id}").ToArray();
                     string strIds = string.Join(", ", ids);
-                    string image = $"<img width =\"200\" height=\"200\" style=\"width: auto; height: 2.5rem\" alt=\"{p.Name}\" src=\"{p.ImageMain}\" class=\"pb-1\" role=\"button\" onclick=\"changeImage({id}, [{strIds}])\" />";
+                    string image = $"<span><img width =\"200\" height=\"200\" style=\"width: 100%; height: auto\" alt=\"{p.Name}\" src=\"{p.ImageMain}\" class=\"pb-1\" role=\"button\" onclick=\"changeImage({id}, [{strIds}])\" /></span>";
                     i += image;
                 }
             int q = 0;
             foreach (UIProduct p in products)
             {
                 string id = $"prod{p.Id}";
-                string ph = $"<div id=\"{id}\" class=\"{(q == 0 ? "d-block" : "d-none")}\"><a href=\"/product/{p.Id}\"><div class=\"row px-2\"><div class=\"col-6 col-xs-12 col-sm-6 ps-1 ps-sm-0  pe-2\"><img width=\"200\" height=\"200\" style=\"width: 100%; height: auto\" alt=\"{p.Name}\" src=\"{p.ImageMain}\" /></div><div class=\"col-6 col-xs-12 col-sm-6 d-flex flex-column px-0\"><div><p class=\"product-font\">{p.Name}</p></div><div><div class=\"badge badge-primary me-1\">{p.Recommended}</div><div class=\"badge badge-secondary me-1\">{p.New}</div></div><div class=\"flex-grow-1 d-flex justify-content-end align-items-end\"><div class=\"text-end\">{(p.NewPrice != null ? $"<s class=\"product-oprice\">{p.Price}</s><p class=\"fs-6 product-price\">{CurrencyService.Currency.CodeName} {p.NewPrice}</p>" : $"<p class=\"fs-6 product-price\">{CurrencyService.Currency.CodeName} {p.Price}</p>")}</div></div></div></div></a><div class=\"row py-1\"><div class=\"col-6 col-sm-8\">{i}</div><div class=\"col-6 col-sm-4 text-end pe-0\"><button name=\"order{p.Id}\" onclick=\"order({p.Id})\" type=\"submit\" class=\"btn btn-primary px-2 text-nowrap\">{add}</button></div></div></div>";
+                string ph = $"<div id=\"{id}\" class=\"{(q == 0 ? "d-block" : "d-none")}\"><div class=\"row\"><div class=\"col-10 col-xs-9 col-sm-10 px-0 ps-1\"><a href=\"/product/{p.Id}\"><div><img width=\"200\" height=\"200\" style=\"width: 100%; height: auto\" alt=\"{p.Name}\" src=\"{p.ImageMain}\" /></div><div class=\"px-0\"><div><p class=\"product-font\">{p.Name}</p></div><div><div class=\"badge badge-primary me-1\">{p.Recommended}</div><div class=\"badge badge-secondary me-1\">{p.New}</div></div><div class=\"justify-content-end align-items-end\"><div class=\"text-end\">{(p.NewPrice != null ? $"<s class=\"product-oprice\">{p.Price}</s><p class=\"fs-6 product-price\">{CurrencyService.Currency.CodeName} {p.NewPrice}</p>" : $"<p class=\"fs-6 product-price\">{CurrencyService.Currency.CodeName} {p.Price}</p>")}</div></div></div></a></div><div class=\"col-2 col-xs-3 col-sm-2 px-0\"><div class=\"text-center\"><div class=\"buttons-list\"><div><button name=\"order{p.Id}\" onclick=\"order({p.Id})\" type=\"submit\" class=\"btn btn-primary px-2 mb-1\"><i class=\"fas fa-cart-plus\"></i></button></div><div><button name=\"like{p.Id}\" type=\"submit\" class=\"btn btn-primary px-2 mb-1\"><i class=\"fas fa-heart\"></i></button></div>{i}</div></div></div></div></div>";
                 htmlProducts += ph;
                 q++;
             }

@@ -46,15 +46,37 @@ namespace newTolkuchka.Controllers
         [Route(ConstantsService.SLASH)]
         [Route(ConstantsService.HOME)]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 10800)]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             ViewBag.MainSlides = _slide.GetSlidesByLayoutAsync(Layout.Main).ToList();
-            IQueryable<Product> newProducts = _product.GetFullModels().OrderByDescending(p => p.Id).Where(p => p.IsNew && !p.NotInUse).Take(4);
-            IList<IEnumerable<UIProduct>> newUIProducts = await newProducts.Select(p => _product.GetUIProduct(new Product[1] { p })).ToListAsync();
-            ViewBag.NewProducts = newUIProducts.Select(u => IProduct.GetHtmlProduct(u, _localizer["add-to-cart"], 3, 3, 4, 4, 6, 6, 6, 12));
-            IQueryable<Product> recProducts = _product.GetFullModels().OrderByDescending(p => p.Id).Where(p => p.IsRecommended && !p.NotInUse).Take(4);
-            IList<IEnumerable<UIProduct>> recUIProducts = await recProducts.Select(p => _product.GetUIProduct(new Product[1] { p })).ToListAsync();
-            ViewBag.RecProducts = recUIProducts.Select(r => IProduct.GetHtmlProduct(r, _localizer["add-to-cart"], 3, 3, 4, 4, 6, 6, 6, 12));
+            IQueryable<Category> mainCategories = _category.GetCategoriesByParentId(0);
+            ViewBag.MainCategories = mainCategories;
+            CreateMetaData();
+            return View();
+        }
+
+
+        [Route($"{ConstantsService.INDEX}")]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 7200)]
+        public async Task<string> Items(int count)
+        {
+            static IEnumerable<string> GetHtmlProducts(IList<IEnumerable<UIProduct>> products)
+            {
+                return products.Select(u => IProduct.GetHtmlProduct(u, 12, 6, 6, 4, 3, 2, 2, 2));
+            }
+            static string GetItems(IEnumerable<string> strings)
+            {
+                string products = null;
+                foreach (string p in strings)
+                {
+                    products += p;
+                }
+                return products;
+            }
+            IList<IEnumerable<UIProduct>> newUIProducts = await _product.GetFullModels().OrderByDescending(p => p.Id).Where(p => p.IsNew && !p.NotInUse).Take(count).Select(p => _product.GetUIProduct(new Product[1] { p })).ToListAsync();
+            IEnumerable<string> newProducts = GetHtmlProducts(newUIProducts);
+            IList<IEnumerable<UIProduct>> recUIProducts = await _product.GetFullModels().OrderByDescending(p => p.Id).Where(p => p.IsRecommended && !p.NotInUse).Take(count).Select(p => _product.GetUIProduct(new Product[1] { p })).ToListAsync();
+            IEnumerable<string> recProducts = GetHtmlProducts(recUIProducts);
             IQueryable<Category> mainCategories = _category.GetCategoriesByParentId(0);
             IList<(Category, IEnumerable<string>)> categories = new List<(Category, IEnumerable<string>)>();
             foreach (Category category in mainCategories)
@@ -62,17 +84,20 @@ namespace newTolkuchka.Controllers
                 IList<int> categoryIds = _category.GetAllCategoryIdsHaveProductsByParentId(category.Id);
                 if (categoryIds.Any())
                 {
-                    IList<IEnumerable<UIProduct>> products = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.CATEGORY, categoryIds } }).OrderByDescending(p => p.Id).Where(p => !p.NotInUse).Take(4).Select(p => _product.GetUIProduct(new Product[1] { p })).ToListAsync();
-                    (Category, IEnumerable<string>) mainCategory = (category, products.Select(p => IProduct.GetHtmlProduct(p, _localizer["add-to-cart"], 3, 3, 4, 4, 6, 6, 6, 12)));
+                    IList<IEnumerable<UIProduct>> products = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.CATEGORY, categoryIds } }).OrderByDescending(p => p.Id).Where(p => !p.NotInUse).Take(count).Select(p => _product.GetUIProduct(new Product[1] { p })).ToListAsync();
+                    (Category, IEnumerable<string>) mainCategory = (category, GetHtmlProducts(products));
                     categories.Add(mainCategory);
                 }
             }
-            ViewBag.MainCategories = mainCategories;
-            ViewBag.MainCategoriesProducts = categories;
-            CreateMetaData();
-            return View();
+            string html = $"<p class=\"fs-5 px-3 mb-2 border-bottom border-primary\"><a href=\"/{ConstantsService.NOVELTIES}\">{_localizer[ConstantsService.NOVELTIES].Value}</a></p><div class=\"row\">{GetItems(newProducts)}</div>";
+            html += $"<p class=\"fs-5 px-3 mb-2 border-bottom border-primary\"><a href=\"/{ConstantsService.RECOMMENDED}\">{_localizer[ConstantsService.RECOMMENDED].Value}</a></p><div class=\"row\">{GetItems(recProducts)}</div>";
+            foreach ((Category, IEnumerable<string>) c in categories)
+            {
+                html += $"<p class=\"fs-5 px-3 mb-2 border-bottom border-primary\"><a href=\"/{PathService.GetModelUrl(ConstantsService.CATEGORY, c.Item1.Id)}\">{CultureProvider.GetLocalName(c.Item1.NameRu, c.Item1.NameEn, c.Item1.NameTm)}</a></p><div class=\"row\">{GetItems(c.Item2)}</div>";
+            }
+            return html;
         }
-        [Route(ConstantsService.CATEGORIES)]
+            [Route(ConstantsService.CATEGORIES)]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
         public async Task<IActionResult> Categories()
         {
@@ -235,7 +260,7 @@ namespace newTolkuchka.Controllers
                     noProduct = _localizer["noProductAbsolutly"].Value
                 });
             IList<IEnumerable<UIProduct>> /*IEnumerable<UIProduct>*/ uiProducts = _product.GetUIData(productsOnly, list, t, b, v, minp, maxp, sort, page, pp, out IList<AdminType> types, out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage);
-            IEnumerable<string> products = uiProducts.Select(p => IProduct.GetHtmlProduct(p, _localizer["add-to-cart"], 3, 4, 4, 4, 6, 6, 6, 12));
+            IEnumerable<string> products = uiProducts.Select(p => IProduct.GetHtmlProduct(p, 12, 6, 6, 4, 4, 3, 3, 3));
             return new JsonResult(new
             {
                 products,

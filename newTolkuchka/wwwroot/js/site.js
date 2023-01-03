@@ -1,7 +1,7 @@
 ﻿document.cookie = `w=${window.innerWidth}; max-age=2592000; samesite=strict; secure; path=/`
 const stringList = {
     // add: 'в корзину',
-    added: 'в корзине',
+    // added: 'в корзине',
     currency: 'TMT',
     wrong: 'Что-то пошло не так! Попробуйте ещё раз или обратитесь к администрации сайта.'
 }
@@ -54,7 +54,7 @@ function checkOrders() {
 function added(id) {
     const bId = `button[name='order${id}']`
     $(bId).each(function () {
-        $(this).html(stringList.added).removeClass('btn-primary').addClass('btn-white')
+        $(this).removeClass('btn-primary').addClass('btn-secondary')
     })
 }
 // set orders quantity to top corner of cart

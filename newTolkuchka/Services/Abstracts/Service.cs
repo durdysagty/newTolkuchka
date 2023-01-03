@@ -4,12 +4,9 @@ using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Reces;
 using newTolkuchka.Services.Interfaces;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using Type = System.Type;
 using ModelsType = newTolkuchka.Models.Type;
-using System.Collections;
 
 namespace newTolkuchka.Services.Abstracts
 {
@@ -55,7 +52,7 @@ namespace newTolkuchka.Services.Abstracts
                         }
                         if (paramsList.TryGetValue(ConstantsService.LINE, out value))
                         {
-                            int? lineId = int.Parse(value.ToString());
+                            int? lineId = value.ToString() == "null" ? null : int.Parse(value.ToString());
                             models2 = models2.Where(x => x.LineId == lineId);
                         }
                         models = (IQueryable<T>)models2;
@@ -250,7 +247,6 @@ namespace newTolkuchka.Services.Abstracts
                                 Padding = level * PADDING,
                                 Id = c.Id,
                                 Name = c.Order + " " + c.NameRu,
-                                // change to models
                                 Models = c.Models.Count
                             });
                             GetCategoriesByOrder(preCategories.Where(x => x.ParentId == c.Id).OrderBy(x => x.Order), level + 1);

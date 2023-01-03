@@ -15,7 +15,7 @@ namespace newTolkuchka.Models
         public Entity Entity { get; set; }
         [Required]
         public int EntityId { get; set; }
-        [MaxLength(100)]
+        [MaxLength(300)]
         public string EntityName { get; set; }
         [Required]
         public DateTimeOffset DateTime { get; set; }

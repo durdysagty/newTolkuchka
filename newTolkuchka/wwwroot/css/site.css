@@ -124,3 +124,7 @@ s {
     bottom: 4rem;
     left: 1rem
 }
+
+.buttons-list i {
+    font-size: 0.8rem
+}
