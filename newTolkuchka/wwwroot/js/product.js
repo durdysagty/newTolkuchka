@@ -12,3 +12,4 @@ function setImage(img, n) {
     src = src.replace(/-[0-4]/, `-${n}`)
     $(img).attr('src', src)
 }
+checkOrders()

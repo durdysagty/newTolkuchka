@@ -22,17 +22,6 @@ namespace newTolkuchka.ControllersAPI
             Category category = await _category.GetModelAsync(id);
             return category;
         }
-        //[HttpGet]
-        //public ModelsFilters<AdminCategory> Get([FromQuery] int page = 0, [FromQuery] int pp = 50)
-        //{
-        //    IEnumerable<AdminCategory> categories = _category.GetAdminModels(page, pp, out int lastPage, out string pagination);
-        //    return new ModelsFilters<AdminCategory>
-        //    {
-        //        Models = categories,
-        //        LastPage = lastPage,
-        //        Pagination = pagination
-        //    };
-        //}
         [HttpGet("hasproduct/{id}")]
         public async Task<bool> HasProduct(int id)
         {
@@ -60,6 +49,14 @@ namespace newTolkuchka.ControllersAPI
             bool isExist = _category.IsExist(category, _category.GetCategoriesByParentId(category.ParentId));
             if (isExist)
                 return Result.Already;
+            Category parent = await _category.GetModelAsync(category.ParentId);
+            if (parent != null)
+            {
+                if (parent.NotInUse)
+                {
+                    category.NotInUse = true;
+                }
+            }
             await _category.AddModelAsync(category);
             await _category.AddCategoryAdLinksAsync(category.Id, adLinks);
             await AddActAsync(category.Id, category.NameRu);
@@ -71,6 +68,17 @@ namespace newTolkuchka.ControllersAPI
             bool isExist = _category.IsExist(category, _category.GetModels().Where(x => x.Id != category.Id));
             if (isExist)
                 return Result.Already;
+            void AllNotInUse(IEnumerable<Category> categories)
+            {
+                if (categories.Any())
+                    foreach (Category category in categories)
+                    {
+                        category.NotInUse = true;
+                        AllNotInUse(_category.GetModels().Where(c => c.ParentId == category.Id));
+                    }
+            }
+            if (category.NotInUse)
+                AllNotInUse(_category.GetModels().Where(c => c.ParentId == category.Id));
             _category.EditModel(category);
             await _category.AddCategoryAdLinksAsync(category.Id, adLinks);
             await EditActAsync(category.Id, category.NameRu);

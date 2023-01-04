@@ -5,11 +5,11 @@ namespace newTolkuchka.Models
     public class SpecsValue
     {
         public int Id { get; set; }
-        [Required, MaxLength(100)]
+        [Required, MaxLength(300)]
         public string NameRu { get; set; }
-        [Required, MaxLength(100)]
+        [Required, MaxLength(300)]
         public string NameEn { get; set; }
-        [Required, MaxLength(100)]
+        [Required, MaxLength(300)]
         public string NameTm { get; set; }
 
         public int SpecId { get; set; }

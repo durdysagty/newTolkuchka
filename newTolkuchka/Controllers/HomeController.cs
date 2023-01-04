@@ -49,12 +49,11 @@ namespace newTolkuchka.Controllers
         public IActionResult Index()
         {
             ViewBag.MainSlides = _slide.GetSlidesByLayoutAsync(Layout.Main).ToList();
-            IQueryable<Category> mainCategories = _category.GetCategoriesByParentId(0);
+            IQueryable<Category> mainCategories = _category.GetActiveCategoriesByParentId(0);
             ViewBag.MainCategories = mainCategories;
             CreateMetaData();
             return View();
         }
-
 
         [Route($"{ConstantsService.INDEX}")]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 7200)]
@@ -62,7 +61,7 @@ namespace newTolkuchka.Controllers
         {
             static IEnumerable<string> GetHtmlProducts(IList<IEnumerable<UIProduct>> products)
             {
-                return products.Select(u => IProduct.GetHtmlProduct(u, 12, 6, 6, 4, 3, 2, 2, 2));
+                return products.Select(u => IProduct.GetHtmlProduct(u, 12, 6, 4, 3, 3, 2, 2, 2));
             }
             static string GetItems(IEnumerable<string> strings)
             {
@@ -73,18 +72,18 @@ namespace newTolkuchka.Controllers
                 }
                 return products;
             }
-            IList<IEnumerable<UIProduct>> newUIProducts = await _product.GetFullModels().OrderByDescending(p => p.Id).Where(p => p.IsNew && !p.NotInUse).Take(count).Select(p => _product.GetUIProduct(new Product[1] { p })).ToListAsync();
+            IList<IEnumerable<UIProduct>> newUIProducts = await _product.GetFullModels().OrderByDescending(p => p.Id).Where(p => p.IsNew && !p.NotInUse && !p.Model.Category.NotInUse).Take(count).Select(p => _product.GetUIProduct(new Product[1] { p })).ToListAsync();
             IEnumerable<string> newProducts = GetHtmlProducts(newUIProducts);
-            IList<IEnumerable<UIProduct>> recUIProducts = await _product.GetFullModels().OrderByDescending(p => p.Id).Where(p => p.IsRecommended && !p.NotInUse).Take(count).Select(p => _product.GetUIProduct(new Product[1] { p })).ToListAsync();
+            IList<IEnumerable<UIProduct>> recUIProducts = await _product.GetFullModels().OrderByDescending(p => p.Id).Where(p => p.IsRecommended && !p.NotInUse && !p.Model.Category.NotInUse).Take(count).Select(p => _product.GetUIProduct(new Product[1] { p })).ToListAsync();
             IEnumerable<string> recProducts = GetHtmlProducts(recUIProducts);
-            IQueryable<Category> mainCategories = _category.GetCategoriesByParentId(0);
+            IQueryable<Category> mainCategories = _category.GetActiveCategoriesByParentId(0);
             IList<(Category, IEnumerable<string>)> categories = new List<(Category, IEnumerable<string>)>();
             foreach (Category category in mainCategories)
             {
                 IList<int> categoryIds = _category.GetAllCategoryIdsHaveProductsByParentId(category.Id);
                 if (categoryIds.Any())
                 {
-                    IList<IEnumerable<UIProduct>> products = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.CATEGORY, categoryIds } }).OrderByDescending(p => p.Id).Where(p => !p.NotInUse).Take(count).Select(p => _product.GetUIProduct(new Product[1] { p })).ToListAsync();
+                    IList<IEnumerable<UIProduct>> products = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.CATEGORY, categoryIds } }).OrderByDescending(p => p.Id).Where(p => !p.NotInUse && !p.Model.Category.NotInUse).Take(count).Select(p => _product.GetUIProduct(new Product[1] { p })).ToListAsync();
                     (Category, IEnumerable<string>) mainCategory = (category, GetHtmlProducts(products));
                     categories.Add(mainCategory);
                 }
@@ -97,7 +96,7 @@ namespace newTolkuchka.Controllers
             }
             return html;
         }
-            [Route(ConstantsService.CATEGORIES)]
+        [Route(ConstantsService.CATEGORIES)]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
         public async Task<IActionResult> Categories()
         {
@@ -118,10 +117,10 @@ namespace newTolkuchka.Controllers
         public async Task<IActionResult> Category(int id)
         {
             Category category = await _category.GetModelAsync(id);
-            if (category == null)
+            if (category == null || category.NotInUse)
                 return GetNotFoundPage();
             string localName = CultureProvider.GetLocalName(category.NameRu, category.NameEn, category.NameTm);
-            ViewBag.Categories = _category.GetCategoriesByParentId(id);
+            ViewBag.Categories = _category.GetActiveCategoriesByParentId(id);
             CreateMetaData(ConstantsService.CATEGORY, await _breadcrumbs.GetCategoryBreadcrumbsAsync(category.ParentId), localName, true);
             return View();
         }
@@ -146,7 +145,7 @@ namespace newTolkuchka.Controllers
                 return GetNotFoundPage();
             string localName = IProduct.GetProductName(product);
             CreateMetaData(ConstantsService.PRODUCT, await _breadcrumbs.GetProductBreadcrumbs(product.Model.CategoryId), localName, true, false);
-            if (product.NotInUse)
+            if (product.NotInUse || product.Model.Category.NotInUse)
                 return View();
             IQueryable<Product> products = _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.MODEL, product.ModelId } }).Where(p => !p.NotInUse).AsNoTrackingWithIdentityResolution();
             if (!products.Any())
@@ -190,6 +189,13 @@ namespace newTolkuchka.Controllers
             CreateMetaData(special, _breadcrumbs.GetBreadcrumbs(), null, true);
             return View();
         }
+        [Route(ConstantsService.LIKED)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 3600)]
+        public IActionResult Liked(string special)
+        {
+            CreateMetaData(special, _breadcrumbs.GetBreadcrumbs(), null, true);
+            return View();
+        }
         [Route(ConstantsService.ABOUT)]
         [Route($"{ConstantsService.DELIVERY}")]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 259200)]
@@ -212,46 +218,54 @@ namespace newTolkuchka.Controllers
         }
         [Route($"{ConstantsService.PRODUCTS}")]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 7200)]
-        public async Task<JsonResult> Products(string model, int id, bool productsOnly, int[] t, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp = 20, string search = null)
+        public async Task<JsonResult> Products(string model, string ids, bool productsOnly, int[] t, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp = 20, string search = null)
         {
             IList<Product> list = new List<Product>();
+            IQueryable<Product> targetProducts = null;
             switch (model)
             {
                 case ConstantsService.CATEGORY:
                     // get all products in the category including subcategories
                     // maybe possibility to optimize
-                    IList<int> categoryIds = _category.GetAllCategoryIdsHaveProductsByParentId(id);
+                    IList<int> categoryIds = _category.GetAllCategoryIdsHaveProductsByParentId(int.Parse(ids));
                     if (!categoryIds.Any())
                         return new JsonResult(new
                         {
                             products = list,
                             noProduct = _localizer["noProductAbsolutly"].Value
                         });
-                    list = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.CATEGORY, categoryIds } }).Where(p => !p.NotInUse).ToListAsync();
+                    targetProducts = _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.CATEGORY, categoryIds } });
                     break;
                 case ConstantsService.BRAND:
                     // get all products in by brand
-                    list = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.BRAND, new[] { id } } }).Where(p => !p.NotInUse).ToListAsync();
+                    targetProducts = _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.BRAND, new int[] { int.Parse(ids) } } });
                     break;
                 case ConstantsService.SEARCH:
                     var words = search.Trim().Split(" ");
-                    list = await _product.GetFullModels().Where(p => p.Model.Type.NameRu.Contains(words[0]) || p.Model.Type.NameEn.Contains(words[0]) || p.Model.Type.NameTm.Contains(words[0]) || p.Model.Brand.Name.Contains(words[0]) || p.Model.Line.Name.Contains(words[0]) || p.Model.Name.Contains(words[0]) || p.ProductSpecsValues.Any(psv => psv.SpecsValue.NameRu.Contains(words[0]) || psv.SpecsValue.NameEn.Contains(words[0]) || psv.SpecsValue.NameTm.Contains(words[0])) || p.ProductSpecsValueMods.Any(psvm => psvm.SpecsValueMod.NameRu.Contains(words[0]) || psvm.SpecsValueMod.NameEn.Contains(words[0]) || psvm.SpecsValueMod.NameTm.Contains(words[0]))).Where(p => !p.NotInUse).ToListAsync();
+                    targetProducts = _product.GetFullModels().Where(p => p.Model.Type.NameRu.Contains(words[0]) || p.Model.Type.NameEn.Contains(words[0]) || p.Model.Type.NameTm.Contains(words[0]) || p.Model.Brand.Name.Contains(words[0]) || p.Model.Line.Name.Contains(words[0]) || p.Model.Name.Contains(words[0]) || p.ProductSpecsValues.Any(psv => psv.SpecsValue.NameRu.Contains(words[0]) || psv.SpecsValue.NameEn.Contains(words[0]) || psv.SpecsValue.NameTm.Contains(words[0])) || p.ProductSpecsValueMods.Any(psvm => psvm.SpecsValueMod.NameRu.Contains(words[0]) || psvm.SpecsValueMod.NameEn.Contains(words[0]) || psvm.SpecsValueMod.NameTm.Contains(words[0])));
                     if (list.Any())
                     {
                         for (var i = 1; i < words.Length; i++)
                         {
-                            list = list.Where(p => p.Model.Type.NameRu.Contains(words[i]) || p.Model.Type.NameEn.Contains(words[i]) || p.Model.Type.NameTm.Contains(words[i]) || p.Model.Brand.Name.Contains(words[i]) || p.Model.Line.Name.Contains(words[i]) || p.Model.Name.Contains(words[i]) || p.ProductSpecsValues.Any(psv => psv.SpecsValue.NameRu.Contains(words[i]) || psv.SpecsValue.NameEn.Contains(words[i]) || psv.SpecsValue.NameTm.Contains(words[i])) || p.ProductSpecsValueMods.Any(psvm => psvm.SpecsValueMod.NameRu.Contains(words[i]) || psvm.SpecsValueMod.NameEn.Contains(words[i]) || psvm.SpecsValueMod.NameTm.Contains(words[i]))).Where(p => !p.NotInUse).ToList();
+                            targetProducts = targetProducts.Where(p => p.Model.Type.NameRu.Contains(words[i]) || p.Model.Type.NameEn.Contains(words[i]) || p.Model.Type.NameTm.Contains(words[i]) || p.Model.Brand.Name.Contains(words[i]) || p.Model.Line.Name.Contains(words[i]) || p.Model.Name.Contains(words[i]) || p.ProductSpecsValues.Any(psv => psv.SpecsValue.NameRu.Contains(words[i]) || psv.SpecsValue.NameEn.Contains(words[i]) || psv.SpecsValue.NameTm.Contains(words[i])) || p.ProductSpecsValueMods.Any(psvm => psvm.SpecsValueMod.NameRu.Contains(words[i]) || psvm.SpecsValueMod.NameEn.Contains(words[i]) || psvm.SpecsValueMod.NameTm.Contains(words[i])));
                             if (!list.Any())
                                 break;
                         }
                     }
                     break;
                 case ConstantsService.NOVELTIES:
-                    list = await _product.GetFullModels().Where(p => p.IsNew && !p.NotInUse).ToListAsync();
+                    targetProducts = _product.GetFullModels().Where(p => p.IsNew);
                     break;
                 case ConstantsService.RECOMMENDED:
-                    list = await _product.GetFullModels().Where(p => p.IsRecommended && !p.NotInUse).ToListAsync();
+                    targetProducts = _product.GetFullModels().Where(p => p.IsRecommended);
                     break;
+                case ConstantsService.LIKED:
+                    targetProducts = _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, JsonSerializer.Deserialize<IList<int>>(ids) } });
+                    break;
+            }
+            if (targetProducts.Any())
+            {
+                list = await targetProducts.Where(p => !p.NotInUse && !p.Model.Category.NotInUse).ToListAsync();
             }
             if (!list.Any())
                 return new JsonResult(new
@@ -433,12 +447,12 @@ namespace newTolkuchka.Controllers
                 int w = int.Parse(width);
                 ViewBag.WindowWidth = w;
                 if (ViewBag.MainCategories == null && w < ConstantsService.MOBILEWIDTH)
-                    ViewBag.MainCategories = _category.GetCategoriesByParentId(0);
+                    ViewBag.MainCategories = _category.GetActiveCategoriesByParentId(0);
             }
             else
             {
                 if (ViewBag.MainCategories == null)
-                    ViewBag.MainCategories = _category.GetCategoriesByParentId(0);
+                    ViewBag.MainCategories = _category.GetActiveCategoriesByParentId(0);
             }
         }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

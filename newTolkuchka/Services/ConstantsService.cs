@@ -88,6 +88,7 @@
         public const string MENU = "menu";
         public const string NOVELTIES = "novelties";
         public const string RECOMMENDED = "recommended";
+        public const string LIKED = "liked";
         public const string NEW = "new";
         public const string START = "start";
         public const string END = "end";

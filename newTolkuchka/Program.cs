@@ -148,7 +148,7 @@ app.UseStaticFiles(new StaticFileOptions()
         if (ctx.Context.Request.Host.Value.Contains("localhost"))
             ctx.Context.Response.Headers.Add("cache-control", "no-cache");
         else
-            ctx.Context.Response.Headers.Add("Cache-Control", "public,max-age=8640000");
+            ctx.Context.Response.Headers.Add("Cache-Control", "public,max-age=86400");
     }
 });
 app.UseRouting();

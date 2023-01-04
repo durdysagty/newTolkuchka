@@ -128,3 +128,9 @@ s {
 .buttons-list i {
     font-size: 0.8rem
 }
+
+@media (max-width:351px) {
+    .buttons-list i {
+        font-size: 1.4rem
+    }
+}

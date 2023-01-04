@@ -27,7 +27,7 @@
                             <img id="@imgId" width="600" height="600" style="width: 100%; height: auto" alt="@p.Model.Brand.Name" src="@PathService.GetImageRelativePath(ConstantsService.PRODUCT, p.Id)" />
                         </div>
                         <div class="col-auto col-sm-1 col-md-auto col-lg-2 my-2 my-md-0 px-0 pt-1">
-                            <div class="d-flex d-md-block">
+                            <div>
                                 @for (int i = 0; i < ConstantsService.PRODUCTMAXIMAGE; i++)
                                 {
                                     if (File.Exists(_pathService.GetImagePath(ConstantsService.PRODUCT + "/small", p.Id, i)))
@@ -160,8 +160,12 @@
                         }
                         @{
                             string buttonName = "order" + p.Id;
+                            string buttonLikeName = "like" + p.Id;
                         }
-                        <button name="@buttonName" onclick="order(@p.Id)" type="submit" class="btn btn-primary">@Localizer["add-to-cart"]</button>
+                        <div class="d-inline-flex">
+                            <button name="@buttonName" onclick="order(@p.Id)" type="submit" class="btn btn-primary">@Localizer["add-to-cart"]</button>
+                            <button name="@buttonLikeName" onclick="like(@p.Id)" type="submit" class="btn btn-primary ms-2"><i class="fas fa-heart"></i></button>
+                        </div>
                     </div>
                 </div>
                 <div class="col-auto d-flex flex-column justify-content-start align-items-start pt-2">

@@ -85,9 +85,12 @@ function prepareSearchObj() {
 async function setProducts(productsOnly) {
     const path = window.location.pathname.split('/')
     const search = window.location.search.substring(1)
+    if (path[1] === 'liked') {
+        path[2] = localStorage.getItem('likes')
+    }
     let data
     try {
-        const response = await fetch(`/products/?model=${path[1]}&id=${path[2]}&productsOnly=${productsOnly}&${search}`, {
+        const response = await fetch(`/products/?model=${path[1]}&ids=${path[2]}&productsOnly=${productsOnly}&${search}`, {
             method: 'GET',
             credentials: 'include'
         })
@@ -283,8 +286,6 @@ function setFilters() {
     setProducts(true)
 }
 function changeImage(id, ids) {
-    console.log(id)
-    console.log(ids)
     ids.forEach(i => { $(i).addClass('d-none').removeClass('d-block') })
     $(id).addClass('d-block').removeClass('d-none')
 

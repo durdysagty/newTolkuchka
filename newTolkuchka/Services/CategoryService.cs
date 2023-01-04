@@ -10,7 +10,7 @@ namespace newTolkuchka.Services
 {
     public class CategoryService : ServiceNoFile<Category, AdminCategory>, ICategory
     {
-        private const int PADDING = 2;
+        // private const int PADDING = 2;
         private readonly IProduct _product;
         public CategoryService(AppDbContext con, IStringLocalizer<Shared> localizer, IProduct product) : base(con, localizer)
         {
@@ -58,7 +58,13 @@ namespace newTolkuchka.Services
 
         public IQueryable<Category> GetCategoriesByParentId(int parentId)
         {
-            IQueryable<Category> categories = GetModels().Where(c => (c.ParentId == parentId || c.CategoryAdLinks.Where(y => y.StepParentId == parentId).Any()) && !c.NotInUse).OrderBy(x => x.Order);
+            IQueryable<Category> categories = GetModels().Where(c => (c.ParentId == parentId || c.CategoryAdLinks.Where(y => y.StepParentId == parentId).Any())).OrderBy(x => x.Order);
+            return categories;
+        }
+
+        public IQueryable<Category> GetActiveCategoriesByParentId(int parentId)
+        {
+            IQueryable<Category> categories = GetCategoriesByParentId(parentId).Where(c => !c.NotInUse);
             return categories;
         }
 
@@ -67,7 +73,7 @@ namespace newTolkuchka.Services
             IList<int> ids = new List<int>();
             void GetAll(int catId)
             {
-                IQueryable<Category> categories = GetCategoriesByParentId(catId).Include(c => c.Models).ThenInclude(m => m.Products);
+                IQueryable<Category> categories = GetActiveCategoriesByParentId(catId).Include(c => c.Models).ThenInclude(m => m.Products);
                 if (categories.Any())
                     foreach (Category c in categories)
                     {

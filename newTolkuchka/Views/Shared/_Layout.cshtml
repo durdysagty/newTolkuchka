@@ -4,13 +4,14 @@
     int? width = ViewBag.WindowWidth;
     IEnumerable<Category> mainCategories = ViewBag.MainCategories;
     //href, name
-    IEnumerable<(string, string, string)> mainLinks = new (string, string, string)[8] {
+    IEnumerable<(string, string, string)> mainLinks = new (string, string, string)[9] {
         ($"tel:{ConstantsService.CURRENTPHONE}", ConstantsService.CURRENTPHONE, null),
         ($"mailto:{ConstantsService.INFOEMAIL}{CultureProvider.SiteName}", $"{ConstantsService.INFOEMAIL}{CultureProvider.SiteName}", null),
         (ConstantsService.ABOUT, Localizer[ConstantsService.ABOUT].Value, "d-none d-lg-inline"),
         (ConstantsService.DELIVERY, Localizer[ConstantsService.DELIVERY].Value, "d-none d-lg-inline"),
         (ConstantsService.BRANDS, Localizer[ConstantsService.BRANDS].Value, "d-none d-lg-inline"),
         (ConstantsService.CATEGORIES, Localizer[ConstantsService.CATEGORIES].Value, "d-none d-lg-inline"),
+        (ConstantsService.LIKED, Localizer[ConstantsService.LIKED].Value, "d-none d-lg-inline"),
         (ConstantsService.NOVELTIES, Localizer[ConstantsService.NOVELTIES].Value, "d-none d-lg-inline"),
         (ConstantsService.RECOMMENDED, Localizer[ConstantsService.RECOMMENDED].Value, "d-none d-lg-inline")
     };
@@ -88,7 +89,7 @@
                     }
                     @if (width == null || width > ConstantsService.MOBILEWIDTH)
                     {
-                        foreach ((string, string, string) l in mainLinks.Skip(2).Take(4))
+                        foreach ((string, string, string) l in mainLinks.Skip(2).Take(5))
                         {
                             await Html.RenderPartialAsync("_MainLink", l);
                         }
@@ -389,7 +390,7 @@
         </div>
         <script src="~/js/in.js" asp-append-version="true"></script>
     }
-    <script src="~/lib/mdb/mdb.min.js"></script>
+    <script src="~/lib/mdb/mdb.min.js" asp-append-version="true"></script>
     <script src="~/lib/sidenav/cash.js"></script>
     <script src="~/lib/sidenav/component.js"></script>
     <script src="~/lib/sidenav/global.js"></script>
