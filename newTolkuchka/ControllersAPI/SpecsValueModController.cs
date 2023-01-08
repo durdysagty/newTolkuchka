@@ -43,7 +43,7 @@ namespace newTolkuchka.ControllersAPI
         [HttpPost]
         public async Task<Result> Post(SpecsValueMod specsValueMod)
         {
-            bool isExist = _specsValueMod.IsExist(specsValueMod, _specsValueMod.GetModels());
+            bool isExist = _specsValueMod.IsExist(specsValueMod, _specsValueMod.GetModels().Where(x => x.SpecsValueId == specsValueMod.SpecsValueId));
             if (isExist)
                 return Result.Already;
             await _specsValueMod.AddModelAsync(specsValueMod);

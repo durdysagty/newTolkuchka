@@ -26,10 +26,11 @@ namespace newTolkuchka.Controllers
         private readonly IUser _user;
         private readonly IInvoice _invoice;
         private readonly IOrder _order;
+        private readonly ILogin _login;
         private readonly static int _deliveryFree = 500;
         private readonly static int _deliveryPrice = 20;
 
-        public HomeController(IStringLocalizer<Shared> localizer, IBreadcrumbs breadcrumbs, IPath path, ICategory category, IBrand brand, IProduct product, ISlide slide, IUser user, IOrder order, IInvoice invoice)
+        public HomeController(IStringLocalizer<Shared> localizer, IBreadcrumbs breadcrumbs, IPath path, ICategory category, IBrand brand, IProduct product, ISlide slide, IUser user, IInvoice invoice, IOrder order, ILogin login)
         {
             _localizer = localizer;
             _breadcrumbs = breadcrumbs;
@@ -41,6 +42,7 @@ namespace newTolkuchka.Controllers
             _user = user;
             _order = order;
             _invoice = invoice;
+            _login = login;
         }
         #endregion
         [Route(ConstantsService.SLASH)]
@@ -54,7 +56,6 @@ namespace newTolkuchka.Controllers
             CreateMetaData();
             return View();
         }
-
         [Route($"{ConstantsService.INDEX}")]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 7200)]
         public async Task<string> Items(int count)
@@ -218,7 +219,7 @@ namespace newTolkuchka.Controllers
         }
         [Route($"{ConstantsService.PRODUCTS}")]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 7200)]
-        public async Task<JsonResult> Products(string model, string ids, bool productsOnly, int[] t, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp = 20, string search = null)
+        public async Task<JsonResult> Products(string model, string ids, bool productsOnly, int[] t, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp = 100, string search = null)
         {
             IList<Product> list = new List<Product>();
             IQueryable<Product> targetProducts = null;
@@ -410,7 +411,7 @@ namespace newTolkuchka.Controllers
                 if (isPinChanged)
                 {
                     HttpContext.Response.Cookies.Delete(Secrets.userCookie);
-                    return RedirectToAction("Index");
+                    return RedirectToAction(ConstantsService.INDEX);
                 }
             }
             return await AccountGeneric(user);
@@ -420,6 +421,16 @@ namespace newTolkuchka.Controllers
         {
             CreateMetaData();
             return View();
+        }
+
+        [HttpGet("recovery/newpin/{guid}")]
+        public async Task<IActionResult> PinRecovery(Guid guid)
+        {
+            LoginResponse loginResponse = await _login.NewPINAsync(guid);
+            if (loginResponse.Result == LoginResponse.R.Error)
+                return GetNotFoundPage();
+            CreateMetaData();
+            return View(loginResponse);
         }
         private IActionResult GetNotFoundPage()
         {

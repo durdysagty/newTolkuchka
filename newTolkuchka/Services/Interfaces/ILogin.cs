@@ -6,7 +6,8 @@ namespace newTolkuchka.Services.Interfaces
     {
         Task<LoginResponse> LoginFirstStepByEmailAsync(string login);
         Task<LoginResponse> LoginSecondStepAsync(string pinNumbers);
-
+        Task<LoginResponse> RecoveryAsync(string pinNumbers);
+        Task<LoginResponse> NewPINAsync(Guid guid);
 
         Task<LoginResponse> JwtLoginEmployeeAsync(LoginRequest loginRequest);
         Task<LoginResponse> CheckAuthedEmployeeAsync(HttpContext httpContext);

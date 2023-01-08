@@ -27,6 +27,14 @@ namespace newTolkuchka.Services
         {
             return Path.Combine(GetHtmlBodyPath(), "pin.html");
         }
+        public string GetHtmlRecoveryBodyPath()
+        {
+            return Path.Combine(GetHtmlBodyPath(), "recovery.html");
+        }
+        public string GetHtmlNewPinBodyPath()
+        {
+            return Path.Combine(GetHtmlBodyPath(), "newpin.html");
+        }
         public string GetHtmlAboutBodyPath(string lang)
         {
             return lang switch

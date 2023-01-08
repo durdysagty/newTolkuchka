@@ -3,6 +3,7 @@ using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
 using newTolkuchka.Reces;
 using newTolkuchka.Services.Interfaces;
+using Type = System.Type;
 
 namespace newTolkuchka.Services.Abstracts
 {
@@ -14,6 +15,12 @@ namespace newTolkuchka.Services.Abstracts
 
         public virtual async Task AddModelAsync(T model, bool save = false)
         {
+            Type type = typeof(T);
+            int id = GetModelId(type, model);
+            if (id != 0)
+            {
+                type.GetProperty("Id").SetValue(model, 0);
+            }
             await _con.Set<T>().AddAsync(model);
             if (save)
                 await _con.SaveChangesAsync();

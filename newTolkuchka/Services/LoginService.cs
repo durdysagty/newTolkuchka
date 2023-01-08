@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
@@ -7,10 +8,11 @@ using newTolkuchka.Reces;
 using newTolkuchka.Services.Interfaces;
 using System.Text.RegularExpressions;
 using static newTolkuchka.Models.DTO.LoginResponse;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace newTolkuchka.Services
 {
-    public class LoginService : ILogin
+    public partial class LoginService : ILogin
     {
         private readonly AppDbContext _con;
         private readonly ICrypto _crypto;
@@ -33,7 +35,7 @@ namespace newTolkuchka.Services
         }
         public async Task<LoginResponse> LoginFirstStepByEmailAsync(string login)
         {
-            bool isEmail = Regex.IsMatch(login, @"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.IgnoreCase);
+            bool isEmail = MyRegex().IsMatch(login);
             if (!isEmail)
                 return CreateFailResult(_localizer["wrong-email"]);
             User user = await _user.GetUserByLoginAsync(login);
@@ -49,7 +51,7 @@ namespace newTolkuchka.Services
                     Pin = _crypto.EncryptString(pin.ToString())
                 };
                 await _user.AddModelAsync(user);
-                _memoryCache.Set(user.Id, pin, TimeSpan.FromMinutes(5));
+                _memoryCache.Set(ConstantsService.USER + user.Id, pin, TimeSpan.FromMinutes(5));
                 return new LoginResponse
                 {
                     Result = R.New,
@@ -58,7 +60,7 @@ namespace newTolkuchka.Services
                 };
             }
             int userPin = int.Parse(_crypto.DecryptString(user.Pin));
-            _memoryCache.Set(user.Id, userPin, TimeSpan.FromMinutes(5));
+            _memoryCache.Set(ConstantsService.USER + user.Id, userPin, TimeSpan.FromMinutes(5));
             return new LoginResponse
             {
                 Result = R.Success,
@@ -68,10 +70,24 @@ namespace newTolkuchka.Services
         public async Task<LoginResponse> LoginSecondStepAsync(string pinNumbers)
         {
             int id = (int)char.GetNumericValue(pinNumbers[0]);
+            string key = ConstantsService.PIN + ConstantsService.USER + id;
+            _memoryCache.TryGetValue(key, out int? count);
+            if (count == 3)
+                return CreateFailResult(_localizer["attempts"]);
             int p = int.Parse(pinNumbers[1..]);
-            _memoryCache.TryGetValue(id, out int pin);
+            _memoryCache.TryGetValue(ConstantsService.USER + id, out int? pin);
+            if (pin == null)
+                return CreateFailResult(_localizer["time-elapsed1"]);
             if (pin != p)
+            {
+                if (count == null)
+                    count = 1;
+                else count++;
+                _memoryCache.Set(ConstantsService.PIN + ConstantsService.USER + id, count, TimeSpan.FromSeconds(15));
+                if (count == 3)
+                    _memoryCache.Remove(ConstantsService.USER + id);
                 return CreateFailResult(_localizer["wrong-pin"]);
+            }
             User user = await _con.Users.FindAsync(id);
             string token = _jwt.GetUserToken(user);
             return new LoginResponse
@@ -81,6 +97,66 @@ namespace newTolkuchka.Services
             };
         }
 
+        public async Task<LoginResponse> RecoveryAsync(string pinNumbers)
+        {
+            int id = (int)char.GetNumericValue(pinNumbers[0]);
+            User user = await _user.GetUserByIdAsync(id);
+            if (user == null)
+                return CreateFailResult(_localizer["no-user"]);
+            Guid guid = Guid.NewGuid();
+            bool isSent = await _mail.SendRecoveryAsync(user.Email, guid);
+            if (!isSent)
+                return CreateFailResult(_localizer["no-sent-email"]);
+            _memoryCache.Set(guid, user.Id, TimeSpan.FromDays(1));
+            return new LoginResponse
+            {
+                Result = R.Success,
+                Text = _localizer["new-registered"]
+            };
+        }
+        public async Task<LoginResponse> NewPINAsync(Guid guid)
+        {
+            _memoryCache.TryGetValue(guid, out int? id);
+            if (id == null)
+            {
+                _memoryCache.TryGetValue(guid + "used", out int? count);
+                if (count != null)
+                {
+                    if (count < 3)
+                    {
+                        _memoryCache.Set(guid + "used", ++count, TimeSpan.FromHours(12));
+                        return CreateFailResult(_localizer["time-elapsed"]);
+                    }
+                    else
+                    {
+                        _memoryCache.Remove(guid + "used");
+                        return new() { Result = R.Error };
+                    }
+                }
+                else
+                    return new() { Result = R.Error };
+            }
+            User user = await _user.GetUserByIdAsync(id.Value);
+            if (user == null)
+            {
+                _memoryCache.Remove(guid);
+                return CreateFailResult(_localizer["no-user"]);
+            }
+            int pin = ICrypto.GetNumber(1000, 9999);
+            bool isSent = await _mail.SendNewPinAsync(user.Email, pin);
+            if (!isSent)
+                return CreateFailResult(_localizer["no-sent-email1"]);
+            user.Pin = _crypto.EncryptString(pin.ToString());
+            await _user.SaveChangesAsync();
+            _memoryCache.Remove(guid);
+            _memoryCache.Set(guid + "used", 1, TimeSpan.FromHours(12));
+            return new LoginResponse
+            {
+                Result = R.Success,
+                Text = _localizer["new-pin"].Value
+            };
+
+        }
 
         public async Task<LoginResponse> JwtLoginEmployeeAsync(LoginRequest loginRequest)
         {
@@ -103,12 +179,14 @@ namespace newTolkuchka.Services
             return CreateEmployeeSuccessResult(employee);
         }
 
-
         private LoginResponse CreateEmployeeSuccessResult(Employee employee)
         {
             string token = _jwt.GetEmployeeToken(employee);
             return new LoginResponse { Result = R.Success, Data = token };
         }
         private static LoginResponse CreateFailResult(string text = null) => new() { Result = R.Fail, Text = text };
+
+        [GeneratedRegex("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", RegexOptions.IgnoreCase, "ru-RU")]
+        private static partial Regex MyRegex();
     }
 }

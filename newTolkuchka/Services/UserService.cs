@@ -38,6 +38,12 @@ namespace newTolkuchka.Services
             return user;
         }
 
+        public async Task<User> GetUserByIdAsync(int id)
+        {
+            User user = await GetModelAsync(id);
+            return user;
+        }
+
         public async Task<bool> EditUserAsync(AccountUser accountUser, User user)
         {
             if (accountUser.Pin is 0 or (< 9999 and > 999))

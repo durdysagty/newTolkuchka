@@ -7,6 +7,7 @@ namespace newTolkuchka.Services.Interfaces
     {
         Task<User> GetCurrentUser();
         Task<User> GetUserByLoginAsync(string login);
+        Task<User> GetUserByIdAsync(int id);
         // returns is pin changed status
         Task<bool> EditUserAsync(AccountUser accountUser, User user);
     }

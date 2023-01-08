@@ -94,6 +94,7 @@
         public const string END = "end";
         public const string NOTINUSE = "notinuse";
         public const string N404 = "404";
+        public const string USER = "user";
         // images
         public const int PRODUCTMAXIMAGE = 5;
         public const int BRANDMAXIMAGE = 1;

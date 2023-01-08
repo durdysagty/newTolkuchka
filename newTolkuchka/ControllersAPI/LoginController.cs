@@ -39,13 +39,20 @@ namespace newTolkuchka.ControllersAPI
             return loginResponse;
         }
 
+        [HttpPost("recovery")]
+        public async Task<LoginResponse> UserRecoveryLogin([FromBody] string pins)
+        {
+            LoginResponse loginResponse = await _login.RecoveryAsync(pins);
+            return loginResponse;
+        }
+
+
         [HttpPost]
         public async Task<LoginResponse> Login(LoginRequest loginData)
         {
             LoginResponse loginResponse = await _login.JwtLoginEmployeeAsync(loginData);
             return loginResponse;
         }
-
         [HttpGet]
         public async Task<LoginResponse> CheckEmployee()
         {

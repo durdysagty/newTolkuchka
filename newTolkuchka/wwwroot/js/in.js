@@ -14,8 +14,12 @@ function invalidloginHandler(e) {
     $('#loginForm').addClass('was-validated')
 }
 let pin = []
+let interval = null
 async function loginHandler(e) {
     e.preventDefault()
+    $('#pinWrong').html('')
+    $('#pinText').html('')
+    $('#logText').html('')
     let input = e.currentTarget[0]
     try {
         const response = await fetch('/login/userlogin', {
@@ -33,7 +37,9 @@ async function loginHandler(e) {
                 if (result.result === r.new)
                     $('#pinText').html(result.text)
                 let ms = 300000
-                setInterval(() => {
+                if (interval !== null)
+                    clearInterval(interval)
+                interval = setInterval(() => {
                     ms = ms - 1000
                     if (ms === 0)
                         $('#closePin').click()
@@ -42,11 +48,11 @@ async function loginHandler(e) {
                     const s = t.getSeconds()
                     $('#timer').html(`${m}:${s}`)
                 }, 1000)
-                pin.push(result.data)
-                $(`#${0}`).focus()
+                pin = [result.data]
+                $(`#0`).focus()
             }
             else if (result.result === r.fail)
-                $('#logText').html(result.data)
+                $('#logText').html(result.text)
             else
                 $('#logText').html(stringList.wrong)
         }
@@ -57,6 +63,34 @@ async function loginHandler(e) {
         $('#logText').html(stringList.wrong)
     }
 }
+
+async function forgotPassword(e) {
+    e.preventDefault()
+    try {
+        const response = await fetch('/login/recovery', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(pin.join(''))
+        })
+        if (response.ok) {
+            const result = await response.json()
+            if (result.result === r.success) 
+                $('#pinText').html(result.text)
+            else if (result.result === r.fail)
+                $('#pinWrong').html(result.text)
+            else
+                $('#pinWrong').html(stringList.wrong)
+        }
+        else
+            $('#pinWrong').html(stringList.wrong)
+    }
+    catch {
+        $('#pinWrong').html(stringList.wrong)
+    }
+}
+
 async function inputPin(e) {
     let id = parseInt(e.target.id)
     pin.push(e.target.value)

@@ -147,6 +147,9 @@
   <data name="announces" xml:space="preserve">
     <value>Announcements</value>
   </data>
+  <data name="attempts" xml:space="preserve">
+    <value>There were too many input attempts. Your account is temporarily blocked. Try logging in later!</value>
+  </data>
   <data name="birthday" xml:space="preserve">
     <value>Birthday</value>
   </data>
@@ -216,6 +219,9 @@
   <data name="enterorreg" xml:space="preserve">
     <value>Login or register</value>
   </data>
+  <data name="forgot" xml:space="preserve">
+    <value>Forgot PIN code</value>
+  </data>
   <data name="invoice" xml:space="preserve">
     <value>Invoice</value>
   </data>
@@ -230,6 +236,9 @@
   </data>
   <data name="login" xml:space="preserve">
     <value>Login</value>
+  </data>
+  <data name="mail-reason" xml:space="preserve">
+    <value>You have received this email because a PIN recovery procedure has been initiated on your account. If you did not do this, then ignore this letter. If you really want to restore access to your account, go to the link below and follow the instructions</value>
   </data>
   <data name="main" xml:space="preserve">
     <value>Home</value>
@@ -249,6 +258,12 @@
   <data name="new" xml:space="preserve">
     <value>newest</value>
   </data>
+  <data name="new-pin" xml:space="preserve">
+    <value>Please check your email, we have sent you a new PIN!</value>
+  </data>
+  <data name="new-pin-link" xml:space="preserve">
+    <value>PIN recovery link</value>
+  </data>
   <data name="new-registered" xml:space="preserve">
     <value>Please check your email!</value>
   </data>
@@ -257,6 +272,15 @@
   </data>
   <data name="next" xml:space="preserve">
     <value>next</value>
+  </data>
+  <data name="no-sent-email" xml:space="preserve">
+    <value>We were unable to send a letter to your email. Please check your email is correct and try again or contact the site administration.</value>
+  </data>
+  <data name="no-sent-email1" xml:space="preserve">
+    <value>We were unable to send the PIN to your email address. Please go through the PIN code recovery procedure again or contact the site administration.</value>
+  </data>
+  <data name="no-user" xml:space="preserve">
+    <value>We were unable to identify you. Try entering your login again or contact the site administration.</value>
   </data>
   <data name="noProduct" xml:space="preserve">
     <value>Sorry, there are no products matching your selection!</value>
@@ -284,6 +308,9 @@
   </data>
   <data name="order-success" xml:space="preserve">
     <value>Thanks for your order! We will contact you shortly. Also, you can track your orders in your account.</value>
+  </data>
+  <data name="password-recovery" xml:space="preserve">
+    <value>PIN Recovery</value>
   </data>
   <data name="payment" xml:space="preserve">
     <value>Payment</value>
@@ -362,6 +389,12 @@
   </data>
   <data name="supplier" xml:space="preserve">
     <value>Supplier</value>
+  </data>
+  <data name="time-elapsed" xml:space="preserve">
+    <value>Looks like the link is outdated or has been used before. If you were unable to recover the PIN, try to go through the recovery procedure again or contact the site administration.</value>
+  </data>
+  <data name="time-elapsed1" xml:space="preserve">
+    <value>Login Timed Out! Please try again!</value>
   </data>
   <data name="type" xml:space="preserve">
     <value>Type</value>

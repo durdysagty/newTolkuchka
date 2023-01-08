@@ -147,6 +147,9 @@
   <data name="announces" xml:space="preserve">
     <value>Объявления</value>
   </data>
+  <data name="attempts" xml:space="preserve">
+    <value>Было слишком много попыток ввода. Ваш аккаунт временно заблокирован. Попробуйте войти позже!</value>
+  </data>
   <data name="birthday" xml:space="preserve">
     <value>Дата рождения</value>
   </data>
@@ -216,6 +219,9 @@
   <data name="enterorreg" xml:space="preserve">
     <value>Вход или регистрация</value>
   </data>
+  <data name="forgot" xml:space="preserve">
+    <value>Забыл PIN код</value>
+  </data>
   <data name="invoice" xml:space="preserve">
     <value>Инвойс</value>
   </data>
@@ -230,6 +236,9 @@
   </data>
   <data name="login" xml:space="preserve">
     <value>Войти</value>
+  </data>
+  <data name="mail-reason" xml:space="preserve">
+    <value>Вы получили это письмо, так как на вашем аккаунте была начата процедура восстановления ПИН кода. Если Вы не делали этого, то проигнорируйте это письмо. Если действительно хотите восстановить доступ к вашему аккаунту, пройдите по ссылке ниже и следуйте инструкциям</value>
   </data>
   <data name="main" xml:space="preserve">
     <value>Главная</value>
@@ -249,6 +258,12 @@
   <data name="new" xml:space="preserve">
     <value>новизне</value>
   </data>
+  <data name="new-pin" xml:space="preserve">
+    <value>Пожалуйста, проверьте эл. почту, мы отправили Вам новый PIN код!</value>
+  </data>
+  <data name="new-pin-link" xml:space="preserve">
+    <value>ссылка для восстановления PIN кода</value>
+  </data>
   <data name="new-registered" xml:space="preserve">
     <value>Пожалуйста, проверьте эл. почту!</value>
   </data>
@@ -257,6 +272,15 @@
   </data>
   <data name="next" xml:space="preserve">
     <value>дальше</value>
+  </data>
+  <data name="no-sent-email" xml:space="preserve">
+    <value>Мы не смогли отравить письмо на вашу электронную почту. Пожалуйста, проверьте правильность электронной почты и повторите попытку или свяжитесь с администрацией сайта..</value>
+  </data>
+  <data name="no-sent-email1" xml:space="preserve">
+    <value>Мы не смогли отравить письмо с пин кодом на вашу электронную почту. Пожалуйста, пройдите процедуру восстановления PIN кода ещё раз или свяжитесь с администрацией сайта. </value>
+  </data>
+  <data name="no-user" xml:space="preserve">
+    <value>Нам не удалось определить Вас. Попробуйте ввести ваш логин заново или свяжитесь с администрацией сайта.</value>
   </data>
   <data name="noProduct" xml:space="preserve">
     <value>К сожалению, по выбранным параметрам товаров нет!</value>
@@ -284,6 +308,9 @@
   </data>
   <data name="order-success" xml:space="preserve">
     <value>Спасибо за Ваш заказ! Мы с Вами свяжемся в скором времени. Также, Вы можете отслеживать Ваши заказы в кабинете.</value>
+  </data>
+  <data name="password-recovery" xml:space="preserve">
+    <value>Восстановление PIN кода</value>
   </data>
   <data name="payment" xml:space="preserve">
     <value>Оплата</value>
@@ -359,6 +386,12 @@
   </data>
   <data name="supplier" xml:space="preserve">
     <value>Поставщик</value>
+  </data>
+  <data name="time-elapsed" xml:space="preserve">
+    <value>Похоже, что ссылка устарела или уже использовалась. Если Вам не удалось восставноить ПИН код, попробуйте пройти процедуру восстановления ещё раз или свяжитесь с администрацией сайта.</value>
+  </data>
+  <data name="time-elapsed1" xml:space="preserve">
+    <value>Время для логина истекло! Пожалуйста, попробуйте заново!</value>
   </data>
   <data name="type" xml:space="preserve">
     <value>Тип</value>
