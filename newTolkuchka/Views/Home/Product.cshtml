@@ -7,6 +7,7 @@
     // to select specs from
     IList<ModelWithList<SpecsValue>> specs = ViewBag.Specs;
     int current = ViewBag.Current;
+    int n = 0;
     foreach (Product p in Model)
     {
         string id = $"pr{p.Id}";
@@ -18,28 +19,37 @@
         string specTab = $"specTab{p.Id}";
         string descContent = $"decCon{p.Id}";
         string specContent = $"specCon{p.Id}";
+        IList<string> imagePaths = new List<string>();
+        @for (int i = 0; i < ConstantsService.PRODUCTMAXIMAGE; i++)
+        {
+            if (File.Exists(_pathService.GetImagePath(ConstantsService.PRODUCT, p.Id, i)))
+                imagePaths.Add(PathService.GetImageRelativePath(ConstantsService.PRODUCT, p.Id, i));
+            else
+                break;
+        }
         <div id="@id" class="@currentProduct">
             <h4>@IProduct.GetProductName(p)</h4>
             <div class="row justify-content-between justify-content-lg-start">
                 <div class="col-12 col-md-4">
                     <div class="row">
                         <div class="col-auto col-sm-11 col-md-12 col-lg-10">
-                            <img id="@imgId" width="600" height="600" style="width: 100%; height: auto" alt="@p.Model.Brand.Name" src="@PathService.GetImageRelativePath(ConstantsService.PRODUCT, p.Id)" />
+                            <img role="button" id="@imgId" onclick="showGalery(@n)" width="600" height="600" style="width: 100%; height: auto" alt="@p.Model.Brand.Name" src="@imagePaths[0]" />
                         </div>
                         <div class="col-auto col-sm-1 col-md-auto col-lg-2 my-2 my-md-0 px-0 pt-1">
-                            <div>
-                                @for (int i = 0; i < ConstantsService.PRODUCTMAXIMAGE; i++)
-                                {
-                                    if (File.Exists(_pathService.GetImagePath(ConstantsService.PRODUCT + "/small", p.Id, i)))
-                                    {
-                                        <img role="button" width="200" height="200" style="width: 100%; height: auto; max-width: 4rem" alt="@p.Model.Brand.Name" src="@PathService.GetImageRelativePath(ConstantsService.PRODUCT + "/small", p.Id, i)" onclick="setImage(@imgId, @i)" />
-                                    }
-                                    else
-                                        break;
-                                }
-                            </div>
+                            @for (int i = 0; i < imagePaths.Count; i++)
+                            {
+                                <img role="button" width="200" height="200" style="width: 100%; height: auto; max-width: 4rem" alt="@p.Model.Brand.Name" src="@imagePaths[i]" onclick="setImage(@imgId, @i)" />
+                            }
                         </div>
                     </div>
+                </div>
+                <div class="gallery" style="display: none">
+                    @for (int i = 0; i < imagePaths.Count; i++)
+                    {
+                        <a href="@imagePaths[i]">
+                            <img role="button" width="200" height="200" style="width: 100%; height: auto; max-width: 4rem" alt="@p.Model.Brand.Name" src="@imagePaths[i]" onclick="setImage(@imgId, @i)" />
+                        </a>
+                    }
                 </div>
                 @*<div class="col-12 col-md-1 my-2 my-md-0">
         <div class="d-flex d-md-block">
@@ -57,6 +67,8 @@
                 <div class="col-auto d-flex flex-column justify-content-end">
                     @if (Model.Count() > 1)
                     {
+                        // for galery index if model more than one
+                        n++;
                         <div class="d-flex flex-column justify-content-end align-items-start mb-3">
                             @foreach (ModelWithList<SpecsValue> s in specs)
                             {
@@ -221,6 +233,8 @@
         </div>
     }
     @section Scripts {
+    <link rel="stylesheet" href="~/lib/baguette/box.css" asp-append-version="true" />
+    <script src="~/lib/baguette/box.js" asp-append-version="true"></script>
     <script src="~/js/product.js" asp-append-version="true"></script>
         }
 }

@@ -145,7 +145,7 @@ namespace newTolkuchka.Controllers
             if (product == null)
                 return GetNotFoundPage();
             string localName = IProduct.GetProductName(product);
-            CreateMetaData(ConstantsService.PRODUCT, await _breadcrumbs.GetProductBreadcrumbs(product.Model.CategoryId), localName, true, false);
+            CreateMetaData(ConstantsService.PRODUCT, await _breadcrumbs.GetProductBreadcrumbs(product.Model.CategoryId), localName, false, false);
             if (product.NotInUse || product.Model.Category.NotInUse)
                 return View();
             IQueryable<Product> products = _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.MODEL, product.ModelId } }).Where(p => !p.NotInUse).AsNoTrackingWithIdentityResolution();

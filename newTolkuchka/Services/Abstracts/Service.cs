@@ -497,7 +497,7 @@ namespace newTolkuchka.Services.Abstracts
             {
                 string[] words = search.ToString().Trim().Split(" ");
                 // IEnumerable<PropertyInfo> propertiesTest = typeof(TAdmin).GetProperties();
-                IEnumerable<PropertyInfo> properties = typeof(TAdmin).GetProperties().Where(p => p.PropertyType.Name is "String" or "DateTimeOffset");
+                IEnumerable<PropertyInfo> properties = typeof(TAdmin).GetProperties().Where(p => p.PropertyType.Name is "String" or "Int32" or "DateTimeOffset");
                 foreach (string word in words)
                 {
                     if (adminModels.Any())

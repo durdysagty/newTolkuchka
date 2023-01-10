@@ -59,8 +59,8 @@ namespace newTolkuchka.Services
                 emailMessage.Subject = _localizer[subject];
                 emailMessage.Body = bodyBuilder.ToMessageBody();
                 using var client = new SmtpClient();
-                //await client.ConnectAsync("smtp.mail.ru", 465, true);
-                await client.ConnectAsync("smtp.mail.ru", 587, false);
+                await client.ConnectAsync("smtp.mail.ru", 465, true);
+                //await client.ConnectAsync("smtp.mail.ru", 587, false);
                 await client.AuthenticateAsync(box, Secrets.mailPas);
                 await client.SendAsync(emailMessage);
 

@@ -214,13 +214,13 @@
     <value>enter</value>
   </data>
   <data name="enter-pin" xml:space="preserve">
-    <value>Please use this PIN code to login</value>
+    <value>Please use this PIN to login</value>
   </data>
   <data name="enterorreg" xml:space="preserve">
     <value>Login or register</value>
   </data>
   <data name="forgot" xml:space="preserve">
-    <value>Forgot PIN code</value>
+    <value>Forgot PIN</value>
   </data>
   <data name="invoice" xml:space="preserve">
     <value>Invoice</value>
@@ -319,7 +319,7 @@
     <value>Phone number</value>
   </data>
   <data name="pin" xml:space="preserve">
-    <value>PIN code</value>
+    <value>PIN</value>
   </data>
   <data name="position" xml:space="preserve">
     <value>Position</value>
@@ -349,7 +349,7 @@
     <value>recommended</value>
   </data>
   <data name="recomended-pin" xml:space="preserve">
-    <value>We recommend changing the PIN code after login</value>
+    <value>We recommend changing the PIN after login</value>
   </data>
   <data name="recommended" xml:space="preserve">
     <value>Recommended</value>
@@ -421,6 +421,6 @@
     <value>Your name</value>
   </data>
   <data name="your-pin" xml:space="preserve">
-    <value>Your PIN code</value>
+    <value>Your PIN</value>
   </data>
 </root>

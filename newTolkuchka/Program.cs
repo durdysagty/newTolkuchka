@@ -131,7 +131,8 @@ app.Use(async (context, next) =>
             context.Request.Headers.Add("Authorization", "Bearer " + t);
         }
     }
-    _ = context.RequestServices.GetService<IActionNoFile<Currency, AdminCurrency>>();
+    if (CurrencyService.Currency == null)
+        _ = context.RequestServices.GetService<IActionNoFile<Currency, AdminCurrency>>();
     await next();
     if (context.Response.StatusCode == 404 && !context.Response.HasStarted)
     {

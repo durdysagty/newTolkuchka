@@ -13,3 +13,7 @@ function setImage(img, n) {
     $(img).attr('src', src)
 }
 checkOrders()
+const gallery = baguetteBox.run(".gallery");
+function showGalery(i) {
+    baguetteBox.show(0, gallery[i]);
+}

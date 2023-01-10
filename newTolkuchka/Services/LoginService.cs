@@ -83,7 +83,7 @@ namespace newTolkuchka.Services
                 if (count == null)
                     count = 1;
                 else count++;
-                _memoryCache.Set(ConstantsService.PIN + ConstantsService.USER + id, count, TimeSpan.FromSeconds(15));
+                _memoryCache.Set(ConstantsService.PIN + ConstantsService.USER + id, count, TimeSpan.FromHours(3));
                 if (count == 3)
                     _memoryCache.Remove(ConstantsService.USER + id);
                 return CreateFailResult(_localizer["wrong-pin"]);
