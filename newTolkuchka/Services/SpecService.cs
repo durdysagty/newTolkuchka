@@ -13,12 +13,22 @@ namespace newTolkuchka.Services
         public SpecService(AppDbContext con, IStringLocalizer<Shared> localizer) : base(con, localizer)
         {
         }
-        public IEnumerable<ModelWithList<ModelWithList<AdminSpecsValueMod>>> GetSpecWithValues(int modelId = 0)
+        public IEnumerable<ModelWithList<ModelWithList<AdminSpecsValueMod>>> GetSpecWithValues(Dictionary<string, object> paramsList = null)
         {
             // may be GetFullModels in include all stuff & Dictionary instead of modelId
             IQueryable<Spec> specs = GetModels().Include(s => s.SpecsValues).ThenInclude(sv => sv.SpecsValueMods).Include(s=> s.ModelSpecs);
-            if (modelId != 0)
+
+            if (paramsList.TryGetValue(ConstantsService.MODEL, out object value))
+            {
+                int modelId = int.Parse(value.ToString());
                 specs = specs.Where(s => s.ModelSpecs.Where(x => x.ModelId == modelId).Any());
+            }
+            if (paramsList.TryGetValue(ConstantsService.SPEC, out value))
+            {
+                IList<int> specIds = (IList<int>)value;
+                if (specIds != null)
+                    specs = specs.Where(s => specIds.Any(x => x == s.Id));
+            }
             IEnumerable<ModelWithList<ModelWithList<AdminSpecsValueMod>>> specWithValues = specs.OrderBy(x => x.Order).Select(x => new ModelWithList<ModelWithList<AdminSpecsValueMod>>
             {
                 Id = x.Id,

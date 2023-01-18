@@ -528,8 +528,8 @@ namespace newTolkuchka.Services.Abstracts
             IEnumerable<PropertyInfo> nameProperties = type.GetProperties().Where(x => x.Name.Contains("Name"));
             foreach (PropertyInfo p in nameProperties)
             {
-                string value = p.GetValue(model).ToString();
-                exist = list.Where(x => p.GetValue(x).ToString() == value).Any();
+                string value = p.GetValue(model).ToString().ToLower();
+                exist = list.Where(x => p.GetValue(x).ToString().ToLower() == value).Any();
                 if (exist)
                     return exist;
             }

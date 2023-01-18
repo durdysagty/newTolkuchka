@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
+using newTolkuchka.Services;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
+using System.Text.Json;
 
 namespace newTolkuchka.ControllersAPI
 {
@@ -22,16 +24,23 @@ namespace newTolkuchka.ControllersAPI
             Spec spec = await _spec.GetModelAsync(id);
             return spec;
         }
-        //[HttpGet]
-        //public IEnumerable<AdminSpec> Get()
-        //{
-        //    IEnumerable<AdminSpec> specs = _spec.GetAdminSpecs();
-        //    return specs;
-        //}
+
         [HttpGet("value")]
-        public IEnumerable<ModelWithList<ModelWithList<AdminSpecsValueMod>>> GetSpecsWithValues([FromQuery] int modelId = 0)
+        public IEnumerable<ModelWithList<ModelWithList<AdminSpecsValueMod>>> GetSpecsWithValues([FromQuery] string[] keys, [FromQuery] string[] values)
         {
-            IEnumerable<ModelWithList<ModelWithList<AdminSpecsValueMod>>> specWithValues = _spec.GetSpecWithValues(modelId);
+            Dictionary<string, object> paramsList = null;
+            if (keys.Any())
+            {
+                paramsList = new();
+                for (int i = 0; i < keys.Length; i++)
+                {
+                    if (keys[i] == ConstantsService.SPEC)
+                        paramsList.Add(keys[i], JsonSerializer.Deserialize<IList<int>>(values[i]));
+                    else
+                        paramsList.Add(keys[i], values[i]);
+                }
+            }
+            IEnumerable<ModelWithList<ModelWithList<AdminSpecsValueMod>>> specWithValues = _spec.GetSpecWithValues(paramsList);
             return specWithValues;
         }
         [HttpPost]

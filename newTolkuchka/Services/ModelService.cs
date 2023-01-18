@@ -21,6 +21,33 @@ namespace newTolkuchka.Services
             return await GetModelSpecs(id).Select(x => new int[] { x.SpecId, x.IsNameUse ? 1 : 0 }).ToListAsync();
         }
 
+        public IQueryable<ModelSpec> GetModelSpecs(int id, bool isNameUse = false)
+        {
+            var modelSpecs = _con.ModelSpecs.Where(x => x.ModelId == id);
+            if (isNameUse)
+                modelSpecs = modelSpecs.Where(x => x.IsNameUse);
+            return modelSpecs;
+        }
+
+        public async Task<object[]> GetSpecValuesAsync(int id)
+        {
+            return await _con.ProductSpecsValues.Where(x => x.Product.ModelId == id).Select(x => new {
+                id = x.SpecsValueId.ToString(),
+                productId = x.ProductId,
+            }).ToArrayAsync();
+        }
+
+        public async Task<object[]> GetSpecValueModsAsync(int id)
+        {
+            return await _con.ProductSpecsValueMods.Include(x => x.SpecsValueMod).Where(x => x.Product.ModelId == id).Select(x => new
+            {
+                id = x.SpecsValueModId.ToString(),
+                productId = x.ProductId,
+                parentId = x.SpecsValueMod.SpecsValueId
+            }).ToArrayAsync();
+        }
+
+
         public async Task AddModelSpecsAsync(int id, IList<int[]> specs)
         {
             IList<ModelSpec> modelSpecs = await GetModelSpecs(id).ToListAsync();
@@ -44,13 +71,6 @@ namespace newTolkuchka.Services
                 };
                 await _con.ModelSpecs.AddAsync(ms);
             }
-        }
-        public IQueryable<ModelSpec> GetModelSpecs(int id, bool isNameUse = false)
-        {
-            var modelSpecs = _con.ModelSpecs.Where(x => x.ModelId == id);
-            if (isNameUse)
-                modelSpecs = modelSpecs.Where(x => x.IsNameUse);
-            return modelSpecs;
         }
 
         //public IQueryable<int> GetModelSpecsSpecIds(int id, bool isNameUse = false)

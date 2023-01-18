@@ -33,35 +33,7 @@ namespace newTolkuchka.Services
             }).FirstOrDefault();
             return editProduct;
         }
-        //public IQueryable<Product> GetProducts(IList<int> categoryIds = null, IList<int> brandIds = null, int? typeId = null, int? lineId = null, int? modelId = null, IList<int> productIds = null)
-        //{
-        //    IQueryable<Product> products = GetModels();
-        //    if (categoryIds != null)
-        //        products = products.Where(p => categoryIds.Any(c => c == p.Model.CategoryId) || p.Model.CategoryModelAdLinks.Any(x => categoryIds.Any(c => c == x.CategoryId)));
-        //    if (brandIds != null)
-        //        products = products.Where(p => brandIds.Any(b => b == p.Model.BrandId));
-        //    if (typeId != null)
-        //        products = products.Where(p => p.Model.TypeId == typeId);
-        //    if (lineId != null)
-        //        products = products.Where(p => p.Model.LineId == lineId);
-        //    if (modelId != null)
-        //        products = products.Where(p => p.ModelId == modelId);
-        //    if (productIds != null)
-        //        products = products.Where(p => productIds.Any(x => x == p.Id));
-        //    return products;
-        //}
-
-        //public IQueryable<Product> GetFullProducts(IList<int> categoryIds = null, IList<int> brandIds = null, int? typeId = null, int? lineId = null, int? modelId = null, IList<int> productIds = null)
-        //{
-        //    return GetModels(new Dictionary<string, object>() {
-        //            { ConstantsService.CATEGORY, categoryIds },
-        //            { ConstantsService.BRAND, brandIds },
-        //            { ConstantsService.TYPE, typeId },
-        //            { ConstantsService.LINE, lineId },
-        //            { ConstantsService.MODEL, modelId },
-        //            { ConstantsService.PRODUCT, productIds }
-        //        }).Include(p => p.Model).ThenInclude(m => m.Type).Include(p => p.Model).ThenInclude(m => m.Brand).Include(p => p.Model).ThenInclude(m => m.Line).Include(p => p.Model).ThenInclude(x => x.ModelSpecs).Include(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ThenInclude(x => x.Spec).Include(x => x.ProductSpecsValueMods).ThenInclude(x => x.SpecsValueMod);
-        //}
+        
         public async Task<Product> GetFullProductAsync(int id)
         {
             return await GetFullModels().Include(p => p.Model).ThenInclude(m => m.Warranty).FirstOrDefaultAsync(p => p.Id == id);
@@ -71,46 +43,7 @@ namespace newTolkuchka.Services
         {
             return await GetFullModels().Include(p => p.Model).ThenInclude(m => m.Warranty).AsNoTrackingWithIdentityResolution().FirstOrDefaultAsync(p => p.Id == id);
         }
-
-        //public IQueryable<AdminProduct> GetAdminProducts(IList<int> categoryIds, IList<int> brandIds, int? lineId, int? modelId, int page, int pp, out int lastPage, out string pagination)
-        //{
-        //    IQueryable<Product> preProducts = GetFullProducts(categoryIds, brandIds, null, lineId, modelId).OrderByDescending(x => x.Id);
-        //    int toSkip = page * pp;
-        //    IQueryable<AdminProduct> adminProducts = preProducts.Skip(toSkip).Take(pp).Select(p => new AdminProduct
-        //    {
-        //        Id = p.Id,
-        //        Name = IProduct.GetProductName(p, 1),
-        //        Category = p.Model.Category.NameRu,
-        //        Price = p.Price,
-        //        NewPrice = p.NewPrice,
-        //        NotInUse = !p.NotInUse,
-        //        IsRecommended = p.IsRecommended,
-        //        IsNew = p.IsNew
-        //    });
-        //    pagination = GetPagination(pp, preProducts.Count(), adminProducts.Count(), toSkip, out int lp);
-        //    lastPage = lp;
-        //    return adminProducts;
-        //}
-        //public IQueryable<AdminProduct> GetAdminProducts(int page, int pp, out int lastPage, out string pagination)
-        //{
-        //    IQueryable<Product> preProducts = GetFullModels().OrderByDescending(x => x.Id);
-        //    int toSkip = page * pp;
-        //    IQueryable<AdminProduct> adminProducts = preProducts.Skip(toSkip).Take(pp).Select(p => new AdminProduct
-        //    {
-        //        Id = p.Id,
-        //        Name = IProduct.GetProductName(p, 1),
-        //        Category = p.Model.Category.NameRu,
-        //        Price = p.Price,
-        //        NewPrice = p.NewPrice,
-        //        NotInUse = !p.NotInUse,
-        //        IsRecommended = p.IsRecommended,
-        //        IsNew = p.IsNew
-        //    });
-        //    pagination = GetPagination(pp, preProducts.Count(), adminProducts.Count(), toSkip, out int lp);
-        //    lastPage = lp;
-        //    return adminProducts;
-        //}
-        public IList<IEnumerable<UIProduct>> /*IList<UIProduct>*/ GetUIData(bool productsOnly, IList<Product> products, int[] t, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp, out IList<AdminType> types, out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage)
+        public IList<IEnumerable<UIProduct>> GetUIData(bool productsOnly, IList<Product> products, int[] t, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp, out IList<AdminType> types, out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage)
         {
             IList<Product> preProducts = new List<Product>();
             IList<IEnumerable<UIProduct>> uiProducts = new List<IEnumerable<UIProduct>>();
@@ -282,18 +215,26 @@ namespace newTolkuchka.Services
         public async Task<bool> CheckProductSpecValues(int modelId, IList<int> specsValues, int productId = 0)
         {
             IList<Product> products = await GetModels(new Dictionary<string, object>() { { ConstantsService.MODEL, modelId } }).Where(p => p.Id != productId).Include(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ToListAsync();
+            //if no products in model then ok
             if (!products.Any())
                 return false;
+            //if no specsValues && any products with no specsValues in model then not allow
             if (!specsValues.Any())
             {
                 if (products.Where(p => !p.ProductSpecsValues.Any()).Any())
                     return true;
             }
-            int[] psvCheck = specsValues.OrderBy(x => x).ToArray();
-            foreach (Product p in products)
+            int[] psvCheck = specsValues.ToArray();
+            IEnumerable<int[]> psvs = products.Select(p => p.ProductSpecsValues.Select(x => x.SpecsValueId).ToArray());
+            bool result = IsSequencesEqual(psvCheck, psvs);
+            return result;
+        }
+
+        public bool IsSequencesEqual(int[] psvCheck, IEnumerable<int[]> psvs)
+        {
+            foreach (int[] psv in psvs)
             {
-                int[] psv = p.ProductSpecsValues.Select(x => x.SpecsValueId).OrderBy(x => x).ToArray();
-                bool result = psvCheck.SequenceEqual(psv);
+                bool result = psvCheck.OrderBy(x => x).SequenceEqual(psv.OrderBy(x => x));
                 if (result)
                     return true;
             }
