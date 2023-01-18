@@ -234,12 +234,12 @@ namespace newTolkuchka.Services.Abstracts
                     }).OrderBy(x => x.Name);
                     break;
                 case ConstantsService.CATEGORY:
-                    IEnumerable<Category> preCategories = preModels as IEnumerable<Category>;
+                    // we use preCategories several times in recursive function below, thus we get all categories to memory before
+                    IEnumerable<Category> preCategories = preModels.ToList() as IEnumerable<Category>;
                     List<AdminCategory> categories = new();
                     const int PADDING = 2;
                     void GetCategoriesByOrder(IEnumerable<Category> parentList, int level)
                     {
-
                         foreach (var c in parentList)
                         {
                             categories.Add(new AdminCategory

@@ -31,12 +31,12 @@ namespace newTolkuchka.Services
                     Id = x.Id,
                     Level = level,
                     Name = x.NameRu,
-                    HasProduct = GetProducts(x.Id).Any(),
+                    HasProduct = x.Models.Any(),
                     List = CreateTree(categories, x.Id, level + 1)
                 });
                 return tree;
             }
-            IEnumerable<AdminCategoryTree> categoryTrees = CreateTree(await GetModels().ToArrayAsync(), startId, 0);
+            IEnumerable<AdminCategoryTree> categoryTrees = CreateTree(await GetFullModels().ToArrayAsync(), startId, 0);
             return categoryTrees;
         }
 
