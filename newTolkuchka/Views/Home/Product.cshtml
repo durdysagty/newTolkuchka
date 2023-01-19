@@ -4,8 +4,6 @@
 
 @if (Model != null)
 {
-    // to select specs from
-    IList<ModelWithList<SpecsValue>> specs = ViewBag.Specs;
     int current = ViewBag.Current;
     int n = 0;
     foreach (Product p in Model)
@@ -67,10 +65,14 @@
                 <div class="col-auto d-flex flex-column justify-content-end">
                     @if (Model.Count() > 1)
                     {
+                        // to select specs from
+                        IList<ModelWithList<SpecsValue>> nameUsedSpecs = ViewBag.Specs;
+                        // get ids of name used specs to test product specValues
+                        IEnumerable<int> namedSpecIds = ViewBag.SpecIds;
                         // for galery index if model more than one
                         n++;
                         <div class="d-flex flex-column justify-content-end align-items-start mb-3">
-                            @foreach (ModelWithList<SpecsValue> s in specs)
+                            @foreach (ModelWithList<SpecsValue> s in nameUsedSpecs)
                             {
                                 <div><strong>@s.Name</strong></div>
                                 <div class="d-flex">
@@ -86,10 +88,10 @@
                                         else
                                         {
                                             // get specsvalues that is in current product but not in this spec
-                                            IList<SpecsValue> currentSV = p.ProductSpecsValues.Select(x => x.SpecsValue).Where(x => x.Spec.NamingOrder != null && x.SpecId != s.Id).ToList();
+                                            IList<SpecsValue> currentSV = p.ProductSpecsValues.Select(x => x.SpecsValue).Where(x => namedSpecIds.Contains(x.Spec.Id) && x.SpecId != s.Id).ToList();
                                             // the sv is not in current product thus add sv to currentSV and seek the product that is got all svs
                                             currentSV.Add(sv);
-                                            getIp = Model.FirstOrDefault(m => m.ProductSpecsValues.Select(x => x.SpecsValue).Where(x => x.Spec.NamingOrder != null).All(x => currentSV.Any(y => y.Id == x.Id)))?.Id;
+                                            getIp = Model.FirstOrDefault(m => m.ProductSpecsValues.Select(x => x.SpecsValue).Where(x => namedSpecIds.Contains(x.Spec.Id)).All(x => currentSV.Any(y => y.Id == x.Id)))?.Id;
                                             // if there is no product that matchs with given spec values (with current product specs values)
                                             if (getIp == null)
                                             {
@@ -99,7 +101,7 @@
                                                 if (seekingProducts.Count > 1)
                                                 {
                                                     // get all specsvalues by specs list except looped spec and specsvalues except actual product specsvalues
-                                                    IEnumerable<IEnumerable<SpecsValue>> specsValuesList = specs.Where(x => x.Id != s.Id).Select(s => s.List.Where(v => p.ProductSpecsValues.Any(psv => psv.SpecsValueId != v.Id)));
+                                                    IEnumerable<IEnumerable<SpecsValue>> specsValuesList = nameUsedSpecs.Where(x => x.Id != s.Id).Select(s => s.List.Where(v => p.ProductSpecsValues.Any(psv => psv.SpecsValueId != v.Id)));
                                                     // loop all specs
                                                     foreach (IEnumerable<SpecsValue> specsValues in specsValuesList)
                                                     {

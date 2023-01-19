@@ -152,23 +152,25 @@ namespace newTolkuchka.Controllers
             if (!products.Any())
                 return View();
             // to select Specs from any of product for change products by specs value
-            IList<ModelWithList<SpecsValue>> specs = product.Model.ModelSpecs.Where(s => s.Spec.NamingOrder != null).OrderBy(s => s.Spec.NamingOrder).Select(ms => new ModelWithList<SpecsValue>
+            IList<ModelWithList<SpecsValue>> nameUsedSpecs = product.Model.ModelSpecs.Where(s => s.IsNameUse).OrderBy(s => s.Spec.NamingOrder).Select(ms => new ModelWithList<SpecsValue>
             {
                 Id = ms.Spec.Id,
                 Name = CultureProvider.GetLocalName(ms.Spec.NameRu, ms.Spec.NameEn, ms.Spec.NameTm),
                 Is = ms.Spec.IsImaged,
                 List = new Collection<SpecsValue>()
             }).ToList();
+            IEnumerable<int> namedSpecIds = nameUsedSpecs.Select(ms => ms.Id);
             foreach (Product p in products)
             {
-                foreach (SpecsValue sv in p.ProductSpecsValues.Select(psv => psv.SpecsValue).Where(x => x.Spec.NamingOrder != null))
+                foreach (SpecsValue sv in p.ProductSpecsValues.Select(psv => psv.SpecsValue).Where(x => namedSpecIds.Contains(x.SpecId)))
                 {
-                    ModelWithList<SpecsValue> spec = specs.FirstOrDefault(s => s.Id == sv.SpecId);
+                    ModelWithList<SpecsValue> spec = nameUsedSpecs.FirstOrDefault(s => s.Id == sv.SpecId);
                     if (!spec.List.Any(s => s.Id == sv.Id))
                         spec.List.Add(sv);
                 }
             }
-            ViewBag.Specs = specs;
+            ViewBag.Specs = nameUsedSpecs;
+            ViewBag.SpecIds = namedSpecIds;
             ViewBag.Current = product.Id;
             return View(products);
         }
