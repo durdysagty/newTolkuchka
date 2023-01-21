@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
@@ -8,7 +6,6 @@ using newTolkuchka.Reces;
 using newTolkuchka.Services.Interfaces;
 using System.Text.RegularExpressions;
 using static newTolkuchka.Models.DTO.LoginResponse;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace newTolkuchka.Services
 {
@@ -51,7 +48,7 @@ namespace newTolkuchka.Services
                     Pin = _crypto.EncryptString(pin.ToString())
                 };
                 await _user.AddModelAsync(user);
-                _memoryCache.Set(ConstantsService.USER + user.Id, pin, TimeSpan.FromMinutes(5));
+                _memoryCache.Set(ConstantsService.UserPinKey(user.Id), pin, TimeSpan.FromMinutes(5));
                 return new LoginResponse
                 {
                     Result = R.New,
@@ -60,7 +57,7 @@ namespace newTolkuchka.Services
                 };
             }
             int userPin = int.Parse(_crypto.DecryptString(user.Pin));
-            _memoryCache.Set(ConstantsService.USER + user.Id, userPin, TimeSpan.FromMinutes(5));
+            _memoryCache.Set(ConstantsService.UserPinKey(user.Id), userPin, TimeSpan.FromMinutes(5));
             return new LoginResponse
             {
                 Result = R.Success,
@@ -89,11 +86,15 @@ namespace newTolkuchka.Services
                 return CreateFailResult(_localizer["wrong-pin"]);
             }
             User user = await _con.Users.FindAsync(id);
+            string hash = _crypto.EncryptString($"{user.Id} {user.Pin}{user.Email}");
             string token = _jwt.GetUserToken(user);
+            // could be used for count actual loged in users in the future
+            _ = _memoryCache.Set(ConstantsService.UserHashKey(user.Id), hash);
             return new LoginResponse
             {
                 Result = R.Success,
-                Data = token
+                Data = token,
+                Text = hash
             };
         }
 

@@ -28,9 +28,16 @@ namespace newTolkuchka.ControllersAPI
             LoginResponse loginResponse = await _login.LoginSecondStepAsync(pins);
             if (loginResponse.Result == LoginResponse.R.Success)
             {
-                HttpContext.Response.Cookies.Append(Secrets.userCookie, loginResponse.Data, new CookieOptions
+                HttpContext.Response.Cookies.Append(Secrets.userTokenCookie, loginResponse.Data, new CookieOptions
                 {
-                    MaxAge = new TimeSpan(10, 0, 0, 0),
+                    MaxAge = new TimeSpan(29, 0, 0, 0),
+                    // remove on publish
+                    //SameSite = SameSiteMode.Strict,
+                    //Domain = CultureProvider.Host
+                });
+                HttpContext.Response.Cookies.Append(Secrets.userHashCookie, loginResponse.Text, new CookieOptions
+                {
+                    MaxAge = new TimeSpan(28, 0, 0, 0),
                     // remove on publish
                     //SameSite = SameSiteMode.Strict,
                     //Domain = CultureProvider.Host
@@ -42,7 +49,8 @@ namespace newTolkuchka.ControllersAPI
         [HttpGet("logout")]
         public void Logout()
         {
-            HttpContext.Response.Cookies.Delete(Secrets.userCookie);
+            HttpContext.Response.Cookies.Delete(Secrets.userHashCookie);
+            HttpContext.Response.Cookies.Delete(Secrets.userTokenCookie);
         }
 
         [HttpPost("recovery")]

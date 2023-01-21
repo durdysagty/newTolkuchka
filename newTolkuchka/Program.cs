@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 using newTolkuchka;
 using newTolkuchka.Models;
@@ -123,14 +124,34 @@ app.UseRequestLocalization();
 app.UseCookiePolicy();
 app.Use(async (context, next) =>
 {
-    if (!context.Request.Headers.Authorization.Any())
-    {
-        string t = context.Request.Cookies[Secrets.userCookie];
-        if (!string.IsNullOrEmpty(t))
+    if (!context.Request.Path.Value.Contains('.'))
+        if (!context.Request.Headers.Authorization.Any())
         {
-            context.Request.Headers.Add("Authorization", "Bearer " + t);
+            string t = context.Request.Cookies[Secrets.userTokenCookie];
+            string h = context.Request.Cookies[Secrets.userHashCookie];
+            if (!string.IsNullOrEmpty(t) && !string.IsNullOrEmpty(h))
+            {
+                IMemoryCache _memoryCache = context.RequestServices.GetService<IMemoryCache>();
+                ICrypto _crypto = context.RequestServices.GetService<ICrypto>();
+                int userId = int.Parse(_crypto.DecryptString(h).Split(" ")[0]);
+                _memoryCache.TryGetValue(ConstantsService.UserHashKey(userId), out string testHash);
+                if (!string.IsNullOrEmpty(testHash))
+                {
+                    if (h == testHash)
+                        context.Request.Headers.Add("Authorization", "Bearer " + t);
+                    else
+                    {
+                        context.Response.Cookies.Delete(Secrets.userTokenCookie);
+                        context.Response.Cookies.Delete(Secrets.userHashCookie);
+                    }
+                }
+                else
+                {
+                    context.Response.Cookies.Delete(Secrets.userTokenCookie);
+                    context.Response.Cookies.Delete(Secrets.userHashCookie);
+                }
+            }
         }
-    }
     //if (CurrencyService.Currency == null)
     //    _ = context.RequestServices.GetService<IActionNoFile<Currency, AdminCurrency>>();
     await next();

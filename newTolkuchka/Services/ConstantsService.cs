@@ -1,7 +1,11 @@
-﻿namespace newTolkuchka.Services
+﻿using newTolkuchka.Models;
+
+namespace newTolkuchka.Services
 {
     public static class ConstantsService
     {
+        public static string UserPinKey(int id) => $"{USER}{id}";
+        public static string UserHashKey(int id) => $"{USER}{id}{HASH}";
         // lang standarts
         public const string RU = "ru";
         public const string EN = "en";
@@ -95,6 +99,7 @@
         public const string NOTINUSE = "notinuse";
         public const string N404 = "404";
         public const string USER = "user";
+        public const string HASH = "hash";
         // images
         public const int PRODUCTMAXIMAGE = 5;
         public const int BRANDMAXIMAGE = 1;

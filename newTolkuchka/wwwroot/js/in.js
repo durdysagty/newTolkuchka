@@ -5,9 +5,9 @@
 }
 function inputLogin(e) {
     if (e.target.validity.typeMismatch)
-        $('#wrongLog').html('Напишите правильный email!')
+        $('#login').html('Напишите правильный email!')
     else if (e.target.validity.valueMissing)
-        $('#wrongLog').html('Вы не написали электронную почту!')
+        $('#login').html('Вы не написали электронную почту!')
 }
 function invalidloginHandler(e) {
     e.preventDefault()

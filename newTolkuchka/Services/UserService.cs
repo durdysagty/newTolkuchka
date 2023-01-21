@@ -5,7 +5,6 @@ using newTolkuchka.Models.DTO;
 using newTolkuchka.Reces;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
-using System.Net.NetworkInformation;
 using System.Security.Claims;
 
 namespace newTolkuchka.Services
@@ -25,7 +24,7 @@ namespace newTolkuchka.Services
             string userId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
             {
-                _contextAccessor.HttpContext.Response.Cookies.Delete(Secrets.userCookie);
+                _contextAccessor.HttpContext.Response.Cookies.Delete(Secrets.userHashCookie);
                 return null;
             }
             User user = await GetModelAsync(int.Parse(userId));

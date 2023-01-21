@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
@@ -7,9 +8,11 @@ using newTolkuchka.Reces;
 using newTolkuchka.Services;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Security.Claims;
 using System.Text.Json;
 
 namespace newTolkuchka.Controllers
@@ -29,10 +32,11 @@ namespace newTolkuchka.Controllers
         private readonly IOrder _order;
         private readonly ILogin _login;
         private readonly IActionNoFile<Currency, AdminCurrency> _currency;
+        private readonly IMemoryCache _memoryCache;
         private readonly static int _deliveryFree = 500;
         private readonly static int _deliveryPrice = 20;
 
-        public HomeController(IStringLocalizer<Shared> localizer, IBreadcrumbs breadcrumbs, IPath path, ICategory category, IBrand brand, IProduct product, ISlide slide, IUser user, IInvoice invoice, IOrder order, ILogin login, IActionNoFile<Currency, AdminCurrency> currency)
+        public HomeController(IStringLocalizer<Shared> localizer, IBreadcrumbs breadcrumbs, IPath path, ICategory category, IBrand brand, IProduct product, ISlide slide, IUser user, IInvoice invoice, IOrder order, ILogin login, IActionNoFile<Currency, AdminCurrency> currency, IMemoryCache memoryCache)
         {
             _localizer = localizer;
             _breadcrumbs = breadcrumbs;
@@ -46,6 +50,7 @@ namespace newTolkuchka.Controllers
             _invoice = invoice;
             _login = login;
             _currency = currency;
+            _memoryCache = memoryCache;
         }
         #endregion
         [Route(ConstantsService.SLASH)]
@@ -416,7 +421,9 @@ namespace newTolkuchka.Controllers
                 bool isPinChanged = await _user.EditUserAsync(accountUser, user);
                 if (isPinChanged)
                 {
-                    HttpContext.Response.Cookies.Delete(Secrets.userCookie);
+                    HttpContext.Response.Cookies.Delete(Secrets.userTokenCookie);
+                    HttpContext.Response.Cookies.Delete(Secrets.userHashCookie);
+                    _memoryCache.Remove(ConstantsService.UserHashKey(user.Id));
                     return RedirectToAction(ConstantsService.INDEX);
                 }
             }
