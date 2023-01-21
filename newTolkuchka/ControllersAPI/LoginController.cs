@@ -39,6 +39,12 @@ namespace newTolkuchka.ControllersAPI
             return loginResponse;
         }
 
+        [HttpGet("logout")]
+        public void Logout()
+        {
+            HttpContext.Response.Cookies.Delete(Secrets.userCookie);
+        }
+
         [HttpPost("recovery")]
         public async Task<LoginResponse> UserRecoveryLogin([FromBody] string pins)
         {

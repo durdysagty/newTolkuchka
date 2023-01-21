@@ -12,7 +12,7 @@ namespace newTolkuchka.Services
         public static Currency Currency { get; set; }
         public CurrencyService(AppDbContext con, IStringLocalizer<Shared> localizer) : base(con, localizer)
         {
-            Currency = GetModels().AsNoTracking().FirstOrDefault(c => c.Id == 2);
+            Currency ??= GetModels().AsNoTracking().FirstOrDefault(c => c.Id == 2);
         }
     }
 }

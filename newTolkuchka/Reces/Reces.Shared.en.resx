@@ -237,6 +237,9 @@
   <data name="login" xml:space="preserve">
     <value>Login</value>
   </data>
+  <data name="logout" xml:space="preserve">
+    <value>logout</value>
+  </data>
   <data name="mail-reason" xml:space="preserve">
     <value>You have received this email because a PIN recovery procedure has been initiated on your account. If you did not do this, then ignore this letter. If you really want to restore access to your account, go to the link below and follow the instructions</value>
   </data>

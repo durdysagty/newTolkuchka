@@ -5,6 +5,7 @@ using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Reces;
 using newTolkuchka.Services;
+using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,10 +28,11 @@ namespace newTolkuchka.Controllers
         private readonly IInvoice _invoice;
         private readonly IOrder _order;
         private readonly ILogin _login;
+        private readonly IActionNoFile<Currency, AdminCurrency> _currency;
         private readonly static int _deliveryFree = 500;
         private readonly static int _deliveryPrice = 20;
 
-        public HomeController(IStringLocalizer<Shared> localizer, IBreadcrumbs breadcrumbs, IPath path, ICategory category, IBrand brand, IProduct product, ISlide slide, IUser user, IInvoice invoice, IOrder order, ILogin login)
+        public HomeController(IStringLocalizer<Shared> localizer, IBreadcrumbs breadcrumbs, IPath path, ICategory category, IBrand brand, IProduct product, ISlide slide, IUser user, IInvoice invoice, IOrder order, ILogin login, IActionNoFile<Currency, AdminCurrency> currency)
         {
             _localizer = localizer;
             _breadcrumbs = breadcrumbs;
@@ -43,6 +45,7 @@ namespace newTolkuchka.Controllers
             _order = order;
             _invoice = invoice;
             _login = login;
+            _currency = currency;
         }
         #endregion
         [Route(ConstantsService.SLASH)]
@@ -392,7 +395,8 @@ namespace newTolkuchka.Controllers
                 success = _localizer["order-success"].Value
             });
         }
-        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 3600)]
+        // no cache, when logout redirect 302 code are cached
+        //[ResponseCache(Location = ResponseCacheLocation.Any, Duration = 120)]
         [Route($"{ConstantsService.ACCOUNT}")]
         public async Task<IActionResult> Account()
         {

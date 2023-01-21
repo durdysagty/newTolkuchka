@@ -237,6 +237,9 @@
   <data name="login" xml:space="preserve">
     <value>Girelge</value>
   </data>
+  <data name="logout" xml:space="preserve">
+    <value>çykyş</value>
+  </data>
   <data name="mail-reason" xml:space="preserve">
     <value>Bu haty almagyňyzyň sebäbi, hasabyňyzda PIN dikeltmek prosedurasy başlandy. Muny etmedik bolsaňyz, bu hata üns bermäň we hatdaky görkezmeleri ýerine ýetirmäň. Hasabyňyza girişi hakykatdanam dikeltmek isleseňiz, aşakdaky baglanyşyga basyň we görkezmelere eýeriň</value>
   </data>

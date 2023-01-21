@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services;
@@ -47,6 +48,9 @@ namespace newTolkuchka.ControllersAPI
                 return Result.Already;
             _currency.EditModel(currency);
             await EditActAsync(currency.Id, currency.CodeName);
+            //to update current static currency property
+            if (currency.Id == 2)
+                CurrencyService.Currency = _currency.GetModels().AsNoTracking().FirstOrDefault(c => c.Id == 2);
             return Result.Success;
         }
         [HttpDelete("{id}")]

@@ -237,6 +237,9 @@
   <data name="login" xml:space="preserve">
     <value>Войти</value>
   </data>
+  <data name="logout" xml:space="preserve">
+    <value>выход</value>
+  </data>
   <data name="mail-reason" xml:space="preserve">
     <value>Вы получили это письмо, так как на вашем аккаунте была начата процедура восстановления ПИН кода. Если Вы не делали этого, то проигнорируйте это письмо. Если действительно хотите восстановить доступ к вашему аккаунту, пройдите по ссылке ниже и следуйте инструкциям</value>
   </data>
