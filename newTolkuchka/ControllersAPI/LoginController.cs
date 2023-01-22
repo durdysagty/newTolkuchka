@@ -33,14 +33,16 @@ namespace newTolkuchka.ControllersAPI
                     MaxAge = new TimeSpan(29, 0, 0, 0),
                     // remove on publish
                     //SameSite = SameSiteMode.Strict,
-                    //Domain = CultureProvider.Host
+                    //Domain = CultureProvider.Host,
+                    //Secure = true
                 });
                 HttpContext.Response.Cookies.Append(Secrets.userHashCookie, loginResponse.Text, new CookieOptions
                 {
                     MaxAge = new TimeSpan(28, 0, 0, 0),
                     // remove on publish
                     //SameSite = SameSiteMode.Strict,
-                    //Domain = CultureProvider.Host
+                    //Domain = CultureProvider.Host,
+                    //Secure = true
                 });
             }
             return loginResponse;
@@ -49,8 +51,20 @@ namespace newTolkuchka.ControllersAPI
         [HttpGet("logout")]
         public void Logout()
         {
-            HttpContext.Response.Cookies.Delete(Secrets.userHashCookie);
-            HttpContext.Response.Cookies.Delete(Secrets.userTokenCookie);
+            HttpContext.Response.Cookies.Delete(Secrets.userHashCookie, new CookieOptions
+            {
+                // remove on publish
+                //SameSite = SameSiteMode.Strict,
+                //Domain = CultureProvider.Host,
+                //Secure = true
+            });
+            HttpContext.Response.Cookies.Delete(Secrets.userTokenCookie, new CookieOptions
+            {
+                // remove on publish
+                //SameSite = SameSiteMode.Strict,
+                //Domain = CultureProvider.Host,
+                //Secure = true
+            });
         }
 
         [HttpPost("recovery")]
