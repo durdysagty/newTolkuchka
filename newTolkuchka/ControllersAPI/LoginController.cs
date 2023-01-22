@@ -33,35 +33,25 @@ namespace newTolkuchka.ControllersAPI
                     MaxAge = new TimeSpan(29, 0, 0, 0),
                     // remove on publish
                     //SameSite = SameSiteMode.Strict,
-                    //Domain = CultureProvider.Host,
-                    //Secure = true
+                    //Domain = CultureProvider.Host
                 });
                 HttpContext.Response.Cookies.Append(Secrets.userHashCookie, loginResponse.Text, new CookieOptions
                 {
                     MaxAge = new TimeSpan(28, 0, 0, 0),
                     // remove on publish
                     //SameSite = SameSiteMode.Strict,
-                    //Domain = CultureProvider.Host,
-                    //Secure = true
-                });
-                HttpContext.Response.Cookies.Append(Secrets.userFalseCookie, loginResponse.False, new CookieOptions
-                {
-                    MaxAge = new TimeSpan(28, 0, 0, 0),
-                    // remove on publish
-                    //SameSite = SameSiteMode.Strict,
-                    //Domain = CultureProvider.Host,
-                    //Secure = true
+                    //Domain = CultureProvider.Host
                 });
             }
             return loginResponse;
         }
 
-        //[HttpGet("logout")]
-        //public void Logout()
-        //{
-        //    HttpContext.Response.Cookies.Delete(Secrets.userHashCookie);
-        //    HttpContext.Response.Cookies.Delete(Secrets.userTokenCookie);
-        //}
+        [HttpGet("logout")]
+        public void Logout()
+        {
+            HttpContext.Response.Cookies.Delete(Secrets.userHashCookie);
+            HttpContext.Response.Cookies.Delete(Secrets.userTokenCookie);
+        }
 
         [HttpPost("recovery")]
         public async Task<LoginResponse> UserRecoveryLogin([FromBody] string pins)
