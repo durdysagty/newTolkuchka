@@ -20,13 +20,13 @@ function invalidAccountHandler(e) {
     $('#userForm').addClass('was-validated')
 }
 toLcalTime()
-async function logout() {
-    const response = await fetch('/login/logout', {
-        method: 'GET'
-    })
-    if (response.ok) {
-        location.reload(true)
-    }
-    else
-        location.reload(true)
-}
+//async function logout() {
+//    const response = await fetch('/login/logout', {
+//        method: 'GET'
+//    })
+//    if (response.ok) {
+//        location.reload(true)
+//    }
+//    else
+//        location.reload(true)
+//}

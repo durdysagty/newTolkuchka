@@ -86,6 +86,7 @@ namespace newTolkuchka.Services
         public const string WARRANTY = "warranty";
         public const string ACCOUNT = "account";
         public const string LOGIN = "login";
+        public const string LOGOUT = "logout";
         public const string CART = "cart";
         public const string SEARCH = "search";
         public const string ABOUT = "about";

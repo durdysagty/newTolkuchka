@@ -20,3 +20,10 @@ async function getItems() {
     }
 }
 getItems()
+function isCached() {
+    const t = document.cookie.includes('usrath=')
+    const m = $('#loginModal')
+    if (!t && !m.length)
+        location.reload(true)
+}
+isCached()

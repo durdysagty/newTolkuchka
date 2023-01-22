@@ -7,5 +7,6 @@ namespace newTolkuchka.Services.Interfaces
         const string jwtKey = Secrets.jwtKey;
         string GetEmployeeToken(Employee employee);
         string GetUserToken(User user);
+        string GetFalseToken();
     }
 }

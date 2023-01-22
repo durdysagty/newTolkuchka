@@ -6,5 +6,6 @@
         public R Result { get; set; }
         public string Data { get; set; }
         public string Text { get; set; }
+        public string False { get; set; }
     }
 }

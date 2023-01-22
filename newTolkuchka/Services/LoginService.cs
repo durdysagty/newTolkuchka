@@ -94,7 +94,8 @@ namespace newTolkuchka.Services
             {
                 Result = R.Success,
                 Data = token,
-                Text = hash
+                Text = hash,
+                False = _jwt.GetFalseToken()
             };
         }
 

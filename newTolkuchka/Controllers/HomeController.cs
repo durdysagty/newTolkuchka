@@ -429,6 +429,14 @@ namespace newTolkuchka.Controllers
             }
             return await AccountGeneric(user);
         }
+        [Route($"{ConstantsService.LOGOUT}")]
+        public IActionResult Logout()
+        {
+            HttpContext.Response.Cookies.Delete(Secrets.userHashCookie);
+            HttpContext.Response.Cookies.Delete(Secrets.userTokenCookie);
+            HttpContext.Response.Cookies.Delete(Secrets.userFalseCookie);
+            return RedirectToAction("Index");
+        }
         [Route($"{ConstantsService.N404}")]
         public IActionResult NotFoundPage()
         {
