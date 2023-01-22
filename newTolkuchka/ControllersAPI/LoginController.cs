@@ -67,11 +67,5 @@ namespace newTolkuchka.ControllersAPI
             LoginResponse loginResponse = await _login.JwtLoginEmployeeAsync(loginData);
             return loginResponse;
         }
-        [HttpGet]
-        public async Task<LoginResponse> CheckEmployee()
-        {
-            LoginResponse loginResponse = await _login.CheckAuthedEmployeeAsync(HttpContext);
-            return loginResponse;
-        }
     }
 }

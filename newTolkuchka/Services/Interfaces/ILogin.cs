@@ -10,6 +10,6 @@ namespace newTolkuchka.Services.Interfaces
         Task<LoginResponse> NewPINAsync(Guid guid);
 
         Task<LoginResponse> JwtLoginEmployeeAsync(LoginRequest loginRequest);
-        Task<LoginResponse> CheckAuthedEmployeeAsync(HttpContext httpContext);
+        //Task<LoginResponse> CheckAuthedEmployeeAsync(HttpContext httpContext);
     }
 }

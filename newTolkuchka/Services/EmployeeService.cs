@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
@@ -11,9 +12,11 @@ namespace newTolkuchka.Services
     public class EmployeeService : ServiceNoFile<Employee, AdminEmployee>, IEmployee
     {
         private readonly ICrypto _crypto;
-        public EmployeeService(AppDbContext con, IStringLocalizer<Shared> localizer, ICrypto crypto) : base(con, localizer)
+        private readonly IMemoryCache _memoryCache;
+        public EmployeeService(AppDbContext con, IStringLocalizer<Shared> localizer, ICrypto crypto, IMemoryCache memoryCache) : base(con, localizer)
         {
             _crypto = crypto;
+            _memoryCache = memoryCache;
         }
         public async Task<EditEmployee> GetEditEmployeeAsync(int id)
         {
@@ -78,7 +81,10 @@ namespace newTolkuchka.Services
         public void ChangeEmployeesHashAsync(IEnumerable<Employee> employees)
         {
             foreach (Employee employee in employees)
+            {
                 employee.Hash = ICrypto.GetNumber(0, 1000).ToString(); // to be more complicated hash
+                _memoryCache.Remove(ConstantsService.EmpHashKey(employee.Id));
+            }
         }
 
         private void EncryptPassword(Employee employee) => employee.Password = _crypto.EncryptString(employee.Password);

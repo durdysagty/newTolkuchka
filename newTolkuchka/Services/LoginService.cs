@@ -89,7 +89,7 @@ namespace newTolkuchka.Services
             string hash = _crypto.EncryptString($"{user.Id} {user.Pin}{user.Email}");
             string token = _jwt.GetUserToken(user);
             // could be used for count actual loged in users in the future
-            _ = _memoryCache.Set(ConstantsService.UserHashKey(user.Id), hash);
+            _ = _memoryCache.Set(ConstantsService.UserHashKey(user.Id), hash, TimeSpan.FromDays(28));
             return new LoginResponse
             {
                 Result = R.Success,
@@ -168,22 +168,24 @@ namespace newTolkuchka.Services
                 return CreateFailResult();
             return CreateEmployeeSuccessResult(employee);
         }
-        public async Task<LoginResponse> CheckAuthedEmployeeAsync(HttpContext httpContext)
-        {
-            string id = IContext.GetAthorizedUserId(httpContext);
-            Employee employee = await _employee.GetEmployeeWithPositionAsync(id);
-            if (employee == null)
-                return CreateFailResult();
-            string hash = IContext.GetAthorizedUserHash(httpContext);
-            if (employee.Hash != hash)
-                return CreateFailResult();
-            return CreateEmployeeSuccessResult(employee);
-        }
+        //public async Task<LoginResponse> CheckAuthedEmployeeAsync(HttpContext httpContext)
+        //{
+        //    string id = IContext.GetAthorizedUserId(httpContext);
+        //    Employee employee = await _employee.GetEmployeeWithPositionAsync(id);
+        //    if (employee == null)
+        //        return CreateFailResult();
+        //    string hash = IContext.GetAthorizedUserHash(httpContext);
+        //    if (employee.Hash != hash)
+        //        return CreateFailResult();
+        //    return CreateEmployeeSuccessResult(employee);
+        //}
 
         private LoginResponse CreateEmployeeSuccessResult(Employee employee)
         {
             string token = _jwt.GetEmployeeToken(employee);
-            return new LoginResponse { Result = R.Success, Data = token };
+            _ = _memoryCache.Set(ConstantsService.EmpHashKey(employee.Id), $"{employee.Id}-{employee.Hash}", TimeSpan.FromDays(7));
+            // Text is employeeId and employee Hash we use '-' to split them on Program if there are space then cokkie are not sending
+            return new LoginResponse { Result = R.Success, Data = token, Text = $"{employee.Id}-{employee.Hash}" };
         }
         private static LoginResponse CreateFailResult(string text = null) => new() { Result = R.Fail, Text = text };
 

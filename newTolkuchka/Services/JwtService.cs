@@ -17,7 +17,7 @@ namespace newTolkuchka.Services
             {
                 Subject = new ClaimsIdentity(new Claim[] {
                     new Claim(ClaimTypes.NameIdentifier, employee.Login),
-                    new Claim(ClaimTypes.Hash, employee.Hash),
+                    //new Claim(ClaimTypes.Hash, employee.Hash),
                     new Claim("accesslevel", employee.Position.Level.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),

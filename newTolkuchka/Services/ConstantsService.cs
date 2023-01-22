@@ -6,6 +6,7 @@ namespace newTolkuchka.Services
     {
         public static string UserPinKey(int id) => $"{USER}{id}";
         public static string UserHashKey(int id) => $"{USER}{id}{HASH}";
+        public static string EmpHashKey(int id) => $"{EMPLOYEE}{id}{HASH}";
         // lang standarts
         public const string RU = "ru";
         public const string EN = "en";

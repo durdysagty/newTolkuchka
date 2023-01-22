@@ -125,6 +125,7 @@ app.UseCookiePolicy();
 app.Use(async (context, next) =>
 {
     if (!context.Request.Path.Value.Contains('.'))
+        // for users
         if (!context.Request.Headers.Authorization.Any())
         {
             string t = context.Request.Cookies[Secrets.userTokenCookie];
@@ -151,6 +152,28 @@ app.Use(async (context, next) =>
                     context.Response.Cookies.Delete(Secrets.userHashCookie);
                 }
             }
+        }
+        // for employees
+        else
+        {
+            string h = context.Request.Cookies[Secrets.empHashCookie];
+            if (!string.IsNullOrEmpty(h))
+            {
+                IMemoryCache _memoryCache = context.RequestServices.GetService<IMemoryCache>();
+                string[] value = h.Split("-");
+                if (value.Length != 2)
+                    _ = context.Request.Headers.Remove("Authorization");
+                else
+                {
+                    int empId = int.Parse(value[0]);
+                    _memoryCache.TryGetValue(ConstantsService.EmpHashKey(empId), out string testHash);
+                    if (h != testHash)
+                        _ = context.Request.Headers.Remove("Authorization");
+                }
+            }
+            else
+                _ = context.Request.Headers.Remove("Authorization");
+
         }
     //if (CurrencyService.Currency == null)
     //    _ = context.RequestServices.GetService<IActionNoFile<Currency, AdminCurrency>>();
