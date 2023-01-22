@@ -11,5 +11,6 @@ namespace newTolkuchka.Services.Interfaces
         Task<Employee> GetEmployeeWithPositionAsync(string login);
         IQueryable<Employee> GetEmployeesByPosition(int id);
         void ChangeEmployeesHashAsync(IEnumerable<Employee> employees);
+        void DeleteHash(int id);
     }
 }

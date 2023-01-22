@@ -83,8 +83,13 @@ namespace newTolkuchka.Services
             foreach (Employee employee in employees)
             {
                 employee.Hash = ICrypto.GetNumber(0, 1000).ToString(); // to be more complicated hash
-                _memoryCache.Remove(ConstantsService.EmpHashKey(employee.Id));
+                DeleteHash(employee.Id);
             }
+        }
+
+        public void DeleteHash(int id)
+        {
+            _memoryCache.Remove(ConstantsService.EmpHashKey(id));
         }
 
         private void EncryptPassword(Employee employee) => employee.Password = _crypto.EncryptString(employee.Password);

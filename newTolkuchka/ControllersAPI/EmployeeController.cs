@@ -51,6 +51,7 @@ namespace newTolkuchka.ControllersAPI
             Employee employee = await _employee.GetModelAsync(id);
             if (employee == null)
                 return Result.Fail;
+            _employee.DeleteHash(id);
             Result result = await _employee.DeleteModelAsync(employee.Id, employee);
             if (result == Result.Success)
                 await DeleteActAsync(id, employee.Login);
