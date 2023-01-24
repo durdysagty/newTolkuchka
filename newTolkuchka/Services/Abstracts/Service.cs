@@ -330,7 +330,7 @@ namespace newTolkuchka.Services.Abstracts
                                     InvoiceDate = invoice.Date,
                                     PaidDate = invoice.PaidDate.Value,
                                     ProductId = order.ProductId,
-                                    ProductName = IProduct.GetProductName(order.Product),
+                                    ProductName = IProduct.GetProductNameCounted(order.Product),
                                     OrderPrice = order.OrderPrice,
                                     OrderCurrency = invoice.Currency.CodeName,
                                     OrderCurrencyRate = invoice.CurrencyRate,
@@ -391,7 +391,7 @@ namespace newTolkuchka.Services.Abstracts
                     adminModels = (IEnumerable<TAdmin>)preProducts.Select(p => new AdminProduct
                     {
                         Id = p.Id,
-                        Name = IProduct.GetProductName(p, 1),
+                        Name = IProduct.GetProductNameCounted(p, 1),
                         Category = p.Model.Category.NameRu,
                         Price = p.Price,
                         NewPrice = p.NewPrice,

@@ -23,24 +23,42 @@ namespace newTolkuchka.Services.Interfaces
         {
             return decimal.Round(price * CurrencyService.Currency.PriceRate, 2);
         }
-        static string GetProductName(Product product, int? productsInModel = 1)
+
+        // I think we can optimize all stuff of getting product name
+        #region productName
+        static string GetProductNameCounted(Product product, int? productsInModel = 1)
         {
-            // have to opimize
-            string name = CultureProvider.GetLocalName(product.Model.Type.NameRu, product.Model.Type.NameEn, product.Model.Type.NameTm);
-            name += ' ' + product.Model.Brand.Name + ' ' + product.Model.Line?.Name + ' ' + product.Model.Name;
             if (productsInModel > 1)
             {
+                string name = GetProductBaseName(product);
                 name += $" ({productsInModel} {CultureProvider.GetLocalName("м.", "m.", "m.")})";
                 return name;
             }
-            IEnumerable<ProductSpecsValue> productSpecsValues = product.ProductSpecsValues.Where(x => product.Model.ModelSpecs.Where(y => y.IsNameUse).Any(z => z.Spec == x.SpecsValue.Spec)).OrderBy(x => x.SpecsValue.Spec.NamingOrder);
-            foreach (ProductSpecsValue s in productSpecsValues)
+            else
             {
-                SpecsValueMod svm = product.ProductSpecsValueMods.FirstOrDefault(y => y.SpecsValueMod.SpecsValueId == s.SpecsValueId)?.SpecsValueMod;
-                name += svm != null ? ' ' + CultureProvider.GetLocalName(svm.NameRu, svm.NameEn, svm.NameTm) : ' ' + CultureProvider.GetLocalName(s.SpecsValue.NameRu, s.SpecsValue.NameEn, s.SpecsValue.NameTm);
+                string name = GetProductNameSingle(product, product.ProductSpecsValues.Where(x => product.Model.ModelSpecs.Where(y => y.IsNameUse).Any(z => z.Spec == x.SpecsValue.Spec)).Select(psv => psv.SpecsValue));
+                return name;
+            }
+        }
+
+        static string GetProductNameSingle(Product product, IEnumerable<SpecsValue> specsValues)
+        {
+            string name = GetProductBaseName(product);
+            foreach (SpecsValue s in specsValues.OrderBy(x => x.Spec.NamingOrder))
+            {
+                SpecsValueMod svm = product.ProductSpecsValueMods.FirstOrDefault(y => y.SpecsValueMod.SpecsValueId == s.Id)?.SpecsValueMod;
+                name += svm != null ? ' ' + CultureProvider.GetLocalName(svm.NameRu, svm.NameEn, svm.NameTm) : ' ' + CultureProvider.GetLocalName(s.NameRu, s.NameEn, s.NameTm);
             }
             return name;
         }
+
+        static string GetProductBaseName(Product product)
+        {
+            string name = CultureProvider.GetLocalName(product.Model.Type.NameRu, product.Model.Type.NameEn, product.Model.Type.NameTm);
+            name += ' ' + product.Model.Brand.Name + ' ' + product.Model.Line?.Name + ' ' + product.Model.Name;
+            return name;
+        }
+        #endregion
 
         static string GetHtmlProduct(IEnumerable<UIProduct> products, int col, int xs, int sm, int md, int lg, int xl, int xxl, int xxxl)
         {

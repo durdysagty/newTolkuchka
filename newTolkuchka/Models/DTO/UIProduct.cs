@@ -13,7 +13,5 @@ namespace newTolkuchka.Models.DTO
         public string ImageMain { get; set; }
         public string Recommended { get; set; }
         public string New { get; set; }
-        // used for colored options of Product (id, price, newPrice)
-        public IEnumerable<(int, decimal, decimal)> Others { get; set; }
     }
 }

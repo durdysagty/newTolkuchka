@@ -51,7 +51,7 @@ namespace newTolkuchka.ControllersAPI
                 await _product.AddProductSpecValueModsAsync(product.Id, specsValueMods);
             await _product.SaveChangesAsync();
             product = await _product.GetFullProductAsNoTrackingWithIdentityResolutionAsync(product.Id);
-            await AddActAsync(product.Id, IProduct.GetProductName(product));
+            await AddActAsync(product.Id, IProduct.GetProductNameCounted(product));
             return Result.Success;
         }
         [HttpPut]
@@ -65,7 +65,7 @@ namespace newTolkuchka.ControllersAPI
             await _product.AddProductSpecValueModsAsync(product.Id, specsValueMods);
             await _product.SaveChangesAsync();
             product = await _product.GetFullProductAsNoTrackingWithIdentityResolutionAsync(product.Id);
-            await EditActAsync(product.Id, IProduct.GetProductName(product));
+            await EditActAsync(product.Id, IProduct.GetProductNameCounted(product));
             return Result.Success;
         }
         [HttpDelete("{id}")]
@@ -78,7 +78,7 @@ namespace newTolkuchka.ControllersAPI
             if (result == Result.Success)
             {
                 product = await _product.GetFullProductAsNoTrackingWithIdentityResolutionAsync(product.Id);
-                await DeleteActAsync(id, IProduct.GetProductName(product));
+                await DeleteActAsync(id, IProduct.GetProductNameCounted(product));
             }
             return result;
         }
@@ -92,7 +92,7 @@ namespace newTolkuchka.ControllersAPI
                     product.Price = price;
                 if (newPriceIds.Contains(product.Id))
                     product.NewPrice = price == 0 ? null : price;
-                await EditActAsync(product.Id, IProduct.GetProductName(product));
+                await EditActAsync(product.Id, IProduct.GetProductNameCounted(product));
             }
             return Result.Success;
         }

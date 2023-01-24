@@ -349,7 +349,7 @@ namespace newTolkuchka.Services
             return distinct.Select(p => new UIProduct()
             {
                 Id = p.Id,
-                Name = sameModels != null ? IProduct.GetProductName(p, sameModels.Count) : IProduct.GetProductName(p),
+                Name = sameModels != null ? IProduct.GetProductNameCounted(p, sameModels.Count) : IProduct.GetProductNameCounted(p),
                 Price = IProduct.GetConvertedPrice(p.Price),
                 NewPrice = p.NewPrice == null ? null : IProduct.GetConvertedPrice((decimal)p.NewPrice),
                 ImageMain = PathService.GetImageRelativePath(ConstantsService.PRODUCT + "/small", p.Id),

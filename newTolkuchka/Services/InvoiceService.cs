@@ -60,7 +60,7 @@ namespace newTolkuchka.Services
                     Product p = await _product.GetFullProductAsync(o.ProductId);
                     UserOrder userOrder = new()
                     {
-                        ProductName = IProduct.GetProductName(p, null),
+                        ProductName = IProduct.GetProductNameCounted(p, null),
                         Warranty = CultureProvider.GetLocalName(p.Model.Warranty.NameRu, p.Model.Warranty.NameEn, p.Model.Warranty.NameTm),
                         Price = o.OrderPrice,
                         Quantity = i.Orders.Count(c => c.ProductId == o.ProductId)

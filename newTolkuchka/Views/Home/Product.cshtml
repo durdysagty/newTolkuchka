@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Product>
+﻿@model IList<(string name, Product product)>
 @using newTolkuchka.Services.Interfaces
 @inject IPath _pathService
 
@@ -6,7 +6,7 @@
 {
     int current = ViewBag.Current;
     int n = 0;
-    foreach (Product p in Model)
+    foreach ((string name, Product p) in Model)
     {
         string id = $"pr{p.Id}";
         string imgId = $"img{p.Id}";
@@ -26,7 +26,7 @@
                 break;
         }
         <div id="@id" class="@currentProduct">
-            <h4>@IProduct.GetProductName(p)</h4>
+            <h4>@name</h4>
             <div class="row justify-content-between justify-content-lg-start">
                 <div class="col-12 col-md-4">
                     <div class="row">
@@ -65,6 +65,7 @@
                 <div class="col-auto d-flex flex-column justify-content-end">
                     @if (Model.Count() > 1)
                     {
+                        IEnumerable<Product> products = Model.Select(m => m.product);
                         // to select specs from
                         IList<ModelWithList<SpecsValue>> nameUsedSpecs = ViewBag.Specs;
                         // get ids of name used specs to test product specValues
@@ -91,12 +92,12 @@
                                             IList<SpecsValue> currentSV = p.ProductSpecsValues.Select(x => x.SpecsValue).Where(x => namedSpecIds.Contains(x.Spec.Id) && x.SpecId != s.Id).ToList();
                                             // the sv is not in current product thus add sv to currentSV and seek the product that is got all svs
                                             currentSV.Add(sv);
-                                            getIp = Model.FirstOrDefault(m => m.ProductSpecsValues.Select(x => x.SpecsValue).Where(x => namedSpecIds.Contains(x.Spec.Id)).All(x => currentSV.Any(y => y.Id == x.Id)))?.Id;
+                                            getIp = products.FirstOrDefault(m => m.ProductSpecsValues.Select(x => x.SpecsValue).Where(x => namedSpecIds.Contains(x.Spec.Id)).All(x => currentSV.Any(y => y.Id == x.Id)))?.Id;
                                             // if there is no product that matchs with given spec values (with current product specs values)
                                             if (getIp == null)
                                             {
                                                 // is any products of given model has ProductsSpecsValue with given SpecsValue
-                                                IList<Product> seekingProducts = Model.Where(m => m.Id != p.Id && m.ProductSpecsValues.Any(psv => psv.SpecsValueId == sv.Id)).ToList();
+                                                IList<Product> seekingProducts = products.Where(m => m.Id != p.Id && m.ProductSpecsValues.Any(psv => psv.SpecsValueId == sv.Id)).ToList();
                                                 // if more than one product has given SpecsValue
                                                 if (seekingProducts.Count > 1)
                                                 {

@@ -44,7 +44,7 @@ namespace newTolkuchka.Services
                     adminPurchase = new()
                     {
                         ProductId = p.ProductId,
-                        Name = IProduct.GetProductName(await _product.GetFullProductAsync(p.ProductId)),
+                        Name = IProduct.GetProductNameCounted(await _product.GetFullProductAsync(p.ProductId)),
                         SerialNumbers = new List<string>()
                         {
                             p.SerialNumber

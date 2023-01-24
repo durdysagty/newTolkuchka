@@ -9,6 +9,7 @@ using newTolkuchka.Services;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -148,19 +149,20 @@ namespace newTolkuchka.Controllers
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 10800)]
         public async Task<IActionResult> Product(int id)
         {
-            //Product product = await _product.GetFullProducts(null, null, null, null, new int[1] { id }).AsNoTracking().FirstOrDefaultAsync();
-            Product product = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, new int[1] { id } } }).FirstOrDefaultAsync();
+            Product product = await _product.GetModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, new int[1] { id } } }).Include(p => p.Model).ThenInclude(m => m.Category).FirstOrDefaultAsync();
             if (product == null)
                 return GetNotFoundPage();
-            string localName = IProduct.GetProductName(product);
-            CreateMetaData(ConstantsService.PRODUCT, await _breadcrumbs.GetProductBreadcrumbs(product.Model.CategoryId), localName, false, false);
             if (product.NotInUse || product.Model.Category.NotInUse)
+            {
+                product = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, new int[1] { id } } }).FirstOrDefaultAsync();
+                string localName = IProduct.GetProductNameCounted(product);
+                CreateMetaData(ConstantsService.PRODUCT, await _breadcrumbs.GetProductBreadcrumbs(product.Model.CategoryId), localName, false, false);
                 return View();
-            IQueryable<Product> products = _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.MODEL, product.ModelId } }).Where(p => !p.NotInUse).AsNoTrackingWithIdentityResolution();
-            if (!products.Any())
-                return View();
+            }
+            IList<Product> products = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.MODEL, product.ModelId } }).Where(p => !p.NotInUse).ToListAsync();
+            IList<(string, Product)> namedProducts = new List<(string, Product)>();
             // to select Specs from any of product for change products by specs value
-            IList<ModelWithList<SpecsValue>> nameUsedSpecs = product.Model.ModelSpecs.Where(s => s.IsNameUse).OrderBy(s => s.Spec.NamingOrder).Select(ms => new ModelWithList<SpecsValue>
+            IList<ModelWithList<SpecsValue>> nameUsedSpecs = products.FirstOrDefault().Model.ModelSpecs.Where(s => s.IsNameUse).OrderBy(s => s.Spec.NamingOrder).Select(ms => new ModelWithList<SpecsValue>
             {
                 Id = ms.Spec.Id,
                 Name = CultureProvider.GetLocalName(ms.Spec.NameRu, ms.Spec.NameEn, ms.Spec.NameTm),
@@ -170,17 +172,21 @@ namespace newTolkuchka.Controllers
             IEnumerable<int> namedSpecIds = nameUsedSpecs.Select(ms => ms.Id);
             foreach (Product p in products)
             {
-                foreach (SpecsValue sv in p.ProductSpecsValues.Select(psv => psv.SpecsValue).Where(x => namedSpecIds.Contains(x.SpecId)))
+                IEnumerable<SpecsValue> psvs = p.ProductSpecsValues.Select(psv => psv.SpecsValue).Where(x => namedSpecIds.Contains(x.SpecId));
+                string name = IProduct.GetProductNameSingle(p, psvs);
+                namedProducts.Add((name, p));
+                foreach (SpecsValue sv in psvs)
                 {
                     ModelWithList<SpecsValue> spec = nameUsedSpecs.FirstOrDefault(s => s.Id == sv.SpecId);
                     if (!spec.List.Any(s => s.Id == sv.Id))
                         spec.List.Add(sv);
                 }
             }
+            CreateMetaData(ConstantsService.PRODUCT, await _breadcrumbs.GetProductBreadcrumbs(product.Model.CategoryId), namedProducts.FirstOrDefault(x => x.Item2.Id == id).Item1, false, false);
             ViewBag.Specs = nameUsedSpecs;
             ViewBag.SpecIds = namedSpecIds;
             ViewBag.Current = product.Id;
-            return View(products);
+            return View(namedProducts);
         }
         [Route(ConstantsService.SEARCH)]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
@@ -484,5 +490,143 @@ namespace newTolkuchka.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+        // only for test would be ideal if hide in release
+        //[Route("testus/{id}/{count}")]
+        //public async Task<IActionResult> Test(int id, int count)
+        //{
+        //    Stopwatch stopwatch = new();
+        //    async Task<double> Method1(int id)
+        //    {
+        //        stopwatch.Start();
+        //        Product product = await _product.GetModelAsync(id);
+        //        if (product == null)
+        //        {
+        //            stopwatch.Stop();
+        //            return stopwatch.Elapsed.TotalMilliseconds;
+        //        }
+        //        IQueryable<Product> products = _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.MODEL, product.ModelId } }).Where(p => !p.NotInUse);
+        //        product = products.FirstOrDefault(p => p.Id == id);
+        //        string localName = IProduct.GetProductNameCounted(product);
+        //        CreateMetaData(ConstantsService.PRODUCT, await _breadcrumbs.GetProductBreadcrumbs(product.Model.CategoryId), localName, false, false);
+        //        if (product.NotInUse || product.Model.Category.NotInUse)
+        //        {
+        //            stopwatch.Stop();
+        //            return stopwatch.Elapsed.TotalMilliseconds;
+        //        }
+        //        if (!products.Any())
+        //        {
+        //            stopwatch.Stop();
+        //            return stopwatch.Elapsed.TotalMilliseconds;
+        //        }
+        //        // to select Specs from any of product for change products by specs value
+        //        IList<ModelWithList<SpecsValue>> nameUsedSpecs = product.Model.ModelSpecs.Where(s => s.IsNameUse).OrderBy(s => s.Spec.NamingOrder).Select(ms => new ModelWithList<SpecsValue>
+        //        {
+        //            Id = ms.Spec.Id,
+        //            Name = CultureProvider.GetLocalName(ms.Spec.NameRu, ms.Spec.NameEn, ms.Spec.NameTm),
+        //            Is = ms.Spec.IsImaged,
+        //            List = new Collection<SpecsValue>()
+        //        }).ToList();
+        //        IEnumerable<int> namedSpecIds = nameUsedSpecs.Select(ms => ms.Id);
+        //        foreach (Product p in products)
+        //        {
+        //            foreach (SpecsValue sv in p.ProductSpecsValues.Select(psv => psv.SpecsValue).Where(x => namedSpecIds.Contains(x.SpecId)))
+        //            {
+        //                ModelWithList<SpecsValue> spec = nameUsedSpecs.FirstOrDefault(s => s.Id == sv.SpecId);
+        //                if (!spec.List.Any(s => s.Id == sv.Id))
+        //                    spec.List.Add(sv);
+        //            }
+        //        }
+        //        ViewBag.Specs = nameUsedSpecs;
+        //        ViewBag.SpecIds = namedSpecIds;
+        //        ViewBag.Current = product.Id;
+        //        stopwatch.Stop();
+        //        return stopwatch.Elapsed.TotalMilliseconds;
+        //    }
+        //    async Task<double> Method2(int id)
+        //    {
+        //        stopwatch.Start();
+        //        Product product = await _product.GetModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, new int[1] { id } } }).Include(p => p.Model).ThenInclude(m => m.Category).FirstOrDefaultAsync();
+        //        if (product == null)
+        //        {
+        //            stopwatch.Stop();
+        //            return stopwatch.Elapsed.TotalMilliseconds;
+        //        }
+        //        if (product.NotInUse || product.Model.Category.NotInUse)
+        //        {
+        //            string localName = IProduct.GetProductNameCounted(product);
+        //            CreateMetaData(ConstantsService.PRODUCT, await _breadcrumbs.GetProductBreadcrumbs(product.Model.CategoryId), localName, false, false);
+        //            stopwatch.Stop();
+        //            return stopwatch.Elapsed.TotalMilliseconds;
+        //        }
+        //        IList<Product> products = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.MODEL, product.ModelId } }).Where(p => !p.NotInUse).ToListAsync();
+        //        // to select Specs from any of product for change products by specs value
+        //        IList<ModelWithList<SpecsValue>> nameUsedSpecs = products.FirstOrDefault().Model.ModelSpecs.Where(s => s.IsNameUse).OrderBy(s => s.Spec.NamingOrder).Select(ms => new ModelWithList<SpecsValue>
+        //        {
+        //            Id = ms.Spec.Id,
+        //            Name = CultureProvider.GetLocalName(ms.Spec.NameRu, ms.Spec.NameEn, ms.Spec.NameTm),
+        //            Is = ms.Spec.IsImaged,
+        //            List = new Collection<SpecsValue>()
+        //        }).ToList();
+        //        IEnumerable<int> namedSpecIds = nameUsedSpecs.Select(ms => ms.Id);
+        //        foreach (Product p in products)
+        //        {
+        //            foreach (SpecsValue sv in p.ProductSpecsValues.Select(psv => psv.SpecsValue).Where(x => namedSpecIds.Contains(x.SpecId)))
+        //            {
+        //                ModelWithList<SpecsValue> spec = nameUsedSpecs.FirstOrDefault(s => s.Id == sv.SpecId);
+        //                if (!spec.List.Any(s => s.Id == sv.Id))
+        //                    spec.List.Add(sv);
+        //            }
+        //        }
+        //        ViewBag.Specs = nameUsedSpecs;
+        //        ViewBag.SpecIds = namedSpecIds;
+        //        ViewBag.Current = product.Id;
+        //        string localName2 = IProduct.GetProductNameCounted(product);
+        //        CreateMetaData(ConstantsService.PRODUCT, await _breadcrumbs.GetProductBreadcrumbs(product.Model.CategoryId), localName2, false, false);
+        //        stopwatch.Stop();
+        //        return stopwatch.Elapsed.TotalMilliseconds;
+        //    }
+        //    IList<double> method1 = new List<double>();
+        //    IList<double> method2 = new List<double>();
+        //    for (int i = 0; i < count; i++)
+        //    {
+        //        //double result1 = await Method1(id);
+        //        //method1.Add(result1);
+        //        double result2 = await Method2(id);
+        //        method2.Add(result2);
+        //        //if (i % 2 == 0)
+        //        //{
+        //        //    double result1 = await Method1(id);
+        //        //    method1.Add(result1);
+        //        //}
+        //        //else
+        //        //{
+        //        //    double result2 = await Method2(id);
+        //        //    method2.Add(result2);
+        //        //}
+        //    }
+        //    //for (int i = 0; i < count; i++)
+        //    //{
+        //    //    if (i % 2 != 0)
+        //    //    {
+        //    //        double result1 = await Method1(id);
+        //    //        method1.Add(result1);
+        //    //    }
+        //    //    else
+        //    //    {
+        //    //        double result2 = await Method2(id);
+        //    //        method2.Add(result2);
+        //    //    }
+        //    //}
+        //    double average1 = method1.Sum(x => x) / method1.Count;
+        //    double average2 = method2.Sum(x => x) / method2.Count;
+        //    List<string> strings = new()
+        //    {
+        //        //$"The reslut of method 1 - [{string.Join(" | ", method1)}]",
+        //        //$"Average is {average1}",
+        //        $"The reslut of method 2 - [{string.Join(" | ", method2)}]",
+        //        $"Average is {average2}"
+        //};
+        //    return View(strings);
+        //}
     }
 }

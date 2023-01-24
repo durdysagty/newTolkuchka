@@ -25,7 +25,7 @@ namespace newTolkuchka.Services
                 Product product = _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, new[] { order.Id } } }).FirstOrDefault();
                 if (product != null)
                 {
-                    order.ProductName = IProduct.GetProductName(product);
+                    order.ProductName = IProduct.GetProductNameCounted(product);
                     order.Price = IProduct.GetConvertedPrice(product.NewPrice != null ? (decimal)product.NewPrice : product.Price);
                     order.Amount = order.Price * order.Quantity;
                     order.Image = PathService.GetImageRelativePath(ConstantsService.PRODUCT + "/small", product.Id);
@@ -53,7 +53,7 @@ namespace newTolkuchka.Services
                     adminOrder = new()
                     {
                         ProductId = o.ProductId,
-                        Name = IProduct.GetProductName(await _product.GetFullProductAsync(o.ProductId)),
+                        Name = IProduct.GetProductNameCounted(await _product.GetFullProductAsync(o.ProductId)),
                         OrderPrice = o.OrderPrice,
                         SerialNumbers = o.Purchase?.SerialNumber,
                         Quantity = 1
@@ -74,7 +74,7 @@ namespace newTolkuchka.Services
             IEnumerable<AdminStoreOrder> adminStoreOrders = GetOrdersByInvoiceId(id).Select(o => new AdminStoreOrder
             {
                 Id= o.Id,
-                Name = IProduct.GetProductName(_product.GetFullProductAsync(o.ProductId).Result),
+                Name = IProduct.GetProductNameCounted(_product.GetFullProductAsync(o.ProductId).Result),
                 OrderPrice = o.OrderPrice,
                 ProductId= o.ProductId,
                 PurchaseId = o.PurchaseId
