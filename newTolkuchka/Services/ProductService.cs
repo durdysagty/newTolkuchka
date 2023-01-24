@@ -27,13 +27,16 @@ namespace newTolkuchka.Services
                 IsRecommended = p.IsRecommended,
                 IsNew = p.IsNew,
                 OnOrder = p.OnOrder,
+                DescRu = p.DescRu,
+                DescEn = p.DescEn,
+                DescTm = p.DescTm,
                 BrandId = p.Model.BrandId,
                 LineId = p.Model.LineId,
                 ModelId = p.ModelId
             }).FirstOrDefault();
             return editProduct;
         }
-        
+
         public async Task<Product> GetFullProductAsync(int id)
         {
             return await GetFullModels().Include(p => p.Model).ThenInclude(m => m.Warranty).FirstOrDefaultAsync(p => p.Id == id);

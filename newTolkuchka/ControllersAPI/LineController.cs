@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
+using newTolkuchka.Services;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 
@@ -31,7 +32,7 @@ namespace newTolkuchka.ControllersAPI
         [HttpPost]
         public async Task<Result> Post(Line line)
         {
-            bool isExist = _line.IsExist(line, _line.GetModels());
+            bool isExist = _line.IsExist(line, _line.GetModels(new Dictionary<string, object>() { { ConstantsService.BRAND, line.BrandId } }));
             if (isExist)
                 return Result.Already;
             await _line.AddModelAsync(line);
@@ -41,7 +42,7 @@ namespace newTolkuchka.ControllersAPI
         [HttpPut]
         public async Task<Result> Put(Line line)
         {
-            bool isExist = _line.IsExist(line, _line.GetModels().Where(x => x.Id != line.Id));
+            bool isExist = _line.IsExist(line, _line.GetModels(new Dictionary<string, object>() { { ConstantsService.BRAND, line.BrandId } }).Where(x => x.Id != line.Id));
             if (isExist)
                 return Result.Already;
             _line.EditModel(line);

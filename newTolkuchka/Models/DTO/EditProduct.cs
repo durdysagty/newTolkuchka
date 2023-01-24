@@ -15,6 +15,9 @@ namespace newTolkuchka.Models
         public bool IsRecommended { get; set; }
         public bool IsNew { get; set; }
         public bool OnOrder { get; set; }
+        public string DescRu { get; set; }
+        public string DescEn { get; set; }
+        public string DescTm { get; set; }
         public int BrandId { get; set; }
         public int? LineId { get; set; }
         public int? ModelId { get; set; }

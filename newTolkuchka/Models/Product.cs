@@ -16,6 +16,14 @@ namespace newTolkuchka.Models
         public bool IsRecommended { get; set; }
         public bool IsNew { get; set; }
         public bool OnOrder { get; set; }
+        [MaxLength(1000)]
+        public string DescRu { get; set; }
+
+        [MaxLength(1000)]
+        public string DescEn { get; set; }
+
+        [MaxLength(1000)]
+        public string DescTm { get; set; }
         public int? ModelId { get; set; }
         public Model Model { get; set; }
         public ICollection<ProductSpecsValue> ProductSpecsValues { get; set; }
