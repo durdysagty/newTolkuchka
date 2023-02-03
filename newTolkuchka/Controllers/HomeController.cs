@@ -373,7 +373,7 @@ namespace newTolkuchka.Controllers
                 articles,
                 pagination,
                 lastPage,
-                noArticle = articles != string.Empty ? null : _localizer["noProduct"].Value
+                noArticle = articles != string.Empty ? null : _localizer["noArticle"].Value
             });
         }
         [Route($"{ConstantsService.ARTICLE}/{{id}}")]

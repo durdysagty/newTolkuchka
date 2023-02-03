@@ -70,7 +70,8 @@ namespace newTolkuchka.Services.Interfaces
                     string id = $"prod{p.Id}";
                     string[] ids = products.Where(x => x.Id != p.Id).Select(x => $"prod{x.Id}").ToArray();
                     string strIds = string.Join(", ", ids);
-                    string image = $"<span><img width =\"200\" height=\"200\" style=\"width: 100%; height: auto\" alt=\"{p.Name}\" src=\"{p.ImageMain}\" class=\"pb-1\" role=\"button\" onclick=\"changeImage({id}, [{strIds}])\" /></span>";
+                    int width = products.Count() > 4 ? 50: 100;
+                    string image = $"<span><img width =\"200\" height=\"200\" style=\"width: {width}%; height: auto\" alt=\"{p.Name}\" src=\"{p.ImageMain}\" class=\"pb-1\" role=\"button\" onclick=\"changeImage({id}, [{strIds}])\" /></span>";
                     i += image;
                 }
             int q = 0;

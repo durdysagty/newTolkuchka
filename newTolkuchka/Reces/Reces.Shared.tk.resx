@@ -294,6 +294,9 @@
   <data name="no-user" xml:space="preserve">
     <value>Biz sizi tapyp bilmedik. Loginiňizi täzeden ýazyp görüň ýa-da saýt administrasiýasyna ýüz tutuň.</value>
   </data>
+  <data name="noArticle" xml:space="preserve">
+    <value>Bagyşlaň, entek makala ýok!</value>
+  </data>
   <data name="noProduct" xml:space="preserve">
     <value>Bagyşlaň, saýlawyňyza laýyk önüm ýok!</value>
   </data>

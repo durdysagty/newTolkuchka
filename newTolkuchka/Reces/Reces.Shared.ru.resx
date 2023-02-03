@@ -294,6 +294,9 @@
   <data name="no-user" xml:space="preserve">
     <value>Нам не удалось определить Вас. Попробуйте ввести ваш логин заново или свяжитесь с администрацией сайта.</value>
   </data>
+  <data name="noArticle" xml:space="preserve">
+    <value>К сожалению, пока нет статей!</value>
+  </data>
   <data name="noProduct" xml:space="preserve">
     <value>К сожалению, по выбранным параметрам товаров нет!</value>
   </data>

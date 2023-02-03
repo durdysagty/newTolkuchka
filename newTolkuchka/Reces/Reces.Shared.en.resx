@@ -294,6 +294,9 @@
   <data name="no-user" xml:space="preserve">
     <value>We were unable to identify you. Try entering your login again or contact the site administration.</value>
   </data>
+  <data name="noArticle" xml:space="preserve">
+    <value>Sorry, there are no articles yet!</value>
+  </data>
   <data name="noProduct" xml:space="preserve">
     <value>Sorry, there are no products matching your selection!</value>
   </data>
