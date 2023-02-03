@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
+using newTolkuchka.Services;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
-using System.Text.Json;
 
 namespace newTolkuchka.ControllersAPI
 {
@@ -44,10 +44,7 @@ namespace newTolkuchka.ControllersAPI
         [HttpPost]
         public async Task<Result> Post([FromForm] PurchaseInvoice purchaseInvoice, [FromForm] string jsonPurchases)
         {
-            IList<AdminPurchase> adminPurchases = JsonSerializer.Deserialize<List<AdminPurchase>>(jsonPurchases, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+            IList<AdminPurchase> adminPurchases = JsonService.Deserialize<List<AdminPurchase>>(jsonPurchases);
             if (!adminPurchases.Any())
                 return Result.Fail;
             purchaseInvoice.Date = DateTimeOffset.Now.ToUniversalTime();
@@ -59,10 +56,7 @@ namespace newTolkuchka.ControllersAPI
         [HttpPut]
         public async Task<Result> Put([FromForm] PurchaseInvoice purchaseInvoice, [FromForm] string jsonPurchases)
         {
-            IList<AdminPurchase> adminPurchases = JsonSerializer.Deserialize<List<AdminPurchase>>(jsonPurchases, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+            IList<AdminPurchase> adminPurchases = JsonService.Deserialize<List<AdminPurchase>>(jsonPurchases);
             if (!adminPurchases.Any())
                 return Result.Fail;
             // result will not to be saved, becouse result can be Fail

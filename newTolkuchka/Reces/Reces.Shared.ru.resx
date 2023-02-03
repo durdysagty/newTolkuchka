@@ -141,11 +141,20 @@
   <data name="all" xml:space="preserve">
     <value>Весь ассортимент в каталоге.</value>
   </data>
+  <data name="all-articles" xml:space="preserve">
+    <value>все статьи</value>
+  </data>
   <data name="amount" xml:space="preserve">
     <value>Сумма</value>
   </data>
   <data name="announces" xml:space="preserve">
     <value>Объявления</value>
+  </data>
+  <data name="article" xml:space="preserve">
+    <value>Статья</value>
+  </data>
+  <data name="articles" xml:space="preserve">
+    <value>Статьи</value>
   </data>
   <data name="attempts" xml:space="preserve">
     <value>Было слишком много попыток ввода. Ваш аккаунт временно заблокирован. Попробуйте войти позже!</value>

@@ -1,0 +1,21 @@
+﻿@model IEnumerable<Heading>
+<div class="d-flex mb-4">
+    @{
+        if (Model.Any())
+        {
+            <div class="d-flex" id="sortby">
+                @foreach (Heading heading in Model)
+                {
+                    <p class="ms-2" role="button" onclick="setHeadingId(@heading.Id)" name="sort">@heading.Name</p>
+                }
+            </div>
+        }
+    }
+</div>
+<div class="row me-2 me-md-0" id="articles">
+</div>
+<div class="text-center" id="pagination">
+</div>
+@section Scripts {
+    <script src="~/js/articles.js" asp-append-version="true"></script>
+}

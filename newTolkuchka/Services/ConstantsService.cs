@@ -8,6 +8,7 @@ namespace newTolkuchka.Services
         public static string UserHashKey(int id) => $"{USER}{id}{HASH}";
         public static string EmpHashKey(int id) => $"{EMPLOYEE}{id}{HASH}";
         // lang standarts
+        public const string CULTURE = "culture";
         public const string RU = "ru";
         public const string EN = "en";
         public const string TK = "tk";
@@ -45,6 +46,8 @@ namespace newTolkuchka.Services
         public const string SLASH = "/";
         public const string HOME = "home";
         public const string INDEX = "index";
+        public const string ARTICLES = "articles";
+        public const string ARTICLE = "article";
         public const string BRANDS = "brands";
         public const string BRAND = "brand";
         public const string CATEGORIES = "categories";
@@ -55,6 +58,8 @@ namespace newTolkuchka.Services
         public const string EMPLOYEE = "employee";
         public const string ENTRIES = "entries";
         public const string ENTRY = "entry";
+        public const string HEADINGS = "headings";
+        public const string HEADING = "heading";
         public const string INVOICES = "invoices";
         public const string INVOICE = "invoice";
         public const string LINES = "lines";
@@ -106,5 +111,8 @@ namespace newTolkuchka.Services
         public const int BRANDMAXIMAGE = 1;
         public const int SPECSVALUEMAXIMAGE = 1;
         public const int SLIDEMAXIMAGE = 3;
+        public const int ARTICLEMAXIMAGE = 1;
+        //other stuff
+        public const int ARTICLEMAXLENGTH = 4000;
     }
 }

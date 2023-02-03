@@ -134,3 +134,15 @@ s {
         font-size: 1.4rem
     }
 }
+.vrh {
+    overflow-y: hidden
+}
+
+.vrw {
+    overflow-x: hidden
+}
+
+.small {
+    line-height: 1px;
+    font-size: 0.6rem
+}

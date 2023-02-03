@@ -5,6 +5,7 @@ namespace newTolkuchka.Services
 {
     public class CultureProvider : RequestCultureProvider
     {
+        public enum Culture { Ru, En, Tm }
         public static string Lang { get; set; }
         public static string LangState { get; set; }
         public static string Host { get; set; }
@@ -13,6 +14,7 @@ namespace newTolkuchka.Services
         public static string SiteUrlRu { get; set; }
         public static string SiteUrlEn { get; set; }
         public static string SiteUrlTm { get; set; }
+        public static Culture CurrentCulture { get; set; }
 
         public static string GetLocalName(string ru, string en, string tk)
         {
@@ -28,9 +30,9 @@ namespace newTolkuchka.Services
         {
             return Lang switch
             {
-                ConstantsService.EN => 1,
-                ConstantsService.TK => 2,
-                _ => 0
+                ConstantsService.EN => (int)Culture.En,
+                ConstantsService.TK => (int)Culture.Tm,
+                _ => (int)Culture.Ru
             };
         }
         public override Task<ProviderCultureResult> DetermineProviderCultureResult(HttpContext httpContext)
@@ -42,18 +44,21 @@ namespace newTolkuchka.Services
             {
                 Lang = ConstantsService.EN;
                 LangState = ConstantsService.ENST;
+                CurrentCulture = Culture.En;
                 SiteName = host[0].Replace($"{ConstantsService.EN}.", "");
             }
             else if (Host.Contains($"{ConstantsService.TM}."))
             {
                 Lang = ConstantsService.TK;
                 LangState = ConstantsService.TMST;
+                CurrentCulture = Culture.Tm;
                 SiteName = host[0].Replace($"{ConstantsService.TM}.", "");
             }
             else
             {
                 Lang = ConstantsService.RU;
                 LangState = ConstantsService.RUST;
+                CurrentCulture = Culture.Ru;
                 SiteName = host[0];
             }
             SiteUrlRu = $"https://{SiteName}";

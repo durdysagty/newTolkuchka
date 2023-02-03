@@ -10,6 +10,7 @@ namespace newTolkuchka.Services.Interfaces
         // name is brand name to create link from brand
         // isBrand is used for to determine is product page came from category or brand
         Task<IList<Breadcrumb>> GetProductBreadcrumbs(int parentId, string name = null, bool isBrand = false);
+        IList<Breadcrumb> GetArticleBreadcrumbs();
         IList<Breadcrumb> GetBreadcrumbs();
     }
 }

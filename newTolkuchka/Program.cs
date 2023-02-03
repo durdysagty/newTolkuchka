@@ -7,9 +7,11 @@ using newTolkuchka;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services;
+using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 using System.Globalization;
 using System.Text;
+using System.Text.Json;
 
 string con = Secrets.dbConnection;
 int accessLevels = 4;
@@ -60,6 +62,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddMemoryCache();
 builder.Services.AddHttpContextAccessor();
 #region myservices
+builder.Services.AddScoped<IArticle, ArticleService>();
 builder.Services.AddScoped<IBrand, BrandService>();
 builder.Services.AddScoped<IBreadcrumbs, BreadcrumbsService>();
 builder.Services.AddScoped<ICategory, CategoryService>();
@@ -68,6 +71,7 @@ builder.Services.AddScoped<ICrypto, CryptoService>();
 builder.Services.AddScoped<IActionNoFile<Currency, AdminCurrency>, CurrencyService>();
 builder.Services.AddScoped<IEntry, EntryService>();
 builder.Services.AddScoped<IEmployee, EmployeeService>();
+builder.Services.AddScoped<IActionNoFile<Heading, Heading>, HeadingService>();
 builder.Services.AddScoped<IInvoice, InvoiceService>();
 builder.Services.AddScoped<IImage, ImageService>();
 builder.Services.AddScoped<IJwt, JwtService>();

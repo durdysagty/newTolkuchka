@@ -141,11 +141,20 @@
   <data name="all" xml:space="preserve">
     <value>You can find all available products in the categories section.</value>
   </data>
+  <data name="all-articles" xml:space="preserve">
+    <value>all articles</value>
+  </data>
   <data name="amount" xml:space="preserve">
     <value>Amount</value>
   </data>
   <data name="announces" xml:space="preserve">
     <value>Announcements</value>
+  </data>
+  <data name="article" xml:space="preserve">
+    <value>Article</value>
+  </data>
+  <data name="articles" xml:space="preserve">
+    <value>Articles</value>
   </data>
   <data name="attempts" xml:space="preserve">
     <value>There were too many input attempts. Your account is temporarily blocked. Try logging in later!</value>

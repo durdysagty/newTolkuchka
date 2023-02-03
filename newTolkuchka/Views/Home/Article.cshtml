@@ -1,0 +1,8 @@
+﻿@using System.Text.RegularExpressions;
+@model Article
+<div class="mb-3" style="text-align:justify">
+    <p>
+        <img class="p-3 float-start" style="max-height: 60vh" src="@PathService.GetImageRelativePath(ConstantsService.ARTICLE, Model.Id)" alt="@Model.Name" />
+        @Html.Raw($"<p>{Regex.Replace(Model.Text, "\n", "</p><p>")}</p>")
+    </p>
+</div>

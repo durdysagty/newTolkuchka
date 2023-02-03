@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
+using newTolkuchka.Services;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
-using System.Text.Json;
 
 namespace newTolkuchka.ControllersAPI
 {
@@ -50,10 +50,7 @@ namespace newTolkuchka.ControllersAPI
         [HttpPut]
         public async Task<Result> Put([FromForm] Invoice invoice, [FromForm] string jsonOrders)
         {
-            IList<AdminOrder> adminOrders = JsonSerializer.Deserialize<List<AdminOrder>>(jsonOrders, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+            IList<AdminOrder> adminOrders = JsonService.Deserialize<List<AdminOrder>>(jsonOrders);
             await _order.CorrectOrdersAsync(invoice.Id, adminOrders);
             _invoice.EditModel(invoice);
             await EditActAsync(invoice.Id, CreateInvoiceName(invoice));

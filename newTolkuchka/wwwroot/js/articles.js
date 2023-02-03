@@ -1,17 +1,21 @@
-﻿async function getItems() {
+﻿let h;
+async function getItems() {
     try {
-        const response = await fetch(`/index`, {
+        const response = await fetch(`/articlesbh?headingId=${h}`, {
             method: 'GET',
             credentials: 'include'
         })
         if (response.ok) {
             const result = await response.text()
-            $("#items").append(result)
+            $("#articles").html(result)
         }
-        checkOrders()
     }
     catch {
         console.log('!')
     }
 }
 getItems()
+function setHeadingId(id) {
+    h = id
+    getItems()
+}

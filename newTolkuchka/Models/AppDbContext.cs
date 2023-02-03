@@ -12,6 +12,7 @@ namespace newTolkuchka.Models
             _crypto = crypto;
         }
 
+        public DbSet<Article> Articles { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<CategoryAdLink> CategoryAdLinks { get; set; }
@@ -19,6 +20,8 @@ namespace newTolkuchka.Models
         public DbSet<Currency> Currencies { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Entry> Entries { get; set; }
+        public DbSet<Heading> Headings { get; set; }
+        public DbSet<HeadingArticle> HeadingArticles { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
         public DbSet<Line> Lines { get; set; }
         public DbSet<Model> Models { get; set; }
@@ -49,6 +52,8 @@ namespace newTolkuchka.Models
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            //builder.Entity<Article>().HasIndex(i => i.Name).IsUnique();
+            builder.Entity<Heading>().HasIndex(i => new { i.Language, i.Name }).IsUnique();
             builder.Entity<Employee>().HasIndex(i => i.Login).IsUnique();
             builder.Entity<User>().HasIndex(i => i.Email).IsUnique();
             builder.Entity<User>().HasIndex(i => i.Phone).IsUnique();
@@ -72,6 +77,7 @@ namespace newTolkuchka.Models
             builder.Entity<Warranty>().HasIndex(i => i.NameRu).IsUnique();
             builder.Entity<Warranty>().HasIndex(i => i.NameEn).IsUnique();
             builder.Entity<Warranty>().HasIndex(i => i.NameTm).IsUnique();
+            builder.Entity<HeadingArticle>().HasKey(x => new { x.HeadingId, x.ArticleId });
             builder.Entity<CategoryAdLink>().HasKey(x => new { x.CategoryId, x.StepParentId });
             builder.Entity<CategoryModelAdLink>().HasKey(x => new { x.CategoryId, x.ModelId });
             builder.Entity<CategoryModelAdLink>().HasOne(x => x.Model).WithMany(x => x.CategoryModelAdLinks).OnDelete(DeleteBehavior.ClientCascade);

@@ -7,6 +7,7 @@ using newTolkuchka.Services.Interfaces;
 using System.Reflection;
 using Type = System.Type;
 using ModelsType = newTolkuchka.Models.Type;
+using static newTolkuchka.Services.CultureProvider;
 
 namespace newTolkuchka.Services.Abstracts
 {
@@ -34,9 +35,37 @@ namespace newTolkuchka.Services.Abstracts
                 Type modelType = typeof(T);
                 switch (modelType.Name.ToLower())
                 {
+                    case ConstantsService.ARTICLE:
+                        IQueryable<Article> articles = models as IQueryable<Article>;
+                        if (paramsList.TryGetValue(ConstantsService.CULTURE, out object value))
+                        {
+                            Culture culture = (Culture)value;
+                            articles = articles.Where(x => x.HeadingArticles.Any(h => h.Heading.Language == culture));
+                        }
+                        if (paramsList.TryGetValue(ConstantsService.HEADING, out value))
+                        {
+                            int headingId = int.Parse(value.ToString());
+                            articles = articles.Where(x => x.HeadingArticles.Any(h => h.HeadingId == headingId));
+                        }
+                        models = (IQueryable<T>)articles;
+                        break;
+                    case ConstantsService.HEADING:
+                        IQueryable<Heading> headings = models as IQueryable<Heading>;
+                        if (paramsList.TryGetValue(ConstantsService.CULTURE, out value))
+                        {
+                            Culture culture = (Culture)value;
+                            headings = headings.Where(x => x.Language == culture);
+                        }
+                        if (paramsList.TryGetValue(ConstantsService.ARTICLE, out value))
+                        {
+                            int articleId = (int)value;
+                            headings = headings.Where(x => x.HeadingArticles.Any(ha => ha.ArticleId == articleId));
+                        }
+                        models = (IQueryable<T>)headings;
+                        break;
                     case ConstantsService.LINE:
                         IQueryable<Line> lines = models as IQueryable<Line>;
-                        if (paramsList.TryGetValue(ConstantsService.BRAND, out object value))
+                        if (paramsList.TryGetValue(ConstantsService.BRAND, out value))
                         {
                             int brandId = int.Parse(value.ToString());
                             lines = lines.Where(x => x.BrandId == brandId);
@@ -143,6 +172,10 @@ namespace newTolkuchka.Services.Abstracts
             Type modelType = typeof(T);
             switch (modelType.Name.ToLower())
             {
+                case ConstantsService.ARTICLE:
+                    IQueryable<Article> articles = fullModels as IQueryable<Article>;
+                    fullModels = (IQueryable<T>)articles.Include(a => a.HeadingArticles).ThenInclude(a => a.Heading);
+                    break;
                 case ConstantsService.BRAND:
                     IQueryable<Brand> brands = fullModels as IQueryable<Brand>;
                     fullModels = (IQueryable<T>)brands.Include(b => b.Models);
@@ -223,9 +256,19 @@ namespace newTolkuchka.Services.Abstracts
             bool isPaged = false;
             switch (type.Name.ToLower())
             {
+                case ConstantsService.ARTICLE:
+                    IEnumerable<Article> preArticles = preModels as IEnumerable<Article>;
+                    preArticles = preArticles.OrderByDescending(x => x.Id);
+                    adminModels = (IEnumerable<TAdmin>)preArticles.Select(x => new AdminArticle
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        Headings = string.Join(", ", x.HeadingArticles.Select(h => h.Heading.Name))
+                    });
+                    break;
                 case ConstantsService.BRAND:
                     IEnumerable<Brand> preBrands = preModels as IEnumerable<Brand>;
-                    preBrands = preBrands.OrderBy(x => x.Name);
+                    //preBrands = preBrands.OrderBy(x => x.Name);
                     adminModels = (IEnumerable<TAdmin>)preBrands.Select(x => new AdminBrand
                     {
                         Id = x.Id,
@@ -538,54 +581,58 @@ namespace newTolkuchka.Services.Abstracts
 
         public async Task<bool> IsBinded(int id)
         {
-            string typeName = typeof(T).Name;
+            string typeName = typeof(T).Name.ToLower();
             switch (typeName)
             {
-                case "Brand":
+                case ConstantsService.BRAND:
                     if (await _con.Lines.Where(x => x.BrandId == id).AnyAsync())
                         return true;
                     if (await _con.Models.Where(x => x.BrandId == id).AnyAsync())
                         return true;
                     break;
-                case "Category":
+                case ConstantsService.CATEGORY:
                     if (await _con.Categories.Where(x => x.ParentId == id).AnyAsync())
                         return true;
                     if (await _con.Models.Where(x => x.CategoryId == id).AnyAsync())
                         return true;
                     break;
-                case "Line":
+                case ConstantsService.HEADING:
+                    if (await _con.HeadingArticles.Where(x => x.HeadingId == id).AnyAsync())
+                        return true;
+                    break;
+                case ConstantsService.LINE:
                     if (await _con.Models.Where(x => x.LineId == id).AnyAsync())
                         return true;
                     break;
-                case "Model":
+                case ConstantsService.MODEL:
                     return await _con.Products.Where(x => x.ModelId == id).AnyAsync();
-                case "Position":
+                case ConstantsService.POSITION:
                     return await _con.Employees.Where(x => x.PositionId == id).AnyAsync();
-                case "Product":
+                case ConstantsService.PRODUCT:
                     if (await _con.Purchases.Where(x => x.ProductId == id).AnyAsync())
                         return true;
                     if (await _con.Orders.Where(x => x.ProductId == id).AnyAsync())
                         return true;
                     break;
-                case "Spec":
+                case ConstantsService.SPEC:
                     return await _con.SpecsValues.Where(x => x.SpecId == id).AnyAsync();
-                case "SpecsValue":
+                case ConstantsService.SPECSVALUE:
                     return await _con.ProductSpecsValues.Where(x => x.SpecsValueId == id).AnyAsync();
-                case "SpecsValueMod":
+                case ConstantsService.SPECSVALUEMOD:
                     return await _con.ProductSpecsValueMods.Where(x => x.SpecsValueModId == id).AnyAsync();
-                case "Type":
+                case ConstantsService.TYPE:
                     return await _con.Models.Where(x => x.TypeId == id).AnyAsync();
-                case "Warranty":
+                case ConstantsService.WARRANTY:
                     return await _con.Models.Where(x => x.WarrantyId == id).AnyAsync();
-                case "Supplier":
+                case ConstantsService.SUPPLIER:
                     return await _con.PurchaseInvoices.Where(x => x.SupplierId == id).AnyAsync();
-                case "PurchaseInvoice":
+                case ConstantsService.PURCHASEINVOICE:
                     return await _con.Purchases.Where(x => x.PurchaseInvoiceId == id).AnyAsync();
-                case "Purchase":
+                case ConstantsService.PURCHASE:
                     return await _con.Orders.Where(x => x.PurchaseId == id).AnyAsync();
-                case "Invoice":
+                case ConstantsService.INVOICE:
                     return await _con.Orders.Where(x => x.InvoiceId == id).AnyAsync();
-                case "Currency":
+                case ConstantsService.CURRENCY:
                     // to be corrected
                     return true;
                 default:

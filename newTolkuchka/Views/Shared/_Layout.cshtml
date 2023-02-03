@@ -4,11 +4,12 @@
     int? width = ViewBag.WindowWidth;
     IEnumerable<Category> mainCategories = ViewBag.MainCategories;
     //href, name
-    IEnumerable<(string, string, string)> mainLinks = new (string, string, string)[9] {
+    IEnumerable<(string, string, string)> mainLinks = new (string, string, string)[10] {
         ($"tel:{ConstantsService.CURRENTPHONE}", ConstantsService.CURRENTPHONE, null),
         ($"mailto:{ConstantsService.INFOEMAIL}{CultureProvider.SiteName}", $"{ConstantsService.INFOEMAIL}{CultureProvider.SiteName}", null),
         (ConstantsService.ABOUT, Localizer[ConstantsService.ABOUT].Value, "d-none d-lg-inline"),
         (ConstantsService.DELIVERY, Localizer[ConstantsService.DELIVERY].Value, "d-none d-lg-inline"),
+        (ConstantsService.ARTICLES, Localizer[ConstantsService.ARTICLES].Value, "d-none d-lg-inline"),
         (ConstantsService.BRANDS, Localizer[ConstantsService.BRANDS].Value, "d-none d-lg-inline"),
         (ConstantsService.CATEGORIES, Localizer[ConstantsService.CATEGORIES].Value, "d-none d-lg-inline"),
         (ConstantsService.LIKED, Localizer[ConstantsService.LIKED].Value, "d-none d-lg-inline"),
@@ -205,7 +206,7 @@
                             </a>
                         </div>
                         <div class="@col pt-1">
-                            @foreach ((string, string) l in mainLinks.Take(4).Select(m => (m.Item1, m.Item2)))
+                            @foreach ((string, string) l in mainLinks.Take(5).Select(m => (m.Item1, m.Item2)))
                             {
                                 <p>
                                     @{
@@ -215,7 +216,7 @@
                             }
                         </div>
                         <div class="@col pt-1">
-                            @foreach ((string, string) l in mainLinks.Skip(4).Select(m => (m.Item1, m.Item2)))
+                            @foreach ((string, string) l in mainLinks.Skip(5).Select(m => (m.Item1, m.Item2)))
                             {
                                 <p>
                                     @{

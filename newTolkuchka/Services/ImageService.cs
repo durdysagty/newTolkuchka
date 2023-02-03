@@ -11,8 +11,15 @@ namespace newTolkuchka.Services
         public async Task SetImage(string path, IFormFile image, int w, int h)
         {
             Image file = await Image.LoadAsync(image.OpenReadStream());
-            bool height = (double)file.Width / w < (double)file.Height / h;
-            file.Mutate(m => m.Resize(height ? 0 : w, height ? h : 0).BackgroundColor(Color.White).Pad(w, h, Color.White));
+            if (w == 0 && h == 0)
+            {
+                file.Mutate(m => m.Resize(0, 300));
+            }
+            else
+            {
+                bool height = (double)file.Width / w < (double)file.Height / h;
+                file.Mutate(m => m.Resize(height ? 0 : w, height ? h : 0).BackgroundColor(Color.White).Pad(w, h, Color.White));
+            }
             await file.SaveAsJpegAsync(path);
             file.Dispose();
         }

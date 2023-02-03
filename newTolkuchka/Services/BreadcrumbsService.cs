@@ -53,7 +53,7 @@ namespace newTolkuchka.Services
             _breadcrumbs.Add(
                 new Breadcrumb
                 {
-                    Name = _localizer["brands"],
+                    Name = _localizer[ConstantsService.BRANDS],
                     Link = ConstantsService.BRANDS
                 });
             return _breadcrumbs;
@@ -70,6 +70,17 @@ namespace newTolkuchka.Services
                     });
             else
                 _ = await GetCategoryBreadcrumbsAsync(parentId);
+            return _breadcrumbs;
+        }
+
+        public IList<Breadcrumb> GetArticleBreadcrumbs()
+        {
+            _breadcrumbs.Add(
+                new Breadcrumb
+                {
+                    Name = _localizer[ConstantsService.ARTICLES],
+                    Link = ConstantsService.ARTICLES
+                });
             return _breadcrumbs;
         }
 

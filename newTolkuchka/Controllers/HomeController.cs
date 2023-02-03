@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿#region using
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Localization;
@@ -6,16 +7,12 @@ using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Reces;
 using newTolkuchka.Services;
-using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Security.Claims;
 using System.Text.Json;
-
+#endregion
 namespace newTolkuchka.Controllers
 {
     public class HomeController : Controller
@@ -28,6 +25,8 @@ namespace newTolkuchka.Controllers
         private readonly IBrand _brand;
         private readonly IProduct _product;
         private readonly ISlide _slide;
+        private readonly IActionNoFile<Heading, Heading> _heading;
+        private readonly IArticle _article;
         private readonly IUser _user;
         private readonly IInvoice _invoice;
         private readonly IOrder _order;
@@ -37,7 +36,7 @@ namespace newTolkuchka.Controllers
         private readonly static int _deliveryFree = 500;
         private readonly static int _deliveryPrice = 20;
 
-        public HomeController(IStringLocalizer<Shared> localizer, IBreadcrumbs breadcrumbs, IPath path, ICategory category, IBrand brand, IProduct product, ISlide slide, IUser user, IInvoice invoice, IOrder order, ILogin login, IActionNoFile<Currency, AdminCurrency> currency, IMemoryCache memoryCache)
+        public HomeController(IStringLocalizer<Shared> localizer, IBreadcrumbs breadcrumbs, IPath path, ICategory category, IBrand brand, IProduct product, ISlide slide, IActionNoFile<Heading, Heading> heading, IArticle article, IUser user, IInvoice invoice, IOrder order, ILogin login, IActionNoFile<Currency, AdminCurrency> currency, IMemoryCache memoryCache)
         {
             _localizer = localizer;
             _breadcrumbs = breadcrumbs;
@@ -46,6 +45,8 @@ namespace newTolkuchka.Controllers
             _brand = brand;
             _product = product;
             _slide = slide;
+            _heading = heading;
+            _article = article;
             _user = user;
             _order = order;
             _invoice = invoice;
@@ -67,11 +68,25 @@ namespace newTolkuchka.Controllers
         }
         [Route($"{ConstantsService.INDEX}")]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 7200)]
-        public async Task<string> Items(int count)
+        public async Task<string> Items()
         {
+            int count = 6;
+            int? width = GetScreenWidth();
+            if (width is < 1200 and > 768)
+                count = 4;
+            else if (width < 351)
+                count = 4;
+            const int col = 12;
+            const int xs = 6;
+            const int sm = 4;
+            const int md = 3;
+            const int lg = 3;
+            const int xl = 2;
+            const int xxl = 2;
+            const int xxxl = 2;
             static IEnumerable<string> GetHtmlProducts(IList<IEnumerable<UIProduct>> products)
             {
-                return products.Select(u => IProduct.GetHtmlProduct(u, 12, 6, 4, 3, 3, 2, 2, 2));
+                return products.Select(u => IProduct.GetHtmlProduct(u, col, xs, sm, md, lg, xl, xxl, xxxl));
             }
             static string GetItems(IEnumerable<string> strings)
             {
@@ -98,11 +113,22 @@ namespace newTolkuchka.Controllers
                     categories.Add(mainCategory);
                 }
             }
-            string html = $"<p class=\"fs-5 px-3 mb-2 border-bottom border-primary\"><a href=\"/{ConstantsService.NOVELTIES}\">{_localizer[ConstantsService.NOVELTIES].Value}</a></p><div class=\"row\">{GetItems(newProducts)}</div>";
-            html += $"<p class=\"fs-5 px-3 mb-2 border-bottom border-primary\"><a href=\"/{ConstantsService.RECOMMENDED}\">{_localizer[ConstantsService.RECOMMENDED].Value}</a></p><div class=\"row\">{GetItems(recProducts)}</div>";
+            string template = "<p class=\"fs-5 px-3 mb-2 border-bottom border-primary\"><a href=\"/{0}\">{1}</a></p><div class=\"row\">{2}</div>";
+            string html = string.Format(template, ConstantsService.NOVELTIES, _localizer[ConstantsService.NOVELTIES].Value, GetItems(newProducts));
+            html += string.Format(template, ConstantsService.RECOMMENDED, _localizer[ConstantsService.RECOMMENDED].Value, GetItems(recProducts));
             foreach ((Category, IEnumerable<string>) c in categories)
             {
-                html += $"<p class=\"fs-5 px-3 mb-2 border-bottom border-primary\"><a href=\"/{PathService.GetModelUrl(ConstantsService.CATEGORY, c.Item1.Id)}\">{CultureProvider.GetLocalName(c.Item1.NameRu, c.Item1.NameEn, c.Item1.NameTm)}</a></p><div class=\"row\">{GetItems(c.Item2)}</div>";
+                html += string.Format(template, PathService.GetModelUrl(ConstantsService.CATEGORY, c.Item1.Id), CultureProvider.GetLocalName(c.Item1.NameRu, c.Item1.NameEn, c.Item1.NameTm), GetItems(c.Item2));
+            }
+            IEnumerable<Article> articles = _article.GetModels(new Dictionary<string, object> { { ConstantsService.CULTURE, CultureProvider.CurrentCulture } }).OrderByDescending(a => a.Id).Take(count);
+            if (articles.Count() >= count)
+            {
+                string articleStrings = null;
+                foreach (Article a in articles)
+                {
+                    articleStrings += $"<div class=\"col-{col} col-xs-{xs} col-sm-{sm} col-md-{md} col-lg-{lg} col-xl-{xl} col-xxl-{xxl} col-xxxl-{xxxl}\"><a href=\"/{ConstantsService.ARTICLE}/{a.Id}\"><div class=\"p-1 text-center vrw\"><img class=\"rounded-1\" style=\"width: auto; height: 70px\" src=\"{PathService.GetImageRelativePath(ConstantsService.ARTICLE, a.Id)}\" alt=\"{a.Name}\" /></div><div><small class=\"small text-center\">{a.Name}</small></div></a></div>";
+                }
+                html += $"<div class=\"bg-light\"><div class=\"row justify-content-center\">{articleStrings}</div><div class=\"d-flex justify-content-end\"><a href=\"{ConstantsService.ARTICLES}\"><small>{_localizer["all-articles"].Value}</small></a></div></div>";
             }
             return html;
         }
@@ -134,7 +160,6 @@ namespace newTolkuchka.Controllers
             CreateMetaData(ConstantsService.CATEGORY, await _breadcrumbs.GetCategoryBreadcrumbsAsync(category.ParentId), localName, true);
             return View();
         }
-
         [Route($"{ConstantsService.BRAND}/{{id}}")]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
         public async Task<IActionResult> Brand(int id)
@@ -212,26 +237,6 @@ namespace newTolkuchka.Controllers
         {
             CreateMetaData(special, _breadcrumbs.GetBreadcrumbs(), null, true);
             return View();
-        }
-        [Route(ConstantsService.ABOUT)]
-        [Route($"{ConstantsService.DELIVERY}")]
-        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 259200)]
-        public async Task<IActionResult> Content()
-        {
-            string p = CultureProvider.Path.TrimStart(new char[] { '/' });
-            string content = null;
-            switch (p)
-            {
-                case ConstantsService.ABOUT:
-                    CreateMetaData(ConstantsService.ABOUT, _breadcrumbs.GetBreadcrumbs(), _localizer[ConstantsService.ABOUT].Value, true);
-                    content = await System.IO.File.ReadAllTextAsync(_path.GetHtmlAboutBodyPath(CultureProvider.Lang));
-                    break;
-                case ConstantsService.DELIVERY:
-                    CreateMetaData(ConstantsService.DELIVERY, _breadcrumbs.GetBreadcrumbs(), _localizer[ConstantsService.DELIVERY].Value, true);
-                    content = await System.IO.File.ReadAllTextAsync(_path.GetHtmlDeliveryBodyPath(CultureProvider.Lang));
-                    break;
-            }
-            return View(null, content);
         }
         [Route($"{ConstantsService.PRODUCTS}")]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 7200)]
@@ -319,6 +324,78 @@ namespace newTolkuchka.Controllers
                 noProduct = uiProducts.Any() ? null : _localizer["noProduct"].Value
             });
         }
+        [Route($"{ConstantsService.ARTICLES}")]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 10000)]
+        public IActionResult Articles()
+        {
+            IEnumerable<Heading> headings = _heading.GetModels(new Dictionary<string, object> { { ConstantsService.CULTURE, CultureProvider.CurrentCulture } });
+            CreateMetaData(ConstantsService.ARTICLES, _breadcrumbs.GetBreadcrumbs());
+            return View(headings);
+        }
+        [Route($"{ConstantsService.ARTICLES}bh")] // (bh for by headings)
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 10000)]
+        public string Articles(int? headingId, int page)
+        {
+            int? width = GetScreenWidth();
+            var pp = width switch
+            {
+                < 576 => 20,
+                < 992 => 40,
+                < 1400 => 60,
+                _ => 80,
+            };
+            ;
+            Dictionary<string, object> parameters = new() { { ConstantsService.CULTURE, CultureProvider.CurrentCulture } };
+            if (headingId != null)
+            {
+                parameters.Add(ConstantsService.HEADING, headingId);
+            }
+            IEnumerable<Article> articles = _article.GetModels(parameters).Skip(pp * page).Take(pp);
+            const int col = 12;
+            //const int xs = 6;
+            const int sm = 6;
+            //const int md = 3;
+            const int lg = 4;
+            //const int xl = 2;
+            const int xxl = 3;
+            //const int xxxl = 3;
+            string html = string.Empty;
+            foreach (Article a in articles)
+            {
+                html += $"<div class=\"col-{col} col-sm-{sm} col-lg-{lg} col-xxl-{xxl}\"><a href=\"/{ConstantsService.ARTICLE}/{a.Id}\"><div class=\"p-1 text-center vrw\"><img class=\"rounded-1\" style=\"width: auto; height: 120px\" src=\"{PathService.GetImageRelativePath(ConstantsService.ARTICLE, a.Id)}\" alt=\"{a.Name}\" /></div><p>{a.Name}</p><div class=\"text-end\"><small>{a.Date.ToShortDateString()}</small></div></a></div>";
+            }
+            return html;
+        }
+        [Route($"{ConstantsService.ARTICLE}/{{id}}")]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 259200)]
+        public async Task<IActionResult> Article(int id)
+        {
+            Article article = await _article.GetModelAsync(id);
+            if (article == null)
+                return GetNotFoundPage();
+            CreateMetaData(ConstantsService.ARTICLE, _breadcrumbs.GetArticleBreadcrumbs(), article.Name, true);
+            return View(article);
+        }
+        [Route(ConstantsService.ABOUT)]
+        [Route($"{ConstantsService.DELIVERY}")]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 259200)]
+        public async Task<IActionResult> Content()
+        {
+            string p = CultureProvider.Path.TrimStart(new char[] { '/' });
+            string content = null;
+            switch (p)
+            {
+                case ConstantsService.ABOUT:
+                    CreateMetaData(ConstantsService.ABOUT, _breadcrumbs.GetBreadcrumbs(), _localizer[ConstantsService.ABOUT].Value, true);
+                    content = await System.IO.File.ReadAllTextAsync(_path.GetHtmlAboutBodyPath(CultureProvider.Lang));
+                    break;
+                case ConstantsService.DELIVERY:
+                    CreateMetaData(ConstantsService.DELIVERY, _breadcrumbs.GetBreadcrumbs(), _localizer[ConstantsService.DELIVERY].Value, true);
+                    content = await System.IO.File.ReadAllTextAsync(_path.GetHtmlDeliveryBodyPath(CultureProvider.Lang));
+                    break;
+            }
+            return View(null, content);
+        }
         [Route($"{ConstantsService.CART}")]
         public async Task<IActionResult> Cart()
         {
@@ -358,10 +435,7 @@ namespace newTolkuchka.Controllers
         [Route($"{ConstantsService.ORDER}"), HttpPost]
         public async Task<JsonResult> Order([FromForm] string orders, [FromForm] DeliveryData deliveryData)
         {
-            CartOrder[] cartOrders = JsonSerializer.Deserialize<CartOrder[]>(orders, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+            CartOrder[] cartOrders = JsonService.Deserialize<CartOrder[]>(orders);
             if (cartOrders == null || !cartOrders.Any())
                 return new JsonResult(new
                 {
@@ -441,7 +515,6 @@ namespace newTolkuchka.Controllers
             CreateMetaData();
             return View();
         }
-
         [HttpGet("recovery/newpin/{guid}")]
         public async Task<IActionResult> PinRecovery(Guid guid)
         {
@@ -471,12 +544,11 @@ namespace newTolkuchka.Controllers
                 ViewData["PageName"] = modelName != null ? $"{modelName}" : pageName != null ? $"{_localizer[pageName]}" : null;
             ViewBag.Breadcrumbs = breadcrumbs ?? breadcrumbs;
             ViewBag.FilterScript = filterScript;
-            bool isWidthSet = HttpContext.Request.Cookies.TryGetValue("w", out string width);
-            if (isWidthSet)
+            int? width = GetScreenWidth();
+            if (width != null)
             {
-                int w = int.Parse(width);
-                ViewBag.WindowWidth = w;
-                if (ViewBag.MainCategories == null && w < ConstantsService.MOBILEWIDTH)
+                ViewBag.WindowWidth = width;
+                if (ViewBag.MainCategories == null && width < ConstantsService.MOBILEWIDTH)
                     ViewBag.MainCategories = _category.GetActiveCategoriesByParentId(0);
             }
             else
@@ -484,6 +556,14 @@ namespace newTolkuchka.Controllers
                 if (ViewBag.MainCategories == null)
                     ViewBag.MainCategories = _category.GetActiveCategoriesByParentId(0);
             }
+        }
+        private int? GetScreenWidth()
+        {
+            bool isWidthSet = HttpContext.Request.Cookies.TryGetValue("w", out string width);
+            if (isWidthSet)
+                return int.Parse(width);
+            else
+                return null;
         }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

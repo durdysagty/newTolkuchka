@@ -141,11 +141,20 @@
   <data name="all" xml:space="preserve">
     <value>Bar bolan önümleri kategoriýalar bölüminde tapyp bilersiňiz.</value>
   </data>
+  <data name="all-articles" xml:space="preserve">
+    <value>ahli makalalar</value>
+  </data>
   <data name="amount" xml:space="preserve">
     <value>Jemi</value>
   </data>
   <data name="announces" xml:space="preserve">
     <value>Bildirişler</value>
+  </data>
+  <data name="article" xml:space="preserve">
+    <value>Makala</value>
+  </data>
+  <data name="articles" xml:space="preserve">
+    <value>Makalalar</value>
   </data>
   <data name="attempts" xml:space="preserve">
     <value>Giriş synanyşyklary sany juda köp. Hasabyňyz wagtlaýyn petiklenýär. Biraz salymdan täzeden barlap görüň!</value>
