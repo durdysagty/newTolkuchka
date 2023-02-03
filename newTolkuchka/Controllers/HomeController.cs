@@ -295,16 +295,11 @@ namespace newTolkuchka.Controllers
                     products = list,
                     noProduct = _localizer["noProductAbsolutly"].Value
                 });
-            IList<IEnumerable<UIProduct>> /*IEnumerable<UIProduct>*/ uiProducts = _product.GetUIData(productsOnly, list, t, b, v, minp, maxp, sort, page, pp, out IList<AdminType> types, out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage);
+            IList<IEnumerable<UIProduct>> /*IEnumerable<UIProduct>*/ uiProducts = _product.GetUIData(productsOnly, list, t, b, v, minp, maxp, sort, page, pp,/* out IList<AdminType> types, */out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage);
             IEnumerable<string> products = uiProducts.Select(p => IProduct.GetHtmlProduct(p, 12, 6, 6, 4, 4, 3, 3, 3));
             return new JsonResult(new
             {
                 products,
-                types = new
-                {
-                    name = _localizer["type"].Value,
-                    types
-                },
                 brands = new
                 {
                     name = _localizer[ConstantsService.BRAND].Value,
@@ -383,7 +378,7 @@ namespace newTolkuchka.Controllers
             Article article = await _article.GetModelAsync(id);
             if (article == null)
                 return GetNotFoundPage();
-            CreateMetaData(ConstantsService.ARTICLE, _breadcrumbs.GetArticleBreadcrumbs(), article.Name, true);
+            CreateMetaData(ConstantsService.ARTICLE, _breadcrumbs.GetArticleBreadcrumbs(), article.Name);
             return View(article);
         }
         [Route(ConstantsService.ABOUT)]

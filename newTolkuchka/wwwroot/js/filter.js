@@ -125,24 +125,24 @@ async function setProducts(productsOnly) {
                 })
             }
             // types
-            if (data.types.types.length > 1) {
-                if (window.innerWidth > mobile)
-                    $("#filters").append(`<strong>${data.types.name}</strong>`)
-                else
-                    $("#slide-filters").append(`<strong>${data.types.name}</strong>`)
-                const types = data.types.types.map(t => {
-                    let id = `types${t.id}`
-                    const i = searchObj.t.includes(`${t.id}`)
-                    return `<div class="form-check d-flex">
-<input class="form-check-input" name="filt" ${i ? `checked` : null} onclick="setFilters()" type="checkbox" value="${t.id}" id="${id}" />
-<label class="form-check-label align-self-end" for="${id}">${t.name}</label>
-</div>`
-                })
-                if (window.innerWidth > mobile)
-                    types.forEach(t => $("#filters").append(t))
-                else
-                    types.forEach(t => $("#slide-filters").append(t))
-            }
+//            if (data.types.types.length > 1) {
+//                if (window.innerWidth > mobile)
+//                    $("#filters").append(`<strong>${data.types.name}</strong>`)
+//                else
+//                    $("#slide-filters").append(`<strong>${data.types.name}</strong>`)
+//                const types = data.types.types.map(t => {
+//                    let id = `types${t.id}`
+//                    const i = searchObj.t.includes(`${t.id}`)
+//                    return `<div class="form-check d-flex">
+//<input class="form-check-input" name="filt" ${i ? `checked` : null} onclick="setFilters()" type="checkbox" value="${t.id}" id="${id}" />
+//<label class="form-check-label align-self-end" for="${id}">${t.name}</label>
+//</div>`
+//                })
+//                if (window.innerWidth > mobile)
+//                    types.forEach(t => $("#filters").append(t))
+//                else
+//                    types.forEach(t => $("#slide-filters").append(t))
+//            }
             // brands
             if (data.brands.brands.length > 1) {
                 if (window.innerWidth > mobile)

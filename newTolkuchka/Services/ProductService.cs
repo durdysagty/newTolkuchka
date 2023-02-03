@@ -46,11 +46,11 @@ namespace newTolkuchka.Services
         {
             return await GetFullModels().Include(p => p.Model).ThenInclude(m => m.Warranty).AsNoTrackingWithIdentityResolution().FirstOrDefaultAsync(p => p.Id == id);
         }
-        public IList<IEnumerable<UIProduct>> GetUIData(bool productsOnly, IList<Product> products, int[] t, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp, out IList<AdminType> types, out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage)
+        public IList<IEnumerable<UIProduct>> GetUIData(bool productsOnly, IList<Product> products, int[] t, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp,/* out IList<AdminType> types, */out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage)
         {
             IList<Product> preProducts = new List<Product>();
             IList<IEnumerable<UIProduct>> uiProducts = new List<IEnumerable<UIProduct>>();
-            types = productsOnly ? null : new List<AdminType>();
+            //types = productsOnly ? null : new List<AdminType>();
             brands = productsOnly ? null : new List<Brand>();
             filters = productsOnly ? null : new List<Filter>();
             min = 0;
@@ -83,16 +83,16 @@ namespace newTolkuchka.Services
                 if (!productsOnly)
                 {
                     // prepare types for filter
-                    if (!types.Any(t => t.Id == p.Model.TypeId))
-                    {
-                        AdminType type = new()
-                        {
-                            Id = p.Model.TypeId,
-                            Name = CultureProvider.GetLocalName(p.Model.Type.NameRu, p.Model.Type.NameEn, p.Model.Type.NameTm)
-                        };
-                        types.Add(type);
-                    }
-                    types = types.OrderBy(x => x.Name).ToList();
+                    //if (!types.Any(t => t.Id == p.Model.TypeId))
+                    //{
+                    //    AdminType type = new()
+                    //    {
+                    //        Id = p.Model.TypeId,
+                    //        Name = CultureProvider.GetLocalName(p.Model.Type.NameRu, p.Model.Type.NameEn, p.Model.Type.NameTm)
+                    //    };
+                    //    types.Add(type);
+                    //}
+                    //types = types.OrderBy(x => x.Name).ToList();
                     // prepare brands for filter
                     if (!brands.Any(b => b.Id == p.Model.BrandId))
                     {

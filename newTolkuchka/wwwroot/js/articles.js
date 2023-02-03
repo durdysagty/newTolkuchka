@@ -20,7 +20,7 @@ async function getItems() {
                 $("#pagination").append(`<i class="fas fa-angle-double-right ps-1" role="button" onclick="setPage(${data.lastPage})"></i>`)
             }
             else
-                noArticle(data.noArticle)            
+                noArticle(data.noArticle)
         }
     }
     catch {
@@ -28,9 +28,21 @@ async function getItems() {
     }
 }
 getItems()
-function setHeadingId(id) {
+function setHeadingId(id, e) {
     h = id
     page = 0;
+    $("strong[name='heading']").each(function () {
+        const newElem = $('<p></p>', { html: $(this).html() })
+        $.each(this.attributes, function () {
+            newElem.attr(this.name, this.value)
+        })
+        $(this).replaceWith(newElem)
+    })
+    const newElem = $('<strong></strong>', { html: $(e.target).html() })
+    $.each(e.target.attributes, function () {
+        newElem.attr(this.name, this.value)
+    })
+    $(e.target).replaceWith(newElem)
     getItems()
 }
 function setPage(e, lastPage) {

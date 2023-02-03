@@ -6,7 +6,7 @@
             <div class="d-flex" id="sortby">
                 @foreach (Heading heading in Model)
                 {
-                    <p class="ms-2" role="button" onclick="setHeadingId(@heading.Id)" name="sort">@heading.Name</p>
+                    <p class="ms-2" role="button" onclick="setHeadingId(@heading.Id, event)" name="heading">@heading.Name</p>
                 }
             </div>
         }
