@@ -334,23 +334,25 @@ namespace newTolkuchka.Controllers
         }
         [Route($"{ConstantsService.ARTICLES}bh")] // (bh for by headings)
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 10000)]
-        public string Articles(int? headingId, int page)
+        public JsonResult Articles(int? headingId, int page)
         {
             int? width = GetScreenWidth();
-            var pp = width switch
+            int pp = width switch
             {
                 < 576 => 20,
                 < 992 => 40,
                 < 1400 => 60,
                 _ => 80,
             };
-            ;
             Dictionary<string, object> parameters = new() { { ConstantsService.CULTURE, CultureProvider.CurrentCulture } };
             if (headingId != null)
             {
                 parameters.Add(ConstantsService.HEADING, headingId);
             }
-            IEnumerable<Article> articles = _article.GetModels(parameters).Skip(pp * page).Take(pp);
+            int toSkip = page * pp;
+            IEnumerable<Article> preArticles = _article.GetModels(parameters);
+            int total = preArticles.Count();
+            preArticles = preArticles.OrderByDescending(a => a.Id).Skip(toSkip).Take(pp);
             const int col = 12;
             //const int xs = 6;
             const int sm = 6;
@@ -359,12 +361,20 @@ namespace newTolkuchka.Controllers
             //const int xl = 2;
             const int xxl = 3;
             //const int xxxl = 3;
-            string html = string.Empty;
-            foreach (Article a in articles)
+            string articles = string.Empty;
+            foreach (Article a in preArticles)
             {
-                html += $"<div class=\"col-{col} col-sm-{sm} col-lg-{lg} col-xxl-{xxl}\"><a href=\"/{ConstantsService.ARTICLE}/{a.Id}\"><div class=\"p-1 text-center vrw\"><img class=\"rounded-1\" style=\"width: auto; height: 120px\" src=\"{PathService.GetImageRelativePath(ConstantsService.ARTICLE, a.Id)}\" alt=\"{a.Name}\" /></div><p>{a.Name}</p><div class=\"text-end\"><small>{a.Date.ToShortDateString()}</small></div></a></div>";
+                articles += $"<div class=\"col-{col} col-sm-{sm} col-lg-{lg} col-xxl-{xxl}\"><a href=\"/{ConstantsService.ARTICLE}/{a.Id}\"><div class=\"p-1 text-center vrw\"><img class=\"rounded-1\" style=\"width: auto; height: 120px\" src=\"{PathService.GetImageRelativePath(ConstantsService.ARTICLE, a.Id)}\" alt=\"{a.Name}\" /></div><p>{a.Name}</p><div class=\"text-end\"><small>{a.Date.ToShortDateString()}</small></div></a></div>";
             }
-            return html;
+            string pagination = _article.GetPagination(pp, total, preArticles.Count(), toSkip, out int lp);
+            int lastPage = lp;
+            return new JsonResult(new
+            {
+                articles,
+                pagination,
+                lastPage,
+                noArticle = articles != string.Empty ? null : _localizer["noProduct"].Value
+            });
         }
         [Route($"{ConstantsService.ARTICLE}/{{id}}")]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 259200)]

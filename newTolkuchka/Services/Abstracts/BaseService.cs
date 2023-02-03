@@ -1,12 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
-using newTolkuchka.Models;
+﻿using Microsoft.Extensions.Localization;
 using newTolkuchka.Reces;
-using newTolkuchka.Services.Interfaces;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using Type = System.Type;
-
 namespace newTolkuchka.Services.Abstracts
 {
     public abstract class BaseService
