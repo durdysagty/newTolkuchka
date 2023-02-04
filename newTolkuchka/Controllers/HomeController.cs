@@ -240,16 +240,19 @@ namespace newTolkuchka.Controllers
         }
         [Route($"{ConstantsService.PRODUCTS}")]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 7200)]
-        public async Task<JsonResult> Products(string model, string ids, bool productsOnly, int[] t, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp = 100, string search = null)
+        public async Task<JsonResult> Products(string model, string id, bool productsOnly/*, int[] t*/, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp = 100, string search = null)
         {
             IList<Product> list = new List<Product>();
             IQueryable<Product> targetProducts = null;
+            bool brandsOnly = false;
             switch (model)
             {
                 case ConstantsService.CATEGORY:
                     // get all products in the category including subcategories
                     // maybe possibility to optimize
-                    IList<int> categoryIds = _category.GetAllCategoryIdsHaveProductsByParentId(int.Parse(ids));
+                    int categoryId = int.Parse(id);
+                    brandsOnly = !_product.GetModels(new Dictionary<string, object>() { { ConstantsService.CATEGORY, new List<int> { categoryId } } }).Any();
+                    IList<int> categoryIds = _category.GetAllCategoryIdsHaveProductsByParentId(categoryId);
                     if (!categoryIds.Any())
                         return new JsonResult(new
                         {
@@ -260,9 +263,10 @@ namespace newTolkuchka.Controllers
                     break;
                 case ConstantsService.BRAND:
                     // get all products in by brand
-                    targetProducts = _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.BRAND, new int[] { int.Parse(ids) } } });
+                    targetProducts = _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.BRAND, new int[] { int.Parse(id) } } });
                     break;
                 case ConstantsService.SEARCH:
+                    brandsOnly = true;
                     var words = search.Trim().Split(" ");
                     targetProducts = _product.GetFullModels().Where(p => p.Model.Type.NameRu.Contains(words[0]) || p.Model.Type.NameEn.Contains(words[0]) || p.Model.Type.NameTm.Contains(words[0]) || p.Model.Brand.Name.Contains(words[0]) || p.Model.Line.Name.Contains(words[0]) || p.Model.Name.Contains(words[0]) || p.ProductSpecsValues.Any(psv => psv.SpecsValue.NameRu.Contains(words[0]) || psv.SpecsValue.NameEn.Contains(words[0]) || psv.SpecsValue.NameTm.Contains(words[0])) || p.ProductSpecsValueMods.Any(psvm => psvm.SpecsValueMod.NameRu.Contains(words[0]) || psvm.SpecsValueMod.NameEn.Contains(words[0]) || psvm.SpecsValueMod.NameTm.Contains(words[0])));
                     if (list.Any())
@@ -282,7 +286,7 @@ namespace newTolkuchka.Controllers
                     targetProducts = _product.GetFullModels().Where(p => p.IsRecommended);
                     break;
                 case ConstantsService.LIKED:
-                    targetProducts = _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, JsonSerializer.Deserialize<IList<int>>(ids) } });
+                    targetProducts = _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, JsonSerializer.Deserialize<IList<int>>(id) } });
                     break;
             }
             if (targetProducts.Any())
@@ -295,7 +299,7 @@ namespace newTolkuchka.Controllers
                     products = list,
                     noProduct = _localizer["noProductAbsolutly"].Value
                 });
-            IList<IEnumerable<UIProduct>> /*IEnumerable<UIProduct>*/ uiProducts = _product.GetUIData(productsOnly, list, t, b, v, minp, maxp, sort, page, pp,/* out IList<AdminType> types, */out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage);
+            IList<IEnumerable<UIProduct>> /*IEnumerable<UIProduct>*/ uiProducts = _product.GetUIData(productsOnly, brandsOnly, list,/* t, */b, v, minp, maxp, sort, page, pp,/* out IList<AdminType> types, */out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage);
             IEnumerable<string> products = uiProducts.Select(p => IProduct.GetHtmlProduct(p, 12, 6, 6, 4, 4, 3, 3, 3));
             return new JsonResult(new
             {

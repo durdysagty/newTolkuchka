@@ -46,13 +46,13 @@ namespace newTolkuchka.Services
         {
             return await GetFullModels().Include(p => p.Model).ThenInclude(m => m.Warranty).AsNoTrackingWithIdentityResolution().FirstOrDefaultAsync(p => p.Id == id);
         }
-        public IList<IEnumerable<UIProduct>> GetUIData(bool productsOnly, IList<Product> products, int[] t, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp,/* out IList<AdminType> types, */out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage)
+        public IList<IEnumerable<UIProduct>> GetUIData(bool productsOnly, bool brandsOnly, IList<Product> products,/* int[] t, */int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp,/* out IList<AdminType> types, */out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage)
         {
             IList<Product> preProducts = new List<Product>();
             IList<IEnumerable<UIProduct>> uiProducts = new List<IEnumerable<UIProduct>>();
             //types = productsOnly ? null : new List<AdminType>();
             brands = productsOnly ? null : new List<Brand>();
-            filters = productsOnly ? null : new List<Filter>();
+            filters = productsOnly || brandsOnly ? null : new List<Filter>();
             min = 0;
             max = 0;
             // prepare selected filters (v) to filter products
@@ -104,31 +104,34 @@ namespace newTolkuchka.Services
                         brands.Add(brand);
                     }
                     brands = brands.OrderBy(x => x.Name).ToList();
-                    // prepare filters
-                    foreach (ProductSpecsValue psv in p.ProductSpecsValues)
+                    if (!brandsOnly)
                     {
-                        if (psv.SpecsValue.Spec.IsFilter)
+                        // prepare filters
+                        foreach (ProductSpecsValue psv in p.ProductSpecsValues)
                         {
-                            Filter filter = filters.FirstOrDefault(f => f.Id == psv.SpecsValue.Spec.Id);
-                            if (filter == null)
+                            if (psv.SpecsValue.Spec.IsFilter)
                             {
-                                filter = new Filter()
+                                Filter filter = filters.FirstOrDefault(f => f.Id == psv.SpecsValue.Spec.Id);
+                                if (filter == null)
                                 {
-                                    Id = psv.SpecsValue.Spec.Id,
-                                    Name = CultureProvider.GetLocalName(psv.SpecsValue.Spec.NameRu, psv.SpecsValue.Spec.NameEn, psv.SpecsValue.Spec.NameTm),
-                                    Order = psv.SpecsValue.Spec.Order,
-                                    IsImaged = psv.SpecsValue.Spec.IsImaged,
-                                    FilterValues = new List<FilterValue>()
-                                };
-                                filters.Add(filter);
+                                    filter = new Filter()
+                                    {
+                                        Id = psv.SpecsValue.Spec.Id,
+                                        Name = CultureProvider.GetLocalName(psv.SpecsValue.Spec.NameRu, psv.SpecsValue.Spec.NameEn, psv.SpecsValue.Spec.NameTm),
+                                        Order = psv.SpecsValue.Spec.Order,
+                                        IsImaged = psv.SpecsValue.Spec.IsImaged,
+                                        FilterValues = new List<FilterValue>()
+                                    };
+                                    filters.Add(filter);
+                                }
+                                if (!filter.FilterValues.Any(fv => fv.Id == psv.SpecsValueId))
+                                    filter.FilterValues.Add(new FilterValue()
+                                    {
+                                        Id = psv.SpecsValueId,
+                                        Name = CultureProvider.GetLocalName(psv.SpecsValue.NameRu, psv.SpecsValue.NameEn, psv.SpecsValue.NameTm),
+                                        Image = filter.IsImaged ? PathService.GetImageRelativePath(ConstantsService.SPECSVALUE, psv.SpecsValueId) : null
+                                    });
                             }
-                            if (!filter.FilterValues.Any(fv => fv.Id == psv.SpecsValueId))
-                                filter.FilterValues.Add(new FilterValue()
-                                {
-                                    Id = psv.SpecsValueId,
-                                    Name = CultureProvider.GetLocalName(psv.SpecsValue.NameRu, psv.SpecsValue.NameEn, psv.SpecsValue.NameTm),
-                                    Image = filter.IsImaged ? PathService.GetImageRelativePath(ConstantsService.SPECSVALUE, psv.SpecsValueId) : null
-                                });
                         }
                     }
                     if (min != 0)
@@ -143,11 +146,11 @@ namespace newTolkuchka.Services
                     }
 
                 }
-                if (t.Any())
-                {
-                    if (!t.Any(x => p.Model.TypeId == x))
-                        continue;
-                }
+                //if (t.Any())
+                //{
+                //    if (!t.Any(x => p.Model.TypeId == x))
+                //        continue;
+                //}
                 if (b.Any())
                 {
                     if (!b.Any(x => p.Model.BrandId == x))
@@ -166,7 +169,7 @@ namespace newTolkuchka.Services
                 }
                 preProducts.Add(p);
             }
-            if (!productsOnly)
+            if (!productsOnly && !brandsOnly)
             {
                 // ordering filters & filter values
                 foreach (var f in filters)
