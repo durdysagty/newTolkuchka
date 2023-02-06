@@ -185,7 +185,7 @@ app.Use(async (context, next) =>
         await next();
     }
 });
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseStaticFiles(new StaticFileOptions()
 {
     OnPrepareResponse = ctx =>

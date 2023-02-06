@@ -42,7 +42,7 @@ namespace newTolkuchka.Services
                 ConstantsService.EN => Path.Combine(GetHtmlBodyPath(), "abouten.html"),
                 ConstantsService.TK => Path.Combine(GetHtmlBodyPath(), "abouttk.html"),
                 _ => Path.Combine(GetHtmlBodyPath(), "aboutru.html")
-            };            
+            };
         }
         public string GetHtmlDeliveryBodyPath(string lang)
         {
@@ -61,6 +61,13 @@ namespace newTolkuchka.Services
         public static string GetImageRelativePath(string folder, int id, int imageNumber = 0)
         {
             return Path.Combine($"/images/{folder.ToLower()}/{id}-{imageNumber}.jpg");
+        }
+        public static string GetSVGRelativePath(string folder, string id)
+        {
+            if (folder != null)
+                return Path.Combine($"/svgs/{folder.ToLower()}/{id}.svg");
+            else
+                return Path.Combine($"/svgs/{id}.svg");
         }
         public static string GetModelUrl(string modelName, int id)
         {

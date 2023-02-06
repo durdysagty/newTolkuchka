@@ -11,7 +11,8 @@
         @foreach (Category c in mainCategories)
         {
             <a href="@PathService.GetModelUrl(ConstantsService.CATEGORY, c.Id)" class="list-group-item list-group-item-action px-3 border-0 text-black fs1 text-end">
-                @CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm)
+                <img style="width: auto; height: 1.2rem" src="@PathService.GetSVGRelativePath(ConstantsService.CATEGORY, c.Id.ToString())" alt="@CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm)" />
+                <span>@CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm)</span>
             </a>
         }
     </div>

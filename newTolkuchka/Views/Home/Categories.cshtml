@@ -3,8 +3,9 @@
 @foreach (CategoryTree c in Model)
 {
     <div class="px-1">
-        <a href="@PathService.GetModelUrl(ConstantsService.CATEGORY, c.Id)" class="d-inline-flex">
-            <h5>@c.Name</h5>
+        <a href="@PathService.GetModelUrl(ConstantsService.CATEGORY, c.Id)" class="d-inline-flex align-content-center">
+            <img style="width: auto; height: 2rem" src="@PathService.GetSVGRelativePath(ConstantsService.CATEGORY, c.Id.ToString())" alt="@c.Name" />
+            <h5 class="ms-2 m-0 align-self-center">@c.Name</h5>
         </a>
         @if (c.List != null)
         {
