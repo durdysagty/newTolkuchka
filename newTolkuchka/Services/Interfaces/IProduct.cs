@@ -10,7 +10,7 @@ namespace newTolkuchka.Services.Interfaces
         Task<Product> GetFullProductAsync(int id);
         Task<Product> GetFullProductAsNoTrackingWithIdentityResolutionAsync(int id);
         IList<IEnumerable<UIProduct>> /*IList<UIProduct>*/ GetUIData(bool productsOnly, bool brandsOnly, IList<Product> products,/* int[] t, */int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp,/* out IList<AdminType> types, */out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage);
-        Task<bool> CheckProductSpecValues(int modelId, IList<int> specsValues, int productId = 0);
+        Task<bool> CheckProductSpecValues(int modelId, IList<int> specsValues, IList<int> specsValueMods, int productId = 0);
         bool IsSequencesEqual(int[] psvCheck, IEnumerable<int[]> psvs);
         Task<string[]> GetSpecValuesAsync(int id);
         Task<object[]> GetSpecValueModsAsync(int id);

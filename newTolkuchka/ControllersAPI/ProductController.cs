@@ -41,7 +41,7 @@ namespace newTolkuchka.ControllersAPI
         [HttpPost]
         public async Task<Result> Post([FromForm] Product product, [FromForm] IFormFile[] images, [FromForm] IList<int> specsValues, [FromForm] IList<int> specsValueMods)
         {
-            bool isEqual = await _product.CheckProductSpecValues((int)product.ModelId, specsValues);
+            bool isEqual = await _product.CheckProductSpecValues((int)product.ModelId, specsValues, specsValueMods);
             if (isEqual)
                 return Result.Already;
             await _product.AddModelAsync(product, images, WIDTH, HEIGHT, DIVIDER);
@@ -57,7 +57,7 @@ namespace newTolkuchka.ControllersAPI
         [HttpPut]
         public async Task<Result> Put([FromForm] Product product, [FromForm] IFormFile[] images, [FromForm] IList<int> specsValues, [FromForm] IList<int> specsValueMods)
         {
-            bool isEqual = await _product.CheckProductSpecValues((int)product.ModelId, specsValues, product.Id);
+            bool isEqual = await _product.CheckProductSpecValues((int)product.ModelId, specsValues, specsValueMods, product.Id);
             if (isEqual)
                 return Result.Already;
             await _product.EditModelAsync(product, images, WIDTH, HEIGHT, DIVIDER);

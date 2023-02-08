@@ -63,7 +63,7 @@ namespace newTolkuchka.Models
             builder.Entity<Category>().HasIndex(i => new { i.ParentId, i.NameTm }).IsUnique();
             builder.Entity<Currency>().HasIndex(i => i.CodeName).IsUnique();
             builder.Entity<Line>().HasIndex(i => new { i.BrandId, i.Name }).IsUnique();
-            builder.Entity<Model>().HasIndex(i => new { i.LineId, i.Name }).IsUnique();
+            builder.Entity<Model>().HasIndex(i => new { i.LineId, i.TypeId, i.Name }).IsUnique();
             builder.Entity<Position>().HasIndex(i => i.Name).IsUnique();
             builder.Entity<Spec>().HasIndex(i => i.NameRu).IsUnique();
             builder.Entity<Spec>().HasIndex(i => i.NameEn).IsUnique();

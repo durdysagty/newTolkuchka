@@ -11,8 +11,12 @@ namespace newTolkuchka.Services
     public class ProductService : ServiceFormFile<Product, AdminProduct>, IProduct
     {
         //private const int IMAGESMAX = 5;
-        public ProductService(AppDbContext con, IStringLocalizer<Shared> localizer, IPath path, IImage image) : base(con, localizer, path, image, ConstantsService.PRODUCTMAXIMAGE)
+        private readonly ISpecsValue _specsValue;
+        private readonly ISpecsValueMod _specsValueMod;
+        public ProductService(AppDbContext con, ISpecsValue specsValue, ISpecsValueMod specsValueMod, IStringLocalizer<Shared> localizer, IPath path, IImage image) : base(con, localizer, path, image, ConstantsService.PRODUCTMAXIMAGE)
         {
+            _specsValue = specsValue;
+            _specsValueMod = specsValueMod;
         }
 
         public EditProduct GetEditProduct(int id)
@@ -218,9 +222,9 @@ namespace newTolkuchka.Services
             return uiProducts;
         }
 
-        public async Task<bool> CheckProductSpecValues(int modelId, IList<int> specsValues, int productId = 0)
+        public async Task<bool> CheckProductSpecValues(int modelId, IList<int> specsValues, IList<int> specsValueMods, int productId = 0)
         {
-            IList<Product> products = await GetModels(new Dictionary<string, object>() { { ConstantsService.MODEL, modelId } }).Where(p => p.Id != productId).Include(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ToListAsync();
+            IList<Product> products = await GetModels(new Dictionary<string, object>() { { ConstantsService.MODEL, modelId } }).Where(p => p.Id != productId).Include(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).Include(p => p.ProductSpecsValueMods).ThenInclude(x => x.SpecsValueMod).Include(p => p.Model).ThenInclude(p => p.ModelSpecs).ToListAsync();
             //if no products in model then ok
             if (!products.Any())
                 return false;
@@ -230,10 +234,40 @@ namespace newTolkuchka.Services
                 if (products.Where(p => !p.ProductSpecsValues.Any()).Any())
                     return true;
             }
-            int[] psvCheck = specsValues.ToArray();
-            IEnumerable<int[]> psvs = products.Select(p => p.ProductSpecsValues.Select(x => x.SpecsValueId).ToArray());
-            bool result = IsSequencesEqual(psvCheck, psvs);
-            return result;
+            IEnumerable<int> nameUsedSpecs = products.FirstOrDefault().Model.ModelSpecs.Where(s => s.IsNameUse).Select(ms => ms.SpecId);
+            int[] psvCheck = await _specsValue.GetModels().Where(sv => specsValues.Contains(sv.Id) && nameUsedSpecs.Contains(sv.SpecId)).Select(sv => sv.Id).ToArrayAsync();//specsValues.ToArray();
+            int[] psvmCheck = await _specsValueMod.GetModels().Where(svm => specsValueMods.Contains(svm.Id) && psvCheck.Contains(svm.SpecsValueId)).Select(sv => sv.Id).ToArrayAsync();
+            IList<int[]> psvs = products.Select(p => p.ProductSpecsValues.Where(psv => nameUsedSpecs.Contains(psv.SpecsValue.SpecId)).Select(x => x.SpecsValueId).ToArray()).ToList();
+            foreach (Product p in products)
+            {
+                int[] psv = p.ProductSpecsValues.Where(psv => nameUsedSpecs.Contains(psv.SpecsValue.SpecId)).Select(x => x.SpecsValueId).ToArray();
+                bool isEqual = IsSequencesEqual(psvCheck, new List<int[]> { psv });
+                if (isEqual)
+                {
+                    int[] psvm = p.ProductSpecsValueMods.Where(psvm => psv.Contains(psvm.SpecsValueMod.SpecsValueId)).Select(x => x.SpecsValueModId).ToArray();
+                    isEqual = IsSequencesEqual(psvmCheck, new List<int[]> { psvm });
+                }
+                if (isEqual)
+                    return true;
+            }
+            return false;
+            //bool result = IsSequencesEqual(psvCheck, psvs);
+            //// if product specsValues is equal we check SpecsValueMod
+            //if (result)
+            //{
+            //    int[] psvmCheck = await _specsValueMod.GetModels().Where(svm => specsValueMods.Contains(svm.Id) && psvCheck.Contains(svm.SpecsValueId)).Select(sv => sv.Id).ToArrayAsync();
+            //    IList<int[]> psvms = new List<int[]>();
+            //    for (int i = 0; i < psvs.Count(); i++)
+            //    {
+            //        int[] psvm = products[i].ProductSpecsValueMods.Where(psvm => psvs[i].Contains(psvm.SpecsValueMod.SpecsValueId)).Select(x => x.SpecsValueModId).ToArray();
+            //        //int[] psvm = await _specsValueMod.GetModels().Where(svm => psv.Contains(svm.SpecsValueId)).Select(sv => sv.Id).ToArrayAsync();
+            //        if (specsValueMods.Count == 0 && psvm.Length == 0)
+            //            continue;
+            //        psvms.Add(psvm);
+            //    }
+            //    result = IsSequencesEqual(psvmCheck, psvms);
+            //}
+            //return result;
         }
 
         public bool IsSequencesEqual(int[] psvCheck, IEnumerable<int[]> psvs)
