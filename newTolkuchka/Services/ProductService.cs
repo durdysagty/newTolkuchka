@@ -351,41 +351,12 @@ namespace newTolkuchka.Services
                 await _con.ProductSpecsValueMods.AddAsync(productSpecsValueMod);
             }
         }
-
-        //public UIProduct GetUIProduct(Product p, int? modelCount)
-        //{
-        //    return new UIProduct()
-        //    {
-        //        Id = p.Id,
-        //        Name = modelCount != null ? IProduct.GetProductName(p, modelCount) : IProduct.GetProductName(p),
-        //        Price = IProduct.GetConvertedPrice(p.Price),
-        //        NewPrice = p.NewPrice == null ? null : IProduct.GetConvertedPrice((decimal)p.NewPrice),
-        //        ImageMain = PathService.GetImageRelativePath(ConstantsService.PRODUCT + "/small", p.Id),
-        //        Recommended = p.IsRecommended ? _localizer["recod"] : null,
-        //        New = p.IsNew ? _localizer["newed"] : null
-        //    };
-        //}
-        //public UIProduct GetUIProduct(Product p, IList<Product> sameModels)
-        //{
-        //    //IEnumerable<Product> products = GetProducts(null, null, null, null, sameModels);
-        //    //an only one imaged specsvalue in a product is expected
-        //    // if multiple images specasvalues are expected, then not firstordefault and sequenceeauale coulde be used
-        //    IEnumerable<(int, decimal, decimal)> imagedProductsIds = sameModels?.DistinctBy(p => p.ProductSpecsValues.Where(psv => psv.SpecsValue.Spec.IsImaged).Select(psv => psv.SpecsValue.Id).FirstOrDefault()).Select(p => (p.Id, IProduct.GetConvertedPrice(p.Price), p.NewPrice == null ? 0 : IProduct.GetConvertedPrice((decimal)p.NewPrice)));
-        //    return new UIProduct()
-        //    {
-        //        Id = p.Id,
-        //        Name = sameModels != null ? IProduct.GetProductName(p, sameModels.Count) : IProduct.GetProductName(p),
-        //        Price = IProduct.GetConvertedPrice(p.Price),
-        //        NewPrice = p.NewPrice == null ? null : IProduct.GetConvertedPrice((decimal)p.NewPrice),
-        //        ImageMain = PathService.GetImageRelativePath(ConstantsService.PRODUCT + "/small", p.Id),
-        //        Recommended = p.IsRecommended ? _localizer["recod"] : null,
-        //        New = p.IsNew ? _localizer["newed"] : null,
-        //        Others = sameModels != null ? imagedProductsIds : null
-        //    };
-        //}
+        
         public IEnumerable<UIProduct> GetUIProduct(IList<Product> sameModels)
         {
-            IEnumerable<Product> distinct = sameModels.DistinctBy(p => p.ProductSpecsValues.Where(psv => psv.SpecsValue.Spec.IsImaged).Select(psv => psv.SpecsValue.Id).FirstOrDefault());
+            IEnumerable<Product> distinct1 = sameModels.Where(p => !p.ProductSpecsValueMods.Any()).DistinctBy(p => p.ProductSpecsValues.Where(psv => psv.SpecsValue.Spec.IsImaged).Select(psv => psv.SpecsValue.Id).FirstOrDefault());
+            IEnumerable<Product> distinct2 = sameModels.DistinctBy(p => p.ProductSpecsValueMods.Where(psv => psv.SpecsValueMod.SpecsValue.Spec.IsImaged).Select(psv => psv.SpecsValueMod.Id).FirstOrDefault());
+            IEnumerable<Product> distinct = distinct1.Concat(distinct2).DistinctBy(p => p.Id);
             return distinct.Select(p => new UIProduct()
             {
                 Id = p.Id,

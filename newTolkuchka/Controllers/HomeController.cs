@@ -11,6 +11,7 @@ using newTolkuchka.Services.Interfaces;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.Json;
 #endregion
 namespace newTolkuchka.Controllers
@@ -187,24 +188,56 @@ namespace newTolkuchka.Controllers
             IList<Product> products = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.MODEL, product.ModelId } }).Where(p => !p.NotInUse).ToListAsync();
             IList<(string, Product)> namedProducts = new List<(string, Product)>();
             // to select Specs from any of product for change products by specs value
-            IList<ModelWithList<SpecsValue>> nameUsedSpecs = products.FirstOrDefault().Model.ModelSpecs.Where(s => s.IsNameUse).OrderBy(s => s.Spec.NamingOrder).Select(ms => new ModelWithList<SpecsValue>
+            IList<ModelWithList<ModelWithList<AdminSpecsValueMod>>> nameUsedSpecs = products.FirstOrDefault().Model.ModelSpecs.Where(s => s.IsNameUse).OrderBy(s => s.Spec.NamingOrder).Select(ms => new ModelWithList<ModelWithList<AdminSpecsValueMod>>
             {
                 Id = ms.Spec.Id,
                 Name = CultureProvider.GetLocalName(ms.Spec.NameRu, ms.Spec.NameEn, ms.Spec.NameTm),
                 Is = ms.Spec.IsImaged,
-                List = new Collection<SpecsValue>()
+                List = new Collection<ModelWithList<AdminSpecsValueMod>>()
             }).ToList();
+            // ids of namedSpecs we need to select specsValues, which specId is in namedSpecIds, from products and we need them in Product page
             IEnumerable<int> namedSpecIds = nameUsedSpecs.Select(ms => ms.Id);
             foreach (Product p in products)
             {
+                // selecting of named specsValues from the product
                 IEnumerable<SpecsValue> psvs = p.ProductSpecsValues.Select(psv => psv.SpecsValue).Where(x => namedSpecIds.Contains(x.SpecId));
                 string name = IProduct.GetProductNameSingle(p, psvs);
                 namedProducts.Add((name, p));
+                // loop the specsValues to add them to nameUsedSpecs unique
                 foreach (SpecsValue sv in psvs)
                 {
-                    ModelWithList<SpecsValue> spec = nameUsedSpecs.FirstOrDefault(s => s.Id == sv.SpecId);
+                    ModelWithList<ModelWithList<AdminSpecsValueMod>> spec = nameUsedSpecs.FirstOrDefault(s => s.Id == sv.SpecId);
                     if (!spec.List.Any(s => s.Id == sv.Id))
-                        spec.List.Add(sv);
+                    {
+                        ModelWithList<AdminSpecsValueMod> specValue = new()
+                        {
+                            Id = sv.Id,
+                            Name = CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm),
+                            List = new Collection<AdminSpecsValueMod>()
+                        };
+                        spec.List.Add(specValue);
+                    }
+                    // check if a product has a specsValuMod (modification of specsValue)
+                    SpecsValueMod svm = p.ProductSpecsValueMods.FirstOrDefault(x => x.SpecsValueMod.SpecsValueId == sv.Id)?.SpecsValueMod;
+                    // if svm is null, that mean a product do not have a modification od this specsValue
+                    if (svm == null && !spec.List.FirstOrDefault(s => s.Id == sv.Id).List.Any(asvm => asvm.Id == 0))
+                    {
+                        // dispite of null we need to add 0 Id specsValueMod, to select Product without modificated specsValue in Product page
+                        spec.List.FirstOrDefault(s => s.Id == sv.Id).List.Add(new AdminSpecsValueMod
+                        {
+                            Id = 0
+                        });
+                    }
+                    else if (svm != null && !spec.List.FirstOrDefault(s => s.Id == sv.Id).List.Any(asvm => asvm.Id == svm.Id))
+                    {
+                        // unique adding of specsValueMod to List of specsValueMods of specsValue of Spec
+                        AdminSpecsValueMod adminSpecsValueMod = new()
+                        {
+                            Id = svm.Id,
+                            Name = CultureProvider.GetLocalName(svm.NameRu, svm.NameEn, svm.NameTm)
+                        };
+                        spec.List.FirstOrDefault(s => s.Id == sv.Id).List.Add(adminSpecsValueMod);
+                    }
                 }
             }
             CreateMetaData(ConstantsService.PRODUCT, await _breadcrumbs.GetProductBreadcrumbs(product.Model.CategoryId), namedProducts.FirstOrDefault(x => x.Item2.Id == id).Item1, false, false);

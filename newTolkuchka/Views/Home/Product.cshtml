@@ -65,100 +65,210 @@
                 <div class="col-auto d-flex flex-column justify-content-end">
                     @if (Model.Count() > 1)
                     {
+                        // only if model count more than 1 wee need selection buttons from list of models
                         IEnumerable<Product> products = Model.Select(m => m.product);
                         // to select specs from
-                        IList<ModelWithList<SpecsValue>> nameUsedSpecs = ViewBag.Specs;
+                        IList<ModelWithList<ModelWithList<AdminSpecsValueMod>>> nameUsedSpecs = ViewBag.Specs;
                         // get ids of name used specs to test product specValues
                         IEnumerable<int> namedSpecIds = ViewBag.SpecIds;
                         // for galery index if model more than one
                         n++;
                         <div class="d-flex flex-column justify-content-end align-items-start mb-3">
-                            @foreach (ModelWithList<SpecsValue> s in nameUsedSpecs)
+                            @foreach (ModelWithList<ModelWithList<AdminSpecsValueMod>> spec in nameUsedSpecs)
                             {
-                                <div><strong>@s.Name</strong></div>
+                                // looping through nameusedSpecs
+                                <div><strong>@spec.Name</strong></div>
                                 <div class="d-flex">
-                                    @foreach (SpecsValue sv in s.List)
+                                    @foreach (ModelWithList<AdminSpecsValueMod> specsValue in spec.List)
                                     {
-                                        // is this specsvalue in current product
-                                        bool isActive = p.ProductSpecsValues.Any(x => x.SpecsValueId == sv.Id);
-                                        string function = null;
-                                        string border = null;
-                                        int? getIp = null;
-                                        if (isActive)
-                                            border = "border-primary";
-                                        else
+                                        // looping through specsValue of this spec
+                                        @foreach (AdminSpecsValueMod specsValueMod in specsValue.List)
                                         {
-                                            // get specsvalues that is in current product but not in this spec
-                                            IList<SpecsValue> currentSV = p.ProductSpecsValues.Select(x => x.SpecsValue).Where(x => namedSpecIds.Contains(x.Spec.Id) && x.SpecId != s.Id).ToList();
-                                            // the sv is not in current product thus add sv to currentSV and seek the product that is got all svs
-                                            currentSV.Add(sv);
-                                            getIp = products.FirstOrDefault(m => m.ProductSpecsValues.Select(x => x.SpecsValue).Where(x => namedSpecIds.Contains(x.Spec.Id)).All(x => currentSV.Any(y => y.Id == x.Id)))?.Id;
-                                            // if there is no product that matchs with given spec values (with current product specs values)
-                                            if (getIp == null)
+                                            // looping through specsValueMod of this specValue
+                                            // check is this specsValueMod is presented in active Product
+                                            // if specsValueMod.Id equal to 0 we need to select the Products by specsValueId and no one of specsValueMods of given Products have to belong to this specsValue
+                                            // if specsValueMod.Id not equal to 0 we just seek products that match to given specsValueMod
+                                            bool isActive = specsValueMod.Id == 0 ? p.ProductSpecsValues.Any(x => x.SpecsValueId == specsValue.Id) && !p.ProductSpecsValueMods.Any(x => x.SpecsValueMod.SpecsValueId == specsValue.Id) : p.ProductSpecsValueMods.Any(x => x.SpecsValueModId == specsValueMod.Id);
+                                            // function to select Product by click
+                                            string function = null;
+                                            // border of element if Product is Active
+                                            string border = null;
+                                            if (isActive)
+                                                border = "border-primary";
+                                            else
                                             {
-                                                // is any products of given model has ProductsSpecsValue with given SpecsValue
-                                                IList<Product> seekingProducts = products.Where(m => m.Id != p.Id && m.ProductSpecsValues.Any(psv => psv.SpecsValueId == sv.Id)).ToList();
-                                                // if more than one product has given SpecsValue
+                                                // if Product is not presented by this specsValueMod we start seeaking a product that matches to other of specsValues and specsValueMods of given product, or closest to given Product by specsValues and specsValueMods
+                                                // excluding of Product we actual product
+                                                IList<Product> seekingProducts = products.Where(x => x.Id != p.Id).ToList();
+                                                    // seeking by actual specsValue
+                                                seekingProducts = seekingProducts.Where(x => x.ProductSpecsValues.Any(psv => psv.SpecsValueId == specsValue.Id)).ToList();
+                                                // if Products count equal to one we got the product closest to actual product
                                                 if (seekingProducts.Count > 1)
                                                 {
-                                                    // get all specsvalues by specs list except looped spec and specsvalues except actual product specsvalues
-                                                    IEnumerable<IEnumerable<SpecsValue>> specsValuesList = nameUsedSpecs.Where(x => x.Id != s.Id).Select(s => s.List.Where(v => p.ProductSpecsValues.Any(psv => psv.SpecsValueId != v.Id)));
-                                                    // loop all specs
-                                                    foreach (IEnumerable<SpecsValue> specsValues in specsValuesList)
+                                                    // if Products more than 1, we try to check them by actual specsValueMod
+                                                    // we can get no one Product that has this specsValueMod, that is why we need to check is we have any product that match to specsValueMod before continue
+                                                    IEnumerable<Product> seekingProductsBySVM = specsValueMod.Id != 0 ?
+                                                    seekingProducts.Where(x => x.ProductSpecsValueMods.Any(psvm => psvm.SpecsValueModId == specsValueMod.Id)).ToList() :
+                                                    seekingProducts.Where(x => !x.ProductSpecsValueMods.Any(x => x.SpecsValueMod.SpecsValueId == specsValue.Id));
+                                                    if (seekingProductsBySVM.Any())
+                                                        seekingProducts = seekingProductsBySVM.ToList();
+                                                }
+                                                // if we have more than 1 Product that match to given specsValue or specsValueMod (the most of time)
+                                                if (seekingProducts.Count > 1)
+                                                {
+                                                    // we start looping specsValues of given Product to find closest Product
+                                                    // get specsValues of the Product those in namedSpecs but not in this Spec
+                                                    IList<SpecsValue> otherSpecsValueOfProduct = p.ProductSpecsValues.Select(x => x.SpecsValue).Where(x => namedSpecIds.Contains(x.Spec.Id) && x.SpecId != spec.Id).ToList();
+                                                    foreach (SpecsValue specsValueOfPoduct in otherSpecsValueOfProduct)
                                                     {
-                                                        // loop all specs value of given spec
-                                                        foreach (SpecsValue specsValue in specsValues)
+                                                        // we can get no one Product that has this specsValue, that is why we need to check is we have any product that match to specsValue before continue
+                                                        IEnumerable<Product> seekingProductsBySV = seekingProducts.Where(x => x.ProductSpecsValues.Any(psv => psv.SpecsValueId == specsValueOfPoduct.Id)).ToList();
+                                                        if (seekingProductsBySV.Any())
                                                         {
-                                                            IList<Product> testProducts = seekingProducts.Where(s => s.ProductSpecsValues.Any(psv => psv.SpecsValueId == specsValue.Id)).ToList();
-                                                            // if we got any products we need to constrict seekingproducts, no need if we did not get any product
-                                                            if (testProducts.Any())
-                                                                seekingProducts = testProducts;
-                                                            // if count constricted to 1, then break, we got that son of a bitch
-                                                            if (seekingProducts.Count == 1)
-                                                                break;
+                                                            // if we have any Products matching to looping specsValueOfPoduct, then we update seekingProducts
+                                                            seekingProducts = seekingProductsBySV.ToList();
+                                                            if (seekingProducts.Count > 1)
+                                                            {
+                                                                // if we have more than 1 Product, we check the Products for matching of specsValueMod of the given Product   
+                                                                // get specswValueMod of given Product of given specsValue
+                                                                SpecsValueMod specsValueModOfPoduct = p.ProductSpecsValueMods.Select(x => x.SpecsValueMod).FirstOrDefault(x => x.SpecsValueId == specsValueOfPoduct.Id);
+                                                                // if we got a specsValueModOfPoduct that matching our purposes
+                                                                if (specsValueModOfPoduct != null)
+                                                                {
+                                                                    // is any Products have specific specsValueMod
+                                                                    IEnumerable<Product> seekingProductsBySVM = seekingProducts.Where(x => x.ProductSpecsValueMods.Any(psvm => psvm.SpecsValueModId == specsValueModOfPoduct.Id)).ToList();
+                                                                    // of course we can get no one Product that has this specsValueMod, that is why we need to check is we have any Product that match to specsValueMod before continue
+                                                                    if (seekingProductsBySVM.Any())
+                                                                        seekingProducts = seekingProductsBySVM.ToList();
+                                                                }
+                                                            }
                                                         }
-                                                        // if count constricted to 1, no need to continue
+                                                        // if we came to only 1 product, we do not need seeking and looping breaks
                                                         if (seekingProducts.Count == 1)
                                                             break;
                                                     }
                                                 }
-                                                getIp = seekingProducts.FirstOrDefault().Id;
-                                                @*  // we start to seek the product that not correspond with actual ptoduct specs values
-                    foreach (ModelWithList<SpecsValue> s2 in specs.Where(x => x.Id != s.Id))
-                    {
-                    SpecsValue toRemove = currentSV.FirstOrDefault(x => s2.List.Any(y => y.Id == x.Id));
-                    currentSV.Remove(toRemove);
-                    foreach(var sv2 in s2.List.Where(x => x.Id != toRemove.Id))
-                    {
-                    // SpecsValue toRemove = currentSV.FirstOrDefault(x => x.Id == s2.Id);
-                    // currentSV.Remove(toRemove);
-                    currentSV.Add(sv2);
-                    getIp = Model.SingleOrDefault(m => m.ProductSpecsValues.Select(x => x.SpecsValue).Where(x => x.Spec.NamingOrder != null).All(x => currentSV.Any(y => y.Id == x.Id)))?.Id;
-                    if (getIp != null)
-                    break;
-                    currentSV.Remove(sv2);
-
-                    }
-                    if (getIp != null)
-                    break;
-                    currentSV.Add(toRemove);
-                    }*@
+                                                function = $"role=button onclick=getProduct({seekingProducts[0].Id})";
                                             }
-                                            function = $"role=button onclick=getProduct({getIp})";
+                                            <div class="d-inline-block p-1 me-1 border rounded @border">
+                                                @{
+
+                                                    string vn = specsValueMod.Id == 0 ? specsValue.Name : specsValueMod.Name;
+                                                    if (spec.Is)
+                                                    {
+                                                        <img width="25" height="25" style="width: 1.5rem; height: auto" src="@PathService.GetImageRelativePath(ConstantsService.SPECSVALUE, specsValue.Id)" title="@vn" alt="@specsValue.Name" @function />
+                                                    }
+                                                    else
+                                                    {
+                                                        <span @function>@vn</span>
+                                                    }
+                                                }
+                                            </div>
                                         }
-
-                                        <div class="d-inline-block p-1 me-1 border rounded @border">
-                                            @if (s.Is)
-                                            {
-                                                <img width="25" height="25" style="width: 1.5rem; height: auto" src="@PathService.GetImageRelativePath(ConstantsService.SPECSVALUE, sv.Id)" title="@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)" alt="@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)" @function />
-                                            }
-                                            else
-                                            {
-                                                <span @function>@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)</span>
-                                            }
-                                        </div>
-
                                     }
+                                    @*
+                    @foreach (SpecsValue sv in s.List)
+                    {
+                    // is this specsvalue in current product
+                    bool isActive = p.ProductSpecsValues.Any(x => x.SpecsValueId == sv.Id);
+                    string function = null;
+                    string border = null;
+                    IEnumerable<Product> matchedProducts = null;
+                    if (isActive)
+                    border = "border-primary";
+                    // get specsvalues that is in current product but not in this spec
+                    IList<SpecsValue> currentSV = p.ProductSpecsValues.Select(x => x.SpecsValue).Where(x => namedSpecIds.Contains(x.Spec.Id) && x.SpecId != s.Id).ToList();
+                    // the sv is not in current product thus add sv to currentSV and seek the product that is got all svs
+                    currentSV.Add(sv);
+                    matchedProducts = products.Where(m => m.ProductSpecsValues.Select(x => x.SpecsValue).Where(x => namedSpecIds.Contains(x.Spec.Id)).All(x => currentSV.Any(y => y.Id == x.Id)));
+                    // if there is no product that matchs with given spec values (with current product specs values)
+                    if (matchedProducts == null || matchedProducts.Count() < 1)
+                    {
+                    // is any products of given model has ProductsSpecsValue with given SpecsValue
+                    IList<Product> seekingProducts = products.Where(m => m.Id != p.Id && m.ProductSpecsValues.Any(psv => psv.SpecsValueId == sv.Id)).ToList();
+                    // if more than one product has given SpecsValue
+                    if (seekingProducts.Count > 1)
+                    {
+                    // get all specsvalues by specs list except looped spec and specsvalues except actual product specsvalues
+                    IEnumerable<IEnumerable<SpecsValue>> specsValuesList = nameUsedSpecs.Where(x => x.Id != s.Id).Select(s => s.List.Where(v => p.ProductSpecsValues.Any(psv => psv.SpecsValueId != v.Id)));
+                    // loop all specs
+                    foreach (IEnumerable<SpecsValue> specsValues in specsValuesList)
+                    {
+                    // loop all specs value of given spec
+                    foreach (SpecsValue specsValue in specsValues)
+                    {
+                    IList<Product> testProducts = seekingProducts.Where(s => s.ProductSpecsValues.Any(psv => psv.SpecsValueId == specsValue.Id)).ToList();
+                    // if we got any products we need to constrict seekingproducts, no need if we did not get any product
+                    if (testProducts.Any())
+                    seekingProducts = testProducts;
+                    // if count constricted to 1, then break, we got that son of a bitch
+                    if (seekingProducts.Count == 1)
+                    break;
+                    }
+                    // if count constricted to 1, no need to continue
+                    if (seekingProducts.Count == 1)
+                    break;
+                    }
+                    }
+                    matchedProducts = seekingProducts;
+                    }
+                    if (matchedProducts != null && matchedProducts.Count() > 1)
+                    {
+                    int q = matchedProducts.Where(mp => mp.ProductSpecsValueMods.Any(psvm => psvm.SpecsValueMod.SpecsValueId == sv.Id)).Count() + 1;
+                    border = null;
+                    if (q <= 1)
+                    {
+                    border = "border-primary";
+                    <div class="d-inline-block p-1 me-1 border rounded @border">
+                    @if (s.Is)
+                    {
+                    <img width="25" height="25" style="width: 1.5rem; height: auto" src="@PathService.GetImageRelativePath(ConstantsService.SPECSVALUE, sv.Id)" title="@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)" alt="@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)" />
+                    }
+                    else
+                    {
+                    <span>@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)</span>
+                    }
+                    </div>
+                    }
+                    else
+                    {
+                    foreach (Product matchedProduct in matchedProducts)
+                    {
+                    border = null;
+                    function = null;
+                    if (matchedProduct.Id == p.Id)
+                    border = "border-primary";
+                    else
+                    function = $"role=button onclick=getProduct({matchedProduct.Id})";
+                    <div class="d-inline-block p-1 me-1 border rounded @border">
+                    @if (s.Is)
+                    {
+                    <img width="25" height="25" style="width: 1.5rem; height: auto" src="@PathService.GetImageRelativePath(ConstantsService.SPECSVALUE, sv.Id)" title="@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)" alt="@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)" @function />
+                    }
+                    else
+                    {
+                    <span @function>@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)</span>
+                    }
+                    </div>
+                    }
+                    }
+                    }
+                    else
+                    {
+                    if (border == null)
+                    function = $"role=button onclick=getProduct({matchedProducts.FirstOrDefault().Id})";
+                    <div class="d-inline-block p-1 me-1 border rounded @border">
+                    @if (s.Is)
+                    {
+                    <img width="25" height="25" style="width: 1.5rem; height: auto" src="@PathService.GetImageRelativePath(ConstantsService.SPECSVALUE, sv.Id)" title="@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)" alt="@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)" @function />
+                    }
+                    else
+                    {
+                    <span @function>@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)</span>
+                    }
+                    </div>
+                    }
+                    }*@
                                 </div>
                             }
                         </div>
