@@ -313,12 +313,15 @@ namespace newTolkuchka.Controllers
                     }
                     break;
                 case ConstantsService.NOVELTIES:
+                    brandsOnly = true;
                     targetProducts = _product.GetFullModels().Where(p => p.IsNew);
                     break;
                 case ConstantsService.RECOMMENDED:
+                    brandsOnly = true;
                     targetProducts = _product.GetFullModels().Where(p => p.IsRecommended);
                     break;
                 case ConstantsService.LIKED:
+                    brandsOnly = true;
                     targetProducts = _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, JsonSerializer.Deserialize<IList<int>>(id) } });
                     break;
             }

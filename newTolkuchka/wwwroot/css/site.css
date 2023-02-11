@@ -2,6 +2,25 @@ main {
     min-height: 75vh
 }
 
+/* Track */
+::-webkit-scrollbar-track {
+    background: #fff
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #f18c29
+}
+
+::-webkit-scrollbar {
+    width: .3em
+}
+
+html {
+    scrollbar-width: thin;
+    scrollbar-color: #f18c29 #fff;
+}
+
 i {
     font-size: 1rem
 }
@@ -145,4 +164,9 @@ s {
 .small {
     line-height: 1px;
     font-size: 0.6rem
+}
+
+#brands {
+    max-height: 15rem;
+    overflow-y: scroll
 }
