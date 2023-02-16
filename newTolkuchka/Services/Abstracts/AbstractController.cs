@@ -49,11 +49,11 @@ namespace newTolkuchka.Services.Abstracts
         }
 
         [HttpGet("{id}/{key}")]
-        public async Task<Result> ChangeNotInUse(int id, string key)
+        public async Task<Result> ChangeBoolenProperty(int id, string key)
         {
             Type modelType = typeof(TModel);
             Type serviceType = typeof(TService);
-            MethodInfo method = modelType.Name == "Product" ? serviceType.GetMethod("GetFullProductAsync", new Type[1] { typeof(int) }) : serviceType.GetInterface("IAction`1").GetMethod("GetModelAsync", new Type[1] { typeof(int) });
+            MethodInfo method = modelType.Name == "Product" ? serviceType.GetMethod("GetFullProductAsync", new Type[1] { typeof(int) }) : serviceType.GetInterfaces().FirstOrDefault(i => i.Name.Contains("IAction`")).GetMethod("GetModelAsync", new Type[1] { typeof(int) });
             object result = method.Invoke(_service, new object[] { id });
             TModel model = await (Task<TModel>)result;
             PropertyInfo property = modelType.GetProperty(key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);

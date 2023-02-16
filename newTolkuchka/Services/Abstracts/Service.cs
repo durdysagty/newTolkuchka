@@ -273,6 +273,7 @@ namespace newTolkuchka.Services.Abstracts
                     {
                         Id = x.Id,
                         Name = x.Name,
+                        IsForHome = x.IsForHome,
                         Models = x.Models.Count
                     }).OrderBy(x => x.Name);
                     break;

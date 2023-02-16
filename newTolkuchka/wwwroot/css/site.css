@@ -21,6 +21,18 @@ html {
     scrollbar-color: #f18c29 #fff;
 }
 
+.scroll-none {
+    scrollbar-width: none
+}
+
+.scroll-none::-webkit-scrollbar-track {
+    display:none
+}
+
+.scroll-none::-webkit-scrollbar {
+    display: none
+}
+
 i {
     font-size: 1rem
 }

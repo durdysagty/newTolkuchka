@@ -61,21 +61,28 @@ namespace newTolkuchka.Controllers
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 10800)]
         public IActionResult Index()
         {
-            ViewBag.MainSlides = _slide.GetSlidesByLayoutAsync(Layout.Main).ToList();
-            IQueryable<Category> mainCategories = _category.GetActiveCategoriesByParentId(0);
-            ViewBag.MainCategories = mainCategories;
             CreateMetaData();
             return View();
         }
         [Route($"{ConstantsService.INDEX}")]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 7200)]
-        public async Task<string> Items()
+        public async Task<JsonResult> Items()
         {
             int count = 6;
+            int slidesCount = 3;
             int? width = GetScreenWidth();
-            if (width is < 1200 and > 768)
+            if (width < 351)
                 count = 4;
-            else if (width < 351)
+            else if (width < 576)
+            {
+                slidesCount = 1;
+            }
+            else if (width < 768)
+            {
+                slidesCount = 2;
+                count = 6;
+            }
+            else if (width < 1200)
                 count = 4;
             const int col = 12;
             const int xs = 6;
@@ -85,6 +92,18 @@ namespace newTolkuchka.Controllers
             const int xl = 2;
             const int xxl = 2;
             const int xxxl = 2;
+            IEnumerable<Brand> brands = _brand.GetModels().Where(b => b.IsForHome);
+            string brandsString = string.Empty;
+            foreach (Brand b in brands)
+            {
+                brandsString += $"<div class=\"keen-slider__slide text-center\"><a href=\"/{PathService.GetModelUrl(ConstantsService.BRAND, b.Id)}\"><img src=\"{PathService.GetImageRelativePath(ConstantsService.BRAND, b.Id)}\" class=\"card-img-top brand rounded border border-primary px-1 py-2\" alt=\"{b.Name}\" /></a></div>";
+            }
+            IEnumerable<Slide> mainSlides = _slide.GetSlidesByLayoutAsync(Layout.Main).OrderByDescending(s => s.Id).Take(slidesCount);
+            string slidesString = string.Empty;
+            foreach (Slide s in mainSlides)
+            {
+                slidesString += $"<div class=\"col-12 col-sm-6 col-md-4 p-1\"><a href=\"/{s.Link}\"><img src=\"{PathService.GetImageRelativePath(ConstantsService.SLIDE, s.Id)}\" class=\"card-img-top brand rounded\" alt=\"{s.Name}\" /></a></div>";
+            }
             static IEnumerable<string> GetHtmlProducts(IList<IEnumerable<UIProduct>> products)
             {
                 return products.Select(u => IProduct.GetHtmlProduct(u, col, xs, sm, md, lg, xl, xxl, xxxl));
@@ -131,7 +150,12 @@ namespace newTolkuchka.Controllers
                 }
                 html += $"<div class=\"bg-light\"><div class=\"row justify-content-center\">{articleStrings}</div><div class=\"d-flex justify-content-end\"><a href=\"{ConstantsService.ARTICLES}\"><small>{_localizer["all-articles"].Value}</small></a></div></div>";
             }
-            return html;
+            return new JsonResult(new
+            {
+                fl = brandsString, // firstLine
+                p = slidesString, // slides
+                i = html // items
+            });
         }
         [Route(ConstantsService.CATEGORIES)]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
@@ -145,7 +169,7 @@ namespace newTolkuchka.Controllers
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
         public IActionResult Brands()
         {
-            IQueryable<Brand> brands = _brand.GetModels();
+            IQueryable<Brand> brands = _brand.GetModels().Where(b => b.Models.Any());
             CreateMetaData(ConstantsService.BRANDS, _breadcrumbs.GetBreadcrumbs());
             return View(brands);
         }
@@ -582,6 +606,8 @@ namespace newTolkuchka.Controllers
         }
         private void CreateMetaData(string pageName = null, IList<Breadcrumb> breadcrumbs = null, string modelName = null, bool filterScript = false, bool isPageName = true)
         {
+            IQueryable<Category> mainCategories = _category.GetActiveCategoriesByParentId(0);
+            ViewBag.MainCategories = mainCategories;
             ViewData[ConstantsService.TITLE] = modelName != null ? $" - {modelName}".ToLower() : pageName != null ? $" - {_localizer[pageName]}".ToLower() : null;
             ViewData[ConstantsService.DESCRIPTION] = string.Format(_localizer[$"desc-{(pageName == null ? "home" : "model")}"], CultureProvider.SiteName, modelName);
             ViewData[ConstantsService.IMAGE] = _path.GetLogo();

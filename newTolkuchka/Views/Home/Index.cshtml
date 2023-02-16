@@ -1,44 +1,20 @@
 ﻿@{
-    IEnumerable<Category> mainCategories = ViewBag.MainCategories;
+    //IEnumerable<Category> mainCategories = ViewBag.MainCategories;
     //IList<(Category, IEnumerable<string>)> categories = ViewBag.MainCategoriesProducts;
-    IList<Slide> mainSlides = ViewBag.MainSlides;
+    IEnumerable<Slide> mainSlides = ViewBag.MainSlides;
     //IEnumerable<string> newProducts = ViewBag.NewProducts;
     //IEnumerable<string> recProducts = ViewBag.RecProducts;
 }
 
-<div class="row justify-content-center">
-    <div class="col-4 d-none d-md-block list-group">
-        @foreach (Category c in mainCategories)
-        {
-            <a href="@PathService.GetModelUrl(ConstantsService.CATEGORY, c.Id)" class="list-group-item list-group-item-action px-3 border-0 text-black fs1 text-end">
-                <img style="width: auto; height: 1.2rem" src="@PathService.GetSVGRelativePath(ConstantsService.CATEGORY, c.Id.ToString())" alt="@CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm)" />
-                <span>@CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm)</span>
-            </a>
-        }
-    </div>
-    <div class="col-12 col-md-8">
-        <div id="carousel-main" class="carousel slide" data-mdb-ride="carousel">
-            <div class="carousel-inner rounded-4">
-                @{
-                    string cl = "carousel-item";
-                    for (int i = 0; i < mainSlides.Count; i++)
-                    {
-                        if (i == mainSlides.Count - 1)
-                            cl = cl + " active";
-                        <div class="@cl">
-                            <a href="@mainSlides[i].Link">
-                                <img src="@PathService.GetImageRelativePath(ConstantsService.SLIDE, mainSlides[i].Id, CultureProvider.GetLocalNumberEx())" class="d-block w-100" alt="@Localizer["commercial"]" />
-                            </a>
-                        </div>
-                    }
-                }
-            </div>
-        </div>
-    </div>
+<div id="fl" class="keen-slider my-1">
+</div>
+<div id="promo" class="row justify-content-between my-3">
 </div>
 <div id="items">
 </div>
 
 @section Scripts {
+    <link rel="stylesheet" href="~/lib/keen/slider.css" asp-append-version="true" />
+    <script src="~/lib/keen/slider.js" asp-append-version="true"></script>
     <script src="~/js/index.js" asp-append-version="true"></script>
 }

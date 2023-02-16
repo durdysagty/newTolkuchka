@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
-using newTolkuchka.Services;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 
@@ -11,8 +10,8 @@ namespace newTolkuchka.ControllersAPI
     [Authorize(Policy = "Level1")]
     public class SlideController : AbstractController<Slide, AdminSlide, ISlide>
     {
-        private const int WIDTH = 990;
-        private const int HEIGHT = 450;
+        private const int WIDTH = 600;
+        private const int HEIGHT = 300;
         private const int LEFTWIDTH = 220;
         private const int LEFTHEIGHT = 300;
         private readonly ISlide _slide;

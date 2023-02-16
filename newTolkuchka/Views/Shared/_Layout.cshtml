@@ -19,6 +19,7 @@
     string ru = $"{CultureProvider.SiteUrlRu}{CultureProvider.Path}";
     string en = $"{CultureProvider.SiteUrlEn}{CultureProvider.Path}";
     string tk = $"{CultureProvider.SiteUrlTm}{CultureProvider.Path}";
+    string headerClass = width > ConstantsService.MOBILEWIDTH ? "pb-md-2" : "";
 }
 <!DOCTYPE html>
 <html lang="@CultureProvider.Lang">
@@ -49,37 +50,37 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
+    <header class="@headerClass">
         <div class="container">
             <div class="d-flex justify-content-end mb-0 mb-md-3">
                 <div>
-                @switch (CultureProvider.Lang)
-                {
-                    case ConstantsService.EN:
-                        <a href="@tk">
-                            <img src="~/turkmen.svg" class="img-fluid align-self-center mx-1" style="width: auto; height: 15px" alt="türkmençe" />
-                        </a>
-                        <a href="@ru">
-                            <img src="~/russian.svg" class="img-fluid align-self-center mx-1" style="width: auto; height: 15px" alt="русский" />
-                        </a>
-                        break;
-                    case ConstantsService.TK:
-                        <a href="@en">
-                            <img src="~/english.svg" class="img-fluid align-self-center mx-1" style="width: auto; height: 15px" alt="english" />
-                        </a>
-                        <a href="@ru">
-                            <img src="~/russian.svg" class="img-fluid align-self-center mx-1" style="width: auto; height: 15px" alt="русский" />
-                        </a>
-                        break;
-                    default:
-                        <a href="@tk">
-                            <img src="~/turkmen.svg" class="img-fluid align-self-center mx-1" style="width: auto; height: 15px" alt="türkmençe" />
-                        </a>
-                        <a href="@en">
-                            <img src="~/english.svg" class="img-fluid align-self-center mx-1" style="width: auto; height: 15px" alt="english" />
-                        </a>
-                        break;
-                }
+                    @switch (CultureProvider.Lang)
+                    {
+                        case ConstantsService.EN:
+                            <a href="@tk">
+                                <img src="~/turkmen.svg" class="img-fluid align-self-center mx-1" style="width: auto; height: 15px" alt="türkmençe" />
+                            </a>
+                            <a href="@ru">
+                                <img src="~/russian.svg" class="img-fluid align-self-center mx-1" style="width: auto; height: 15px" alt="русский" />
+                            </a>
+                            break;
+                        case ConstantsService.TK:
+                            <a href="@en">
+                                <img src="~/english.svg" class="img-fluid align-self-center mx-1" style="width: auto; height: 15px" alt="english" />
+                            </a>
+                            <a href="@ru">
+                                <img src="~/russian.svg" class="img-fluid align-self-center mx-1" style="width: auto; height: 15px" alt="русский" />
+                            </a>
+                            break;
+                        default:
+                            <a href="@tk">
+                                <img src="~/turkmen.svg" class="img-fluid align-self-center mx-1" style="width: auto; height: 15px" alt="türkmençe" />
+                            </a>
+                            <a href="@en">
+                                <img src="~/english.svg" class="img-fluid align-self-center mx-1" style="width: auto; height: 15px" alt="english" />
+                            </a>
+                            break;
+                    }
                 </div>
             </div>
             <div class="row justify-content-between">
@@ -118,6 +119,12 @@
                     },
                     new List<string>()
                     {
+                    ConstantsService.LIKED,
+                    "fas fa-heart",
+                    ConstantsService.LIKED
+                    },
+                    new List<string>()
+                    {
                     ConstantsService.CART,
                     "fas fa-shopping-cart",
                     ConstantsService.CART
@@ -137,7 +144,7 @@
                         <img class="img-fluid" width="300" height="60" src='~/logo.png' alt="logo" />
                     </a>
                 </div>
-                <div class="col-12 col-md align-self-center">
+                <div class="col-12 col-md align-self-center mb-1 m-md-0">
                     <form asp-action="search" method="get">
                         <div class="input-group justify-content-center justify-content-md-end">
                             <div class="form-outline w-75" id="search-form">
@@ -152,6 +159,18 @@
                 </div>
             </div>
         </div>
+        <div class="d-flex justify-content-start justify-content-lg-center overflow-x-scroll border-bottom ps-3 ps-md-0 p-lg-1 scroll-none">
+            @foreach (Category c in mainCategories)
+            {
+                <div class="text-center">
+                    <a href="/@PathService.GetModelUrl(ConstantsService.CATEGORY, c.Id)" class="list-group-item list-group-item-action fs1 px-2 border-0">
+                        <img style="width: auto; height: 1.2rem" src="@PathService.GetSVGRelativePath(ConstantsService.CATEGORY, c.Id.ToString())" alt="@CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm)" />
+                        <span class="text-nowrap">@CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm)</span>
+                    </a>
+                </div>
+            }
+        </div>
+
     </header>
     @if (width == null || width < ConstantsService.MOBILEWIDTH)
     {
@@ -173,7 +192,7 @@
             @if (ViewBag.Breadcrumbs != null)
             {
                 IList<Breadcrumb> breadcrumb = ViewBag.Breadcrumbs;
-                <div class="container-fluid">
+                <div class="container-fluid mt-2">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
                             @foreach (Breadcrumb b in breadcrumb)
