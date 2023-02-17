@@ -58,7 +58,17 @@ namespace newTolkuchka.Services.Abstracts
             TModel model = await (Task<TModel>)result;
             PropertyInfo property = modelType.GetProperty(key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
             property.SetValue(model, !(bool)property.GetValue(model));
-            await EditActAsync(id, modelType.Name == "Product" ? IProduct.GetProductNameCounted(model as Product) : modelType.GetProperty("Name").GetValue(model).ToString());
+            if (modelType.Name == "Product")
+                await EditActAsync(id, IProduct.GetProductNameCounted(model as Product));
+            else
+            {
+                PropertyInfo nameProperty = modelType.GetProperty("Name");
+                if (nameProperty == null)
+                    nameProperty = modelType.GetProperty("NameRu");
+                await EditActAsync(id, nameProperty.GetValue(model).ToString());
+            }
+            
+            
             return Result.Success;
         }
 

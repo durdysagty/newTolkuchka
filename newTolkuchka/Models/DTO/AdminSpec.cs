@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace newTolkuchka.Models.DTO
+﻿namespace newTolkuchka.Models.DTO
 {
     public class AdminSpec
     {
@@ -9,5 +7,6 @@ namespace newTolkuchka.Models.DTO
         public int SpecsValues { get; set; }
         public int Order { get; set; }
         public int? NamingOrder { get; set; }
+        public bool IsFilter { get; set; }
     }
 }

@@ -479,7 +479,8 @@ namespace newTolkuchka.Services.Abstracts
                         Name = x.NameRu,
                         Order = x.Order,
                         NamingOrder = x.NamingOrder,
-                        SpecsValues = x.SpecsValues.Count
+                        SpecsValues = x.SpecsValues.Count,
+                        IsFilter = x.IsFilter
                     });
                     break;
                 case ConstantsService.SPECSVALUE:
