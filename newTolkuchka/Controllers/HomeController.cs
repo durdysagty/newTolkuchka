@@ -70,20 +70,36 @@ namespace newTolkuchka.Controllers
         {
             int count = 6;
             int slidesCount = 3;
+            string fontSize = "1";
             int? width = GetScreenWidth();
             if (width < 351)
-                count = 4;
+                count = 3;
+            else if (width < 415)
+            {
+                slidesCount = 1;
+                fontSize = "0.55";
+            }
             else if (width < 576)
             {
                 slidesCount = 1;
+                fontSize = "0.7";
             }
             else if (width < 768)
             {
                 slidesCount = 2;
                 count = 6;
+                fontSize = "0.8";
+            }
+            else if (width < 992)
+            {
+                count = 4;
+                fontSize = "1.2";
             }
             else if (width < 1200)
+            {
                 count = 4;
+                fontSize = "0.7";
+            }
             const int col = 12;
             const int xs = 6;
             const int sm = 4;
@@ -96,13 +112,13 @@ namespace newTolkuchka.Controllers
             string brandsString = string.Empty;
             foreach (Brand b in brands)
             {
-                brandsString += $"<div class=\"keen-slider__slide text-center\"><a href=\"/{PathService.GetModelUrl(ConstantsService.BRAND, b.Id)}\"><img src=\"{PathService.GetImageRelativePath(ConstantsService.BRAND, b.Id)}\" class=\"card-img-top brand rounded border border-primary px-1 py-2\" alt=\"{b.Name}\" /></a></div>";
+                brandsString += $"<div class=\"keen-slider__slide text-center\"><a href=\"/{PathService.GetModelUrl(ConstantsService.BRAND, b.Id)}\"><img src=\"{PathService.GetImageRelativePath(ConstantsService.BRAND, b.Id)}\" class=\"card-img-top rounded border border-primary px-1 py-2\" alt=\"{b.Name}\" /></a></div>";
             }
             IEnumerable<Slide> mainSlides = _slide.GetSlidesByLayoutAsync(Layout.Main).OrderByDescending(s => s.Id).Take(slidesCount);
             string slidesString = string.Empty;
             foreach (Slide s in mainSlides)
             {
-                slidesString += $"<div class=\"col-12 col-sm-6 col-md-4 p-1\"><a href=\"/{s.Link}\"><img src=\"{PathService.GetImageRelativePath(ConstantsService.SLIDE, s.Id)}\" class=\"card-img-top brand rounded\" alt=\"{s.Name}\" /></a></div>";
+                slidesString += $"<div class=\"col-12 col-sm-6 col-md-4 p-1\"><a href=\"/{s.Link}\"><img src=\"{PathService.GetImageRelativePath(ConstantsService.SLIDE, s.Id)}\" class=\"card-img-top rounded\" alt=\"{s.Name}\" /></a></div>";
             }
             static IEnumerable<string> GetHtmlProducts(IList<IEnumerable<UIProduct>> products)
             {
@@ -121,40 +137,49 @@ namespace newTolkuchka.Controllers
             IEnumerable<string> newProducts = GetHtmlProducts(newUIProducts);
             IList<IEnumerable<UIProduct>> recUIProducts = await _product.GetFullModels().OrderByDescending(p => p.Id).Where(p => p.IsRecommended && !p.NotInUse && !p.Model.Category.NotInUse).Take(count).Select(p => _product.GetUIProduct(new Product[1] { p })).ToListAsync();
             IEnumerable<string> recProducts = GetHtmlProducts(recUIProducts);
-            IQueryable<Category> mainCategories = _category.GetActiveCategoriesByParentId(0);
-            IList<(Category, IEnumerable<string>)> categories = new List<(Category, IEnumerable<string>)>();
-            foreach (Category category in mainCategories)
-            {
-                IList<int> categoryIds = _category.GetAllCategoryIdsHaveProductsByParentId(category.Id);
-                if (categoryIds.Any())
-                {
-                    IList<IEnumerable<UIProduct>> products = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.CATEGORY, categoryIds } }).OrderByDescending(p => p.Id).Where(p => !p.NotInUse && !p.Model.Category.NotInUse).Take(count).Select(p => _product.GetUIProduct(new Product[1] { p })).ToListAsync();
-                    (Category, IEnumerable<string>) mainCategory = (category, GetHtmlProducts(products));
-                    categories.Add(mainCategory);
-                }
-            }
+            //IQueryable<Category> mainCategories = _category.GetActiveCategoriesByParentId(0);
+            //IList<(Category, IEnumerable<string>)> categories = new List<(Category, IEnumerable<string>)>();
+            //foreach (Category category in mainCategories)
+            //{
+            //    IList<int> categoryIds = _category.GetAllCategoryIdsHaveProductsByParentId(category.Id);
+            //    if (categoryIds.Any())
+            //    {
+            //        IList<IEnumerable<UIProduct>> products = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.CATEGORY, categoryIds } }).OrderByDescending(p => p.Id).Where(p => !p.NotInUse && !p.Model.Category.NotInUse).Take(count).Select(p => _product.GetUIProduct(new Product[1] { p })).ToListAsync();
+            //        (Category, IEnumerable<string>) mainCategory = (category, GetHtmlProducts(products));
+            //        categories.Add(mainCategory);
+            //    }
+            //}
             string template = "<div class=\"fs-5 px-3 mb-3 border-bottom border-primary\"><a href=\"/{0}\"><img style=\"width: auto; height: 1.5rem\" src=\"{1}\"/><span class=\"ms-2\">{2}</span></a></div><div class=\"row\">{3}</div>";
             string html = string.Format(template, ConstantsService.NOVELTIES, PathService.GetSVGRelativePath(null, "new"), _localizer[ConstantsService.NOVELTIES].Value, GetItems(newProducts));
             html += string.Format(template, ConstantsService.RECOMMENDED, PathService.GetSVGRelativePath(null, "rec"), _localizer[ConstantsService.RECOMMENDED].Value, GetItems(recProducts));
-            foreach ((Category, IEnumerable<string>) c in categories)
+            //foreach ((Category, IEnumerable<string>) c in categories)
+            //{
+            //    html += string.Format(template, PathService.GetModelUrl(ConstantsService.CATEGORY, c.Item1.Id), PathService.GetSVGRelativePath(ConstantsService.CATEGORY, c.Item1.Id.ToString()), CultureProvider.GetLocalName(c.Item1.NameRu, c.Item1.NameEn, c.Item1.NameTm), GetItems(c.Item2));
+            //}
+            IEnumerable<Category> indexCats = _category.GetIndexCategories();
+            string catsString = string.Empty;
+            foreach (Category c in indexCats)
             {
-                html += string.Format(template, PathService.GetModelUrl(ConstantsService.CATEGORY, c.Item1.Id), PathService.GetSVGRelativePath(ConstantsService.CATEGORY, c.Item1.Id.ToString()), CultureProvider.GetLocalName(c.Item1.NameRu, c.Item1.NameEn, c.Item1.NameTm), GetItems(c.Item2));
+                catsString += $"<div class=\"col-12 col-xs-6 col-lg-3 p-1\"><a href=\"/{PathService.GetModelUrl(ConstantsService.CATEGORY, c.Id)}\"><img src=\"{PathService.GetImageRelativePath(ConstantsService.CATEGORY, c.Id)}\" class=\"card-img-top rounded-top\" alt=\"{CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm)}\" /><div style=\"font-size: {fontSize}rem\" class=\"bg-primary p-1 rounded-bottom\">{CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm)}</div></a></div>";
             }
             IEnumerable<Article> articles = _article.GetModels(new Dictionary<string, object> { { ConstantsService.CULTURE, CultureProvider.CurrentCulture } }).OrderByDescending(a => a.Id).Take(count);
+            string articleStrings = null;
             if (articles.Count() >= count)
             {
-                string articleStrings = null;
+                string arts = string.Empty;
                 foreach (Article a in articles)
                 {
-                    articleStrings += $"<div class=\"col-{col} col-xs-{xs} col-sm-{sm} col-md-{md} col-lg-{lg} col-xl-{xl} col-xxl-{xxl} col-xxxl-{xxxl}\"><a href=\"/{ConstantsService.ARTICLE}/{a.Id}\"><div class=\"p-1 text-center vrw\"><img class=\"rounded-1\" style=\"width: auto; height: 70px\" src=\"{PathService.GetImageRelativePath(ConstantsService.ARTICLE, a.Id)}\" alt=\"{a.Name}\" /></div><div><small class=\"small text-center\">{a.Name}</small></div></a></div>";
+                    arts += $"<div class=\"col-{col} col-xs-{xs} col-sm-{sm} col-md-{md} col-lg-{lg} col-xl-{xl} col-xxl-{xxl} col-xxxl-{xxxl}\"><a href=\"/{ConstantsService.ARTICLE}/{a.Id}\"><div class=\"p-1 text-center vrw\"><img class=\"rounded-1\" style=\"width: auto; height: 70px\" src=\"{PathService.GetImageRelativePath(ConstantsService.ARTICLE, a.Id)}\" alt=\"{a.Name}\" /></div><div><small class=\"small text-center\">{a.Name}</small></div></a></div>";
                 }
-                html += $"<div class=\"bg-light\"><div class=\"row justify-content-center\">{articleStrings}</div><div class=\"d-flex justify-content-end\"><a href=\"{ConstantsService.ARTICLES}\"><small>{_localizer["all-articles"].Value}</small></a></div></div>";
+                articleStrings = $"<div class=\"row justify-content-center\">{arts}</div><div class=\"d-flex justify-content-end\"><a href=\"/{ConstantsService.ARTICLES}\"><small>{_localizer["all-articles"].Value}</small></a></div>";
             }
             return new JsonResult(new
             {
                 fl = brandsString, // firstLine
                 p = slidesString, // slides
-                i = html // items
+                i = html, // items
+                c = catsString, // index categories
+                a = articleStrings
             });
         }
         [Route(ConstantsService.CATEGORIES)]
@@ -300,7 +325,7 @@ namespace newTolkuchka.Controllers
         public async Task<JsonResult> Products(string model, string id, bool productsOnly/*, int[] t*/, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp = 100, string search = null)
         {
             IList<Product> list = new List<Product>();
-            IQueryable<Product> targetProducts = null;
+            IEnumerable<Product> targetProducts = null;
             bool brandsOnly = false;
             switch (model)
             {
@@ -324,14 +349,14 @@ namespace newTolkuchka.Controllers
                     break;
                 case ConstantsService.SEARCH:
                     brandsOnly = true;
-                    var words = search.Trim().Split(" ");
-                    targetProducts = _product.GetFullModels().Where(p => p.Model.Type.NameRu.Contains(words[0]) || p.Model.Type.NameEn.Contains(words[0]) || p.Model.Type.NameTm.Contains(words[0]) || p.Model.Brand.Name.Contains(words[0]) || p.Model.Line.Name.Contains(words[0]) || p.Model.Name.Contains(words[0]) || p.ProductSpecsValues.Any(psv => psv.SpecsValue.NameRu.Contains(words[0]) || psv.SpecsValue.NameEn.Contains(words[0]) || psv.SpecsValue.NameTm.Contains(words[0])) || p.ProductSpecsValueMods.Any(psvm => psvm.SpecsValueMod.NameRu.Contains(words[0]) || psvm.SpecsValueMod.NameEn.Contains(words[0]) || psvm.SpecsValueMod.NameTm.Contains(words[0])));
-                    if (list.Any())
+                    IList<string> words = search.Trim().Split(" ");
+                    targetProducts = await _product.GetFullModels().Where(p => p.Model.Type.NameRu.Contains(words[0]) || p.Model.Type.NameEn.Contains(words[0]) || p.Model.Type.NameTm.Contains(words[0]) || p.Model.Brand.Name.Contains(words[0]) || p.Model.Name.Contains(words[0]) || p.ProductSpecsValues.Any(psv => psv.SpecsValue.NameRu.Contains(words[0]) || psv.SpecsValue.NameEn.Contains(words[0]) || psv.SpecsValue.NameTm.Contains(words[0])) || p.ProductSpecsValueMods.Any(psvm => psvm.SpecsValueMod.NameRu.Contains(words[0]) || psvm.SpecsValueMod.NameEn.Contains(words[0]) || psvm.SpecsValueMod.NameTm.Contains(words[0])) || (p.Model.Line != null && p.Model.Line.Name.Contains(words[0]))).ToListAsync();
+                    if (targetProducts.Any())
                     {
-                        for (var i = 1; i < words.Length; i++)
+                        for (var i = 1; i < words.Count; i++)
                         {
-                            targetProducts = targetProducts.Where(p => p.Model.Type.NameRu.Contains(words[i]) || p.Model.Type.NameEn.Contains(words[i]) || p.Model.Type.NameTm.Contains(words[i]) || p.Model.Brand.Name.Contains(words[i]) || p.Model.Line.Name.Contains(words[i]) || p.Model.Name.Contains(words[i]) || p.ProductSpecsValues.Any(psv => psv.SpecsValue.NameRu.Contains(words[i]) || psv.SpecsValue.NameEn.Contains(words[i]) || psv.SpecsValue.NameTm.Contains(words[i])) || p.ProductSpecsValueMods.Any(psvm => psvm.SpecsValueMod.NameRu.Contains(words[i]) || psvm.SpecsValueMod.NameEn.Contains(words[i]) || psvm.SpecsValueMod.NameTm.Contains(words[i])));
-                            if (!list.Any())
+                            targetProducts = targetProducts.Where(p => p.Model.Type.NameRu.Contains(words[i], StringComparison.OrdinalIgnoreCase) || p.Model.Type.NameEn.Contains(words[i], StringComparison.OrdinalIgnoreCase) || p.Model.Type.NameTm.Contains(words[i], StringComparison.OrdinalIgnoreCase) || p.Model.Brand.Name.Contains(words[i], StringComparison.OrdinalIgnoreCase) || p.Model.Name.Contains(words[i], StringComparison.OrdinalIgnoreCase) || p.ProductSpecsValues.Any(psv => psv.SpecsValue.NameRu.Contains(words[i], StringComparison.OrdinalIgnoreCase) || psv.SpecsValue.NameEn.Contains(words[i], StringComparison.OrdinalIgnoreCase) || psv.SpecsValue.NameTm.Contains(words[i], StringComparison.OrdinalIgnoreCase)) || p.ProductSpecsValueMods.Any(psvm => psvm.SpecsValueMod.NameRu.Contains(words[i], StringComparison.OrdinalIgnoreCase) || psvm.SpecsValueMod.NameEn.Contains(words[i], StringComparison.OrdinalIgnoreCase) || psvm.SpecsValueMod.NameTm.Contains(words[i], StringComparison.OrdinalIgnoreCase)) || (p.Model.Line != null && p.Model.Line.Name.Contains(words[i], StringComparison.OrdinalIgnoreCase))).ToList();
+                            if (!targetProducts.Any())
                                 break;
                         }
                     }
@@ -351,15 +376,16 @@ namespace newTolkuchka.Controllers
             }
             if (targetProducts.Any())
             {
-                list = await targetProducts.Where(p => !p.NotInUse && !p.Model.Category.NotInUse).ToListAsync();
+                list = targetProducts.Where(p => !p.NotInUse && !p.Model.Category.NotInUse).ToList();
             }
             if (!list.Any())
                 return new JsonResult(new
                 {
                     products = list,
-                    noProduct = _localizer["noProductAbsolutly"].Value
+                    noProduct = model == ConstantsService.SEARCH ? _localizer["noProductSearch"].Value : _localizer["noProductAbsolutly"].Value
                 });
             IList<IEnumerable<UIProduct>> /*IEnumerable<UIProduct>*/ uiProducts = _product.GetUIData(productsOnly, brandsOnly, list,/* t, */b, v, minp, maxp, sort, page, pp,/* out IList<AdminType> types, */out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage);
+            
             IEnumerable<string> products = uiProducts.Select(p => IProduct.GetHtmlProduct(p, 12, 6, 6, 4, 4, 3, 3, 3));
             return new JsonResult(new
             {

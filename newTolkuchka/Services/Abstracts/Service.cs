@@ -215,7 +215,7 @@ namespace newTolkuchka.Services.Abstracts
                     break;
                 case ConstantsService.PRODUCT:
                     IQueryable<Product> products = fullModels as IQueryable<Product>;
-                    fullModels = (IQueryable<T>)products.Include(p => p.Model).ThenInclude(m => m.Type).Include(p => p.Model).ThenInclude(m => m.Brand).Include(p => p.Model).ThenInclude(m => m.Line).Include(p => p.Model).ThenInclude(x => x.ModelSpecs).Include(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ThenInclude(x => x.Spec).Include(x => x.ProductSpecsValueMods).ThenInclude(x => x.SpecsValueMod);
+                    fullModels = (IQueryable<T>)products.Include(p => p.Model).ThenInclude(m => m.Category).Include(p => p.Model).ThenInclude(m => m.Type).Include(p => p.Model).ThenInclude(m => m.Brand).Include(p => p.Model).ThenInclude(m => m.Line).Include(p => p.Model).ThenInclude(x => x.ModelSpecs).Include(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ThenInclude(x => x.Spec).Include(x => x.ProductSpecsValueMods).ThenInclude(x => x.SpecsValueMod).ThenInclude(x => x.SpecsValue);
                     break;
                 case ConstantsService.PURCHASEINVOICE:
                     IQueryable<PurchaseInvoice> purchaseInvoices = fullModels as IQueryable<PurchaseInvoice>;

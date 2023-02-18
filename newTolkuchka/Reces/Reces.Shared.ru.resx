@@ -303,6 +303,9 @@
   <data name="noProductAbsolutly" xml:space="preserve">
     <value>К сожалению, в данном разделе товаров нет!</value>
   </data>
+  <data name="noProductSearch" xml:space="preserve">
+    <value>К сожалению, по вашему запросу ничего не найдено!</value>
+  </data>
   <data name="notAvailable" xml:space="preserve">
     <value>К сожалению, данного товара нет!</value>
   </data>

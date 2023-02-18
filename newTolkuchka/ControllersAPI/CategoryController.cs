@@ -10,6 +10,8 @@ namespace newTolkuchka.ControllersAPI
     [Authorize(Policy = "Level1")]
     public class CategoryController : AbstractController<Category, AdminCategory, ICategory>
     {
+        private const int WIDTH = 450;
+        private const int HEIGHT = 225;
         private readonly ICategory _category;
         public CategoryController(IEntry entry, ICategory category) : base(entry, Entity.Category, category)
         {
@@ -44,11 +46,17 @@ namespace newTolkuchka.ControllersAPI
             return await _category.GetModelAdLinksAsync(id);
         }
         [HttpPost]
-        public async Task<Result> Post([FromForm] Category category, [FromForm] int[] adLinks)
+        public async Task<Result> Post([FromForm] Category category, [FromForm] int[] adLinks, [FromForm] IFormFile[] images)
         {
             bool isExist = _category.IsExist(category, _category.GetCategoriesByParentId(category.ParentId));
             if (isExist)
                 return Result.Already;
+            if (category.IsForHome)
+            {
+                bool isImaged = _category.IsCategoryImaged(images);
+                if (!isImaged)
+                    return Result.NoImage;
+            }
             Category parent = await _category.GetModelAsync(category.ParentId);
             if (parent != null)
             {
@@ -57,17 +65,23 @@ namespace newTolkuchka.ControllersAPI
                     category.NotInUse = true;
                 }
             }
-            await _category.AddModelAsync(category);
+            await _category.AddModelAsync(category, images, WIDTH, HEIGHT);
             await _category.AddCategoryAdLinksAsync(category.Id, adLinks);
             await AddActAsync(category.Id, category.NameRu);
             return Result.Success;
         }
         [HttpPut]
-        public async Task<Result> Put([FromForm] Category category, [FromForm] int[] adLinks)
+        public async Task<Result> Put([FromForm] Category category, [FromForm] int[] adLinks, [FromForm] IFormFile[] images)
         {
             bool isExist = _category.IsExist(category, _category.GetModels().Where(x => x.Id != category.Id));
             if (isExist)
                 return Result.Already;
+            if (category.IsForHome)
+            {
+                bool isImaged = _category.IsCategoryImaged(images, category.Id);
+                if (!isImaged)
+                    return Result.NoImage;
+            }
             void AllNotInUse(IEnumerable<Category> categories)
             {
                 if (categories.Any())
@@ -79,7 +93,7 @@ namespace newTolkuchka.ControllersAPI
             }
             if (category.NotInUse)
                 AllNotInUse(_category.GetModels().Where(c => c.ParentId == category.Id));
-            _category.EditModel(category);
+            await _category.EditModelAsync(category, images, WIDTH, HEIGHT);
             await _category.AddCategoryAdLinksAsync(category.Id, adLinks);
             await EditActAsync(category.Id, category.NameRu);
             return Result.Success;

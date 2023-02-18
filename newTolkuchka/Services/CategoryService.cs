@@ -8,11 +8,11 @@ using newTolkuchka.Services.Interfaces;
 
 namespace newTolkuchka.Services
 {
-    public class CategoryService : ServiceNoFile<Category, AdminCategory>, ICategory
+    public class CategoryService : ServiceFormFile<Category, AdminCategory>, ICategory
     {
         // private const int PADDING = 2;
         private readonly IProduct _product;
-        public CategoryService(AppDbContext con, IStringLocalizer<Shared> localizer, IProduct product) : base(con, localizer)
+        public CategoryService(AppDbContext con, IStringLocalizer<Shared> localizer, IProduct product, IPath path, IImage image) : base(con, localizer, path, image, ConstantsService.CATEGORYMAXIMAGE)
         {
             _product = product;
         }
@@ -90,6 +90,12 @@ namespace newTolkuchka.Services
                 GetAll(parentId);
             return ids;
         }
+
+        public IEnumerable<Category> GetIndexCategories()
+        {
+            IEnumerable<Category> categories = GetModels().Where(c => c.IsForHome && !c.NotInUse).OrderBy(c => c.ParentId).ThenBy(c => c.Order);
+            return categories;
+        }
         public async Task<string[]> GetAdLinksAsync(int id)
         {
             return await GetCategoryAdLinks(id).Select(x => x.StepParentId.ToString()).ToArrayAsync();
@@ -138,6 +144,19 @@ namespace newTolkuchka.Services
                 };
                 await _con.CategoryModelAdLinks.AddAsync(categoryModelAdLink);
             }
+        }
+
+        public bool IsCategoryImaged(IFormFile[] images, int id)
+        {
+            if (images.Any(i => i.Length > 0))
+                return true;
+            if (id > 0)
+            {
+                string[] files = Directory.GetFiles($"{_path.GetImagesFolder()}/{ConstantsService.CATEGORY}", $"{id}-0.jpg", SearchOption.TopDirectoryOnly);
+                if (files.Any())
+                    return true;
+            }
+            return false;
         }
 
         private IQueryable<CategoryAdLink> GetCategoryAdLinks(int id)

@@ -108,6 +108,7 @@ namespace newTolkuchka.Services
         public const string HASH = "hash";
         // images
         public const int PRODUCTMAXIMAGE = 5;
+        public const int CATEGORYMAXIMAGE = 1;
         public const int BRANDMAXIMAGE = 1;
         public const int SPECSVALUEMAXIMAGE = 1;
         public const int SLIDEMAXIMAGE = 3;

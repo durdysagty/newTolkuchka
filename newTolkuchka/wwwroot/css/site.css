@@ -182,3 +182,7 @@ s {
     max-height: 15rem;
     overflow-y: scroll
 }
+
+a > .bg-primary {
+    color: #fff
+}

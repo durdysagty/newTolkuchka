@@ -6,9 +6,11 @@
         })
         if (response.ok) {
             const result = await response.json()
-            $("#fl").append(result.fl)
             $("#promo").append(result.p)
             $("#items").append(result.i)
+            $("#cats").append(result.c)
+            $("#art").append(result.a)
+            $("#fl").append(result.fl)
             function autoplay(run) {
                 clearInterval(interval)
                 interval = setInterval(() => {

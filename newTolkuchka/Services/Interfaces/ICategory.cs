@@ -3,7 +3,7 @@ using newTolkuchka.Models.DTO;
 
 namespace newTolkuchka.Services.Interfaces
 {
-    public interface ICategory : IActionNoFile<Category, AdminCategory>
+    public interface ICategory : IActionFormFile<Category, AdminCategory>
     {
         Task<bool> HasProduct(int id);
         Task<IEnumerable<AdminCategoryTree>> GetAdminCategoryTree(int startId = 0);
@@ -11,9 +11,11 @@ namespace newTolkuchka.Services.Interfaces
         IQueryable<Category> GetCategoriesByParentId(int parentId);
         IQueryable<Category> GetActiveCategoriesByParentId(int parentId);
         IList<int> GetAllCategoryIdsHaveProductsByParentId(int parentId);
+        IEnumerable<Category> GetIndexCategories();
         Task<string[]> GetAdLinksAsync(int id);
         Task AddCategoryAdLinksAsync(int id, IList<int> adLinks);
         Task<string[]> GetModelAdLinksAsync(int id);
         Task AddCategoryModelAdLinksAsync(int id, IList<int> adLinks);
+        bool IsCategoryImaged(IFormFile[] images, int id = 0);
     }
 }

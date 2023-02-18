@@ -303,6 +303,9 @@
   <data name="noProductAbsolutly" xml:space="preserve">
     <value>Bagyşlaň, bu bölümde önüm ýok!</value>
   </data>
+  <data name="noProductSearch" xml:space="preserve">
+    <value>Gynansagam, gözlegiňiz boýunça haryt tapyp bilmedik!</value>
+  </data>
   <data name="notAvailable" xml:space="preserve">
     <value>Bagyşlaň, bu önüm elýeterli däl!</value>
   </data>

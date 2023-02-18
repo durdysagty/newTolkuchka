@@ -2,7 +2,7 @@
 
 namespace newTolkuchka.Services.Interfaces
 {
-    public enum Result { Success, Fail, Already, MaxLength, NoConnections, DeleteError }
+    public enum Result { Success, Fail, Already, MaxLength, NoConnections, DeleteError, NoImage }
     public interface IAction<T, TAdmin>
     {        
         Task<T> GetModelAsync(int id);

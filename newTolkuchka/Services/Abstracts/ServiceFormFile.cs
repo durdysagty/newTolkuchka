@@ -36,7 +36,7 @@ namespace newTolkuchka.Services.Abstracts
                 await SetModelImages(model, images, width, height, divider);
             else
             {
-                // if no files are downloaded, then copy the files of sponsor model
+                // if no files are downloaded, then copy the files of a sponsor model
                 string[] files = Directory.GetFiles($"{_path.GetImagesFolder()}/{type.Name.ToLower()}", $"{simId}-*", SearchOption.AllDirectories);
                 id = GetModelId(type, model);
                 int n = 0;

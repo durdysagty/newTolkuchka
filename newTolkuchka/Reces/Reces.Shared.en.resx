@@ -303,6 +303,9 @@
   <data name="noProductAbsolutly" xml:space="preserve">
     <value>Sorry, there are no products in this section!</value>
   </data>
+  <data name="noProductSearch" xml:space="preserve">
+    <value>Unfortunately, your search returned no results!</value>
+  </data>
   <data name="notAvailable" xml:space="preserve">
     <value>Sorry, this item is not available!</value>
   </data>
