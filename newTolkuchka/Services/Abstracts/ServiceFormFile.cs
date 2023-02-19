@@ -77,12 +77,13 @@ namespace newTolkuchka.Services.Abstracts
                     if (divider != null)
                         await _image.SetImage(_path.GetImagePath($"{type.Name}/small", id, i), images[i], width / (int)divider, height / (int)divider);
                 }
-                if (images[i].FileName == "delete")
-                {
-                    _image.DeleteImages(new Stack<string>(new string[] { _path.GetImagePath(type.Name, id, i) }));
-                    if (divider != null)
-                        _image.DeleteImages(new Stack<string>(new string[] { _path.GetImagePath($"{type.Name}/small", id, i) }));
-                }
+                if (i != 0)
+                    if (images[i].FileName == "delete")
+                    {
+                        _image.DeleteImages(new Stack<string>(new string[] { _path.GetImagePath(type.Name, id, i) }));
+                        if (divider != null)
+                            _image.DeleteImages(new Stack<string>(new string[] { _path.GetImagePath($"{type.Name}/small", id, i) }));
+                    }
             }
         }
 
