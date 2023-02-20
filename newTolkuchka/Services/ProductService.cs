@@ -354,7 +354,7 @@ namespace newTolkuchka.Services
         
         public IEnumerable<UIProduct> GetUIProduct(IList<Product> sameModels)
         {
-            IEnumerable<Product> distinct1 = sameModels.Where(p => !p.ProductSpecsValueMods.Any()).DistinctBy(p => p.ProductSpecsValues.Where(psv => psv.SpecsValue.Spec.IsImaged).Select(psv => psv.SpecsValue.Id).FirstOrDefault());
+            IEnumerable<Product> distinct1 = sameModels.Where(p => !p.ProductSpecsValueMods.Where(psv => psv.SpecsValueMod.SpecsValue.Spec.IsImaged).Any()).DistinctBy(p => p.ProductSpecsValues.Where(psv => psv.SpecsValue.Spec.IsImaged).Select(psv => psv.SpecsValue.Id).FirstOrDefault());
             IEnumerable<Product> distinct2 = sameModels.DistinctBy(p => p.ProductSpecsValueMods.Where(psv => psv.SpecsValueMod.SpecsValue.Spec.IsImaged).Select(psv => psv.SpecsValueMod.Id).FirstOrDefault());
             IEnumerable<Product> distinct = distinct1.Concat(distinct2).DistinctBy(p => p.Id);
             return distinct.Select(p => new UIProduct()
