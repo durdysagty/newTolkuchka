@@ -237,6 +237,9 @@
   <data name="invoices" xml:space="preserve">
     <value>hasaplar</value>
   </data>
+  <data name="items" xml:space="preserve">
+    <value>{0} haryt</value>
+  </data>
   <data name="liked" xml:space="preserve">
     <value>Halanlaryňyz</value>
   </data>

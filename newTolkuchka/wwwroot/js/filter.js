@@ -1,6 +1,6 @@
 ﻿const mobile = 992
 const searchObj = {
-    //t: [],
+    t: [],
     b: [],
     v: [],
     min: '',
@@ -124,64 +124,71 @@ async function setProducts(productsOnly) {
                     onFinish: setFilters
                 })
             }
-            // types
-            //            if (data.types.types.length > 1) {
-            //                if (window.innerWidth > mobile)
-            //                    $("#filters").append(`<strong>${data.types.name}</strong>`)
-            //                else
-            //                    $("#slide-filters").append(`<strong>${data.types.name}</strong>`)
-            //                const types = data.types.types.map(t => {
-            //                    let id = `types${t.id}`
-            //                    const i = searchObj.t.includes(`${t.id}`)
-            //                    return `<div class="form-check d-flex">
-            //<input class="form-check-input" name="filt" ${i ? `checked` : null} onclick="setFilters()" type="checkbox" value="${t.id}" id="${id}" />
-            //<label class="form-check-label align-self-end" for="${id}">${t.name}</label>
-            //</div>`
-            //                })
-            //                if (window.innerWidth > mobile)
-            //                    types.forEach(t => $("#filters").append(t))
-            //                else
-            //                    types.forEach(t => $("#slide-filters").append(t))
-            //            }
-            // brands
-            if (data.brands.brands.length > 1) {
-                if (window.innerWidth > mobile)
-                    $("#filters").append(`<strong>${data.brands.name}</strong><div id="brands"></div>`)
-                else
-                    $("#slide-filters").append(`<strong>${data.brands.name}</strong><div id="brands"></div>`)
-                const brands = data.brands.brands.map(b => {
-                    let id = `brands${b.id}`
-                    const i = searchObj.b.includes(`${b.id}`)
-                    return `<div class="form-check d-flex">
+        }
+        // types
+        if (data.types.types !== null && data.types.types.length > 1) {
+            $("#types").append(`<strong>${data.types.name}</strong><div id="typesList" class="scList"></div>`)
+            //if (window.innerWidth > mobile)
+            //    $("#types").append(`<strong>${data.types.name}</strong>`)
+            //else
+            //    $("#slide-filters").append(`<strong>${data.types.name}</strong>`)
+            const types = data.types.types.map(t => {
+                let id = `types${t.id}`
+                const i = searchObj.t.includes(`${t.id}`)
+                return `<div class="form-check d-flex">
+            <input class="form-check-input" name="filt" ${i ? `checked` : null} onclick="setFilters()" type="checkbox" value="${t.id}" id="${id}" />
+            <label class="form-check-label align-self-end" for="${id}">${t.name}</label></div>`
+            })
+            types.forEach(t => $("#typesList").append(t))
+            //if (window.innerWidth > mobile)
+            //    types.forEach(t => $("#filters").append(t))
+            //else
+            //    types.forEach(t => $("#slide-filters").append(t))
+        }
+        // brands
+        if (data.brands.brands !== null && data.brands.brands.length > 1) {
+            $("#brands").append(`<strong>${data.brands.name}</strong><div id="brandsList" class="scList"></div>`)
+            //if (window.innerWidth > mobile)
+            //    $("#filters").append(`<strong>${data.brands.name}</strong><div id="brands"></div>`)
+            //else
+            //    $("#slide-filters").append(`<strong>${data.brands.name}</strong><div id="brands"></div>`)
+            const brands = data.brands.brands.map(b => {
+                let id = `brands${b.id}`
+                const i = searchObj.b.includes(`${b.id}`)
+                return `<div class="form-check d-flex">
 <input class="form-check-input" name="filb" ${i ? `checked` : null} onclick="setFilters()" type="checkbox" value="${b.id}" id="${id}" />
 <label class="form-check-label align-self-end" for="${id}">${b.name}</label>
 </div>`
-                })
-                brands.forEach(b => $("#brands").append(b))
-            }
-            // filters
-            if (data.filters !== null) {
-                const filters = data.filters.map(f => {
-                    const filterValues = f.isImaged ?
-                        f.filterValues.map(fv => {
-                            const id = `filVal${fv.id}`
-                            const i = searchObj.v.includes(`${f.id},${fv.id}`)
-                            return `<span class="my-2"><input name="filv" ${i ? `checked` : null} class="d-none" onclick="setFilters()" type="checkbox" value="${f.id},${fv.id}" id="${id}" /><img name="img${f.id},${fv.id}" width="25" height="25" style="width: 25px; height: auto; cursor: pointer; padding: 1px" onclick="clickInput(event, ${id})" title="${fv.name}" alt="${fv.name}" src="${fv.image}" class="my-1 border-1 ${i ? `border border-black` : null}" /></span>`
-                        }) :
-                        f.filterValues.map(fv => {
-                            const id = `filVal${fv.id}`
-                            const i = searchObj.v.includes(`${f.id},${fv.id}`)
-                            return `<div class="form-check d-flex"><input class="form-check-input" name="filv" ${i ? `checked` : null} onclick="setFilters()" type="checkbox" value="${f.id},${fv.id}" id="${id}" /><label class="form-check-label align-self-end" for="${id}">${fv.name}</label></div>`
-                        })
-                    let filter = `<div><strong>${f.name}</strong></div>`
-                    filterValues.forEach(fv => filter += fv)
-                    return filter
-                })
-                if (window.innerWidth > mobile)
-                    filters.forEach(b => $("#filters").append(b))
-                else
-                    filters.forEach(b => $("#slide-filters").append(b))
-            }
+            })
+            brands.forEach(b => $("#brandsList").append(b))
+        }
+        // filters
+        if (data.filters !== null) {
+            const filters = data.filters.map(f => {
+                const filterValues = f.isImaged ?
+                    f.filterValues.map(fv => {
+                        const id = `filVal${fv.id}`
+                        const i = searchObj.v.includes(`${f.id},${fv.id}`)
+                        return `<span class="my-2"><input name="filv" ${i ? `checked` : null} class="d-none" onclick="setFilters()" type="checkbox" value="${f.id},${fv.id}" id="${id}" /><img name="img${f.id},${fv.id}" width="25" height="25" style="width: 25px; height: auto; cursor: pointer; padding: 1px" onclick="clickInput(event, ${id})" title="${fv.name}" alt="${fv.name}" src="${fv.image}" class="my-1 border-1 ${i ? `border border-black` : null}" /></span>`
+                    }) :
+                    f.filterValues.map(fv => {
+                        const id = `filVal${fv.id}`
+                        const i = searchObj.v.includes(`${f.id},${fv.id}`)
+                        return `<div class="form-check d-flex"><input class="form-check-input" name="filv" ${i ? `checked` : null} onclick="setFilters()" type="checkbox" value="${f.id},${fv.id}" id="${id}" /><label class="form-check-label align-self-end" for="${id}">${fv.name}</label></div>`
+                    })
+                let filter = `<div><strong>${f.name}</strong></div>`
+                filterValues.forEach(fv => filter += fv)
+                return filter
+            })
+            $("#filters").html('')
+            filters.forEach(b => $("#filters").append(b))
+            //if (window.innerWidth > mobile)
+            //    filters.forEach(b => $("#filters").append(b))
+            //else
+            //    filters.forEach(b => $("#slide-filters").append(b))
+        }
+        else if ((path[1] === 'brand' || path[1] === 'search')  && data.filters === null) {
+            $("#filters").html('')
         }
         const sortby = data.sort.map((s, i) => {
             if (Math.abs(searchObj.sort) === i)
@@ -258,20 +265,20 @@ function setPage(e, lastPage) {
 }
 function setFilters() {
     const inputs = $("input[name*='fil']")
-    //const tids = []
+    const tids = []
     const bids = []
     const vids = []
     inputs.each(function () {
         if (this.checked) {
-            //if (this.name == 'filt')
-            //    tids.push(this.value)
-            if (this.name == 'filb')
+            if (this.name == 'filt')
+                tids.push(this.value)
+            else if (this.name == 'filb')
                 bids.push(this.value)
             else
                 vids.push(this.value)
         }
     })
-    //searchObj.t = tids
+    searchObj.t = tids
     searchObj.b = bids
     searchObj.v = vids
     const minMaxValues = $("input[name='m']").val()

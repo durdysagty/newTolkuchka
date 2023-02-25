@@ -59,8 +59,9 @@ namespace newTolkuchka.Controllers
         [Route(ConstantsService.SLASH)]
         [Route(ConstantsService.HOME)]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 10800)]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            ViewBag.PrCnt = await _product.GetModels().CountAsync();
             CreateMetaData();
             return View();
         }
@@ -322,11 +323,12 @@ namespace newTolkuchka.Controllers
         }
         [Route($"{ConstantsService.PRODUCTS}")]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 7200)]
-        public async Task<JsonResult> Products(string model, string id, bool productsOnly/*, int[] t*/, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp = 100, string search = null)
+        public async Task<JsonResult> Products(string model, string id, bool productsOnly, int[] t, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp = 100, string search = null)
         {
             IList<Product> list = new List<Product>();
             IEnumerable<Product> targetProducts = null;
             bool brandsOnly = false;
+            bool typesNeeded = false;
             switch (model)
             {
                 case ConstantsService.CATEGORY:
@@ -344,11 +346,13 @@ namespace newTolkuchka.Controllers
                     targetProducts = _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.CATEGORY, categoryIds } });
                     break;
                 case ConstantsService.BRAND:
+                    typesNeeded = true;
                     // get all products in by brand
                     targetProducts = _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.BRAND, new int[] { int.Parse(id) } } });
                     break;
                 case ConstantsService.SEARCH:
                     brandsOnly = true;
+                    typesNeeded = true;
                     IList<string> words = search.Trim().Split(" ");
                     targetProducts = await _product.GetFullModels().Where(p => p.Model.Type.NameRu.Contains(words[0]) || p.Model.Type.NameEn.Contains(words[0]) || p.Model.Type.NameTm.Contains(words[0]) || p.Model.Brand.Name.Contains(words[0]) || p.Model.Name.Contains(words[0]) || p.ProductSpecsValues.Any(psv => psv.SpecsValue.NameRu.Contains(words[0]) || psv.SpecsValue.NameEn.Contains(words[0]) || psv.SpecsValue.NameTm.Contains(words[0])) || p.ProductSpecsValueMods.Any(psvm => psvm.SpecsValueMod.NameRu.Contains(words[0]) || psvm.SpecsValueMod.NameEn.Contains(words[0]) || psvm.SpecsValueMod.NameTm.Contains(words[0])) || (p.Model.Line != null && p.Model.Line.Name.Contains(words[0]))).ToListAsync();
                     if (targetProducts.Any())
@@ -384,7 +388,7 @@ namespace newTolkuchka.Controllers
                     products = list,
                     noProduct = model == ConstantsService.SEARCH ? _localizer["noProductSearch"].Value : _localizer["noProductAbsolutly"].Value
                 });
-            IList<IEnumerable<UIProduct>> /*IEnumerable<UIProduct>*/ uiProducts = _product.GetUIData(productsOnly, brandsOnly, list,/* t, */b, v, minp, maxp, sort, page, pp,/* out IList<AdminType> types, */out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage);
+            IList<IEnumerable<UIProduct>> uiProducts = _product.GetUIData(productsOnly, brandsOnly, typesNeeded, list, t, b, v, minp, maxp, sort, page, pp, out IList<AdminType> types, out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage);
             
             IEnumerable<string> products = uiProducts.Select(p => IProduct.GetHtmlProduct(p, 12, 6, 6, 4, 4, 3, 3, 3));
             return new JsonResult(new
@@ -394,6 +398,11 @@ namespace newTolkuchka.Controllers
                 {
                     name = _localizer[ConstantsService.BRAND].Value,
                     brands
+                },
+                types = new
+                {
+                    name = _localizer[ConstantsService.TYPE].Value,
+                    types
                 },
                 filters,
                 min,

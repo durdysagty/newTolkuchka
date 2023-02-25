@@ -14,6 +14,12 @@
         }
         <strong>@Localizer["price2"] @CurrencyService.Currency.CodeName</strong>
         <div id="slide-range"></div>
+        <div id="types">
+        </div>
+        <div id="brands">
+        </div>
+        <div id="filters">
+        </div>
     </div>
     <button type="button" data-target="slide-filters" class="btn btn-primary btn-floating d-lg-none sidenav-trigger" id="btn-filter">
         <i class="fas fa-filter"></i>
@@ -30,9 +36,13 @@
                     <a class="d-block" href="/@ConstantsService.CATEGORY/@c.Id">@CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm)</a>
                 }
             }
+            <strong>@Localizer["price2"] @CurrencyService.Currency.CodeName</strong>
+            <div id="range"></div>
+            <div id="types">
+            </div>
+            <div id="brands">
+            </div>
             <div id="filters">
-                <strong>@Localizer["price2"] @CurrencyService.Currency.CodeName</strong>
-                <div id="range"></div>
             </div>
         </div>
     }

@@ -50,13 +50,15 @@ namespace newTolkuchka.Services
         {
             return await GetFullModels().Include(p => p.Model).ThenInclude(m => m.Warranty).AsNoTrackingWithIdentityResolution().FirstOrDefaultAsync(p => p.Id == id);
         }
-        public IList<IEnumerable<UIProduct>> GetUIData(bool productsOnly, bool brandsOnly, IList<Product> products,/* int[] t, */int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp,/* out IList<AdminType> types, */out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage)
+        public IList<IEnumerable<UIProduct>> GetUIData(bool productsOnly, bool brandsOnly, bool typesNeeded, IList<Product> products, int[] t, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp, out IList<AdminType> types, out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage)
         {
             IList<Product> preProducts = new List<Product>();
             IList<IEnumerable<UIProduct>> uiProducts = new List<IEnumerable<UIProduct>>();
-            //types = productsOnly ? null : new List<AdminType>();
+            types = productsOnly && !typesNeeded ? null : new List<AdminType>();
             brands = productsOnly ? null : new List<Brand>();
             filters = productsOnly || brandsOnly ? null : new List<Filter>();
+            if (typesNeeded && t.Length == 1)
+                filters = new List<Filter>();
             min = 0;
             max = 0;
             // prepare selected filters (v) to filter products
@@ -87,16 +89,19 @@ namespace newTolkuchka.Services
                 if (!productsOnly)
                 {
                     // prepare types for filter
-                    //if (!types.Any(t => t.Id == p.Model.TypeId))
-                    //{
-                    //    AdminType type = new()
-                    //    {
-                    //        Id = p.Model.TypeId,
-                    //        Name = CultureProvider.GetLocalName(p.Model.Type.NameRu, p.Model.Type.NameEn, p.Model.Type.NameTm)
-                    //    };
-                    //    types.Add(type);
-                    //}
-                    //types = types.OrderBy(x => x.Name).ToList();
+                    if (typesNeeded)
+                    {
+                        if (!types.Any(t => t.Id == p.Model.TypeId))
+                        {
+                            AdminType type = new()
+                            {
+                                Id = p.Model.TypeId,
+                                Name = CultureProvider.GetLocalName(p.Model.Type.NameRu, p.Model.Type.NameEn, p.Model.Type.NameTm)
+                            };
+                            types.Add(type);
+                        }
+                        types = types.OrderBy(x => x.Name).ToList();
+                    }
                     // prepare brands for filter
                     if (!brands.Any(b => b.Id == p.Model.BrandId))
                     {
@@ -108,36 +113,6 @@ namespace newTolkuchka.Services
                         brands.Add(brand);
                     }
                     brands = brands.OrderBy(x => x.Name).ToList();
-                    if (!brandsOnly)
-                    {
-                        // prepare filters
-                        foreach (ProductSpecsValue psv in p.ProductSpecsValues)
-                        {
-                            if (psv.SpecsValue.Spec.IsFilter)
-                            {
-                                Filter filter = filters.FirstOrDefault(f => f.Id == psv.SpecsValue.Spec.Id);
-                                if (filter == null)
-                                {
-                                    filter = new Filter()
-                                    {
-                                        Id = psv.SpecsValue.Spec.Id,
-                                        Name = CultureProvider.GetLocalName(psv.SpecsValue.Spec.NameRu, psv.SpecsValue.Spec.NameEn, psv.SpecsValue.Spec.NameTm),
-                                        Order = psv.SpecsValue.Spec.Order,
-                                        IsImaged = psv.SpecsValue.Spec.IsImaged,
-                                        FilterValues = new List<FilterValue>()
-                                    };
-                                    filters.Add(filter);
-                                }
-                                if (!filter.FilterValues.Any(fv => fv.Id == psv.SpecsValueId))
-                                    filter.FilterValues.Add(new FilterValue()
-                                    {
-                                        Id = psv.SpecsValueId,
-                                        Name = CultureProvider.GetLocalName(psv.SpecsValue.NameRu, psv.SpecsValue.NameEn, psv.SpecsValue.NameTm),
-                                        Image = filter.IsImaged ? PathService.GetImageRelativePath(ConstantsService.SPECSVALUE, psv.SpecsValueId) : null
-                                    });
-                            }
-                        }
-                    }
                     if (min != 0)
                     {
                         min = (int)(p.NewPrice != null ? min > p.NewPrice ? p.NewPrice : min : min > p.Price ? p.Price : min);
@@ -150,11 +125,40 @@ namespace newTolkuchka.Services
                     }
 
                 }
-                //if (t.Any())
-                //{
-                //    if (!t.Any(x => p.Model.TypeId == x))
-                //        continue;
-                //}
+                // we need only filters of selected type products
+                if (t.Any())
+                {
+                    if (!t.Any(x => p.Model.TypeId == x))
+                        continue;
+                }
+                // we do it in seperate scope b.o. brands & types in brands, we have to select filters after each type selected and selected type is single by user 
+                if ((!productsOnly && !brandsOnly && !typesNeeded) || (typesNeeded && t.Length == 1))
+                {
+                    // prepare filters
+                    foreach (ProductSpecsValue psv in p.ProductSpecsValues.Where(psv => psv.SpecsValue.Spec.IsFilter))
+                    {
+                        Filter filter = filters.FirstOrDefault(f => f.Id == psv.SpecsValue.Spec.Id);
+                        if (filter == null)
+                        {
+                            filter = new Filter()
+                            {
+                                Id = psv.SpecsValue.Spec.Id,
+                                Name = CultureProvider.GetLocalName(psv.SpecsValue.Spec.NameRu, psv.SpecsValue.Spec.NameEn, psv.SpecsValue.Spec.NameTm),
+                                Order = psv.SpecsValue.Spec.Order,
+                                IsImaged = psv.SpecsValue.Spec.IsImaged,
+                                FilterValues = new List<FilterValue>()
+                            };
+                            filters.Add(filter);
+                        }
+                        if (!filter.FilterValues.Any(fv => fv.Id == psv.SpecsValueId))
+                            filter.FilterValues.Add(new FilterValue()
+                            {
+                                Id = psv.SpecsValueId,
+                                Name = CultureProvider.GetLocalName(psv.SpecsValue.NameRu, psv.SpecsValue.NameEn, psv.SpecsValue.NameTm),
+                                Image = filter.IsImaged ? PathService.GetImageRelativePath(ConstantsService.SPECSVALUE, psv.SpecsValueId) : null
+                            });
+                    }
+                }
                 if (b.Any())
                 {
                     if (!b.Any(x => p.Model.BrandId == x))
@@ -173,7 +177,7 @@ namespace newTolkuchka.Services
                 }
                 preProducts.Add(p);
             }
-            if (!productsOnly && !brandsOnly)
+            if ((!productsOnly && !brandsOnly && !typesNeeded) || (typesNeeded && t.Length == 1))
             {
                 // ordering filters & filter values
                 foreach (var f in filters)
@@ -351,7 +355,7 @@ namespace newTolkuchka.Services
                 await _con.ProductSpecsValueMods.AddAsync(productSpecsValueMod);
             }
         }
-        
+
         public IEnumerable<UIProduct> GetUIProduct(IList<Product> sameModels)
         {
             IEnumerable<Product> distinct1 = sameModels.Where(p => !p.ProductSpecsValueMods.Where(psv => psv.SpecsValueMod.SpecsValue.Spec.IsImaged).Any()).DistinctBy(p => p.ProductSpecsValues.Where(psv => psv.SpecsValue.Spec.IsImaged).Select(psv => psv.SpecsValue.Id).FirstOrDefault());

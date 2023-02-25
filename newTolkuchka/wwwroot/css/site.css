@@ -178,11 +178,15 @@ s {
     font-size: 0.6rem
 }
 
-#brands {
+.scList {
     max-height: 15rem;
     overflow-y: scroll
 }
 
 a > .bg-primary {
     color: #fff
+}
+
+.form-check-input {
+    min-width: 1.125rem
 }

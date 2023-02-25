@@ -237,6 +237,9 @@
   <data name="invoices" xml:space="preserve">
     <value>счета</value>
   </data>
+  <data name="items" xml:space="preserve">
+    <value>Более {0} товаров</value>
+  </data>
   <data name="liked" xml:space="preserve">
     <value>Ваш выбор</value>
   </data>

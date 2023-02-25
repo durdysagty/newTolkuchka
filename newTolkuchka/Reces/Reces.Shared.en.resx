@@ -237,6 +237,9 @@
   <data name="invoices" xml:space="preserve">
     <value>invoices</value>
   </data>
+  <data name="items" xml:space="preserve">
+    <value>More than {0} products</value>
+  </data>
   <data name="liked" xml:space="preserve">
     <value>Liked</value>
   </data>
