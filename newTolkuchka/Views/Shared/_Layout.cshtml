@@ -8,15 +8,15 @@
     IEnumerable<(string, string, string)> mainLinks = new (string, string, string)[11] {
         ($"tel:{ConstantsService.CURRENTPHONE}", ConstantsService.CURRENTPHONE, null),
         ($"mailto:{ConstantsService.INFOEMAIL}{CultureProvider.SiteName}", $"{ConstantsService.INFOEMAIL}{CultureProvider.SiteName}", null),
-        (ConstantsService.ABOUT, Localizer[ConstantsService.ABOUT].Value, "d-none d-lg-inline"),
-        (ConstantsService.DELIVERY, Localizer[ConstantsService.DELIVERY].Value, "d-none d-lg-inline"),
-        (ConstantsService.ARTICLES, Localizer[ConstantsService.ARTICLES].Value, "d-none d-lg-inline"),
-        (ConstantsService.BRANDS, Localizer[ConstantsService.BRANDS].Value, "d-none d-lg-inline"),
-        (ConstantsService.CATEGORIES, Localizer[ConstantsService.CATEGORIES].Value, "d-none d-lg-inline"),
-        (ConstantsService.PROMOTIONS, Localizer[ConstantsService.PROMOTIONS].Value, "d-none d-lg-inline"),
-        (ConstantsService.LIKED, Localizer[ConstantsService.LIKED].Value, "d-none d-lg-inline"),
-        (ConstantsService.NOVELTIES, Localizer[ConstantsService.NOVELTIES].Value, "d-none d-lg-inline"),
-        (ConstantsService.RECOMMENDED, Localizer[ConstantsService.RECOMMENDED].Value, "d-none d-lg-inline")
+        ($"/{ConstantsService.ABOUT}", Localizer[ConstantsService.ABOUT].Value, "d-none d-lg-inline"),
+        ($"/{ConstantsService.DELIVERY}", Localizer[ConstantsService.DELIVERY].Value, "d-none d-lg-inline"),
+        ($"/{ConstantsService.ARTICLES}", Localizer[ConstantsService.ARTICLES].Value, "d-none d-lg-inline"),
+        ($"/{ConstantsService.BRANDS}", Localizer[ConstantsService.BRANDS].Value, "d-none d-lg-inline"),
+        ($"/{ConstantsService.CATEGORIES}", Localizer[ConstantsService.CATEGORIES].Value, "d-none d-lg-inline"),
+        ($"/{ConstantsService.PROMOTIONS}", Localizer[ConstantsService.PROMOTIONS].Value, "d-none d-lg-inline"),
+        ($"/{ConstantsService.LIKED}", Localizer[ConstantsService.LIKED].Value, "d-none d-lg-inline"),
+        ($"/{ConstantsService.NOVELTIES}", Localizer[ConstantsService.NOVELTIES].Value, "d-none d-lg-inline"),
+        ($"/{ConstantsService.RECOMMENDED}", Localizer[ConstantsService.RECOMMENDED].Value, "d-none d-lg-inline")
     };
     string ru = $"{CultureProvider.SiteUrlRu}{CultureProvider.Path}";
     string en = $"{CultureProvider.SiteUrlEn}{CultureProvider.Path}";
