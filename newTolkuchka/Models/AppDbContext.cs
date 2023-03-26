@@ -31,6 +31,8 @@ namespace newTolkuchka.Models
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductSpecsValue> ProductSpecsValues { get; set; }
         public DbSet<ProductSpecsValueMod> ProductSpecsValueMods { get; set; }
+        public DbSet<Promotion> Promotions { get; set; }
+        public DbSet<PromotionProduct> PromotionProducts { get; set; }
         public DbSet<Purchase> Purchases { get; set; }
         public DbSet<PurchaseInvoice> PurchaseInvoices { get; set; }
         public DbSet<Slide> Slides { get; set; }
@@ -64,6 +66,9 @@ namespace newTolkuchka.Models
             builder.Entity<Currency>().HasIndex(i => i.CodeName).IsUnique();
             builder.Entity<Line>().HasIndex(i => new { i.BrandId, i.Name }).IsUnique();
             builder.Entity<Model>().HasIndex(i => new { i.LineId, i.TypeId, i.Name }).IsUnique();
+            builder.Entity<Promotion>().HasIndex(i => i.NameRu).IsUnique();
+            builder.Entity<Promotion>().HasIndex(i => i.NameEn).IsUnique();
+            builder.Entity<Promotion>().HasIndex(i => i.NameTm).IsUnique();
             builder.Entity<Position>().HasIndex(i => i.Name).IsUnique();
             builder.Entity<Spec>().HasIndex(i => i.NameRu).IsUnique();
             builder.Entity<Spec>().HasIndex(i => i.NameEn).IsUnique();
@@ -84,6 +89,7 @@ namespace newTolkuchka.Models
             builder.Entity<ModelSpec>().HasKey(x => new { x.ModelId, x.SpecId });
             builder.Entity<ProductSpecsValue>().HasKey(x => new { x.ProductId, x.SpecsValueId });
             builder.Entity<ProductSpecsValueMod>().HasKey(x => new { x.ProductId, x.SpecsValueModId });
+            builder.Entity<PromotionProduct>().HasKey(x => new { x.PromotionId, x.ProductId });
             builder.Entity<Wish>().HasKey(x => new { x.UserId, x.ProductId });
             builder.Entity<Position>().HasData(
                 new Position

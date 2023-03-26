@@ -34,6 +34,7 @@
   <ItemGroup>
     <Folder Include="wwwroot\images\brand\" />
     <Folder Include="wwwroot\images\category\" />
+    <Folder Include="wwwroot\images\promotion\" />
     <Folder Include="wwwroot\images\product\small\" />
     <Folder Include="wwwroot\images\slide\" />
     <Folder Include="wwwroot\images\specsvalue\" />

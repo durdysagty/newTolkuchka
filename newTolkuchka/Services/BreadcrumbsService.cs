@@ -48,13 +48,13 @@ namespace newTolkuchka.Services
             await GetAllPathBreadcrumbs(parentId);
             return _breadcrumbs;
         }
-        public IList<Breadcrumb> GetBrandBreadcrumbs()
+        public IList<Breadcrumb> GetModelBreadcrumbs(string model)
         {
             _breadcrumbs.Add(
                 new Breadcrumb
                 {
-                    Name = _localizer[ConstantsService.BRANDS],
-                    Link = ConstantsService.BRANDS
+                    Name = _localizer[model],
+                    Link = model
                 });
             return _breadcrumbs;
         }
@@ -70,17 +70,6 @@ namespace newTolkuchka.Services
                     });
             else
                 _ = await GetCategoryBreadcrumbsAsync(parentId);
-            return _breadcrumbs;
-        }
-
-        public IList<Breadcrumb> GetArticleBreadcrumbs()
-        {
-            _breadcrumbs.Add(
-                new Breadcrumb
-                {
-                    Name = _localizer[ConstantsService.ARTICLES],
-                    Link = ConstantsService.ARTICLES
-                });
             return _breadcrumbs;
         }
 

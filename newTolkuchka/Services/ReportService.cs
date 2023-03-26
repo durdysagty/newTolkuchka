@@ -13,7 +13,7 @@ namespace newTolkuchka.Services
     {
         //private readonly IInvoice _invoice;
         //private readonly IProduct _product;
-        public ReportService(AppDbContext con, IStringLocalizer<Shared> localizer, IInvoice invoice, IProduct product)
+        public ReportService(AppDbContext con, IStringLocalizer<Shared> localizer)
             : base(con, localizer)
         {
             //_invoice = invoice;

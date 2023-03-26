@@ -366,10 +366,11 @@ namespace newTolkuchka.Services
                 Id = p.Id,
                 Name = sameModels != null ? IProduct.GetProductNameCounted(p, sameModels.Count) : IProduct.GetProductNameCounted(p),
                 Price = IProduct.GetConvertedPrice(p.Price),
-                NewPrice = p.NewPrice == null ? null : IProduct.GetConvertedPrice((decimal)p.NewPrice),
+                NewPrice = p.PromotionProducts.Any(pp => pp.Promotion.Type == Tp.Discount) ? IProduct.GetConvertedPrice((decimal)(p.Price - p.Price * p.PromotionProducts.FirstOrDefault(pp => pp.Promotion.Type == Tp.Discount).Promotion.Volume / 100)) : p.NewPrice == null ? null : IProduct.GetConvertedPrice((decimal)p.NewPrice),
                 ImageMain = PathService.GetImageRelativePath(ConstantsService.PRODUCT + "/small", p.Id),
                 Recommended = p.IsRecommended ? _localizer["recod"] : null,
-                New = p.IsNew ? _localizer["newed"] : null
+                New = p.IsNew ? _localizer["newed"] : null,
+                Promotions = p.PromotionProducts.Select(p => p.Promotion).ToList()
             });
         }
 

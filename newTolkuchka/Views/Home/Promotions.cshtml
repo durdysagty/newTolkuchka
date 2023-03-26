@@ -1,0 +1,17 @@
+﻿@model IQueryable<Promotion>
+
+<div class="px-1 row justify-content-center justify-content-md-start">
+    @if (Model.Any())
+    {    @foreach (Promotion p in Model)
+        {
+            //string id = p.Id + ".jpg";
+            <div class="col-12 col-xs-6 col-lg-3 p-1">
+                <a href="/@PathService.GetModelUrl(ConstantsService.PROMOTION, p.Id)"><img src="@PathService.GetImageRelativePath(ConstantsService.PROMOTION, p.Id, CultureProvider.GetLocalNumberEx())" class="card-img-top rounded-top" alt="@CultureProvider.GetLocalName(p.NameRu, p.NameEn, p.NameTm)" /></a>
+            </div>
+        }
+    }
+    else
+    {
+        <div style="height: 50vh" class="d-flex justify-content-center align-items-center"><p class="text-center">@Localizer["noPromo"].Value</p></div>
+    }
+</div>

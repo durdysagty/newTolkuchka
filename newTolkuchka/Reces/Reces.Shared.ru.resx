@@ -207,6 +207,9 @@
   <data name="description" xml:space="preserve">
     <value>описание</value>
   </data>
+  <data name="Discount" xml:space="preserve">
+    <value>Прямая скидка</value>
+  </data>
   <data name="edit" xml:space="preserve">
     <value>Изменено</value>
   </data>
@@ -227,6 +230,9 @@
   </data>
   <data name="enterorreg" xml:space="preserve">
     <value>Вход или регистрация</value>
+  </data>
+  <data name="forfree" xml:space="preserve">
+    <value>БЕСПЛАТНО</value>
   </data>
   <data name="forgot" xml:space="preserve">
     <value>Забыл PIN код</value>
@@ -309,6 +315,9 @@
   <data name="noProductSearch" xml:space="preserve">
     <value>К сожалению, по вашему запросу ничего не найдено!</value>
   </data>
+  <data name="noPromo" xml:space="preserve">
+    <value>К сожалению, пока акций нет!</value>
+  </data>
   <data name="notAvailable" xml:space="preserve">
     <value>К сожалению, данного товара нет!</value>
   </data>
@@ -354,6 +363,15 @@
   <data name="product" xml:space="preserve">
     <value>Товар</value>
   </data>
+  <data name="ProductFree" xml:space="preserve">
+    <value>Подарок</value>
+  </data>
+  <data name="promo-price" xml:space="preserve">
+    <value>Цена по акции</value>
+  </data>
+  <data name="promotions" xml:space="preserve">
+    <value>Акции</value>
+  </data>
   <data name="purchase" xml:space="preserve">
     <value>Приход</value>
   </data>
@@ -362,6 +380,12 @@
   </data>
   <data name="quantity" xml:space="preserve">
     <value>Количество</value>
+  </data>
+  <data name="QuantityDiscount" xml:space="preserve">
+    <value>Скидка за количество</value>
+  </data>
+  <data name="QuantityFree" xml:space="preserve">
+    <value>За количество 1 бесплатно</value>
   </data>
   <data name="recipient" xml:space="preserve">
     <value>Получатель</value>
@@ -381,6 +405,12 @@
   <data name="send" xml:space="preserve">
     <value>Отправить</value>
   </data>
+  <data name="Set" xml:space="preserve">
+    <value>Подарок за набор</value>
+  </data>
+  <data name="SetDiscount" xml:space="preserve">
+    <value>Скидка за набор</value>
+  </data>
   <data name="slide" xml:space="preserve">
     <value>Слайд</value>
   </data>
@@ -392,6 +422,9 @@
   </data>
   <data name="spec" xml:space="preserve">
     <value>Характеристика</value>
+  </data>
+  <data name="SpecialSetDiscount" xml:space="preserve">
+    <value>Специальная скидка за набор</value>
   </data>
   <data name="specifications" xml:space="preserve">
     <value>характеристики</value>

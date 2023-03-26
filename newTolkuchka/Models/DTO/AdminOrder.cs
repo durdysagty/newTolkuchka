@@ -2,6 +2,7 @@
 {
     public class AdminOrder
     {
+        public int Id { get; set; }
         public int ProductId { get; set; }
         public string Name { get; set; }
         public string SerialNumbers { get; set; }

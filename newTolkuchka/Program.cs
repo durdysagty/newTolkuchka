@@ -83,6 +83,7 @@ builder.Services.AddScoped<IPosition, PositionService>();
 builder.Services.AddScoped<IPurchase, PurchaseService>();
 builder.Services.AddScoped<IPurchaseInvoice, PurchaseInvoiceService>();
 builder.Services.AddScoped<IProduct, ProductService>();
+builder.Services.AddScoped<IPromotion, PromotionService>();
 builder.Services.AddScoped<IReport, ReportService>();
 builder.Services.AddScoped<ISlide, SlideService>();
 builder.Services.AddScoped<ISpec, SpecService>();

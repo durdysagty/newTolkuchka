@@ -70,6 +70,8 @@ namespace newTolkuchka.Services
         public const string POSITION = "position";
         public const string PRODUCTS = "products";
         public const string PRODUCT = "product";
+        public const string PROMOTIONS = "promotions";
+        public const string PROMOTION = "promotion";
         public const string PURCHASEINVOICES = "purchaseinvoices";
         public const string PURCHASEINVOICE = "purchaseinvoice";
         public const string PURCHASES = "purchases";
@@ -108,12 +110,11 @@ namespace newTolkuchka.Services
         public const string HASH = "hash";
         // images
         public const int PRODUCTMAXIMAGE = 5;
-        public const int CATEGORYMAXIMAGE = 1;
-        public const int BRANDMAXIMAGE = 1;
-        public const int SPECSVALUEMAXIMAGE = 1;
-        public const int SLIDEMAXIMAGE = 3;
-        public const int ARTICLEMAXIMAGE = 1;
+        public const int UMAXIMAGE = 1;
+        public const int LOCALMAXIMAGE = 3;
         //other stuff
         public const int ARTICLEMAXLENGTH = 4000;
+        public const int DELIVERYFREE = 500;
+        public const int DELIVERYPRICE = 20;
     }
 }

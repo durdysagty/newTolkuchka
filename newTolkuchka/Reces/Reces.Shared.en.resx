@@ -228,6 +228,9 @@
   <data name="enterorreg" xml:space="preserve">
     <value>Login or register</value>
   </data>
+  <data name="forfree" xml:space="preserve">
+    <value>FOR FREE</value>
+  </data>
   <data name="forgot" xml:space="preserve">
     <value>Forgot PIN</value>
   </data>
@@ -309,6 +312,9 @@
   <data name="noProductSearch" xml:space="preserve">
     <value>Unfortunately, your search returned no results!</value>
   </data>
+  <data name="noPromo" xml:space="preserve">
+    <value>Sorry, there are no promotions yet!</value>
+  </data>
   <data name="notAvailable" xml:space="preserve">
     <value>Sorry, this item is not available!</value>
   </data>
@@ -353,6 +359,12 @@
   </data>
   <data name="product" xml:space="preserve">
     <value>Product</value>
+  </data>
+  <data name="promo-price" xml:space="preserve">
+    <value>Promotion Price</value>
+  </data>
+  <data name="promotions" xml:space="preserve">
+    <value>Promotions</value>
   </data>
   <data name="purchase" xml:space="preserve">
     <value>Purchase</value>

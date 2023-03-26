@@ -13,5 +13,6 @@ namespace newTolkuchka.Models.DTO
         public string ImageMain { get; set; }
         public string Recommended { get; set; }
         public string New { get; set; }
+        public ICollection<Promotion> Promotions { get; set; }
     }
 }

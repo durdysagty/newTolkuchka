@@ -16,19 +16,22 @@ else if (window.location.hostname.includes('tm')) {
     stringList.wrong = 'Bir zat telek boldy! Gaýtadan synanyşyň ýa-da web sahypa administratoryna ýüz tutmagyňyzy haýyş edýäris.'
 }
 let orders = JSON.parse(sessionStorage.getItem('orders'))
-function order(id) {
+function order(id, q = 1) {
     if (orders !== null) {
         const order = orders.find(o => o.id === parseInt(id))
         if (order !== undefined) {
-            order.quantity++
+            if (q === 1)
+                order.quantity++
+            else
+                order.quantity = q
             orders[orders.indexOf(order)] = order
             sessionStorage.setItem('orders', JSON.stringify(orders))
         }
         else
-            setOrder(id)
+            setOrder(id, q)
     }
     else
-        setOrder(id)
+        setOrder(id, q)
 }
 let likes = JSON.parse(localStorage.getItem('likes'))
 function like(id) {
@@ -49,11 +52,11 @@ function like(id) {
     }
     localStorage.setItem('likes', JSON.stringify(likes))
 }
-function setOrder(id) {
+function setOrder(id, q = 1) {
     added(id)
     const order = {
         id: parseInt(id),
-        quantity: 1
+        quantity: q
     }
     if (orders !== null)
         orders.push(order)

@@ -8,6 +8,7 @@ namespace newTolkuchka.Models
         public int Id { get; set; }
         [Required, MaxLength(30)]
         public string Name { get; set; }
+        [Required, MaxLength(70)]
         public string Link { get; set; }
         public Layout Layout { get; set; }
         public bool NotInUse { get; set; }

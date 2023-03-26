@@ -158,7 +158,7 @@ $value in $buttons-outline {
   --#{$prefix}btn-disabled-color: #{$btn-link-disabled-color};
 
   text-decoration: $link-decoration;
-  box-shadow: var(--#{$prefix}btn-box-shadow);
+  //box-shadow: var(--#{$prefix}btn-box-shadow);
 
   :not(.btn-check)+&:hover,
   &:first-child:hover,

@@ -31,12 +31,7 @@ namespace newTolkuchka.ControllersAPI
             AdminInvoice invoice = _invoice.GetAdminInvoices().FirstOrDefault(i => i.Id == id);
             return invoice;
         }
-        //[HttpGet]
-        //public IEnumerable<AdminInvoice> Get()
-        //{
-        //    IEnumerable<AdminInvoice> invoices = _invoice.GetAdminInvoices();
-        //    return invoices;
-        //}
+        // used for invoice & invoicePrint
         [HttpGet("orders/{id}")]
         public async Task<IEnumerable<AdminOrder>> GetInvoiceAdminOrders(int id)
         {
@@ -84,8 +79,10 @@ namespace newTolkuchka.ControllersAPI
             Invoice invoice = await _invoice.GetModelAsync(id);
             if (invoice == null)
                 return Result.Fail;
-            await DeleteActAsync(id, CreateInvoiceName(invoice));
-            return Result.Success;
+            Result result = await _invoice.DeleteModelAsync(invoice.Id, invoice);
+            if (result == Result.Success)
+                await DeleteActAsync(id, CreateInvoiceName(invoice));
+            return result;
             //return result;
         }
 

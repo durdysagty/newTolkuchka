@@ -26,12 +26,6 @@ namespace newTolkuchka.ControllersAPI
             Slide slide = await _slide.GetModelAsync(id);
             return slide;
         }
-        //[HttpGet]
-        //public IEnumerable<AdminSlide> Get()
-        //{
-        //    IEnumerable<AdminSlide> slides = _slide.GetAdminSlides();
-        //    return slides;
-        //}
         [HttpPost]
         public async Task<Result> Post([FromForm] Slide slide, [FromForm] IFormFile[] images)
         {

@@ -67,8 +67,6 @@ namespace newTolkuchka.Services.Abstracts
                     nameProperty = modelType.GetProperty("NameRu");
                 await EditActAsync(id, nameProperty.GetValue(model).ToString());
             }
-            
-            
             return Result.Success;
         }
 

@@ -1,6 +1,4 @@
-﻿using newTolkuchka.Models.DTO;
-
-namespace newTolkuchka.Services.Interfaces
+﻿namespace newTolkuchka.Services.Interfaces
 {
     public enum Result { Success, Fail, Already, MaxLength, NoConnections, DeleteError, NoImage }
     public interface IAction<T, TAdmin>

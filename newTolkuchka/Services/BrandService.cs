@@ -10,7 +10,7 @@ namespace newTolkuchka.Services
     public class BrandService : ServiceFormFile<Brand, AdminBrand>, IBrand
     {
         //private const int IMAGESMAX = 1;
-        public BrandService(AppDbContext con, IPath path, IImage image, IStringLocalizer<Shared> localizer) : base(con, localizer, path, image, ConstantsService.BRANDMAXIMAGE)
+        public BrandService(AppDbContext con, IPath path, IImage image, IStringLocalizer<Shared> localizer) : base(con, localizer, path, image, ConstantsService.UMAXIMAGE)
         {
         }
     }

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace newTolkuchka.Models.DTO
+﻿namespace newTolkuchka.Models.DTO
 {
     public class EditEmployee
     {

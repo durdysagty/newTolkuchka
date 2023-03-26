@@ -16,16 +16,18 @@
   left: 0;
   margin-top: var(--#{$prefix}dropdown-spacer);
 
-  > li {
+  >li {
     border-radius: 0;
+
     &:first-child {
-      border-top-left-radius: var(--#{$prefix}dropdown-item-border-radius);
-      border-top-right-radius: var(--#{$prefix}dropdown-item-border-radius);
+      // border-top-left-radius: var(--#{$prefix}dropdown-item-border-radius);
+      // border-top-right-radius: var(--#{$prefix}dropdown-item-border-radius);
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
+
       .dropdown-item {
-        border-top-left-radius: var(--#{$prefix}dropdown-item-border-radius);
-        border-top-right-radius: var(--#{$prefix}dropdown-item-border-radius);
+        // border-top-left-radius: var(--#{$prefix}dropdown-item-border-radius);
+        //border-top-right-radius: var(--#{$prefix}dropdown-item-border-radius);
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
       }
@@ -40,13 +42,14 @@
     &:last-child {
       border-top-left-radius: 0;
       border-top-right-radius: 0;
-      border-bottom-left-radius: var(--#{$prefix}dropdown-item-border-radius);
-      border-bottom-right-radius: var(--#{$prefix}dropdown-item-border-radius);
+
+      //border-bottom-left-radius: var(--#{$prefix}dropdown-item-border-radius);
+      //border-bottom-right-radius: var(--#{$prefix}dropdown-item-border-radius);
       .dropdown-item {
         border-top-left-radius: 0;
         border-top-right-radius: 0;
-        border-bottom-left-radius: var(--#{$prefix}dropdown-item-border-radius);
-        border-bottom-right-radius: var(--#{$prefix}dropdown-item-border-radius);
+        //border-bottom-left-radius: var(--#{$prefix}dropdown-item-border-radius);
+        //border-bottom-right-radius: var(--#{$prefix}dropdown-item-border-radius);
       }
     }
   }
@@ -134,12 +137,12 @@
   --#{$prefix}dropdown-divider-border-top-width: #{$dropdown-divider-border-top-width};
   --#{$prefix}dropdown-divider-border-top-bg: #{$dropdown-divider-bg};
 
-  border-top: var(--#{$prefix}dropdown-divider-border-top-width) solid
-    var(--#{$prefix}dropdown-divider-border-top-bg);
+  border-top: var(--#{$prefix}dropdown-divider-border-top-width) solid var(--#{$prefix}dropdown-divider-border-top-bg);
   opacity: 1;
 }
 
 .dropdown-menu {
+
   INPUT:not(:-webkit-autofill),
   SELECT:not(:-webkit-autofill),
   TEXTAREA:not(:-webkit-autofill) {

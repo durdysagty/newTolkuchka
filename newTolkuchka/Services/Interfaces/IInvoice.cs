@@ -5,6 +5,7 @@ namespace newTolkuchka.Services.Interfaces
 {
     public interface IInvoice : IActionNoFile<Invoice, AdminInvoice>
     {
+        Task CreateInvoice(int? userId, CartOrder[] cartOrders, DeliveryData deliveryData);
         Task<IEnumerable<UserInvoice>> GetUserInvoicesAsync(int userId);
         IEnumerable<AdminInvoice> GetAdminInvoices();
     }

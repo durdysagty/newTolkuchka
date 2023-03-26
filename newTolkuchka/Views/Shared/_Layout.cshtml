@@ -2,9 +2,10 @@
     bool isAuth = User.Identity.IsAuthenticated;
     bool? filterScript = ViewBag.FilterScript;
     int? width = ViewBag.WindowWidth;
+    string desc = ViewBag.Desc;
     IEnumerable<Category> mainCategories = ViewBag.MainCategories;
     //href, name
-    IEnumerable<(string, string, string)> mainLinks = new (string, string, string)[10] {
+    IEnumerable<(string, string, string)> mainLinks = new (string, string, string)[11] {
         ($"tel:{ConstantsService.CURRENTPHONE}", ConstantsService.CURRENTPHONE, null),
         ($"mailto:{ConstantsService.INFOEMAIL}{CultureProvider.SiteName}", $"{ConstantsService.INFOEMAIL}{CultureProvider.SiteName}", null),
         (ConstantsService.ABOUT, Localizer[ConstantsService.ABOUT].Value, "d-none d-lg-inline"),
@@ -12,6 +13,7 @@
         (ConstantsService.ARTICLES, Localizer[ConstantsService.ARTICLES].Value, "d-none d-lg-inline"),
         (ConstantsService.BRANDS, Localizer[ConstantsService.BRANDS].Value, "d-none d-lg-inline"),
         (ConstantsService.CATEGORIES, Localizer[ConstantsService.CATEGORIES].Value, "d-none d-lg-inline"),
+        (ConstantsService.PROMOTIONS, Localizer[ConstantsService.PROMOTIONS].Value, "d-none d-lg-inline"),
         (ConstantsService.LIKED, Localizer[ConstantsService.LIKED].Value, "d-none d-lg-inline"),
         (ConstantsService.NOVELTIES, Localizer[ConstantsService.NOVELTIES].Value, "d-none d-lg-inline"),
         (ConstantsService.RECOMMENDED, Localizer[ConstantsService.RECOMMENDED].Value, "d-none d-lg-inline")
@@ -91,7 +93,7 @@
                     }
                     @if (width == null || width > ConstantsService.MOBILEWIDTH)
                     {
-                        foreach ((string, string, string) l in mainLinks.Skip(2).Take(5))
+                        foreach ((string, string, string) l in mainLinks.Skip(2).Take(6))
                         {
                             await Html.RenderPartialAsync("_MainLink", l);
                         }
@@ -205,6 +207,10 @@
                 <h4>
                     @ViewData["PageName"]
                 </h4>
+            }
+            @if (desc != null)
+            {
+                @Html.Raw(desc)
             }
             @RenderBody()
         </main>

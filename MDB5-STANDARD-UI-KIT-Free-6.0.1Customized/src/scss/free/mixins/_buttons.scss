@@ -4,8 +4,7 @@
 // and disabled options for all buttons
 
 // scss-docs-start btn-variant-mixin
-@mixin button-variant(
-  $background,
+@mixin button-variant($background,
   $color: color-contrast($background),
   $shadow,
   $hover-background,
@@ -13,11 +12,10 @@
   $focus-background,
   $focus-color: color-contrast($focus-background),
   $active-background,
-  $active-color: color-contrast($active-background)
-) {
+  $active-color: color-contrast($active-background)) {
   --#{$prefix}btn-bg: #{$background};
   --#{$prefix}btn-color: #{$color};
-  --#{$prefix}btn-box-shadow: #{$shadow};
+  // --#{$prefix}btn-box-shadow: #{$shadow};
   --#{$prefix}btn-hover-bg: #{$hover-background};
   --#{$prefix}btn-hover-color: #{$hover-color};
   --#{$prefix}btn-focus-bg: #{$focus-background};
@@ -25,6 +23,7 @@
   --#{$prefix}btn-active-bg: #{$active-background};
   --#{$prefix}btn-active-color: #{$active-color};
 }
+
 // scss-docs-end btn-variant-mixin
 
 // scss-docs-start btn-outline-variant-mixin
@@ -38,6 +37,7 @@
   --#{$prefix}btn-active-bg: transparent;
   --#{$prefix}btn-active-color: #{$active-color};
 }
+
 // scss-docs-end btn-outline-variant-mixin
 
 // scss-docs-start btn-size-mixin
@@ -48,6 +48,7 @@
   @include rfs($font-size, --#{$prefix}btn-font-size);
   --#{$prefix}btn-line-height: #{$line-height};
 }
+
 // scss-docs-end btn-size-mixin
 
 // Button size variant outline

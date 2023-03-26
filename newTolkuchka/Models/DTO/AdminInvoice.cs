@@ -1,4 +1,6 @@
-﻿namespace newTolkuchka.Models.DTO
+﻿using static newTolkuchka.Services.CultureProvider;
+
+namespace newTolkuchka.Models.DTO
 {
     public class AdminInvoice
     {
@@ -8,7 +10,7 @@
         public string Buyer { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }
-        public string Language { get; set; }
+        public Culture Language { get; set; }
         public string CurrencyCodeName { get; set; }
         public decimal CurrencyRate { get; set; }
         public int Orders { get; set; }

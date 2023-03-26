@@ -125,6 +125,12 @@ namespace newTolkuchka.Services.Abstracts
                             if (productIds != null)
                                 products = products.Where(p => productIds.Any(x => x == p.Id));
                         }
+                        if (paramsList.TryGetValue(ConstantsService.PROMOTION, out value))
+                        {
+                            int? promotionId = int.Parse(value.ToString());
+                            if (promotionId != null)
+                                products = products.Where(p => p.PromotionProducts.Any(p => p.PromotionId == promotionId));
+                        }
                         models = (IQueryable<T>)products;
                         break;
                     case ConstantsService.INVOICE:
@@ -134,7 +140,7 @@ namespace newTolkuchka.Services.Abstracts
                         end = end.Offset > TimeSpan.FromSeconds(0) ? end.UtcDateTime + end.Offset : end.UtcDateTime - end.Offset;
                         DateTimeOffset dateTimeOffset2 = start.UtcDateTime + start.Offset;
                         IQueryable<Invoice> invoices = models as IQueryable<Invoice>;
-                        invoices = invoices.Where(i => i.IsPaid && i.PaidDate >= start && i.PaidDate <= end);
+                        invoices = invoices.Where(i => i.IsPaid && i.PaidDate.Value.Date >= start.Date && i.PaidDate.Value.Date <= end.Date);
                         models = (IQueryable<T>)invoices;
                         break;
                     case ConstantsService.SPECSVALUE:
@@ -215,7 +221,7 @@ namespace newTolkuchka.Services.Abstracts
                     break;
                 case ConstantsService.PRODUCT:
                     IQueryable<Product> products = fullModels as IQueryable<Product>;
-                    fullModels = (IQueryable<T>)products.Include(p => p.Model).ThenInclude(m => m.Category).Include(p => p.Model).ThenInclude(m => m.Type).Include(p => p.Model).ThenInclude(m => m.Brand).Include(p => p.Model).ThenInclude(m => m.Line).Include(p => p.Model).ThenInclude(x => x.ModelSpecs).Include(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ThenInclude(x => x.Spec).Include(x => x.ProductSpecsValueMods).ThenInclude(x => x.SpecsValueMod).ThenInclude(x => x.SpecsValue);
+                    fullModels = (IQueryable<T>)products.Include(p => p.Model).ThenInclude(m => m.Category).Include(p => p.Model).ThenInclude(m => m.Type).Include(p => p.Model).ThenInclude(m => m.Brand).Include(p => p.Model).ThenInclude(m => m.Line).Include(p => p.Model).ThenInclude(x => x.ModelSpecs).Include(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ThenInclude(x => x.Spec).Include(x => x.ProductSpecsValueMods).ThenInclude(x => x.SpecsValueMod).ThenInclude(x => x.SpecsValue).Include(x => x.PromotionProducts.Where(pp => !pp.Promotion.NotInUse)).ThenInclude(x => x.Promotion);
                     break;
                 case ConstantsService.PURCHASEINVOICE:
                     IQueryable<PurchaseInvoice> purchaseInvoices = fullModels as IQueryable<PurchaseInvoice>;
@@ -432,16 +438,28 @@ namespace newTolkuchka.Services.Abstracts
                 case ConstantsService.PRODUCT:
                     IQueryable<Product> preProducts = preModels as IQueryable<Product>;
                     preProducts = preProducts.OrderByDescending(x => x.Id);
-                    adminModels = (IEnumerable<TAdmin>)preProducts.Select(p => new AdminProduct
+                    adminModels = (IEnumerable<TAdmin>)preProducts.Select(x => new AdminProduct
                     {
-                        Id = p.Id,
-                        Name = IProduct.GetProductNameCounted(p, 1),
-                        Category = p.Model.Category.NameRu,
-                        Price = p.Price,
-                        NewPrice = p.NewPrice,
-                        NotInUse = !p.NotInUse,
-                        IsRecommended = p.IsRecommended,
-                        IsNew = p.IsNew
+                        Id = x.Id,
+                        Name = IProduct.GetProductNameCounted(x, 1),
+                        Category = x.Model.Category.NameRu,
+                        Price = x.Price,
+                        NewPrice = x.NewPrice,
+                        NotInUse = !x.NotInUse,
+                        IsRecommended = x.IsRecommended,
+                        IsNew = x.IsNew
+                    });
+                    isPaged = true;
+                    break;
+                case ConstantsService.PROMOTION:
+                    IQueryable<Promotion> prePromotions = preModels as IQueryable<Promotion>;
+                    prePromotions = prePromotions.OrderByDescending(x => x.Id);
+                    adminModels = (IEnumerable<TAdmin>)prePromotions.Select(x => new AdminPromotion
+                    {
+                        Id = x.Id,
+                        Name = x.NameRu,
+                        Type = _localizer[x.Type.ToString()],
+                        Products = x.PromotionProducts.Count
                     });
                     isPaged = true;
                     break;
@@ -615,6 +633,8 @@ namespace newTolkuchka.Services.Abstracts
                         return true;
                     if (await _con.Orders.Where(x => x.ProductId == id).AnyAsync())
                         return true;
+                    if (await _con.Promotions.Where(x => x.SubjectId == id || x.PromotionProducts.Any(pp => pp.ProductId == id)).AnyAsync())
+                        return true;
                     break;
                 case ConstantsService.SPEC:
                     return await _con.SpecsValues.Where(x => x.SpecId == id).AnyAsync();
@@ -632,8 +652,8 @@ namespace newTolkuchka.Services.Abstracts
                     return await _con.Purchases.Where(x => x.PurchaseInvoiceId == id).AnyAsync();
                 case ConstantsService.PURCHASE:
                     return await _con.Orders.Where(x => x.PurchaseId == id).AnyAsync();
-                case ConstantsService.INVOICE:
-                    return await _con.Orders.Where(x => x.InvoiceId == id).AnyAsync();
+                //case ConstantsService.INVOICE:
+                    //return await _con.Orders.Where(x => x.InvoiceId == id).AnyAsync();
                 case ConstantsService.CURRENCY:
                     // to be corrected
                     return true;

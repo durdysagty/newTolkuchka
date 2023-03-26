@@ -8,10 +8,8 @@ using newTolkuchka.Models.DTO;
 using newTolkuchka.Reces;
 using newTolkuchka.Services;
 using newTolkuchka.Services.Interfaces;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Text.Json;
 #endregion
 namespace newTolkuchka.Controllers
@@ -24,6 +22,7 @@ namespace newTolkuchka.Controllers
         private readonly IPath _path;
         private readonly ICategory _category;
         private readonly IBrand _brand;
+        private readonly IPromotion _promotion;
         private readonly IProduct _product;
         private readonly ISlide _slide;
         private readonly IActionNoFile<Heading, Heading> _heading;
@@ -34,16 +33,15 @@ namespace newTolkuchka.Controllers
         private readonly ILogin _login;
         private readonly IActionNoFile<Currency, AdminCurrency> _currency;
         private readonly IMemoryCache _memoryCache;
-        private readonly static int _deliveryFree = 500;
-        private readonly static int _deliveryPrice = 20;
 
-        public HomeController(IStringLocalizer<Shared> localizer, IBreadcrumbs breadcrumbs, IPath path, ICategory category, IBrand brand, IProduct product, ISlide slide, IActionNoFile<Heading, Heading> heading, IArticle article, IUser user, IInvoice invoice, IOrder order, ILogin login, IActionNoFile<Currency, AdminCurrency> currency, IMemoryCache memoryCache)
+        public HomeController(IStringLocalizer<Shared> localizer, IBreadcrumbs breadcrumbs, IPath path, ICategory category, IBrand brand, IPromotion promotion, IProduct product, ISlide slide, IActionNoFile<Heading, Heading> heading, IArticle article, IUser user, IInvoice invoice, IOrder order, ILogin login, IActionNoFile<Currency, AdminCurrency> currency, IMemoryCache memoryCache)
         {
             _localizer = localizer;
             _breadcrumbs = breadcrumbs;
             _path = path;
             _category = category;
             _brand = brand;
+            _promotion = promotion;
             _product = product;
             _slide = slide;
             _heading = heading;
@@ -119,7 +117,7 @@ namespace newTolkuchka.Controllers
             string slidesString = string.Empty;
             foreach (Slide s in mainSlides)
             {
-                slidesString += $"<div class=\"col-12 col-sm-6 col-md-4 p-1\"><a href=\"/{s.Link}\"><img src=\"{PathService.GetImageRelativePath(ConstantsService.SLIDE, s.Id)}\" class=\"card-img-top rounded\" alt=\"{s.Name}\" /></a></div>";
+                slidesString += $"<div class=\"col-12 col-sm-6 col-md-4 p-1\"><a href=\"/{s.Link}\"><img src=\"{PathService.GetImageRelativePath(ConstantsService.SLIDE, s.Id, CultureProvider.GetLocalNumberEx())}\" class=\"card-img-top rounded\" alt=\"{s.Name}\" /></a></div>";
             }
             static IEnumerable<string> GetHtmlProducts(IList<IEnumerable<UIProduct>> products)
             {
@@ -158,10 +156,16 @@ namespace newTolkuchka.Controllers
             //    html += string.Format(template, PathService.GetModelUrl(ConstantsService.CATEGORY, c.Item1.Id), PathService.GetSVGRelativePath(ConstantsService.CATEGORY, c.Item1.Id.ToString()), CultureProvider.GetLocalName(c.Item1.NameRu, c.Item1.NameEn, c.Item1.NameTm), GetItems(c.Item2));
             //}
             IEnumerable<Category> indexCats = _category.GetIndexCategories();
+            IEnumerable<Promotion> promotions = _promotion.GetModels().Where(p => !p.NotInUse);
             string catsString = string.Empty;
+            string catsTemplate = "<div class=\"col-12 col-xs-6 col-lg-3 p-1\"><a href=\"/{0}\"><img src=\"{1}\" class=\"card-img-top rounded-top\" alt=\"{2}\" /><div style=\"font-size: {3}rem\" class=\"bg-primary p-1 rounded-bottom\">{2}</div></a></div>";
             foreach (Category c in indexCats)
             {
-                catsString += $"<div class=\"col-12 col-xs-6 col-lg-3 p-1\"><a href=\"/{PathService.GetModelUrl(ConstantsService.CATEGORY, c.Id)}\"><img src=\"{PathService.GetImageRelativePath(ConstantsService.CATEGORY, c.Id)}\" class=\"card-img-top rounded-top\" alt=\"{CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm)}\" /><div style=\"font-size: {fontSize}rem\" class=\"bg-primary p-1 rounded-bottom\">{CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm)}</div></a></div>";
+                catsString += string.Format(catsTemplate, PathService.GetModelUrl(ConstantsService.CATEGORY, c.Id), PathService.GetImageRelativePath(ConstantsService.CATEGORY, c.Id), CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm), fontSize);
+            }
+            foreach (Promotion p in promotions)
+            {
+                catsString += string.Format(catsTemplate, PathService.GetModelUrl(ConstantsService.PROMOTION, p.Id), PathService.GetImageRelativePath(ConstantsService.PROMOTION, p.Id), CultureProvider.GetLocalName(p.NameRu, p.NameEn, p.NameTm), fontSize);
             }
             IEnumerable<Article> articles = _article.GetModels(new Dictionary<string, object> { { ConstantsService.CULTURE, CultureProvider.CurrentCulture } }).OrderByDescending(a => a.Id).Take(count);
             string articleStrings = null;
@@ -199,6 +203,14 @@ namespace newTolkuchka.Controllers
             CreateMetaData(ConstantsService.BRANDS, _breadcrumbs.GetBreadcrumbs());
             return View(brands);
         }
+        [Route(ConstantsService.PROMOTIONS)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 172800)]
+        public IActionResult Promotions()
+        {
+            IQueryable<Promotion> promotions = _promotion.GetModels().Where(p => !p.NotInUse);
+            CreateMetaData(ConstantsService.PROMOTIONS, _breadcrumbs.GetBreadcrumbs());
+            return View(promotions);
+        }
         [Route($"{ConstantsService.CATEGORY}/{{id}}")]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
         public async Task<IActionResult> Category(int id)
@@ -218,83 +230,46 @@ namespace newTolkuchka.Controllers
             Brand brand = await _brand.GetModelAsync(id);
             if (brand == null)
                 return GetNotFoundPage();
-            CreateMetaData(ConstantsService.BRAND, _breadcrumbs.GetBrandBreadcrumbs(), brand.Name, true);
+            CreateMetaData(ConstantsService.BRAND, _breadcrumbs.GetModelBreadcrumbs(ConstantsService.BRANDS), brand.Name, true);
             return View();
         }
-        [Route($"{ConstantsService.PRODUCT}/{{id}}")]
-        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 10800)]
-        public async Task<IActionResult> Product(int id)
+        [Route($"{ConstantsService.PROMOTION}/{{id}}")]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
+        public async Task<IActionResult> Promotion(int id)
         {
-            Product product = await _product.GetModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, new int[1] { id } } }).Include(p => p.Model).ThenInclude(m => m.Category).FirstOrDefaultAsync();
-            if (product == null)
+            Promotion promotion = await _promotion.GetModelAsync(id);
+            if (promotion == null || promotion.NotInUse)
                 return GetNotFoundPage();
-            if (product.NotInUse || product.Model.Category.NotInUse)
+            string desc = $"<p class=\"mb-2\">{CultureProvider.GetLocalName(promotion.DescRu, promotion.DescEn, promotion.DescTm)}</p>";
+            if (promotion.Type is Tp.ProductFree or Tp.Set or Tp.SpecialSetDiscount)
             {
-                product = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, new int[1] { id } } }).FirstOrDefaultAsync();
-                string localName = IProduct.GetProductNameCounted(product);
-                CreateMetaData(ConstantsService.PRODUCT, await _breadcrumbs.GetProductBreadcrumbs(product.Model.CategoryId), localName, false, false);
-                return View();
-            }
-            IList<Product> products = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.MODEL, product.ModelId } }).Where(p => !p.NotInUse).ToListAsync();
-            IList<(string, Product)> namedProducts = new List<(string, Product)>();
-            // to select Specs from any of product for change products by specs value
-            IList<ModelWithList<ModelWithList<AdminSpecsValueMod>>> nameUsedSpecs = products.FirstOrDefault().Model.ModelSpecs.Where(s => s.IsNameUse).OrderBy(s => s.Spec.NamingOrder).Select(ms => new ModelWithList<ModelWithList<AdminSpecsValueMod>>
-            {
-                Id = ms.Spec.Id,
-                Name = CultureProvider.GetLocalName(ms.Spec.NameRu, ms.Spec.NameEn, ms.Spec.NameTm),
-                Is = ms.Spec.IsImaged,
-                List = new Collection<ModelWithList<AdminSpecsValueMod>>()
-            }).ToList();
-            // ids of namedSpecs we need to select specsValues, which specId is in namedSpecIds, from products and we need them in Product page
-            IEnumerable<int> namedSpecIds = nameUsedSpecs.Select(ms => ms.Id);
-            foreach (Product p in products)
-            {
-                // selecting of named specsValues from the product
-                IEnumerable<SpecsValue> psvs = p.ProductSpecsValues.Select(psv => psv.SpecsValue).Where(x => namedSpecIds.Contains(x.SpecId));
-                string name = IProduct.GetProductNameSingle(p, psvs);
-                namedProducts.Add((name, p));
-                // loop the specsValues to add them to nameUsedSpecs unique
-                foreach (SpecsValue sv in psvs)
+                Product product = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, new int[1] { (int)promotion.SubjectId } } }).FirstOrDefaultAsync();
+                if (product.NotInUse)
                 {
-                    ModelWithList<ModelWithList<AdminSpecsValueMod>> spec = nameUsedSpecs.FirstOrDefault(s => s.Id == sv.SpecId);
-                    if (!spec.List.Any(s => s.Id == sv.Id))
-                    {
-                        ModelWithList<AdminSpecsValueMod> specValue = new()
-                        {
-                            Id = sv.Id,
-                            Name = CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm),
-                            List = new Collection<AdminSpecsValueMod>()
-                        };
-                        spec.List.Add(specValue);
-                    }
-                    // check if a product has a specsValuMod (modification of specsValue)
-                    SpecsValueMod svm = p.ProductSpecsValueMods.FirstOrDefault(x => x.SpecsValueMod.SpecsValueId == sv.Id)?.SpecsValueMod;
-                    // if svm is null, that mean a product do not have a modification od this specsValue
-                    if (svm == null && !spec.List.FirstOrDefault(s => s.Id == sv.Id).List.Any(asvm => asvm.Id == 0))
-                    {
-                        // dispite of null we need to add 0 Id specsValueMod, to select Product without modificated specsValue in Product page
-                        spec.List.FirstOrDefault(s => s.Id == sv.Id).List.Add(new AdminSpecsValueMod
-                        {
-                            Id = 0
-                        });
-                    }
-                    else if (svm != null && !spec.List.FirstOrDefault(s => s.Id == sv.Id).List.Any(asvm => asvm.Id == svm.Id))
-                    {
-                        // unique adding of specsValueMod to List of specsValueMods of specsValue of Spec
-                        AdminSpecsValueMod adminSpecsValueMod = new()
-                        {
-                            Id = svm.Id,
-                            Name = CultureProvider.GetLocalName(svm.NameRu, svm.NameEn, svm.NameTm)
-                        };
-                        spec.List.FirstOrDefault(s => s.Id == sv.Id).List.Add(adminSpecsValueMod);
-                    }
+                    promotion.NotInUse = true;
+                    await _promotion.SaveChangesAsync();
+                    return GetNotFoundPage();
+                }
+                string additional = $"<h5><a href=\"/{PathService.GetModelUrl(ConstantsService.PRODUCT, product.Id)}\"><img class=\"img-fluid mx-2\" style=\"max-height: 50px\" src=\"{PathService.GetImageRelativePath(ConstantsService.PRODUCT, product.Id)}\" />{IProduct.GetProductNameCounted(product)}</a> - ";
+                desc += additional;
+                string additional2 = promotion.Type == Tp.SpecialSetDiscount ? CultureProvider.GetLocalName($"СКИДКА {(int)promotion.Volume}%", $"{(int)promotion.Volume}% OFF", $"ARZANLADYŞ {(int)promotion.Volume}") : $"{_localizer["forfree"]}!</h5>";
+                desc += additional2;
+            }
+            if (promotion.Type is Tp.Set or Tp.SetDiscount or Tp.SpecialSetDiscount)
+            {
+                ICollection<Product> set = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PROMOTION, promotion.Id } }).ToArrayAsync();
+                if (set.Any(s => s.NotInUse))
+                {
+                    promotion.NotInUse = true;
+                    await _promotion.SaveChangesAsync();
+                    return GetNotFoundPage();
                 }
             }
-            CreateMetaData(ConstantsService.PRODUCT, await _breadcrumbs.GetProductBreadcrumbs(product.Model.CategoryId), namedProducts.FirstOrDefault(x => x.Item2.Id == id).Item1, false, false);
-            ViewBag.Specs = nameUsedSpecs;
-            ViewBag.SpecIds = namedSpecIds;
-            ViewBag.Current = product.Id;
-            return View(namedProducts);
+            ViewBag.Desc = desc;
+            if (promotion == null)
+                return GetNotFoundPage();
+            CreateMetaData(ConstantsService.PROMOTION, _breadcrumbs.GetModelBreadcrumbs(ConstantsService.PROMOTIONS), CultureProvider.GetLocalName(promotion.NameRu, promotion.NameEn, promotion.NameTm), true);
+            return View();
         }
         [Route(ConstantsService.SEARCH)]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
@@ -369,6 +344,11 @@ namespace newTolkuchka.Controllers
                     brandsOnly = true;
                     targetProducts = _product.GetFullModels().Where(p => p.IsNew);
                     break;
+                case ConstantsService.PROMOTION:
+                    typesNeeded = true;
+                    // get all products by promotion
+                    targetProducts = _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PROMOTION, id } });
+                    break;
                 case ConstantsService.RECOMMENDED:
                     brandsOnly = true;
                     targetProducts = _product.GetFullModels().Where(p => p.IsRecommended);
@@ -389,7 +369,7 @@ namespace newTolkuchka.Controllers
                     noProduct = model == ConstantsService.SEARCH ? _localizer["noProductSearch"].Value : _localizer["noProductAbsolutly"].Value
                 });
             IList<IEnumerable<UIProduct>> uiProducts = _product.GetUIData(productsOnly, brandsOnly, typesNeeded, list, t, b, v, minp, maxp, sort, page, pp, out IList<AdminType> types, out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage);
-            
+
             IEnumerable<string> products = uiProducts.Select(p => IProduct.GetHtmlProduct(p, 12, 6, 6, 4, 4, 3, 3, 3));
             return new JsonResult(new
             {
@@ -417,6 +397,118 @@ namespace newTolkuchka.Controllers
                 lastPage,
                 noProduct = uiProducts.Any() ? null : _localizer["noProduct"].Value
             });
+        }
+        [Route($"{ConstantsService.PRODUCT}/{{id}}")]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 10800)]
+        public async Task<IActionResult> Product(int id)
+        {
+            Product product = await _product.GetModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, new int[1] { id } } }).Include(p => p.Model).ThenInclude(m => m.Category).FirstOrDefaultAsync();
+            if (product == null)
+                return GetNotFoundPage();
+            if (product.NotInUse || product.Model.Category.NotInUse)
+            {
+                product = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, new int[1] { id } } }).FirstOrDefaultAsync();
+                string localName = IProduct.GetProductNameCounted(product);
+                CreateMetaData(ConstantsService.PRODUCT, await _breadcrumbs.GetProductBreadcrumbs(product.Model.CategoryId), localName, false, false);
+                return View();
+            }
+            IList<Product> products = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.MODEL, product.ModelId } }).Where(p => !p.NotInUse).ToListAsync();
+            IList<(string, Product, IList<Promo>)> namedProducts = new List<(string, Product, IList<Promo>)>();
+            // to select Specs from any of product for change products by specs value
+            IList<ModelWithList<ModelWithList<AdminSpecsValueMod>>> nameUsedSpecs = products.FirstOrDefault().Model.ModelSpecs.Where(s => s.IsNameUse).OrderBy(s => s.Spec.NamingOrder).Select(ms => new ModelWithList<ModelWithList<AdminSpecsValueMod>>
+            {
+                Id = ms.Spec.Id,
+                Name = CultureProvider.GetLocalName(ms.Spec.NameRu, ms.Spec.NameEn, ms.Spec.NameTm),
+                Is = ms.Spec.IsImaged,
+                List = new Collection<ModelWithList<AdminSpecsValueMod>>()
+            }).ToList();
+            // ids of namedSpecs we need to select specsValues, which specId is in namedSpecIds, from products and we need them in Product page
+            IEnumerable<int> namedSpecIds = nameUsedSpecs.Select(ms => ms.Id);
+            foreach (Product p in products)
+            {
+                // preparing Promos of Product
+                List<Promo> promos = new();
+                foreach (Promotion promotion in p.PromotionProducts.Select(pp => pp.Promotion))
+                {
+                    Promo promo = new()
+                    {
+                        Id = promotion.Id,
+                        Type = promotion.Type,
+                        Volume = promotion.Volume,
+                        Quantity = promotion.Quantity,
+                        Name = CultureProvider.GetLocalName(promotion.NameRu, promotion.NameEn, promotion.NameTm)
+                    };
+                    if (promotion.Type is Tp.ProductFree or Tp.Set or Tp.SpecialSetDiscount)
+                    {
+                        Product subject = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, new int[1] { (int)promotion.SubjectId } } }).FirstOrDefaultAsync();
+                        // check is the subject active, if not promotion should to be not active also
+                        if (subject.NotInUse)
+                        {
+                            promotion.NotInUse = true;
+                            await _product.SaveChangesAsync();
+                            continue;
+                        }
+                        promo.Subject = subject;
+                    }
+                    if (promotion.Type is Tp.Set or Tp.SetDiscount or Tp.SpecialSetDiscount)
+                    {
+                        ICollection<Product> set = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PROMOTION, promo.Id } }).ToArrayAsync();
+                        if (set.Any(s => s.NotInUse))
+                        {
+                            promotion.NotInUse = true;
+                            await _product.SaveChangesAsync();
+                            continue;
+                        }
+                        promo.Products = set;
+                    }
+                    promos.Add(promo);
+                }
+                // selecting of named specsValues from the product
+                IEnumerable<SpecsValue> psvs = p.ProductSpecsValues.Select(psv => psv.SpecsValue).Where(x => namedSpecIds.Contains(x.SpecId));
+                string name = IProduct.GetProductNameSingle(p, psvs);
+                namedProducts.Add((name, p, promos));
+                // loop the specsValues to add them to nameUsedSpecs unique
+                foreach (SpecsValue sv in psvs)
+                {
+                    ModelWithList<ModelWithList<AdminSpecsValueMod>> spec = nameUsedSpecs.FirstOrDefault(s => s.Id == sv.SpecId);
+                    if (!spec.List.Any(s => s.Id == sv.Id))
+                    {
+                        ModelWithList<AdminSpecsValueMod> specValue = new()
+                        {
+                            Id = sv.Id,
+                            Name = CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm),
+                            List = new Collection<AdminSpecsValueMod>()
+                        };
+                        spec.List.Add(specValue);
+                    }
+                    // check if a product has a specsValuMod (modification of specsValue)
+                    SpecsValueMod svm = p.ProductSpecsValueMods.FirstOrDefault(x => x.SpecsValueMod.SpecsValueId == sv.Id)?.SpecsValueMod;
+                    // if svm is null, that mean a product do not have a modification od this specsValue
+                    if (svm == null && !spec.List.FirstOrDefault(s => s.Id == sv.Id).List.Any(asvm => asvm.Id == 0))
+                    {
+                        // dispite of null we need to add 0 Id specsValueMod, to select Product without modificated specsValue in Product page
+                        spec.List.FirstOrDefault(s => s.Id == sv.Id).List.Add(new AdminSpecsValueMod
+                        {
+                            Id = 0
+                        });
+                    }
+                    else if (svm != null && !spec.List.FirstOrDefault(s => s.Id == sv.Id).List.Any(asvm => asvm.Id == svm.Id))
+                    {
+                        // unique adding of specsValueMod to List of specsValueMods of specsValue of Spec
+                        AdminSpecsValueMod adminSpecsValueMod = new()
+                        {
+                            Id = svm.Id,
+                            Name = CultureProvider.GetLocalName(svm.NameRu, svm.NameEn, svm.NameTm)
+                        };
+                        spec.List.FirstOrDefault(s => s.Id == sv.Id).List.Add(adminSpecsValueMod);
+                    }
+                }
+            }
+            CreateMetaData(ConstantsService.PRODUCT, await _breadcrumbs.GetProductBreadcrumbs(product.Model.CategoryId), namedProducts.FirstOrDefault(x => x.Item2.Id == id).Item1, false, false);
+            ViewBag.Specs = nameUsedSpecs;
+            ViewBag.SpecIds = namedSpecIds;
+            ViewBag.Current = product.Id;
+            return View(namedProducts);
         }
         [Route($"{ConstantsService.ARTICLES}")]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 10000)]
@@ -477,7 +569,7 @@ namespace newTolkuchka.Controllers
             Article article = await _article.GetModelAsync(id);
             if (article == null)
                 return GetNotFoundPage();
-            CreateMetaData(ConstantsService.ARTICLE, _breadcrumbs.GetArticleBreadcrumbs(), article.Name);
+            CreateMetaData(ConstantsService.ARTICLE, _breadcrumbs.GetModelBreadcrumbs(ConstantsService.ARTICLES), article.Name);
             return View(article);
         }
         [Route(ConstantsService.ABOUT)]
@@ -516,7 +608,7 @@ namespace newTolkuchka.Controllers
             return View();
         }
         [Route($"{ConstantsService.CART}/data"), HttpPost]
-        public JsonResult CartData([FromBody] CartOrder[] orders)
+        public JsonResult CartData([FromBody] IList<CartOrder> orders)
         {
             if (orders == null || !orders.Any())
                 return new JsonResult(new
@@ -532,8 +624,8 @@ namespace newTolkuchka.Controllers
             return new JsonResult(new
             {
                 orders,
-                deliveryFree = _deliveryFree,
-                deliveryPrice = _deliveryPrice
+                deliveryFree = ConstantsService.DELIVERYFREE,
+                deliveryPrice = ConstantsService.DELIVERYPRICE
             });
         }
         [Route($"{ConstantsService.ORDER}"), HttpPost]
@@ -545,40 +637,7 @@ namespace newTolkuchka.Controllers
                 {
                     noOrders = true
                 });
-            Invoice invoice = new()
-            {
-                Date = DateTimeOffset.Now.ToUniversalTime(),
-                Buyer = deliveryData.Name,
-                InvoiceAddress = deliveryData.Address,
-                InvoiceEmail = deliveryData.Email,
-                InvoicePhone = deliveryData.Phone,
-                CurrencyRate = CurrencyService.Currency.RealRate,
-                CurrencyId = CurrencyService.Currency.Id,
-                UserId = _user.GetCurrentUser().Result?.Id,
-                Language = CultureProvider.Lang == ConstantsService.TK ? ConstantsService.TM : CultureProvider.Lang,
-            };
-            await _invoice.AddModelAsync(invoice);
-            decimal sum = 0;
-            foreach (CartOrder cartOrder in cartOrders)
-            {
-                Product product = await _product.GetModelAsync(cartOrder.Id);
-                if (product != null)
-                    for (int i = 0; i < cartOrder.Quantity; i++)
-                    {
-                        Order order = new()
-                        {
-                            ProductId = product.Id,
-                            InvoiceId = invoice.Id,
-                            OrderPrice = IProduct.GetConvertedPrice(product.NewPrice != null ? (decimal)product.NewPrice : product.Price)
-                        };
-                        await _order.AddModelAsync(order, false);
-                        if (sum < _deliveryFree)
-                            sum += cartOrder.Price;
-                    }
-            }
-            if (sum < _deliveryFree)
-                invoice.DeliveryCost = _deliveryPrice;
-            await _order.SaveChangesAsync();
+            await _invoice.CreateInvoice(_user.GetCurrentUser().Result?.Id, cartOrders, deliveryData);
             return new JsonResult(new
             {
                 success = _localizer["order-success"].Value

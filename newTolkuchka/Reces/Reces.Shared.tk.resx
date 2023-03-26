@@ -228,6 +228,9 @@
   <data name="enterorreg" xml:space="preserve">
     <value>Gir ya-da agza bol</value>
   </data>
+  <data name="forfree" xml:space="preserve">
+    <value>MUGT</value>
+  </data>
   <data name="forgot" xml:space="preserve">
     <value>PIN kodymy unutdym</value>
   </data>
@@ -309,6 +312,9 @@
   <data name="noProductSearch" xml:space="preserve">
     <value>Gynansagam, gözlegiňiz boýunça haryt tapyp bilmedik!</value>
   </data>
+  <data name="noPromo" xml:space="preserve">
+    <value>Bagyşlaň, entäklikçe aksiýalar ýok!</value>
+  </data>
   <data name="notAvailable" xml:space="preserve">
     <value>Bagyşlaň, bu önüm elýeterli däl!</value>
   </data>
@@ -356,6 +362,12 @@
   </data>
   <data name="product" xml:space="preserve">
     <value>Haryt</value>
+  </data>
+  <data name="promo-price" xml:space="preserve">
+    <value>aksiýa bahasy</value>
+  </data>
+  <data name="promotions" xml:space="preserve">
+    <value>Aksiýalar</value>
   </data>
   <data name="purchase" xml:space="preserve">
     <value>Geliş</value>

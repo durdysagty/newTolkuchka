@@ -5,6 +5,7 @@ using newTolkuchka.Models.DTO;
 using newTolkuchka.Reces;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
+using Org.BouncyCastle.Asn1.X509;
 using System.Collections.ObjectModel;
 
 namespace newTolkuchka.Services
@@ -12,9 +13,32 @@ namespace newTolkuchka.Services
     public class InvoiceService : ServiceNoFile<Invoice, AdminInvoice>, IInvoice
     {
         private readonly IProduct _product;
-        public InvoiceService(AppDbContext con, IProduct product, IStringLocalizer<Shared> localizer) : base(con, localizer)
+        private readonly IOrder _order;
+        public InvoiceService(AppDbContext con, IProduct product, IOrder order, IStringLocalizer<Shared> localizer) : base(con, localizer)
         {
             _product = product;
+            _order = order;
+        }
+        public async Task CreateInvoice(int? userId, CartOrder[] cartOrders, DeliveryData deliveryData)
+        {
+
+            Invoice invoice = new()
+            {
+                Date = DateTimeOffset.Now.ToUniversalTime(),
+                Buyer = deliveryData.Name,
+                InvoiceAddress = deliveryData.Address,
+                InvoiceEmail = deliveryData.Email,
+                InvoicePhone = deliveryData.Phone,
+                CurrencyRate = CurrencyService.Currency.RealRate,
+                CurrencyId = CurrencyService.Currency.Id,
+                UserId = userId,
+                Language = CultureProvider.CurrentCulture
+            };
+            await AddModelAsync(invoice, true);
+            decimal sum = await _order.CreateOrders(invoice.Id, cartOrders);
+            if (sum < ConstantsService.DELIVERYFREE)
+                invoice.DeliveryCost = ConstantsService.DELIVERYPRICE;
+            await SaveChangesAsync();
         }
 
         public async Task<IEnumerable<UserInvoice>> GetUserInvoicesAsync(int userId)
@@ -82,6 +106,7 @@ namespace newTolkuchka.Services
                 Buyer= x.Buyer,
                 Address = x.InvoiceAddress,
                 Phone = x.InvoicePhone,
+                Language = x.Language,
                 CurrencyCodeName = x.Currency.CodeName,
                 CurrencyRate = x.CurrencyRate,
                 Orders = x.Orders.Count,

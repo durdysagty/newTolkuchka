@@ -28,11 +28,17 @@ namespace newTolkuchka.Services
 
         public static int GetLocalNumberEx()
         {
+            return (int)CurrentCulture;
+        }
+
+        // we use this method in IProduct, we can't use localizer there, becouse of static method
+        public static string GetPromotionsLocal()
+        {
             return Lang switch
             {
-                ConstantsService.EN => (int)Culture.En,
-                ConstantsService.TK => (int)Culture.Tm,
-                _ => (int)Culture.Ru
+                ConstantsService.EN => "Promotions",
+                ConstantsService.TK => "Aksiýalar",
+                _ => "Акции",
             };
         }
         public override Task<ProviderCultureResult> DetermineProviderCultureResult(HttpContext httpContext)

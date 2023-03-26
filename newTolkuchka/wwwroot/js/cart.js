@@ -6,6 +6,7 @@
     delivery: 'Доставка',
     summary: 'Итого',
     empty: 'Ваша корзина пуста',
+    freeOne: 'БЕСПЛАТНО',
     //emptyInput: 'Это поле не должно быть пустым!',
     //numbersOnly: 'Пожалуйста, пишите только цифры!',
     deliveryPrice: 20,
@@ -19,6 +20,7 @@ if (window.location.hostname.includes('en')) {
     stringListCart.delivery = 'Delivery'
     stringListCart.summary = 'Summary'
     stringListCart.empty = 'Your cart is empty'
+    stringList.freeOne = 'FOR FREE'
     //stringListCart.emptyInput = 'This field must not be empty!'
     //stringListCart.numbersOnly = 'Numbers only!'
 }
@@ -30,6 +32,7 @@ else if (window.location.hostname.includes('tm')) {
     stringListCart.delivery = 'Eltmesi'
     stringListCart.summary = 'Jemi netijesi'
     stringListCart.empty = 'Siziň sepetiňiz boş'
+    stringList.freeOne = 'MUGT'
     //stringListCart.emptyInput = 'Bu meýdança boş bolmaly däl!'
     //stringListCart.numbersOnly = 'Diňe san ýazmaly!'
 }
@@ -58,7 +61,7 @@ async function getOrderProducts() {
                 stringListCart.deliveryPrice = result.deliveryPrice
                 $('#cart').append(`<table class="table table-hover table-sm"><thead><tr><th></th><th>${stringListCart.name}</th><th>${stringListCart.price}, ${stringList.currency}</th><th class='text-center'>${stringListCart.quantity}</th><th>${stringListCart.amount}, ${stringList.currency}</th><th></th></tr></thead><tbody id="cartBody"></tbody></table>`)
                 result.orders.forEach(o => {
-                    const tr = $(`<tr><td class='align-middle p-0'><a href='/product/${o.id}'><img class='img-fluid' style='max-height: 50px' src='${o.image}' /></a></td><td class='align-middle'><a href='/product/${o.id}'>${o.productName}</a></td><td class='align-middle'>${o.price}</td><td class='align-middle text-center'><span role="button" class='pointer px-2' onclick='quantity(${o.id}, false)'>-</span><span id='${'q' + o.id}'>${o.quantity}</span><span role="button" class='pointer px-2' onclick='quantity(${o.id}, true)'>+</span></td><td class='align-middle'><span id='${'s' + o.id}'>${o.amount}</span></td><td class='align-middle'><button class='btn btn-primary py-1 px-3' onclick='removeOrder(${o.id})'>X</button></td></tr> `)
+                    const tr = $(`<tr><td class='align-middle p-0'><a href='/product/${o.id}'><img class='img-fluid' style='max-height: 50px' src='${o.image}' /></a></td><td class='align-middle'><a href='/product/${o.id}'>${o.productName}</a> ${o.freeQuantity !== null ? `<span id=${'free' + o.id} ${o.quantity >= o.freeQuantity ? 'class=\"d-block\"' : 'class=\"d-none\"'}>+1  ${stringListCart.freeOne}</span>` : ''} ${o.freeProductQuantity !== null ? `<span id=${'freeQ' + o.id} ${o.quantity >= o.freeProductQuantity ? 'class=\"d-block\"' : 'class=\"d-none\"'}>+ ${o.freeProductName} - ${stringListCart.freeOne}</span>` : ''}  ${o.setId !== null ? `<span>+ ${o.setFreeProductName} - ${stringListCart.freeOne}</span>` : ''}</td><td class='align-middle'  id='${'p' + o.id}'>${o.price}</td><td class='align-middle text-center'>${o.subjected ? '' : `<span role="button" class='pointer px-2' onclick='quantity(${o.id}, false)'>-</span><span id='${'q' + o.id}' > ${o.quantity}</span > <span role="button" class='pointer px-2' onclick='quantity(${o.id}, true)'>+</span>`}</td><td class='align-middle'><span id='${' s' + o.id}'>${o.amount}</span></td><td class='align-middle'><button class='btn btn-primary py-1 px-3' onclick='removeOrder(${o.id})'>X</button></td></tr> `)
                     $('#cartBody').append(tr)
                     sum = ((sum * 10) + (((o.price * 10 * o.quantity * 10) / 100) * 10)) / 10
                 })
@@ -84,6 +87,25 @@ function quantity(id, add) {
     else
         if (order.quantity > 1)
             order.quantity--
+    if (order.discountQuantity !== null) {
+        if (order.quantity >= order.discountQuantity)
+            order.price = order.quantityPrice
+        else
+            order.price = order.regularPrice
+        $(`#${'p' + id} `).text(order.price)
+    }
+    if (order.freeQuantity !== null) {
+        if (order.quantity >= order.freeQuantity)
+            $(`#${'free' + id} `).addClass('d-block').removeClass('d-none')
+        else
+            $(`#${'free' + id} `).addClass('d-none').removeClass('d-block')
+    }
+    if (order.freeProductQuantity !== null) {
+        if (order.quantity >= order.freeProductQuantity)
+            $(`#${'freeQ' + id} `).addClass('d-block').removeClass('d-none')
+        else
+            $(`#${'freeQ' + id} `).addClass('d-none').removeClass('d-block')
+    }
     orders[orders.indexOf(order)] = order
     sessionStorage.setItem('orders', JSON.stringify(orders))
     $(`#${'q' + id} `).text(order.quantity)

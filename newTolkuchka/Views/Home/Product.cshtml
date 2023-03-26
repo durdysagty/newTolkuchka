@@ -1,4 +1,4 @@
-﻿@model IList<(string name, Product product)>
+﻿@model IList<(string name, Product product, IList<Promo> promos)>
 @using newTolkuchka.Services.Interfaces
 @inject IPath _pathService
 
@@ -6,18 +6,22 @@
 {
     int current = ViewBag.Current;
     int n = 0;
-    foreach ((string name, Product p) in Model)
+    foreach ((string name, Product p, IList<Promo> promos) in Model)
     {
         string id = $"pr{p.Id}";
         string imgId = $"img{p.Id}";
         string currentProduct = p.Id == current ? "d-block" : "d-none";
+        string buttonName = "order" + p.Id;
+        string buttonLikeName = "like" + p.Id;
         string tabsId = $"tab{p.Id}";
         string contentId = $"content{p.Id}";
         string descTab = $"decTab{p.Id}";
         string specTab = $"specTab{p.Id}";
         string descContent = $"decCon{p.Id}";
         string specContent = $"specCon{p.Id}";
+        string quantityId = $"q{p.Id}";
         IList<string> imagePaths = new List<string>();
+        Promo discount = promos.FirstOrDefault(pp => pp.Type == Tp.Discount);
         @for (int i = 0; i < ConstantsService.PRODUCTMAXIMAGE; i++)
         {
             if (File.Exists(_pathService.GetImagePath(ConstantsService.PRODUCT, p.Id, i)))
@@ -27,8 +31,8 @@
         }
         <div id="@id" class="@currentProduct">
             <h4>@name</h4>
-            <div class="row justify-content-between justify-content-lg-start">
-                <div class="col-12 col-md-4">
+            <div class="row justify-content-center justify-content-lg-start">
+                <div class="col-12 col-sm-6 col-md-4">
                     <div class="row">
                         <div class="col-auto col-sm-11 col-md-12 col-lg-10">
                             <img role="button" id="@imgId" onclick="showGalery(@n)" width="600" height="600" style="width: 100%; height: auto" alt="@p.Model.Brand.Name" src="@imagePaths[0]" />
@@ -49,20 +53,7 @@
                         </a>
                     }
                 </div>
-                @*<div class="col-12 col-md-1 my-2 my-md-0">
-        <div class="d-flex d-md-block">
-        @for (int i = 0; i < ConstantsService.PRODUCTMAXIMAGE; i++)
-        {
-        if (File.Exists(_pathService.GetImagePath(ConstantsService.PRODUCT + "/small", p.Id, i)))
-        {
-        <img role="button" width="200" height="200" style="width: 4rem; height: auto" alt="@p.Brand.Name" src="@PathService.GetImageRelativePath(ConstantsService.PRODUCT + "/small", p.Id, i)" onclick="setImage(@imgId, @i)" />
-        }
-        else
-        break;
-        }
-        </div>
-        </div>*@
-                <div class="col-auto d-flex flex-column justify-content-end">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 d-flex flex-column justify-content-end">
                     @if (Model.Count() > 1)
                     {
                         // only if model count more than 1 wee need selection buttons from list of models
@@ -100,7 +91,7 @@
                                                 // if Product is not presented by this specsValueMod we start seeaking a product that matches to other of specsValues and specsValueMods of given product, or closest to given Product by specsValues and specsValueMods
                                                 // excluding of Product we actual product
                                                 IList<Product> seekingProducts = products.Where(x => x.Id != p.Id).ToList();
-                                                    // seeking by actual specsValue
+                                                // seeking by actual specsValue
                                                 seekingProducts = seekingProducts.Where(x => x.ProductSpecsValues.Any(psv => psv.SpecsValueId == specsValue.Id)).ToList();
                                                 // if Products count equal to one we got the product closest to actual product
                                                 if (seekingProducts.Count > 1)
@@ -129,7 +120,7 @@
                                                             seekingProducts = seekingProductsBySV.ToList();
                                                             if (seekingProducts.Count > 1)
                                                             {
-                                                                // if we have more than 1 Product, we check the Products for matching of specsValueMod of the given Product   
+                                                                // if we have more than 1 Product, we check the Products for matching of specsValueMod of the given Product
                                                                 // get specswValueMod of given Product of given specsValue
                                                                 SpecsValueMod specsValueModOfPoduct = p.ProductSpecsValueMods.Select(x => x.SpecsValueMod).FirstOrDefault(x => x.SpecsValueId == specsValueOfPoduct.Id);
                                                                 // if we got a specsValueModOfPoduct that matching our purposes
@@ -166,115 +157,31 @@
                                             </div>
                                         }
                                     }
-                                    @*
-                    @foreach (SpecsValue sv in s.List)
-                    {
-                    // is this specsvalue in current product
-                    bool isActive = p.ProductSpecsValues.Any(x => x.SpecsValueId == sv.Id);
-                    string function = null;
-                    string border = null;
-                    IEnumerable<Product> matchedProducts = null;
-                    if (isActive)
-                    border = "border-primary";
-                    // get specsvalues that is in current product but not in this spec
-                    IList<SpecsValue> currentSV = p.ProductSpecsValues.Select(x => x.SpecsValue).Where(x => namedSpecIds.Contains(x.Spec.Id) && x.SpecId != s.Id).ToList();
-                    // the sv is not in current product thus add sv to currentSV and seek the product that is got all svs
-                    currentSV.Add(sv);
-                    matchedProducts = products.Where(m => m.ProductSpecsValues.Select(x => x.SpecsValue).Where(x => namedSpecIds.Contains(x.Spec.Id)).All(x => currentSV.Any(y => y.Id == x.Id)));
-                    // if there is no product that matchs with given spec values (with current product specs values)
-                    if (matchedProducts == null || matchedProducts.Count() < 1)
-                    {
-                    // is any products of given model has ProductsSpecsValue with given SpecsValue
-                    IList<Product> seekingProducts = products.Where(m => m.Id != p.Id && m.ProductSpecsValues.Any(psv => psv.SpecsValueId == sv.Id)).ToList();
-                    // if more than one product has given SpecsValue
-                    if (seekingProducts.Count > 1)
-                    {
-                    // get all specsvalues by specs list except looped spec and specsvalues except actual product specsvalues
-                    IEnumerable<IEnumerable<SpecsValue>> specsValuesList = nameUsedSpecs.Where(x => x.Id != s.Id).Select(s => s.List.Where(v => p.ProductSpecsValues.Any(psv => psv.SpecsValueId != v.Id)));
-                    // loop all specs
-                    foreach (IEnumerable<SpecsValue> specsValues in specsValuesList)
-                    {
-                    // loop all specs value of given spec
-                    foreach (SpecsValue specsValue in specsValues)
-                    {
-                    IList<Product> testProducts = seekingProducts.Where(s => s.ProductSpecsValues.Any(psv => psv.SpecsValueId == specsValue.Id)).ToList();
-                    // if we got any products we need to constrict seekingproducts, no need if we did not get any product
-                    if (testProducts.Any())
-                    seekingProducts = testProducts;
-                    // if count constricted to 1, then break, we got that son of a bitch
-                    if (seekingProducts.Count == 1)
-                    break;
-                    }
-                    // if count constricted to 1, no need to continue
-                    if (seekingProducts.Count == 1)
-                    break;
-                    }
-                    }
-                    matchedProducts = seekingProducts;
-                    }
-                    if (matchedProducts != null && matchedProducts.Count() > 1)
-                    {
-                    int q = matchedProducts.Where(mp => mp.ProductSpecsValueMods.Any(psvm => psvm.SpecsValueMod.SpecsValueId == sv.Id)).Count() + 1;
-                    border = null;
-                    if (q <= 1)
-                    {
-                    border = "border-primary";
-                    <div class="d-inline-block p-1 me-1 border rounded @border">
-                    @if (s.Is)
-                    {
-                    <img width="25" height="25" style="width: 1.5rem; height: auto" src="@PathService.GetImageRelativePath(ConstantsService.SPECSVALUE, sv.Id)" title="@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)" alt="@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)" />
-                    }
-                    else
-                    {
-                    <span>@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)</span>
-                    }
-                    </div>
-                    }
-                    else
-                    {
-                    foreach (Product matchedProduct in matchedProducts)
-                    {
-                    border = null;
-                    function = null;
-                    if (matchedProduct.Id == p.Id)
-                    border = "border-primary";
-                    else
-                    function = $"role=button onclick=getProduct({matchedProduct.Id})";
-                    <div class="d-inline-block p-1 me-1 border rounded @border">
-                    @if (s.Is)
-                    {
-                    <img width="25" height="25" style="width: 1.5rem; height: auto" src="@PathService.GetImageRelativePath(ConstantsService.SPECSVALUE, sv.Id)" title="@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)" alt="@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)" @function />
-                    }
-                    else
-                    {
-                    <span @function>@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)</span>
-                    }
-                    </div>
-                    }
-                    }
-                    }
-                    else
-                    {
-                    if (border == null)
-                    function = $"role=button onclick=getProduct({matchedProducts.FirstOrDefault().Id})";
-                    <div class="d-inline-block p-1 me-1 border rounded @border">
-                    @if (s.Is)
-                    {
-                    <img width="25" height="25" style="width: 1.5rem; height: auto" src="@PathService.GetImageRelativePath(ConstantsService.SPECSVALUE, sv.Id)" title="@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)" alt="@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)" @function />
-                    }
-                    else
-                    {
-                    <span @function>@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)</span>
-                    }
-                    </div>
-                    }
-                    }*@
                                 </div>
                             }
                         </div>
                     }
                     <div class="d-flex flex-column justify-content-end align-items-center align-items-md-start mb-3">
-                        @if (p.NewPrice != null)
+                        <div class="mb-2">
+                            <p>@Localizer["quantity"]</p>
+                            <span role="button" class='pointer px-2 h3' onclick="quantity(@quantityId, false)">-</span>
+                            <span class="h2" id="@quantityId">1</span>
+                            <span role="button" class='pointer px-2 h3' onclick="quantity(@quantityId, true)">+</span>
+                        </div>
+                        @if (discount != null)
+                        {
+                            <div class="d-block"><h6><s>@CurrencyService.Currency.CodeName @IProduct.GetConvertedPrice((decimal)p.Price)</s></h6></div>
+                            @if (CultureProvider.CurrentCulture == CultureProvider.Culture.Ru)
+                            {
+                                <p class="text-primary">@Localizer["promo-price"] <a href="/@PathService.GetModelUrl(ConstantsService.PROMOTION, discount.Id)">"@discount.Name"</a>:</p>
+                            }
+                            else
+                            {
+                                <p class="text-primary"><a href="/@PathService.GetModelUrl(ConstantsService.PROMOTION, discount.Id)">"@discount.Name"</a> @Localizer["promo-price"]:</p>
+                            }
+                            <h4>@CurrencyService.Currency.CodeName @IProduct.GetConvertedPrice((decimal)(p.Price - p.Price * discount.Volume / 100))</h4>
+                        }
+                        else if (p.NewPrice != null)
                         {
                             <div class="d-block"><h6><s>@CurrencyService.Currency.CodeName @IProduct.GetConvertedPrice((decimal)p.Price)</s></h6></div>
                             <h4>@CurrencyService.Currency.CodeName @IProduct.GetConvertedPrice((decimal)p.NewPrice)</h4>
@@ -283,17 +190,13 @@
                         {
                             <h4>@CurrencyService.Currency.CodeName @IProduct.GetConvertedPrice((decimal)p.Price)</h4>
                         }
-                        @{
-                            string buttonName = "order" + p.Id;
-                            string buttonLikeName = "like" + p.Id;
-                        }
                         <div class="d-inline-flex">
-                            <button name="@buttonName" onclick="order(@p.Id)" type="submit" class="btn btn-primary">@Localizer["add-to-cart"]</button>
+                            <button name="@buttonName" onclick="productOrder(@p.Id, @quantityId)" type="submit" class="btn btn-primary">@Localizer["add-to-cart"]</button>
                             <button name="@buttonLikeName" onclick="like(@p.Id)" type="submit" class="btn btn-primary ms-2"><i class="fas fa-heart"></i></button>
                         </div>
                     </div>
                 </div>
-                <div class="col-auto d-flex flex-column justify-content-start align-items-start pt-2">
+                <div class="col-12 col-sm-12 col-md-4 col-lg-5 col-xl-6 d-flex flex-column justify-content-start align-items-center pt-2">
                     @if (p.IsRecommended)
                     {
                         <div class="badge badge-primary me-1">@Localizer["recod"]</div>
@@ -305,6 +208,198 @@
                     <a href="@PathService.GetModelUrl($"https://{CultureProvider.Host}/{ConstantsService.BRAND}", p.Model.BrandId)">
                         <img role="button" width="180" height="60" style="width: 12rem; height: auto" alt="@p.Model.Brand.Name" src="@PathService.GetImageRelativePath($"{ConstantsService.BRAND}", p.Model.BrandId)" />
                     </a>
+                    @foreach (Promo promo in promos.Where(pr => pr.Type != Tp.Discount))
+                    {
+                        @if (promo.Type == Tp.QuantityDiscount)
+                        {
+                            switch (CultureProvider.CurrentCulture)
+                            {
+                                case CultureProvider.Culture.Ru:
+                                    <div class="text-center mt-2">
+                                        <p class="text-primary">Этот товар участвует в акции <a href="/@PathService.GetModelUrl(ConstantsService.PROMOTION, promo.Id)">"@promo.Name"</a>, скидка @((int)promo.Volume)%</p>
+                                        <h4>При покупке не менее @promo.Quantity штук, цена - @CurrencyService.Currency.CodeName @IProduct.GetConvertedPrice((decimal)(p.Price - p.Price * promo.Volume / 100))</h4>
+                                    </div>
+                                    break;
+                                case CultureProvider.Culture.En:
+                                    <div class="text-center mt-2">
+                                        <p class="text-primary">This product is part of the <a href="/@PathService.GetModelUrl(ConstantsService.PROMOTION, promo.Id)">"@promo.Name"</a> promotion, @((int)promo.Volume)% off</p>
+                                        <h4>Get @promo.Quantity at a price of @CurrencyService.Currency.CodeName @IProduct.GetConvertedPrice((decimal)(p.Price - p.Price * promo.Volume / 100))</h4>
+                                    </div>
+                                    break;
+                                case CultureProvider.Culture.Tm:
+                                    <div class="text-center mt-2">
+                                        <p class="text-primary">Bu haryt <a href="/@PathService.GetModelUrl(ConstantsService.PROMOTION, promo.Id)">"@promo.Name"</a> aksiýasyna gatnaşýar, arzanladyş @((int)promo.Volume)%</p>
+                                        <h4>@promo.Quantity sanysy - @CurrencyService.Currency.CodeName @IProduct.GetConvertedPrice((decimal)(p.Price - p.Price * promo.Volume / 100))</h4>
+                                    </div>
+                                    break;
+                            }
+                        }
+                        @if (promo.Type == Tp.QuantityFree)
+                        {
+                            switch (CultureProvider.CurrentCulture)
+                            {
+                                case CultureProvider.Culture.Ru:
+                                    <div class="text-center mt-2">
+                                        <p class="text-primary">Этот товар участвует в акции <a href="/@PathService.GetModelUrl(ConstantsService.PROMOTION, promo.Id)">"@promo.Name"</a></p>
+                                        <h4>Купите не менее @promo.Quantity штук и получите один БЕСПЛАТНО!</h4>
+                                    </div>
+                                    break;
+                                case CultureProvider.Culture.En:
+                                    <div class="text-center mt-2">
+                                        <p class="text-primary">This product is part of the <a href="/@PathService.GetModelUrl(ConstantsService.PROMOTION, promo.Id)">"@promo.Name"</a> promotion</p>
+                                        <h4>Buy @promo.Quantity pieces and get one FOR FREE!</h4>
+                                    </div>
+                                    break;
+                                case CultureProvider.Culture.Tm:
+                                    <div class="text-center mt-2">
+                                        <p class="text-primary">Bu haryt <a href="/@PathService.GetModelUrl(ConstantsService.PROMOTION, promo.Id)">"@promo.Name"</a> aksiýasyna gatnaşýar</p>
+                                        <h4>@promo.Quantity sanysyny satyn alana biri MUGT!</h4>
+                                    </div>
+                                    break;
+                            }
+                        }
+                        @if (promo.Type == Tp.ProductFree)
+                        {
+                            switch (CultureProvider.CurrentCulture)
+                            {
+                                case CultureProvider.Culture.Ru:
+                                    <div class="text-center mt-2">
+                                        <p class="text-primary">Этот товар участвует в акции <a href="/@PathService.GetModelUrl(ConstantsService.PROMOTION, promo.Id)">"@promo.Name"</a></p>
+                                        <h4>Купите не менее @promo.Quantity штук и получите <a href="/@PathService.GetModelUrl(ConstantsService.PRODUCT, promo.Subject.Id)">"@IProduct.GetProductNameCounted(promo.Subject)"</a> БЕСПЛАТНО!</h4>
+                                    </div>
+                                    break;
+                                case CultureProvider.Culture.En:
+                                    <div class="text-center mt-2">
+                                        <p class="text-primary">This product is part of the <a href="/@PathService.GetModelUrl(ConstantsService.PROMOTION, promo.Id)">"@promo.Name"</a> promotion</p>
+                                        <h4>Buy @promo.Quantity pieces and get <a href="/@PathService.GetModelUrl(ConstantsService.PRODUCT, promo.Subject.Id)">"@IProduct.GetProductNameCounted(promo.Subject)"</a> FOR FREE!</h4>
+                                    </div>
+                                    break;
+                                case CultureProvider.Culture.Tm:
+                                    <div class="text-center mt-2">
+                                        <p class="text-primary">Bu haryt <a href="/@PathService.GetModelUrl(ConstantsService.PROMOTION, promo.Id)">"@promo.Name"</a> aksiýasyna gatnaşýar</p>
+                                        <h4>@promo.Quantity sanysyny satyn alana <a href="/@PathService.GetModelUrl(ConstantsService.PRODUCT, promo.Subject.Id)">"@IProduct.GetProductNameCounted(promo.Subject)"</a> MUGT!</h4>
+                                    </div>
+                                    break;
+                            }
+                        }
+                        @if (promo.Type == Tp.Set)
+                        {
+                            switch (CultureProvider.CurrentCulture)
+                            {
+                                case CultureProvider.Culture.Ru:
+                                    <div class="text-center mt-2">
+                                        <p class="text-primary">Этот товар участвует в акции <a href="/@PathService.GetModelUrl(ConstantsService.PROMOTION, promo.Id)">"@promo.Name"</a></p>
+                                        <p>Купите набор, состоящий из:</p>
+                                        @foreach (Product ps in promo.Products)
+                                        {
+                                            <p><a href="/@PathService.GetModelUrl(ConstantsService.PRODUCT, ps.Id)">@IProduct.GetProductNameCounted(ps)</a></p>
+                                        }
+                                        <h4>и получите <a href="/@PathService.GetModelUrl(ConstantsService.PRODUCT, promo.Subject.Id)">"@IProduct.GetProductNameCounted(promo.Subject)"</a> БЕСПЛАТНО!</h4>
+                                    </div>
+                                    break;
+                                case CultureProvider.Culture.En:
+                                    <div class="text-center mt-2">
+                                        <p class="text-primary">This product is part of the <a href="/@PathService.GetModelUrl(ConstantsService.PROMOTION, promo.Id)">"@promo.Name"</a> promotion</p>
+                                        <p>Buy a set consisting of:</p>
+                                        @foreach (Product ps in promo.Products)
+                                        {
+                                            <p><a href="/@PathService.GetModelUrl(ConstantsService.PRODUCT, ps.Id)">@IProduct.GetProductNameCounted(ps)</a></p>
+                                        }
+                                        <h4>and get <a href="/@PathService.GetModelUrl(ConstantsService.PRODUCT, promo.Subject.Id)">"@IProduct.GetProductNameCounted(promo.Subject)"</a> FOR FREE!</h4>
+                                    </div>
+                                    break;
+                                case CultureProvider.Culture.Tm:
+                                    <div class="text-center mt-2">
+                                        <p class="text-primary">Bu haryt <a href="/@PathService.GetModelUrl(ConstantsService.PROMOTION, promo.Id)">"@promo.Name"</a> aksiýasyna gatnaşýar</p>
+                                        <p>Aşakdaky harytlaryň ahlisini satyn alana:</p>
+                                        @foreach (Product ps in promo.Products)
+                                        {
+                                            <p><a href="/@PathService.GetModelUrl(ConstantsService.PRODUCT, ps.Id)">@IProduct.GetProductNameCounted(ps)</a></p>
+                                        }
+                                        <h4><a href="/@PathService.GetModelUrl(ConstantsService.PRODUCT, promo.Subject.Id)">"@IProduct.GetProductNameCounted(promo.Subject)"</a> MUGT!</h4>
+                                    </div>
+                                    break;
+                            }
+                        }
+                        @if (promo.Type == Tp.SetDiscount)
+                        {
+                            switch (CultureProvider.CurrentCulture)
+                            {
+                                case CultureProvider.Culture.Ru:
+                                    <div class="text-center mt-2">
+                                        <p class="text-primary">Этот товар участвует в акции <a href="/@PathService.GetModelUrl(ConstantsService.PROMOTION, promo.Id)">"@promo.Name"</a></p>
+                                        <p>Купите набор, состоящий из:</p>
+                                        @foreach (Product ps in promo.Products)
+                                        {
+                                            <p><a href="/@PathService.GetModelUrl(ConstantsService.PRODUCT, ps.Id)">@IProduct.GetProductNameCounted(ps)</a></p>
+                                        }
+                                        <h4>и получите СКИДКУ @((int)promo.Volume)% на весь набор!</h4>
+                                    </div>
+                                    break;
+                                case CultureProvider.Culture.En:
+                                    <div class="text-center mt-2">
+                                        <p class="text-primary">This product is part of the <a href="/@PathService.GetModelUrl(ConstantsService.PROMOTION, promo.Id)">"@promo.Name"</a> promotion</p>
+                                        <p>Buy a set consisting of:</p>
+                                        @foreach (Product ps in promo.Products)
+                                        {
+                                            <p><a href="/@PathService.GetModelUrl(ConstantsService.PRODUCT, ps.Id)">@IProduct.GetProductNameCounted(ps)</a></p>
+                                        }
+                                        <h4>and get @((int)promo.Volume)% DISCOUNT on all products in the set!</h4>
+                                    </div>
+                                    break;
+                                case CultureProvider.Culture.Tm:
+                                    <div class="text-center mt-2">
+                                        <p class="text-primary">Bu haryt <a href="/@PathService.GetModelUrl(ConstantsService.PROMOTION, promo.Id)">"@promo.Name"</a> aksiýasyna gatnaşýar</p>
+                                        <p>Aşakdaky harytlaryň ahlisini satyn alana:</p>
+                                        @foreach (Product ps in promo.Products)
+                                        {
+                                            <p><a href="/@PathService.GetModelUrl(ConstantsService.PRODUCT, ps.Id)">@IProduct.GetProductNameCounted(ps)</a></p>
+                                        }
+                                        <h4>hemmesine @((int)promo.Volume)% ARZANLADYŞ!</h4>
+                                    </div>
+                                    break;
+                            }
+                        }
+                        @if (promo.Type == Tp.SpecialSetDiscount)
+                        {
+                            switch (CultureProvider.CurrentCulture)
+                            {
+                                case CultureProvider.Culture.Ru:
+                                    <div class="text-center mt-2">
+                                        <p class="text-primary">Этот товар участвует в акции <a href="/@PathService.GetModelUrl(ConstantsService.PROMOTION, promo.Id)">"@promo.Name"</a></p>
+                                        <p>Купите набор, состоящий из:</p>
+                                        @foreach (Product ps in promo.Products)
+                                        {
+                                            <p><a href="/@PathService.GetModelUrl(ConstantsService.PRODUCT, ps.Id)">@IProduct.GetProductNameCounted(ps)</a></p>
+                                        }
+                                        <h4>и получите СКИДКУ @((int)promo.Volume)% при покупке <a href="/@PathService.GetModelUrl(ConstantsService.PRODUCT, promo.Subject.Id)">"@IProduct.GetProductNameCounted(promo.Subject)"</a>!</h4>
+                                    </div>
+                                    break;
+                                case CultureProvider.Culture.En:
+                                    <div class="text-center mt-2">
+                                        <p class="text-primary">This product is part of the <a href="/@PathService.GetModelUrl(ConstantsService.PROMOTION, promo.Id)">"@promo.Name"</a> promotion</p>
+                                        <p>Buy a set consisting of:</p>
+                                        @foreach (Product ps in promo.Products)
+                                        {
+                                            <p><a href="/@PathService.GetModelUrl(ConstantsService.PRODUCT, ps.Id)">@IProduct.GetProductNameCounted(ps)</a></p>
+                                        }
+                                        <h4>and get a @((int)promo.Volume)% DISCOUNT when buying <a href="/@PathService.GetModelUrl(ConstantsService.PRODUCT, promo.Subject.Id)">"@IProduct.GetProductNameCounted(promo.Subject)"</a>!</h4>
+                                    </div>
+                                    break;
+                                case CultureProvider.Culture.Tm:
+                                    <div class="text-center mt-2">
+                                        <p class="text-primary">Bu haryt <a href="/@PathService.GetModelUrl(ConstantsService.PROMOTION, promo.Id)">"@promo.Name"</a> aksiýasyna gatnaşýar</p>
+                                        <p>Aşakdaky harytlaryň ahlisini satyn al:</p>
+                                        @foreach (Product ps in promo.Products)
+                                        {
+                                            <p><a href="/@PathService.GetModelUrl(ConstantsService.PRODUCT, ps.Id)">@IProduct.GetProductNameCounted(ps)</a></p>
+                                        }
+                                        <h4>we <a href="/@PathService.GetModelUrl(ConstantsService.PRODUCT, promo.Subject.Id)">"@IProduct.GetProductNameCounted(promo.Subject)"</a> @((int)promo.Volume)% ARZANLADYŞLY satyn al!</h4>
+                                    </div>
+                                    break;
+                            }
+                        }
+                    }
                 </div>
             </div>
             <ul class="nav nav-tabs mb-3" id="@tabsId" role="tablist">
