@@ -32,7 +32,11 @@ else
             <i class="@i"></i>
             @if (Model[0] == ConstantsService.CART)
             {
-                <span data-test="badge" name="q" class="badge dark badge-dark rounded-pill q2">0</span>
+                <span name="q" class="badge dark badge-dark rounded-pill q2">0</span>
+            }
+            @if (Model[0] == ConstantsService.COMPARISON)
+            {
+                    <span name="s" class="badge dark badge-dark rounded-pill q2">0</span>
             }
         </div>
         <p>@Localizer[Model[2]]</p>

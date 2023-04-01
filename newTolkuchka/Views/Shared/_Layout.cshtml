@@ -109,27 +109,28 @@
                     new List<string>()
                     {
                     ConstantsService.ACCOUNT,
-                    "fa fa-sign-in-alt",
-                    ConstantsService.ACCOUNT
+                    $"fa fa-sign-in-alt me-3"
                     } :
                     new List<string>()
                     {
                     "#",
-                    "fas fa-user-tie",
-                    ConstantsService.LOGIN,
+                    $"fas fa-user-tie me-3",
                     "#loginModal"
                     },
                     new List<string>()
                     {
                     ConstantsService.LIKED,
-                    "fas fa-heart",
-                    ConstantsService.LIKED
+                    $"fas fa-heart me-3"
+                    },
+                    new List<string>()
+                    {
+                    ConstantsService.COMPARISON,
+                    $"fas fa-scale-unbalanced"
                     },
                     new List<string>()
                     {
                     ConstantsService.CART,
-                    "fas fa-shopping-cart",
-                    ConstantsService.CART
+                    $"fas fa-shopping-cart"
                     }
                     };
                             foreach (List<string> l in icoList)
@@ -304,12 +305,6 @@
                 "fa fa-align-center",
                 ConstantsService.CATEGORIES
                 },
-                new List<string>()
-                {
-                ConstantsService.BRANDS,
-                "fas fa-cannabis",
-                ConstantsService.BRANDS
-                },
                 isAuth ?
                 new List<string>()
                 {
@@ -323,6 +318,13 @@
                 "fas fa-user-tie",
                 ConstantsService.LOGIN,
                 "#loginModal"
+                },
+                new List<string>()
+                {
+
+                ConstantsService.COMPARISON,
+                $"fas fa-scale-unbalanced",
+                ConstantsService.COMPARISON
                 },
                 new List<string>()
                 {

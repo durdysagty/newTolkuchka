@@ -52,6 +52,7 @@ namespace newTolkuchka.Services
         public const string BRAND = "brand";
         public const string CATEGORIES = "categories";
         public const string CATEGORY = "category";
+        public const string COMPARISON = "comparison";
         public const string CURRENCIES = "currencies";
         public const string CURRENCY = "currency";
         public const string EMPLOYEES = "employees";
@@ -94,6 +95,7 @@ namespace newTolkuchka.Services
         public const string ACCOUNT = "account";
         public const string LOGIN = "login";
         public const string CART = "cart";
+        public const string SCALE = "scale";
         public const string SEARCH = "search";
         public const string ABOUT = "about";
         public const string DELIVERY = "delivery";

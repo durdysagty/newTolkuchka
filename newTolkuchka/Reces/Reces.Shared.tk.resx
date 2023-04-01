@@ -180,6 +180,9 @@
   <data name="commercial" xml:space="preserve">
     <value>Aksiýa</value>
   </data>
+  <data name="comparison" xml:space="preserve">
+    <value>Deňeşdirme</value>
+  </data>
   <data name="content" xml:space="preserve">
     <value>Mazmun</value>
   </data>
@@ -302,6 +305,9 @@
   </data>
   <data name="noArticle" xml:space="preserve">
     <value>Bagyşlaň, entek makala ýok!</value>
+  </data>
+  <data name="noComparison" xml:space="preserve">
+    <value>Siz deňeşdirmek uçin haryt saýlamadyňyz!</value>
   </data>
   <data name="noProduct" xml:space="preserve">
     <value>Bagyşlaň, saýlawyňyza laýyk önüm ýok!</value>

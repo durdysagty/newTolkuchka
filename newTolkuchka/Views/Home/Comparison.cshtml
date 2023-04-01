@@ -1,0 +1,78 @@
+﻿@using newTolkuchka.Services.Interfaces
+@model List<(string, Product, decimal)>
+@{
+    IList<Spec> specs = ViewBag.Specs;
+}
+
+@if (Model != null && Model.Any())
+{
+    <div class="overflow-x-scroll">
+        <table class="table table-hover table-sm">
+            <thead>
+                <tr>
+                    <th></th>
+                    @foreach ((string, Product, decimal) p in Model)
+                    {
+                        <th class="align-top"><a href="/@PathService.GetModelUrl(ConstantsService.PRODUCT, p.Item2.Id)">@p.Item1</a> <button class='btn btn-primary py-1 px-3' onclick='scale(@p.Item2.Id, true)'>X</button></th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (Spec s in specs.OrderBy(s => s.Order))
+                {
+                    <tr>
+                        <td>@CultureProvider.GetLocalName(s.NameRu, s.NameEn, s.NameTm)</td>
+                        @foreach (Product p in Model.Select(m => m.Item2))
+                        {
+                            SpecsValue sv = p.ProductSpecsValues.Where(psv => psv.SpecsValue.Spec.Id == s.Id)?.Select(psv => psv.SpecsValue).FirstOrDefault();
+                            if (sv == null)
+                            {
+                                <td> - </td>
+                            }
+                            else
+                            {
+                                SpecsValueMod svm = p.ProductSpecsValueMods.Where(psvm => psvm.SpecsValueMod.SpecsValueId == sv.Id)?.Select(psvm => psvm.SpecsValueMod).FirstOrDefault();
+                                if (svm != null)
+                                {
+                                    <td>@CultureProvider.GetLocalName(svm.NameRu, svm.NameEn, svm.NameTm)</td>
+                                }
+                                else
+                                {
+                                    <td>@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)</td>
+                                }
+                            }
+                        }
+                    </tr>
+                }
+                <tr>
+                    <td>@Localizer["price2"], @CurrencyService.Currency.CodeName</td>
+                    @foreach (decimal price in Model.Select(m => m.Item3))
+                    {
+                        <td>@price</td>
+                    }
+                </tr>
+                <tr>
+                    <td></td>
+                    @foreach (Product p in Model.Select(m => m.Item2))
+                    {
+                        string buttonName = "order" + p.Id;
+                        string buttonLikeName = "like" + p.Id;
+                        <td class="text-center">
+                            <div class="d-inline-flex">
+                                <button name="@buttonName" onclick="order(@p.Id)" type="submit" class="btn btn-primary">@Localizer["add-to-cart"]</button>
+                                <button name="@buttonLikeName" onclick="like(@p.Id)" type="submit" class="btn btn-primary ms-2"><i class="fas fa-heart"></i></button>
+                            </div>
+                        </td>
+                    }
+                </tr>
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    await Html.RenderPartialAsync("_AllProducts", "noComparison");
+}
+@section Scripts {
+    <script src="~/js/comparison.js" asp-append-version="true"></script>
+        }

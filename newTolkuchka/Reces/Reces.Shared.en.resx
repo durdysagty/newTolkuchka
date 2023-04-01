@@ -180,6 +180,9 @@
   <data name="commercial" xml:space="preserve">
     <value>Commercial</value>
   </data>
+  <data name="comparison" xml:space="preserve">
+    <value>Comparison</value>
+  </data>
   <data name="content" xml:space="preserve">
     <value>Content</value>
   </data>
@@ -302,6 +305,9 @@
   </data>
   <data name="noArticle" xml:space="preserve">
     <value>Sorry, there are no articles yet!</value>
+  </data>
+  <data name="noComparison" xml:space="preserve">
+    <value>You have not selected any items to compare!</value>
   </data>
   <data name="noProduct" xml:space="preserve">
     <value>Sorry, there are no products matching your selection!</value>

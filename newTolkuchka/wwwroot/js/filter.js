@@ -291,11 +291,6 @@ function setFilters() {
     history.pushState(null, null, `${window.location.pathname}?${search}`)
     setProducts(true)
 }
-function changeImage(id, ids) {
-    ids.forEach(i => { $(i).addClass('d-none').removeClass('d-block') })
-    $(id).addClass('d-block').removeClass('d-none')
-
-}
 //function changeImage(img, btn, id) {
 //    let src = $(img).attr('src')
 //    src = src.replace(/[0-9]+-/, `${id}-`)

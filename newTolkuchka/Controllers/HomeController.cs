@@ -8,6 +8,7 @@ using newTolkuchka.Models.DTO;
 using newTolkuchka.Reces;
 using newTolkuchka.Services;
 using newTolkuchka.Services.Interfaces;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text.Json;
@@ -23,6 +24,7 @@ namespace newTolkuchka.Controllers
         private readonly ICategory _category;
         private readonly IBrand _brand;
         private readonly IPromotion _promotion;
+        private readonly IModel _model;
         private readonly IProduct _product;
         private readonly ISlide _slide;
         private readonly IActionNoFile<Heading, Heading> _heading;
@@ -34,7 +36,7 @@ namespace newTolkuchka.Controllers
         private readonly IActionNoFile<Currency, AdminCurrency> _currency;
         private readonly IMemoryCache _memoryCache;
 
-        public HomeController(IStringLocalizer<Shared> localizer, IBreadcrumbs breadcrumbs, IPath path, ICategory category, IBrand brand, IPromotion promotion, IProduct product, ISlide slide, IActionNoFile<Heading, Heading> heading, IArticle article, IUser user, IInvoice invoice, IOrder order, ILogin login, IActionNoFile<Currency, AdminCurrency> currency, IMemoryCache memoryCache)
+        public HomeController(IStringLocalizer<Shared> localizer, IBreadcrumbs breadcrumbs, IPath path, ICategory category, IBrand brand, IPromotion promotion, IModel model, IProduct product, ISlide slide, IActionNoFile<Heading, Heading> heading, IArticle article, IUser user, IInvoice invoice, IOrder order, ILogin login, IActionNoFile<Currency, AdminCurrency> currency, IMemoryCache memoryCache)
         {
             _localizer = localizer;
             _breadcrumbs = breadcrumbs;
@@ -42,6 +44,7 @@ namespace newTolkuchka.Controllers
             _category = category;
             _brand = brand;
             _promotion = promotion;
+            _model = model;
             _product = product;
             _slide = slide;
             _heading = heading;
@@ -132,29 +135,25 @@ namespace newTolkuchka.Controllers
                 }
                 return products;
             }
-            IList<IEnumerable<UIProduct>> newUIProducts = await _product.GetFullModels().OrderByDescending(p => p.Id).Where(p => p.IsNew && !p.NotInUse && !p.Model.Category.NotInUse).Take(count).Select(p => _product.GetUIProduct(new Product[1] { p })).ToListAsync();
-            IEnumerable<string> newProducts = GetHtmlProducts(newUIProducts);
-            IList<IEnumerable<UIProduct>> recUIProducts = await _product.GetFullModels().OrderByDescending(p => p.Id).Where(p => p.IsRecommended && !p.NotInUse && !p.Model.Category.NotInUse).Take(count).Select(p => _product.GetUIProduct(new Product[1] { p })).ToListAsync();
-            IEnumerable<string> recProducts = GetHtmlProducts(recUIProducts);
-            //IQueryable<Category> mainCategories = _category.GetActiveCategoriesByParentId(0);
-            //IList<(Category, IEnumerable<string>)> categories = new List<(Category, IEnumerable<string>)>();
-            //foreach (Category category in mainCategories)
-            //{
-            //    IList<int> categoryIds = _category.GetAllCategoryIdsHaveProductsByParentId(category.Id);
-            //    if (categoryIds.Any())
-            //    {
-            //        IList<IEnumerable<UIProduct>> products = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.CATEGORY, categoryIds } }).OrderByDescending(p => p.Id).Where(p => !p.NotInUse && !p.Model.Category.NotInUse).Take(count).Select(p => _product.GetUIProduct(new Product[1] { p })).ToListAsync();
-            //        (Category, IEnumerable<string>) mainCategory = (category, GetHtmlProducts(products));
-            //        categories.Add(mainCategory);
-            //    }
-            //}
+            IEnumerable<int> newModelIds = _model.GetModels().OrderByDescending(m => m.Id).Where(m => !m.Category.NotInUse && m.Products.Any(p => p.IsNew && !p.NotInUse)).Take(count).Select(m => m.Id);
+            List<IEnumerable<UIProduct>> newUIProducts = new();
+            foreach (int m in newModelIds)
+            {
+                Product[] newProducts = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.MODEL, m } }).Where(p => p.IsNew && !p.NotInUse).ToArrayAsync();
+                newUIProducts.Add(_product.GetUIProduct(newProducts).ToList());
+            }
+            IEnumerable<string> newProductsHtml = GetHtmlProducts(newUIProducts);
+            IEnumerable<int> recModelIds = _model.GetModels().OrderByDescending(m => m.Id).Where(m => !m.Category.NotInUse && m.Products.Any(p => p.IsRecommended && !p.NotInUse)).Take(count).Select(m => m.Id);
+            List<IEnumerable<UIProduct>> recUIProducts = new();
+            foreach (int m in recModelIds)
+            {
+                Product[] recProducts = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.MODEL, m } }).Where(p => p.IsRecommended && !p.NotInUse).ToArrayAsync();
+                recUIProducts.Add(_product.GetUIProduct(recProducts).ToList());
+            }
+            IEnumerable<string> recProductsHtml = GetHtmlProducts(recUIProducts);
             string template = "<div class=\"fs-5 px-3 mb-3 border-bottom border-primary\"><a href=\"/{0}\"><img style=\"width: auto; height: 1.5rem\" src=\"{1}\"/><span class=\"ms-2\">{2}</span></a></div><div class=\"row\">{3}</div>";
-            string html = string.Format(template, ConstantsService.NOVELTIES, PathService.GetSVGRelativePath(null, "new"), _localizer[ConstantsService.NOVELTIES].Value, GetItems(newProducts));
-            html += string.Format(template, ConstantsService.RECOMMENDED, PathService.GetSVGRelativePath(null, "rec"), _localizer[ConstantsService.RECOMMENDED].Value, GetItems(recProducts));
-            //foreach ((Category, IEnumerable<string>) c in categories)
-            //{
-            //    html += string.Format(template, PathService.GetModelUrl(ConstantsService.CATEGORY, c.Item1.Id), PathService.GetSVGRelativePath(ConstantsService.CATEGORY, c.Item1.Id.ToString()), CultureProvider.GetLocalName(c.Item1.NameRu, c.Item1.NameEn, c.Item1.NameTm), GetItems(c.Item2));
-            //}
+            string html = string.Format(template, ConstantsService.NOVELTIES, PathService.GetSVGRelativePath(null, "new"), _localizer[ConstantsService.NOVELTIES].Value, GetItems(newProductsHtml));
+            html += string.Format(template, ConstantsService.RECOMMENDED, PathService.GetSVGRelativePath(null, "rec"), _localizer[ConstantsService.RECOMMENDED].Value, GetItems(recProductsHtml));
             IEnumerable<Category> indexCats = _category.GetIndexCategories();
             IEnumerable<Promotion> promotions = _promotion.GetModels().Where(p => !p.NotInUse);
             string catsString = string.Empty;
@@ -509,6 +508,34 @@ namespace newTolkuchka.Controllers
             ViewBag.SpecIds = namedSpecIds;
             ViewBag.Current = product.Id;
             return View(namedProducts);
+        }
+        [Route(ConstantsService.COMPARISON)]
+        public async Task<IActionResult> Comparison()
+        {
+            bool isScaled = HttpContext.Request.Cookies.TryGetValue("scaled", out string scaled);
+            CreateMetaData(ConstantsService.COMPARISON, _breadcrumbs.GetBreadcrumbs());
+            if (!isScaled)
+                return View();
+            int[] ids = JsonSerializer.Deserialize<int[]>(scaled.Replace("-", ","));
+            List<(string, Product, decimal)> coms = new();
+            Product[] products = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, ids } }).ToArrayAsync();
+            List<Spec> specs = new();
+            foreach (Product p in products)
+            {
+                string name = IProduct.GetProductNameCounted(p);
+                foreach (Spec psv in p.ProductSpecsValues.Select(psv => psv.SpecsValue.Spec))
+                {
+                    if (!specs.Any(s => s.Id == psv.Id))
+                    {
+                        specs.Add(psv);
+                    }
+                }
+                Promotion discount = p.PromotionProducts.FirstOrDefault(pp => pp.Promotion.Type == Tp.Discount)?.Promotion;
+                decimal price = discount != null ? IProduct.GetConvertedPrice((decimal)(p.Price - p.Price * discount.Volume / 100)) : p.NewPrice != null ? IProduct.GetConvertedPrice((decimal)p.NewPrice) : IProduct.GetConvertedPrice(p.Price);
+                coms.Add((name, p, price));
+            }
+            ViewBag.Specs = specs;
+            return View(coms);
         }
         [Route($"{ConstantsService.ARTICLES}")]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 10000)]

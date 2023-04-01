@@ -180,6 +180,9 @@
   <data name="commercial" xml:space="preserve">
     <value>Акция</value>
   </data>
+  <data name="comparison" xml:space="preserve">
+    <value>Сравнение</value>
+  </data>
   <data name="content" xml:space="preserve">
     <value>Контент</value>
   </data>
@@ -305,6 +308,9 @@
   </data>
   <data name="noArticle" xml:space="preserve">
     <value>К сожалению, пока нет статей!</value>
+  </data>
+  <data name="noComparison" xml:space="preserve">
+    <value>Вы не выбрали товары для сравнения!</value>
   </data>
   <data name="noProduct" xml:space="preserve">
     <value>К сожалению, по выбранным параметрам товаров нет!</value>

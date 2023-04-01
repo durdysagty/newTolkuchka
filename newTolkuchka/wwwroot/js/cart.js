@@ -189,3 +189,4 @@ function setOrderResult(text) {
     $('#cart').html(`<div class="justify-content-center align-items-center"><p class="text-center">${text}</p></div>`)
 }
 getOrderProducts()
+checkOrders()
