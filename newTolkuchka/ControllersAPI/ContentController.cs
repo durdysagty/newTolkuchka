@@ -17,7 +17,7 @@ namespace newTolkuchka.ControllersAPI
     }
 
     [MyApiController]
-    [Authorize(Policy = "Level3")]
+    [Authorize(Policy = "Level2")]
     public class ContentController : AbstractController<Content, Content, IContent>
     {
         private readonly IContent _content;

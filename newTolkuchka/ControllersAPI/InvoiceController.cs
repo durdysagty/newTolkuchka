@@ -73,6 +73,7 @@ namespace newTolkuchka.ControllersAPI
             await EditActAsync(invoice.Id, CreateInvoiceName(invoice));
             return Result.Success;
         }
+        [Authorize(Policy = "Level3")]
         [HttpDelete("{id}")]
         public async Task<Result> Delete(int id)
         {
