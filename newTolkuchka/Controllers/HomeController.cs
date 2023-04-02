@@ -122,9 +122,9 @@ namespace newTolkuchka.Controllers
             {
                 slidesString += $"<div class=\"col-12 col-sm-6 col-md-4 p-1\"><a href=\"/{s.Link}\"><img src=\"{PathService.GetImageRelativePath(ConstantsService.SLIDE, s.Id, CultureProvider.GetLocalNumberEx())}\" class=\"card-img-top rounded\" alt=\"{s.Name}\" /></a></div>";
             }
-            static IEnumerable<string> GetHtmlProducts(IList<IEnumerable<UIProduct>> products)
+            static IEnumerable<string> GetHtmlProducts(IList<IEnumerable<UIProduct>> products, int? sw)
             {
-                return products.Select(u => IProduct.GetHtmlProduct(u, col, xs, sm, md, lg, xl, xxl, xxxl));
+                return products.Select(u => IProduct.GetHtmlProduct(u, sw, col, xs, sm, md, lg, xl, xxl, xxxl));
             }
             static string GetItems(IEnumerable<string> strings)
             {
@@ -142,7 +142,8 @@ namespace newTolkuchka.Controllers
                 Product[] newProducts = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.MODEL, m } }).Where(p => p.IsNew && !p.NotInUse).ToArrayAsync();
                 newUIProducts.Add(_product.GetUIProduct(newProducts).ToList());
             }
-            IEnumerable<string> newProductsHtml = GetHtmlProducts(newUIProducts);
+            int? sw = GetScreenWidth();
+            IEnumerable<string> newProductsHtml = GetHtmlProducts(newUIProducts, sw);
             IEnumerable<int> recModelIds = _model.GetModels().OrderByDescending(m => m.Id).Where(m => !m.Category.NotInUse && m.Products.Any(p => p.IsRecommended && !p.NotInUse)).Take(count).Select(m => m.Id);
             List<IEnumerable<UIProduct>> recUIProducts = new();
             foreach (int m in recModelIds)
@@ -150,7 +151,7 @@ namespace newTolkuchka.Controllers
                 Product[] recProducts = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.MODEL, m } }).Where(p => p.IsRecommended && !p.NotInUse).ToArrayAsync();
                 recUIProducts.Add(_product.GetUIProduct(recProducts).ToList());
             }
-            IEnumerable<string> recProductsHtml = GetHtmlProducts(recUIProducts);
+            IEnumerable<string> recProductsHtml = GetHtmlProducts(recUIProducts, sw);
             string template = "<div class=\"fs-5 px-3 mb-3 border-bottom border-primary\"><a href=\"/{0}\"><img style=\"width: auto; height: 1.5rem\" src=\"{1}\"/><span class=\"ms-2\">{2}</span></a></div><div class=\"row\">{3}</div>";
             string html = string.Format(template, ConstantsService.NOVELTIES, PathService.GetSVGRelativePath(null, "new"), _localizer[ConstantsService.NOVELTIES].Value, GetItems(newProductsHtml));
             html += string.Format(template, ConstantsService.RECOMMENDED, PathService.GetSVGRelativePath(null, "rec"), _localizer[ConstantsService.RECOMMENDED].Value, GetItems(recProductsHtml));
@@ -368,8 +369,8 @@ namespace newTolkuchka.Controllers
                     noProduct = model == ConstantsService.SEARCH ? _localizer["noProductSearch"].Value : _localizer["noProductAbsolutly"].Value
                 });
             IList<IEnumerable<UIProduct>> uiProducts = _product.GetUIData(productsOnly, brandsOnly, typesNeeded, list, t, b, v, minp, maxp, sort, page, pp, out IList<AdminType> types, out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage);
-
-            IEnumerable<string> products = uiProducts.Select(p => IProduct.GetHtmlProduct(p, 12, 6, 6, 4, 4, 3, 3, 3));
+            int? sw = GetScreenWidth();
+            IEnumerable<string> products = uiProducts.Select(p => IProduct.GetHtmlProduct(p, sw, 12, 6, 6, 4, 4, 3, 3, 3));
             return new JsonResult(new
             {
                 products,

@@ -60,7 +60,7 @@ namespace newTolkuchka.Services.Interfaces
         }
         #endregion
 
-        static string GetHtmlProduct(IEnumerable<UIProduct> products, int col, int xs, int sm, int md, int lg, int xl, int xxl, int xxxl)
+        static string GetHtmlProduct(IEnumerable<UIProduct> products, int? sw, int col, int xs, int sm, int md, int lg, int xl, int xxl, int xxxl)
         {
             string htmlProducts = string.Empty;
             string i = string.Empty;
@@ -70,7 +70,7 @@ namespace newTolkuchka.Services.Interfaces
                     string id = $"prod{p.Id}";
                     string[] ids = products.Where(x => x.Id != p.Id).Select(x => $"prod{x.Id}").ToArray();
                     string strIds = string.Join(", ", ids);
-                    int width = products.Count() > 4 ? 50 : 100;
+                    int width = products.Count() > 2 && sw <= ConstantsService.PHONEWIDTH ? 50: products.Count() > 4 ? 50 : 100;
                     string image = $"<span><img width =\"200\" height=\"200\" style=\"width: {width}%; height: auto\" alt=\"{p.Name}\" src=\"{p.ImageMain}\" class=\"pb-1\" role=\"button\" onclick=\"changeImage({id}, [{strIds}])\" /></span>";
                     i += image;
                 }
