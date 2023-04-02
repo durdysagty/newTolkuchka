@@ -598,6 +598,7 @@ namespace newTolkuchka.Controllers
             if (article == null)
                 return GetNotFoundPage();
             CreateMetaData(ConstantsService.ARTICLE, _breadcrumbs.GetModelBreadcrumbs(ConstantsService.ARTICLES), article.Name);
+            ViewBag.ScreenWidth = GetScreenWidth() - 20;
             return View(article);
         }
         [Route(ConstantsService.ABOUT)]
