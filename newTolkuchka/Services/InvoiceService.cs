@@ -110,8 +110,9 @@ namespace newTolkuchka.Services
                 CurrencyCodeName = x.Currency.CodeName,
                 CurrencyRate = x.CurrencyRate,
                 Orders = x.Orders.Count,
-                IsDelivered= x.IsDelivered,
-                IsPaid= x.IsPaid
+                DeliveryCost= x.DeliveryCost,
+                IsPaid = x.IsPaid,
+                IsDelivered= x.IsDelivered
             }).OrderByDescending(x => x.Id);
             return invoices;
         }
