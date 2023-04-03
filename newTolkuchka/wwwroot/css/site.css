@@ -13,7 +13,8 @@ main {
 }
 
 ::-webkit-scrollbar {
-    width: .3em
+    width: .3em;
+    height: .3em
 }
 
 html {
@@ -158,12 +159,6 @@ s {
 
 .buttons-list i {
     font-size: 0.8rem
-}
-
-@media (max-width:351px) {
-    .buttons-list i {
-        font-size: 1.4rem
-    }
 }
 .vrh {
     overflow-y: hidden

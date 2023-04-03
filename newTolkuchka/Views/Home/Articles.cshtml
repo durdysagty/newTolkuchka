@@ -3,10 +3,10 @@
     @{
         if (Model.Any())
         {
-            <div class="d-flex" id="sortby">
+            <div class="flex-row" id="sortby">
                 @foreach (Heading heading in Model)
                 {
-                    <p class="ms-2" role="button" onclick="setHeadingId(@heading.Id, event)" name="heading">@heading.Name</p>
+                    <p class="ms-2 d-inline-flex" role="button" onclick="setHeadingId(@heading.Id, event)" name="heading">@heading.Name</p>
                 }
             </div>
         }

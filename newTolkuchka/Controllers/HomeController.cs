@@ -102,7 +102,7 @@ namespace newTolkuchka.Controllers
                 count = 4;
                 fontSize = "0.7";
             }
-            const int col = 12;
+            const int col = 11;
             const int xs = 6;
             const int sm = 4;
             const int md = 3;
@@ -152,7 +152,7 @@ namespace newTolkuchka.Controllers
                 recUIProducts.Add(_product.GetUIProduct(recProducts).ToList());
             }
             IEnumerable<string> recProductsHtml = GetHtmlProducts(recUIProducts, sw);
-            string template = "<div class=\"fs-5 px-3 mb-3 border-bottom border-primary\"><a href=\"/{0}\"><img style=\"width: auto; height: 1.5rem\" src=\"{1}\"/><span class=\"ms-2\">{2}</span></a></div><div class=\"row\">{3}</div>";
+            string template = "<div class=\"fs-5 px-3 mb-3 border-bottom border-primary\"><a href=\"/{0}\"><img style=\"width: auto; height: 1.5rem\" src=\"{1}\"/><span class=\"ms-2\">{2}</span></a></div><div class=\"row justify-content-center\">{3}</div>";
             string html = string.Format(template, ConstantsService.NOVELTIES, PathService.GetSVGRelativePath(null, "new"), _localizer[ConstantsService.NOVELTIES].Value, GetItems(newProductsHtml));
             html += string.Format(template, ConstantsService.RECOMMENDED, PathService.GetSVGRelativePath(null, "rec"), _localizer[ConstantsService.RECOMMENDED].Value, GetItems(recProductsHtml));
             IEnumerable<Category> indexCats = _category.GetIndexCategories();
