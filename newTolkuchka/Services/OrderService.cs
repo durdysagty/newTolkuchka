@@ -283,6 +283,7 @@ namespace newTolkuchka.Services
                         Name = IProduct.GetProductNameCounted(await _product.GetFullProductAsync(o.ProductId)),
                         OrderPrice = o.OrderPrice,
                         SerialNumbers = o.Purchase?.SerialNumber,
+                        Warranty = CultureProvider.GetLocalName(o.Product.Model.Warranty.NameRu, o.Product.Model.Warranty.NameEn, o.Product.Model.Warranty.NameTm),
                         Quantity = 1
                     };
                     adminOrders.Add(adminOrder);
