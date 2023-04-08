@@ -43,21 +43,11 @@ namespace newTolkuchka.ControllersAPI
         {
             return _order.GetAdminStoreOrdersByInvoiceIdAsync(id);
         }
-        //[HttpGet($"{ConstantsService.USER}/{{id}}")]
-        //public async Task<ModelsFilters<UserInvoice>> GetUserInvoices(int id)
-        //{
-        //    IEnumerable<UserInvoice> invoices = await _invoice.GetUserInvoicesAsync(id);
-        //    // we have to send ModelsFilters, b.o. Models page in admin, we can not send invoices directly, models page intendent to use paged/not paged models
-        //    return new ModelsFilters<UserInvoice>()
-        //    {
-        //        Models = invoices,
-        //        LastPage = 0,
-        //        Pagination = null
-        //    };
-        //}
         [HttpPut]
         public async Task<Result> Put([FromForm] Invoice invoice, [FromForm] string jsonOrders)
         {
+            if (invoice.IsPaid || invoice.IsDelivered)
+                return Result.Fail;
             IList<AdminOrderExtended> adminOrders = JsonService.Deserialize<List<AdminOrderExtended>>(jsonOrders);
             await _order.CorrectOrdersAsync(invoice.Id, adminOrders);
             _invoice.EditModel(invoice);

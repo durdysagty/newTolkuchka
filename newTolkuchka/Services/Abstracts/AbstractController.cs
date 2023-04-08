@@ -52,6 +52,8 @@ namespace newTolkuchka.Services.Abstracts
         public async Task<Result> ChangeBoolenProperty(int id, string key)
         {
             Type modelType = typeof(TModel);
+            if (modelType.Name == "Invoice")
+                return Result.Fail;
             Type serviceType = typeof(TService);
             MethodInfo method = modelType.Name == "Product" ? serviceType.GetMethod("GetFullProductAsync", new Type[1] { typeof(int) }) : serviceType.GetInterfaces().FirstOrDefault(i => i.Name.Contains("IAction`")).GetMethod("GetModelAsync", new Type[1] { typeof(int) });
             object result = method.Invoke(_service, new object[] { id });
