@@ -8,6 +8,7 @@ using System.Reflection;
 using Type = System.Type;
 using ModelsType = newTolkuchka.Models.Type;
 using static newTolkuchka.Services.CultureProvider;
+using System.Collections.ObjectModel;
 
 namespace newTolkuchka.Services.Abstracts
 {
@@ -62,6 +63,24 @@ namespace newTolkuchka.Services.Abstracts
                             headings = headings.Where(x => x.HeadingArticles.Any(ha => ha.ArticleId == articleId));
                         }
                         models = (IQueryable<T>)headings;
+                        break;
+                    case ConstantsService.INVOICE:
+                        IQueryable<Invoice> invoices = models as IQueryable<Invoice>;
+                        // if we set START date we need to set END date also
+                        if (paramsList.TryGetValue(ConstantsService.START, out value))
+                        {
+                            DateTimeOffset start = DateTimeOffset.Parse(value.ToString());
+                            start = start.Offset > TimeSpan.FromSeconds(0) ? start.UtcDateTime + start.Offset : start.UtcDateTime - start.Offset;
+                            DateTimeOffset end = DateTimeOffset.Parse(paramsList.GetValueOrDefault(ConstantsService.END).ToString());
+                            end = end.Offset > TimeSpan.FromSeconds(0) ? end.UtcDateTime + end.Offset : end.UtcDateTime - end.Offset;
+                            invoices = invoices.Where(i => i.IsPaid && i.PaidDate.Value.Date >= start.Date && i.PaidDate.Value.Date <= end.Date);
+                        }
+                        if (paramsList.TryGetValue(ConstantsService.USER, out value))
+                        {
+                            int userId = int.Parse(value.ToString());
+                            invoices = invoices.Where(x => x.UserId == userId);
+                        }
+                        models = (IQueryable<T>)invoices;
                         break;
                     case ConstantsService.LINE:
                         IQueryable<Line> lines = models as IQueryable<Line>;
@@ -133,16 +152,6 @@ namespace newTolkuchka.Services.Abstracts
                         }
                         models = (IQueryable<T>)products;
                         break;
-                    case ConstantsService.INVOICE:
-                        DateTimeOffset start = DateTimeOffset.Parse(paramsList.GetValueOrDefault(ConstantsService.START).ToString());
-                        DateTimeOffset end = DateTimeOffset.Parse(paramsList.GetValueOrDefault(ConstantsService.END).ToString());
-                        start = start.Offset > TimeSpan.FromSeconds(0) ? start.UtcDateTime + start.Offset : start.UtcDateTime - start.Offset;
-                        end = end.Offset > TimeSpan.FromSeconds(0) ? end.UtcDateTime + end.Offset : end.UtcDateTime - end.Offset;
-                        DateTimeOffset dateTimeOffset2 = start.UtcDateTime + start.Offset;
-                        IQueryable<Invoice> invoices = models as IQueryable<Invoice>;
-                        invoices = invoices.Where(i => i.IsPaid && i.PaidDate.Value.Date >= start.Date && i.PaidDate.Value.Date <= end.Date);
-                        models = (IQueryable<T>)invoices;
-                        break;
                     case ConstantsService.SPECSVALUE:
                         IQueryable<SpecsValue> specsValues = models as IQueryable<SpecsValue>;
                         if (paramsList.TryGetValue(ConstantsService.SPEC, out value))
@@ -198,7 +207,7 @@ namespace newTolkuchka.Services.Abstracts
                     if (typeof(TAdmin).Name == "AdminInvoice")
                     {
                         IQueryable<Invoice> invoices = fullModels as IQueryable<Invoice>;
-                        fullModels = (IQueryable<T>)invoices.Include(i => i.Currency).Include(i => i.Orders).Include(i => i.User);
+                        fullModels = (IQueryable<T>)invoices.Include(i => i.Currency).Include(i => i.User).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.Model).ThenInclude(m => m.Type).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.Model).ThenInclude(m => m.Brand).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.Model).ThenInclude(m => m.Line).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.Model).ThenInclude(x => x.ModelSpecs).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ThenInclude(x => x.Spec).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(x => x.ProductSpecsValueMods).ThenInclude(x => x.SpecsValueMod).ThenInclude(x => x.SpecsValue);
                         break;
                     }
                     else
@@ -246,6 +255,10 @@ namespace newTolkuchka.Services.Abstracts
                 case ConstantsService.TYPE:
                     IQueryable<ModelsType> types = fullModels as IQueryable<ModelsType>;
                     fullModels = (IQueryable<T>)types.Include(s => s.Models);
+                    break;
+                case ConstantsService.USER:
+                    IQueryable<User> users = fullModels as IQueryable<User>;
+                    fullModels = (IQueryable<T>)users.Include(s => s.Invoices);
                     break;
                 default:
                     break;
@@ -346,20 +359,39 @@ namespace newTolkuchka.Services.Abstracts
                     {
                         IQueryable<Invoice> preInvoices = preModels as IQueryable<Invoice>;
                         preInvoices = preInvoices.OrderByDescending(x => x.Id);
-                        adminModels = (IEnumerable<TAdmin>)preInvoices.Select(x => new AdminInvoice
+                        IList<AdminInvoice> adminInvoices = new List<AdminInvoice>();
+                        foreach (Invoice x in preInvoices)
                         {
-                            Id = x.Id,
-                            Date = x.Date,
-                            User = x.UserId == null ? null : x.User.Email,
-                            Buyer = x.Buyer,
-                            Address = x.InvoiceAddress,
-                            Phone = x.InvoicePhone,
-                            CurrencyCodeName = x.Currency.CodeName,
-                            CurrencyRate = x.CurrencyRate,
-                            Orders = x.Orders.Count,
-                            IsDelivered = x.IsDelivered,
-                            IsPaid = x.IsPaid
-                        });
+                            AdminInvoice adminInvoice = new()
+                            {
+                                Id = x.Id,
+                                Date = x.Date,
+                                User = x.UserId == null ? null : x.User.Email,
+                                Buyer = x.Buyer,
+                                Address = x.InvoiceAddress,
+                                Phone = x.InvoicePhone,
+                                Amount = x.Orders.Select(o => o.OrderPrice).Sum() + x.DeliveryCost,
+                                CurrencyCodeName = x.Currency.CodeName,
+                                CurrencyRate = x.CurrencyRate,
+                                IsDelivered = x.IsDelivered,
+                                IsPaid = x.IsPaid,
+                                Orders = new Collection<AdminOrder>()
+                            };
+                            foreach (Order o in x.Orders.DistinctBy(o => o.ProductId))
+                            {
+                                AdminOrder adminOrder = new()
+                                {
+                                    Id = o.Id,
+                                    ProductId = o.ProductId,
+                                    Name = IProduct.GetProductNameCounted(o.Product),
+                                    OrderPrice = o.OrderPrice,
+                                    Quantity = x.Orders.Count(c => c.ProductId == o.ProductId)
+                                };
+                                adminInvoice.Orders.Add(adminOrder);
+                            }
+                            adminInvoices.Add(adminInvoice);
+                        }
+                        adminModels = (IEnumerable<TAdmin>)adminInvoices;
                         isPaged = true;
                         break;
                     }
@@ -541,6 +573,19 @@ namespace newTolkuchka.Services.Abstracts
                         Name = x.NameRu,
                         Models = x.Models.Count
                     });
+                    break;
+                case ConstantsService.USER:
+                    IEnumerable<User> preUsers = preModels as IEnumerable<User>;
+                    preUsers = preUsers.OrderBy(x => x.Email);
+                    adminModels = (IEnumerable<TAdmin>)preUsers.Select(x => new AdminUser
+                    {
+                        Id = x.Id,
+                        HumanName = x.Name,
+                        Email= x.Email,
+                        Phone= x.Phone,
+                        Invoices = x.Invoices.Count
+                    });
+                    isPaged = true;
                     break;
                 case ConstantsService.WARRANTY:
                     IEnumerable<Warranty> preWarranties = preModels as IEnumerable<Warranty>;

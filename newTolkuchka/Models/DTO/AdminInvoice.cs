@@ -11,9 +11,10 @@ namespace newTolkuchka.Models.DTO
         public string Address { get; set; }
         public string Phone { get; set; }
         public Culture Language { get; set; }
+        public decimal Amount { get; set; }
         public string CurrencyCodeName { get; set; }
         public decimal CurrencyRate { get; set; }
-        public int Orders { get; set; }
+        public ICollection<AdminOrder> Orders { get; set; }
         public decimal DeliveryCost { get; set; }
         public bool IsPaid { get; set; }
         public bool IsDelivered { get; set; }

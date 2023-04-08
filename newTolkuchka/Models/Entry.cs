@@ -3,7 +3,7 @@
 namespace newTolkuchka.Models
 {
     public enum Act { Add, Edit, Delete }
-    public enum Entity { Brand, Category, Content, Currency, Employee, Invoice, Line, Model, Order, Position, Product, Purchase, PurchaseInvoice, Slide, Spec, SpecsValue, SpecsValueMod, Supplier, Type, Warranty, Wish, Default, Article, Promotion }
+    public enum Entity { Brand, Category, Content, Currency, Employee, Invoice, Line, Model, Order, Position, Product, Purchase, PurchaseInvoice, Slide, Spec, SpecsValue, SpecsValueMod, Supplier, Type, Warranty, Wish, Default, Article, Promotion, User }
     public class Entry
     {
         public int Id { get; set; }

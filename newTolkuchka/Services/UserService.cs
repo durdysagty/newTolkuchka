@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace newTolkuchka.Services
 {
-    public class UserService : ServiceNoFile<User, User>, IUser
+    public class UserService : ServiceNoFile<User, AdminUser>, IUser
     {
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICrypto _crypto;
@@ -41,6 +41,22 @@ namespace newTolkuchka.Services
         {
             User user = await GetModelAsync(id);
             return user;
+        }
+
+        public async Task<AdminUserData> GetAdminUserDataAsync(int id)
+        {
+            AdminUserData adminUserData = await GetModels().Where(x => x.Id == id).Select(x => new AdminUserData
+            {
+                Id = x.Id,
+                Email = x.Email,
+                HumanName = x.Name,
+                Phone = x.Phone,
+                Address = x.Address,
+                BirthDay = x.BirthDay,
+                Invoices = x.Invoices.Count,
+                Wishes = x.Wishes.Count
+            }).FirstOrDefaultAsync();
+            return adminUserData;
         }
 
         public async Task<bool> EditUserAsync(AccountUser accountUser, User user)

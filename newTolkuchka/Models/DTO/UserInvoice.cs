@@ -6,10 +6,10 @@
         public string Recipient { get; set; }
         public DateTimeOffset Date { get; set; }
         public decimal Amount { get; set; }
-        public Currency Currency { get; set; }
-        public bool Payment { get; set; }
-        public bool Delivery { get; set; }
+        public string Currency { get; set; }
+        public bool IsPaid { get; set; }
+        public bool IsDelivered { get; set; }
         public decimal DeliveryCost { get; set; }
-        public ICollection<UserOrder> UserOrders { get; set; }
+        public ICollection<UserOrder> Orders { get; set; }
     }
 }

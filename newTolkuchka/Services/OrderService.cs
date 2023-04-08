@@ -8,7 +8,7 @@ using newTolkuchka.Services.Interfaces;
 
 namespace newTolkuchka.Services
 {
-    public class OrderService : ServiceNoFile<Order, AdminOrder>, IOrder
+    public class OrderService : ServiceNoFile<Order, AdminOrderExtended>, IOrder
     {
 
         private readonly IProduct _product;
@@ -266,14 +266,14 @@ namespace newTolkuchka.Services
             return GetModels().Where(i => i.InvoiceId == id);
         }
 
-        public async Task<IEnumerable<AdminOrder>> GetAdminOrdersByInvoiceIdAsync(int id)
+        public async Task<IEnumerable<AdminOrderExtended>> GetAdminOrdersByInvoiceIdAsync(int id)
         {
             IEnumerable<Order> orders = GetOrdersByInvoiceId(id);
-            IList<AdminOrder> adminOrders = new List<AdminOrder>();
+            IList<AdminOrderExtended> adminOrders = new List<AdminOrderExtended>();
             int i = 1;
             foreach (Order o in orders)
             {
-                AdminOrder adminOrder = adminOrders.FirstOrDefault(ap => ap.ProductId == o.ProductId && ap.OrderPrice == o.OrderPrice);
+                AdminOrderExtended adminOrder = adminOrders.FirstOrDefault(ap => ap.ProductId == o.ProductId && ap.OrderPrice == o.OrderPrice);
                 if (adminOrder == null)
                 {
                     adminOrder = new()
@@ -310,7 +310,7 @@ namespace newTolkuchka.Services
             return adminStoreOrders;
         }
 
-        public async Task CorrectOrdersAsync(int invoiceId, IList<AdminOrder> adminOrders)
+        public async Task CorrectOrdersAsync(int invoiceId, IList<AdminOrderExtended> adminOrders)
         {
             IEnumerable<Order> orders = GetOrdersByInvoiceId(invoiceId);
             IEnumerable<Order> ordersToDel = orders.Where(o => !adminOrders.Any(ao => ao.ProductId == o.ProductId && ao.OrderPrice == o.OrderPrice));
@@ -318,7 +318,7 @@ namespace newTolkuchka.Services
                 foreach (Order o in ordersToDel)
                     await DeleteModelAsync(o.Id, o);
             if (adminOrders.Any())
-                foreach (AdminOrder ao in adminOrders)
+                foreach (AdminOrderExtended ao in adminOrders)
                 {
                     IEnumerable<Order> ordersToCheck = orders.Where(o => o.ProductId == ao.ProductId && ao.OrderPrice == o.OrderPrice);
                     if (!ordersToCheck.Any())

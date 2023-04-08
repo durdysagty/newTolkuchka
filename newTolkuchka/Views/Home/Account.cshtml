@@ -105,15 +105,15 @@
                         <td>@i.Id</td>
                         <td>@i.Recipient</td>
                         <td name="psdate">@i.Date.ToString("o")</td>
-                        <td>@i.Amount @i.Currency.CodeName</td>
+                        <td>@i.Amount @i.Currency</td>
                         <td>
                             @{
-                                await Html.RenderPartialAsync("_IsDone", i.Payment);
+                                await Html.RenderPartialAsync("_IsDone", i.IsPaid);
                             }
                         </td>
                         <td>
                             @{
-                                await Html.RenderPartialAsync("_IsDone", i.Delivery);
+                                await Html.RenderPartialAsync("_IsDone", i.IsDelivered);
                             }
                         </td>
                     </tr>
@@ -124,11 +124,11 @@
                                     <tr>
                                         <th>@Localizer["product"]</th>
                                         <th>@Localizer["warranty"]</th>
-                                        <th>@Localizer["price2"] @i.Currency.CodeName</th>
+                                        <th>@Localizer["price2"] @i.Currency</th>
                                         <th>@Localizer["quantity"]</th>
-                                        <th>@Localizer["sum"] @i.Currency.CodeName</th>
+                                        <th>@Localizer["sum"] @i.Currency</th>
                                     </tr>
-                                    @foreach (UserOrder o in i.UserOrders)
+                                    @foreach (UserOrder o in i.Orders)
                                     {
                                         <tr>
                                             <td>@o.ProductName</td>

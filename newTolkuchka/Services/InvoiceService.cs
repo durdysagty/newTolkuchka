@@ -73,11 +73,11 @@ namespace newTolkuchka.Services
                     Recipient = $"{i.Buyer}, {i.InvoiceAddress}, {i.InvoicePhone}{(i.InvoiceEmail != null ? $", {i.InvoiceEmail}" : "")}",
                     Date = i.Date,
                     Amount = i.Orders.Select(o => o.OrderPrice).Sum() + i.DeliveryCost,
-                    Currency = i.Currency,
-                    Payment = i.IsPaid,
-                    Delivery = i.IsDelivered,
+                    Currency = i.Currency.CodeName,
+                    IsPaid = i.IsPaid,
+                    IsDelivered = i.IsDelivered,
                     DeliveryCost = i.DeliveryCost,
-                    UserOrders = new Collection<UserOrder>()
+                    Orders = new Collection<UserOrder>()
                 };
                 foreach (Order o in i.Orders.DistinctBy(o => o.ProductId))
                 {
@@ -89,7 +89,7 @@ namespace newTolkuchka.Services
                         Price = o.OrderPrice,
                         Quantity = i.Orders.Count(c => c.ProductId == o.ProductId)
                     };
-                    userInvoice.UserOrders.Add(userOrder);
+                    userInvoice.Orders.Add(userOrder);
                 }
                 userInvoices.Add(userInvoice);
             }
@@ -109,7 +109,7 @@ namespace newTolkuchka.Services
                 Language = x.Language,
                 CurrencyCodeName = x.Currency.CodeName,
                 CurrencyRate = x.CurrencyRate,
-                Orders = x.Orders.Count,
+                //Orders = x.Orders.Count,
                 DeliveryCost= x.DeliveryCost,
                 IsPaid = x.IsPaid,
                 IsDelivered= x.IsDelivered
