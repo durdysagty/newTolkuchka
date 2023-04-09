@@ -191,8 +191,8 @@
                             <h4>@CurrencyService.Currency.CodeName @IProduct.GetConvertedPrice((decimal)p.Price)</h4>
                         }
                         <div class="d-inline-flex">
-                            <button name="@buttonName" onclick="productOrder(@p.Id, @quantityId)" type="submit" class="btn btn-primary">@Localizer["add-to-cart"]</button>
-                            <button name="@buttonLikeName" onclick="like(@p.Id)" type="submit" class="btn btn-primary ms-2"><i class="fas fa-heart"></i></button>
+                            <button name="@buttonName" onclick="productOrder(@p.Id, @quantityId)" type="button" class="btn btn-primary">@Localizer["add-to-cart"]</button>
+                            <button name="@buttonLikeName" onclick="like(@p.Id)" type="button" class="btn btn-primary ms-2"><i class="fas fa-heart"></i></button>
                         </div>
                     </div>
                 </div>

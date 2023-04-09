@@ -152,7 +152,7 @@ namespace newTolkuchka.Controllers
                 recUIProducts.Add(_product.GetUIProduct(recProducts).ToList());
             }
             IEnumerable<string> recProductsHtml = GetHtmlProducts(recUIProducts, sw);
-            string template = "<div class=\"fs-5 px-3 mb-3 border-bottom border-primary\"><a href=\"/{0}\"><img style=\"width: auto; height: 1.5rem\" src=\"{1}\"/><span class=\"ms-2\">{2}</span></a></div><div class=\"row justify-content-center\">{3}</div>";
+            string template = "<div class=\"fs-5 px-3 mb-3 border-bottom border-primary\"><a href=\"/{0}\"><img alt=\"{2}\" style=\"width: auto; height: 1.5rem\" src=\"{1}\"/><span class=\"ms-2\">{2}</span></a></div><div class=\"row justify-content-center\">{3}</div>";
             string html = string.Format(template, ConstantsService.NOVELTIES, PathService.GetSVGRelativePath(null, "new"), _localizer[ConstantsService.NOVELTIES].Value, GetItems(newProductsHtml));
             html += string.Format(template, ConstantsService.RECOMMENDED, PathService.GetSVGRelativePath(null, "rec"), _localizer[ConstantsService.RECOMMENDED].Value, GetItems(recProductsHtml));
             IEnumerable<Category> indexCats = _category.GetIndexCategories();
@@ -284,9 +284,9 @@ namespace newTolkuchka.Controllers
         [Route(ConstantsService.NOVELTIES)]
         [Route(ConstantsService.RECOMMENDED)]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
-        public IActionResult Special(string special)
+        public IActionResult Special()
         {
-            CreateMetaData(special, _breadcrumbs.GetBreadcrumbs(), null, true);
+            CreateMetaData(CultureProvider.Path.Remove(0, 1), _breadcrumbs.GetBreadcrumbs(), null, true);
             return View();
         }
         [Route(ConstantsService.LIKED)]
