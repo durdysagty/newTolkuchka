@@ -7,6 +7,7 @@
     summary: 'Итого',
     empty: 'Ваша корзина пуста',
     freeOne: 'БЕСПЛАТНО',
+    status: 'статус',
     //emptyInput: 'Это поле не должно быть пустым!',
     //numbersOnly: 'Пожалуйста, пишите только цифры!',
     deliveryPrice: 20,
@@ -21,6 +22,7 @@ if (window.location.hostname.includes('en')) {
     stringListCart.summary = 'Summary'
     stringListCart.empty = 'Your cart is empty'
     stringList.freeOne = 'FOR FREE'
+    stringListCart.status = 'status'
     //stringListCart.emptyInput = 'This field must not be empty!'
     //stringListCart.numbersOnly = 'Numbers only!'
 }
@@ -33,6 +35,7 @@ else if (window.location.hostname.includes('tm')) {
     stringListCart.summary = 'Jemi netijesi'
     stringListCart.empty = 'Siziň sepetiňiz boş'
     stringList.freeOne = 'MUGT'
+    stringListCart.status = 'status'
     //stringListCart.emptyInput = 'Bu meýdança boş bolmaly däl!'
     //stringListCart.numbersOnly = 'Diňe san ýazmaly!'
 }
@@ -162,6 +165,8 @@ async function orderHandler(e) {
         formData.append(key, deliveryData[key]);
     }
     try {
+        $('#cart').html(`<div class="text-center"><div class="justify-content-center align-items-center spinner-border text-primary" role="${stringListCart.status}"><span class="visually-hidden">Loading...</span></div></div>`)
+        $('#delivery').addClass('d-none')
         const response = await fetch('/order', {
             method: 'POST',
             credentials: 'include',
@@ -173,7 +178,7 @@ async function orderHandler(e) {
                 setOrderResult(stringListCart.empty)
             else
                 setOrderResult(result.success)
-            $('#delivery').addClass('d-none')
+            //$('#delivery').addClass('d-none')
             sessionStorage.removeItem('orders')
             orders = []
             setQ()
