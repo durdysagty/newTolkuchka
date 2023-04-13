@@ -1,4 +1,5 @@
 ﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.Processing;
 using File = System.IO.File;
 using IImage = newTolkuchka.Services.Interfaces.IImage;
@@ -20,7 +21,8 @@ namespace newTolkuchka.Services
                 bool height = (double)file.Width / w < (double)file.Height / h;
                 file.Mutate(m => m.Resize(height ? 0 : w, height ? h : 0).BackgroundColor(Color.White).Pad(w, h, Color.White));
             }
-            await file.SaveAsJpegAsync(path);
+            await file.SaveAsJpegAsync($"{path}{ConstantsService.JPG}");
+            await file.SaveAsWebpAsync($"{path}{ConstantsService.WEBP}", new WebpEncoder { Method = WebpEncodingMethod.BestQuality, NearLossless = true, Quality = 80 });
             file.Dispose();
         }
 

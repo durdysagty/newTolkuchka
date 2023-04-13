@@ -369,6 +369,9 @@
   <data name="promo-price" xml:space="preserve">
     <value>Promotion Price</value>
   </data>
+  <data name="promotion" xml:space="preserve">
+    <value>Promotion</value>
+  </data>
   <data name="promotions" xml:space="preserve">
     <value>Promotions</value>
   </data>

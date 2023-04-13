@@ -111,6 +111,10 @@ namespace newTolkuchka.Services
         public const string USER = "user";
         public const string HASH = "hash";
         // images
+        public const string WEBP = "webp";
+        public const string JPG = "jpg";
+        public const string WEBPTYPE = "image/webp";
+        public const string JPGTYPE = "image/jpeg";
         public const int PRODUCTMAXIMAGE = 5;
         public const int UMAXIMAGE = 1;
         public const int LOCALMAXIMAGE = 3;

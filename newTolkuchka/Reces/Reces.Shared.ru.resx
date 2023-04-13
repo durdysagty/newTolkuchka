@@ -375,6 +375,9 @@
   <data name="promo-price" xml:space="preserve">
     <value>Цена по акции</value>
   </data>
+  <data name="promotion" xml:space="preserve">
+    <value>Акция</value>
+  </data>
   <data name="promotions" xml:space="preserve">
     <value>Акции</value>
   </data>

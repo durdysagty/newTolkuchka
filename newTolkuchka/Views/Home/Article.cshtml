@@ -5,7 +5,7 @@
 @model Article
 <div class="mb-3" style="text-align:justify">
     <p>
-        <img class="p-3 float-start" style="max-width: @screenWidth" src="@PathService.GetImageRelativePath(ConstantsService.ARTICLE, Model.Id)" alt="@Model.Name" />
+        @Html.Raw(IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.ARTICLE, Model.Id), 0, 300, "auto", "100%", Model.Name, "p-3 float-start", screenWidth))
         @Html.Raw($"<p>{Regex.Replace(Model.Text, "\n", "</p><p>")}</p>")
     </p>
 </div>

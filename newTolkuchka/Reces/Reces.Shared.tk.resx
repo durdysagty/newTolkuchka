@@ -372,6 +372,9 @@
   <data name="promo-price" xml:space="preserve">
     <value>aksiýa bahasy</value>
   </data>
+  <data name="promotion" xml:space="preserve">
+    <value>Aksiýa</value>
+  </data>
   <data name="promotions" xml:space="preserve">
     <value>Aksiýalar</value>
   </data>

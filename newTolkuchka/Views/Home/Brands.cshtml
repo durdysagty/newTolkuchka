@@ -7,7 +7,7 @@
         <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-3 px-0">
             <a href="/@PathService.GetModelUrl(ConstantsService.BRAND, b.Id)">
                 <div class="p-3">
-                    <img src="@PathService.GetImageRelativePath(ConstantsService.BRAND, b.Id)" class="card-img-top" alt="@b.Name" />
+                    @Html.Raw(IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.BRAND, b.Id), 180, 60, "100%", "auto", b.Name, "card-img-top"))
                 </div>
                 <div class="text-center">@b.Name</div>
             </a>

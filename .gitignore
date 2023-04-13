@@ -363,14 +363,14 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # wwwroot/images
-newTolkuchka/wwwroot/images/article/*.jpg
-newTolkuchka/wwwroot/images/brand/*.jpg
-newTolkuchka/wwwroot/images/category/*.jpg
-newTolkuchka/wwwroot/images/product/*.jpg
-newTolkuchka/wwwroot/images/product/small/*.jpg
-newTolkuchka/wwwroot/images/promotion/*.jpg
-newTolkuchka/wwwroot/images/slide/*.jpg
-newTolkuchka/wwwroot/images/specsvalue/*.jpg
+newTolkuchka/wwwroot/images/article/*.*
+newTolkuchka/wwwroot/images/brand/*.*
+newTolkuchka/wwwroot/images/category/*.*
+newTolkuchka/wwwroot/images/product/*.*
+newTolkuchka/wwwroot/images/product/small/*.*
+newTolkuchka/wwwroot/images/promotion/*.*
+newTolkuchka/wwwroot/images/slide/*.*
+newTolkuchka/wwwroot/images/specsvalue/*.*
 
 # secretfiles
 Secrets.cs

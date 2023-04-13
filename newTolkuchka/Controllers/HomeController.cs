@@ -70,6 +70,7 @@ namespace newTolkuchka.Controllers
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 7200)]
         public async Task<JsonResult> Items()
         {
+            #region stuff
             int count = 6;
             int slidesCount = 3;
             string fontSize = "1";
@@ -110,17 +111,18 @@ namespace newTolkuchka.Controllers
             const int xl = 2;
             const int xxl = 2;
             const int xxxl = 2;
+            #endregion
             IEnumerable<Brand> brands = _brand.GetModels().Where(b => b.IsForHome);
             string brandsString = string.Empty;
             foreach (Brand b in brands)
             {
-                brandsString += $"<div class=\"keen-slider__slide text-center\"><a href=\"/{PathService.GetModelUrl(ConstantsService.BRAND, b.Id)}\"><img src=\"{PathService.GetImageRelativePath(ConstantsService.BRAND, b.Id)}\" class=\"card-img-top rounded border border-primary px-1 py-2\" alt=\"{b.Name}\" /></a></div>";
+                brandsString += $"<div class=\"keen-slider__slide text-center\"><a href=\"/{PathService.GetModelUrl(ConstantsService.BRAND, b.Id)}\">{IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.BRAND, b.Id), 180, 60, "100%", "auto", b.Name, "card-img-top rounded border border-primary px-1 py-2")}</a></div>";
             }
             IEnumerable<Slide> mainSlides = _slide.GetSlidesByLayoutAsync(Layout.Main).OrderByDescending(s => s.Id).Take(slidesCount);
             string slidesString = string.Empty;
             foreach (Slide s in mainSlides)
             {
-                slidesString += $"<div class=\"col-12 col-sm-6 col-md-4 p-1\"><a href=\"/{s.Link}\"><img src=\"{PathService.GetImageRelativePath(ConstantsService.SLIDE, s.Id, CultureProvider.GetLocalNumberEx())}\" class=\"card-img-top rounded\" alt=\"{s.Name}\" /></a></div>";
+                slidesString += $"<div class=\"col-12 col-sm-6 col-md-4 p-1\"><a href=\"/{s.Link}\">{IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.SLIDE, s.Id), 600, 300, "100%", "auto", s.Name, "card-img-top rounded")}</a></div>";
             }
             static IEnumerable<string> GetHtmlProducts(IList<IEnumerable<UIProduct>> products, int? sw)
             {
@@ -158,14 +160,17 @@ namespace newTolkuchka.Controllers
             IEnumerable<Category> indexCats = _category.GetIndexCategories();
             IEnumerable<Promotion> promotions = _promotion.GetModels().Where(p => !p.NotInUse);
             string catsString = string.Empty;
-            string catsTemplate = "<div class=\"col-12 col-xs-6 col-lg-3 p-1\"><a href=\"/{0}\"><img src=\"{1}\" class=\"card-img-top rounded-top\" alt=\"{2}\" /><div style=\"font-size: {3}rem\" class=\"bg-primary p-1 rounded-bottom\">{2}</div></a></div>";
+            string catsTemplate = "<div class=\"col-12 col-xs-6 col-lg-3 p-1\"><a href=\"/{0}\">{1}<div style=\"font-size: {3}rem\" class=\"bg-primary p-1 rounded-bottom\">{2}</div></a></div>";
+            string imageClasses = "card-img-top rounded-top";
             foreach (Category c in indexCats)
             {
-                catsString += string.Format(catsTemplate, PathService.GetModelUrl(ConstantsService.CATEGORY, c.Id), PathService.GetImageRelativePath(ConstantsService.CATEGORY, c.Id), CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm), fontSize);
+                string locaName = CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm);
+                catsString += string.Format(catsTemplate, PathService.GetModelUrl(ConstantsService.CATEGORY, c.Id), IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.CATEGORY, c.Id), 450, 225, "100%", "auto", locaName, imageClasses), locaName, fontSize);
             }
             foreach (Promotion p in promotions)
             {
-                catsString += string.Format(catsTemplate, PathService.GetModelUrl(ConstantsService.PROMOTION, p.Id), PathService.GetImageRelativePath(ConstantsService.PROMOTION, p.Id), CultureProvider.GetLocalName(p.NameRu, p.NameEn, p.NameTm), fontSize);
+                string locaName = CultureProvider.GetLocalName(p.NameRu, p.NameEn, p.NameTm);
+                catsString += string.Format(catsTemplate, PathService.GetModelUrl(ConstantsService.PROMOTION, p.Id), IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.PROMOTION, p.Id), 600, 300, "100%", "auto", locaName, imageClasses), locaName, fontSize);
             }
             IEnumerable<Article> articles = _article.GetModels(new Dictionary<string, object> { { ConstantsService.CULTURE, CultureProvider.CurrentCulture } }).OrderByDescending(a => a.Id).Take(count);
             string articleStrings = null;
@@ -174,7 +179,7 @@ namespace newTolkuchka.Controllers
                 string arts = string.Empty;
                 foreach (Article a in articles)
                 {
-                    arts += $"<div class=\"col-{col} col-xs-{xs} col-sm-{sm} col-md-{md} col-lg-{lg} col-xl-{xl} col-xxl-{xxl} col-xxxl-{xxxl}\"><a href=\"/{ConstantsService.ARTICLE}/{a.Id}\"><div class=\"p-1 text-center vrw\"><img class=\"rounded-1\" style=\"width: auto; height: 70px\" src=\"{PathService.GetImageRelativePath(ConstantsService.ARTICLE, a.Id)}\" alt=\"{a.Name}\" /></div><div><small class=\"small text-center\">{a.Name}</small></div></a></div>";
+                    arts += $"<div class=\"col-{col} col-xs-{xs} col-sm-{sm} col-md-{md} col-lg-{lg} col-xl-{xl} col-xxl-{xxl} col-xxxl-{xxxl}\"><a href=\"/{ConstantsService.ARTICLE}/{a.Id}\"><div class=\"p-1 text-center vrw\">{IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.ARTICLE, a.Id), 0, 300, "auto", "70px", a.Name, "rounded-1")}</div><div><small class=\"small text-center\">{a.Name}</small></div></a></div>";
                 }
                 articleStrings = $"<div class=\"row justify-content-center\">{arts}</div><div class=\"d-flex justify-content-end\"><a href=\"/{ConstantsService.ARTICLES}\"><small>{_localizer["all-articles"].Value}</small></a></div>";
             }
@@ -578,7 +583,7 @@ namespace newTolkuchka.Controllers
             string articles = string.Empty;
             foreach (Article a in preArticles)
             {
-                articles += $"<div class=\"col-{col} col-sm-{sm} col-lg-{lg} col-xxl-{xxl}\"><a href=\"/{ConstantsService.ARTICLE}/{a.Id}\"><div class=\"p-1 text-center vrw\"><img class=\"rounded-1\" style=\"width: auto; height: 120px\" src=\"{PathService.GetImageRelativePath(ConstantsService.ARTICLE, a.Id)}\" alt=\"{a.Name}\" /></div><p>{a.Name}</p><div class=\"text-end\"><small>{a.Date.ToShortDateString()}</small></div></a></div>";
+                articles += $"<div class=\"col-{col} col-sm-{sm} col-lg-{lg} col-xxl-{xxl}\"><a href=\"/{ConstantsService.ARTICLE}/{a.Id}\"><div class=\"p-1 text-center vrw\">{IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.ARTICLE, a.Id), 0, 300, "auto", "120px", a.Name, "rounded-1")}</div><p>{a.Name}</p><div class=\"text-end\"><small>{a.Date.ToShortDateString()}</small></div></a></div>";
             }
             string pagination = _article.GetPagination(pp, total, preArticles.Count(), toSkip, out int lp);
             int lastPage = lp;

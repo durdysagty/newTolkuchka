@@ -17,7 +17,7 @@ namespace newTolkuchka.Services
         }
         public string GetImagePath(string folder, int id, int imageNumber = 0)
         {
-            return Path.Combine(GetImagesFolder(), folder.ToLower(), $"{id}-{imageNumber}.jpg");
+            return Path.Combine(GetImagesFolder(), folder.ToLower(), $"{id}-{imageNumber}.");
         }
         public string GetHtmlBodyPath()
         {
@@ -60,7 +60,7 @@ namespace newTolkuchka.Services
         // statics
         public static string GetImageRelativePath(string folder, int id, int imageNumber = 0)
         {
-            return Path.Combine($"/images/{folder.ToLower()}/{id}-{imageNumber}.jpg");
+            return Path.Combine($"/images/{folder.ToLower()}/{id}-{imageNumber}.");
         }
         public static string GetSVGRelativePath(string folder, string id)
         {

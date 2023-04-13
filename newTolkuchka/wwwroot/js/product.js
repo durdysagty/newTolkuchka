@@ -11,6 +11,14 @@ function setImage(img, n) {
     let src = $(img).attr('src')
     src = src.replace(/-[0-4]/, `-${n}`)
     $(img).attr('src', src)
+    const imgw = img.id + 'webp'
+    src = $(`#${imgw}`).attr('srcset')
+    src = src.replace(/-[0-4]/, `-${n}`)
+    $(`#${imgw}`).attr('srcset', src)
+    const imgj = img.id + 'jpg'
+    src = $(`#${imgj}`).attr('srcset')
+    src = src.replace(/-[0-4]/, `-${n}`)
+    $(`#${imgj}`).attr('srcset', src)
 }
 checkOrders()
 const gallery = baguetteBox.run(".gallery");
