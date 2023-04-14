@@ -10,8 +10,8 @@ namespace newTolkuchka.ControllersAPI
     [Authorize(Policy = "Level1")]
     public class PromotionController : AbstractController<Promotion, AdminPromotion, IPromotion>
     {
-        private const int WIDTH = 600;
-        private const int HEIGHT = 300;
+        private const int WIDTH = 450;
+        private const int HEIGHT = 225;
         private readonly IPromotion _promotion;
         public PromotionController(IEntry entry, IPromotion promotion) : base(entry, Entity.Promotion, promotion)
         {

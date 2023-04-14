@@ -19,6 +19,10 @@ namespace newTolkuchka.Services
         {
             return Path.Combine(GetImagesFolder(), folder.ToLower(), $"{id}-{imageNumber}.");
         }
+        public string GetSVGFolder()
+        {
+            return Path.Combine(_environment.ContentRootPath, "wwwroot/svgs");
+        }
         public string GetHtmlBodyPath()
         {
             return Path.Combine(_environment.ContentRootPath, "wwwroot/html");

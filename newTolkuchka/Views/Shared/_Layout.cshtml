@@ -1,4 +1,6 @@
-﻿@{
+﻿@using newTolkuchka.Services.Interfaces
+@inject IPath _pathService
+@{
     bool isAuth = User.Identity.IsAuthenticated;
     bool? filterScript = ViewBag.FilterScript;
     int? width = ViewBag.WindowWidth;
@@ -62,26 +64,26 @@
                     {
                         case ConstantsService.EN:
                             <a href="@tk">
-                                <img src="~/turkmen.svg" class="img-fluid align-self-center mx-1" style="width: auto; height: 15px" alt="türkmençe" />
+                                <img src="~/turkmen.svg" class="img-fluid align-self-center mx-1" width="15" height="15" style="width: auto; height: 15px" alt="türkmençe" />
                             </a>
                             <a href="@ru">
-                                <img src="~/russian.svg" class="img-fluid align-self-center mx-1" style="width: auto; height: 15px" alt="русский" />
+                                <img src="~/russian.svg" class="img-fluid align-self-center mx-1" width="15" height="15" style="width: auto; height: 15px" alt="русский" />
                             </a>
                             break;
                         case ConstantsService.TK:
                             <a href="@en">
-                                <img src="~/english.svg" class="img-fluid align-self-center mx-1" style="width: auto; height: 15px" alt="english" />
+                                <img src="~/english.svg" class="img-fluid align-self-center mx-1" width="15" height="15" style="width: auto; height: 15px" alt="english" />
                             </a>
                             <a href="@ru">
-                                <img src="~/russian.svg" class="img-fluid align-self-center mx-1" style="width: auto; height: 15px" alt="русский" />
+                                <img src="~/russian.svg" class="img-fluid align-self-center mx-1" width="15" height="15" style="width: auto; height: 15px" alt="русский" />
                             </a>
                             break;
                         default:
                             <a href="@tk">
-                                <img src="~/turkmen.svg" class="img-fluid align-self-center mx-1" style="width: auto; height: 15px" alt="türkmençe" />
+                                <img src="~/turkmen.svg" class="img-fluid align-self-center mx-1" width="15" height="15" style="width: auto; height: 15px" alt="türkmençe" />
                             </a>
                             <a href="@en">
-                                <img src="~/english.svg" class="img-fluid align-self-center mx-1" style="width: auto; height: 15px" alt="english" />
+                                <img src="~/english.svg" class="img-fluid align-self-center mx-1" width="15" height="15" style="width: auto; height: 15px" alt="english" />
                             </a>
                             break;
                     }
@@ -146,7 +148,7 @@
             <div class="row justify-content-center">
                 <div class="col-auto">
                     <a href="/">
-                        <img class="img-fluid" width="300" height="60" src='~/logo.png' alt="logo" />
+                        <img class="img-fluid" width="300" height="60" style="max-width: 200px" src='~/logo.png' alt="logo" />
                     </a>
                 </div>
                 <div class="col-12 col-md align-self-center mb-1 m-md-0">
@@ -156,7 +158,7 @@
                                 <input required type="search" id="search" name="search" class="form-control" />
                                 <label class="form-label" for="search">@Localizer[ConstantsService.SEARCH]</label>
                             </div>
-                            <button type="submit" class="btn btn-primary" title="@Localizer[ConstantsService.SEARCH]">
+                            <button type="submit" class="btn btn-primary py-1 px-3" title="@Localizer[ConstantsService.SEARCH]">
                                 <i class="fas fa-search"></i>
                             </button>
                         </div>
@@ -169,7 +171,7 @@
             {
                 <div class="text-center">
                     <a href="/@PathService.GetModelUrl(ConstantsService.CATEGORY, c.Id)" class="list-group-item list-group-item-action fs1 px-2 border-0">
-                        <img style="width: auto; height: 1.2rem" src="@PathService.GetSVGRelativePath(ConstantsService.CATEGORY, c.Id.ToString())" alt="@CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm)" />
+                        @Html.Raw(File.ReadAllText($"{_pathService.GetSVGFolder()}/category/{c.Id}.svg"))
                         <span class="text-nowrap">@CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm)</span>
                     </a>
                 </div>

@@ -15,7 +15,7 @@ namespace newTolkuchka.ControllersAPI
     public class ArticleController : AbstractController<Article, AdminArticle, IArticle>
     {
         private const int WIDTH = 0;
-        private const int HEIGHT = 0;
+        private const int HEIGHT = 250;
         private readonly IArticle _article;
         private readonly IActionNoFile<Heading, Heading> _heading;
         public ArticleController(IEntry entry, IArticle article, IActionNoFile<Heading, Heading> heading) : base(entry, Entity.Article, article)
