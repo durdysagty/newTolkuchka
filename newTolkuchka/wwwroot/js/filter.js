@@ -169,7 +169,7 @@ async function setProducts(productsOnly) {
                     f.filterValues.map(fv => {
                         const id = `filVal${fv.id}`
                         const i = searchObj.v.includes(`${f.id},${fv.id}`)
-                        return `<span class="my-2"><input name="filv" ${i ? `checked` : null} class="d-none" onclick="setFilters()" type="checkbox" value="${f.id},${fv.id}" id="${id}" /><img name="img${f.id},${fv.id}" width="25" height="25" style="width: 25px; height: auto; cursor: pointer; padding: 1px" onclick="clickInput(event, ${id})" title="${fv.name}" alt="${fv.name}" src="${fv.image}" class="my-1 border-1 ${i ? `border border-black` : null}" /></span>`
+                        return `<span class="my-2"><input name="filv" ${i ? `checked` : null} class="d-none" onclick="setFilters()" type="checkbox" value="${f.id},${fv.id}" id="${id}" /><picture><source type="image/webp" srcset="${fv.image}webp"><source type="image/jpeg" srcset="${fv.image}.jpg"><img name="img${f.id},${fv.id}" width="25" height="25" style="width: 25px; height: auto; padding: 1px" role="button" onclick="clickInput(event, ${id})" title="${fv.name}" alt="${fv.name}" src="${fv.image}jpg" class="my-1 border-1 ${i ? `border border-black` : null}" /></picture></span>`
                     }) :
                     f.filterValues.map(fv => {
                         const id = `filVal${fv.id}`
