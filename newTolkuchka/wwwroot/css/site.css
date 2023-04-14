@@ -185,3 +185,21 @@ a > .bg-primary {
 .form-check-input {
     min-width: 1.125rem
 }
+
+.product-name {
+    line-height: 1;
+    height: 2.4rem;
+    overflow: hidden;
+    text-overflow: ellipsis
+}
+
+.product-image {
+    position: relative
+}
+
+.badges {
+    position: absolute;
+    top: 10px;
+    left: 7px;
+    z-index: 1
+}

@@ -1,11 +1,12 @@
 ﻿@using System.Text.RegularExpressions;
 @{
-    string screenWidth = ViewBag.ScreenWidth + "px";
+    int width = ViewBag.ScreenWidth - (ViewBag.ScreenWidth / 20);
+    //string screenWidth = ViewBag.ScreenWidth + "px";
 }
 @model Article
 <div class="mb-3" style="text-align:justify">
     <p>
-        @Html.Raw(IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.ARTICLE, Model.Id), 0, 300, "auto", "100%", Model.Name, "p-3 float-start", screenWidth))
+        @Html.Raw(IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.ARTICLE, Model.Id), 0, 300, "auto", "100%", Model.Name, "p-3 float-start", $"{width}px"))
         @Html.Raw($"<p>{Regex.Replace(Model.Text, "\n", "</p><p>")}</p>")
     </p>
 </div>
