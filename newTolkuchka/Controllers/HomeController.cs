@@ -122,7 +122,7 @@ namespace newTolkuchka.Controllers
             string slidesString = string.Empty;
             foreach (Slide s in mainSlides)
             {
-                slidesString += $"<div class=\"col-12 col-sm-6 col-md-4 p-1\"><a href=\"/{s.Link}\">{IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.SLIDE, s.Id), 600, 300, "100%", "auto", s.Name, "card-img-top rounded")}</a></div>";
+                slidesString += $"<div class=\"col-12 col-sm-6 col-md-4 p-1\"><a href=\"{s.Link}\">{IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.SLIDE, s.Id), 600, 300, "100%", "auto", s.Name, "card-img-top rounded")}</a></div>";
             }
             static IEnumerable<string> GetHtmlProducts(IList<IEnumerable<UIProduct>> products, int? sw)
             {
