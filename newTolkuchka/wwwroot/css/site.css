@@ -201,5 +201,9 @@ a > .bg-primary {
     position: absolute;
     top: 10px;
     left: 7px;
+    z-index: 2
+}
+
+.z-index1{
     z-index: 1
 }
