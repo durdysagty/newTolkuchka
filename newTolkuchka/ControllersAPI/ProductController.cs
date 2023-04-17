@@ -65,7 +65,7 @@ namespace newTolkuchka.ControllersAPI
             await _product.AddProductSpecValueModsAsync(product.Id, specsValueMods);
             await _product.SaveChangesAsync();
             product = await _product.GetFullProductAsNoTrackingWithIdentityResolutionAsync(product.Id);
-            await EditActAsync(product.Id, IProduct.GetProductNameCounted(product));
+            await EditActAsync(product.Id, IProduct.GetProductNameCounted(product), !product.NotInUse);
             return Result.Success;
         }
         [HttpDelete("{id}")]

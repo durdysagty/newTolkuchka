@@ -37,24 +37,28 @@ namespace newTolkuchka.Services.Abstracts
             else
             {
                 // if no files are downloaded, then copy the files of a sponsor model
-                string[] files = Directory.GetFiles($"{_path.GetImagesFolder()}/{type.Name.ToLower()}", $"{simId}-*", SearchOption.AllDirectories);
-                id = GetModelId(type, model);
-                int n = 0;
-                int s = 0;
-                if (files.Any())
-                    foreach (string f in files)
-                    {
-                        if (f.Contains("small"))
+                string[] extentions = { ConstantsService.WEBP, ConstantsService.JPG };
+                foreach (string ex in extentions)
+                {
+                    string[] files = Directory.GetFiles($"{_path.GetImagesFolder()}/{type.Name.ToLower()}", $"{simId}-*.{ex}", SearchOption.AllDirectories);
+                    id = GetModelId(type, model);
+                    int n = 0;
+                    int s = 0;
+                    if (files.Any())
+                        foreach (string f in files)
                         {
-                            File.Copy(f, _path.GetImagePath($"{type.Name}/small", id, s));
-                            s++;
+                            if (f.Contains("small"))
+                            {
+                                File.Copy(f, $"{_path.GetImagePath($"{type.Name}/small", id, s)}{ex}");
+                                s++;
+                            }
+                            else
+                            {
+                                File.Copy(f, $"{_path.GetImagePath(type.Name, id, n)}{ex}");
+                                n++;
+                            }
                         }
-                        else
-                        {
-                            File.Copy(f, _path.GetImagePath(type.Name, id, n));
-                            n++;
-                        }
-                    }
+                }
             }
         }
 

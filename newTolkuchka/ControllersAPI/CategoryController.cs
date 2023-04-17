@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
+using newTolkuchka.Services;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 
@@ -13,9 +14,11 @@ namespace newTolkuchka.ControllersAPI
         private const int WIDTH = 450;
         private const int HEIGHT = 225;
         private readonly ICategory _category;
-        public CategoryController(IEntry entry, ICategory category) : base(entry, Entity.Category, category)
+        private readonly IProduct _product;
+        public CategoryController(IEntry entry, ICategory category, IProduct product) : base(entry, Entity.Category, category)
         {
             _category = category;
+            _product = product;
         }
 
         [HttpGet("{id}")]
@@ -82,20 +85,54 @@ namespace newTolkuchka.ControllersAPI
                 if (!isImaged)
                     return Result.NoImage;
             }
-            void AllNotInUse(IEnumerable<Category> categories)
+            IList<(int, bool)> categoriesToSiteMap = new List<(int, bool)>();
+            IList<(int, bool)> productsToSiteMap = new List<(int, bool)>();
+            async Task AllNotInUse(IEnumerable<Category> categories)
             {
                 if (categories.Any())
                     foreach (Category category in categories)
                     {
                         category.NotInUse = true;
-                        AllNotInUse(_category.GetModels().Where(c => c.ParentId == category.Id));
+                        categoriesToSiteMap.Add((category.Id, !category.NotInUse));
+                        if (_product.GetModels(new Dictionary<string, object>() { { ConstantsService.CATEGORY, new List<int> { category.Id } } }).Any())
+                            CorrectProductsSiteMap(category.Id, category.NotInUse);
+                        await AllNotInUse(_category.GetModels().Where(c => c.ParentId == category.Id));
                     }
             }
+            void CorrectProductsSiteMap(int categoryId, bool notInUse)
+            {
+                Product[] products = _product.GetModels(new Dictionary<string, object>() { { ConstantsService.CATEGORY, new List<int> { categoryId } } }).ToArray();
+                if (notInUse)
+                    foreach (Product p in products)
+                        productsToSiteMap.Add((p.Id, false));
+                else
+                    foreach (Product p in products)
+                    {
+                        if (!p.NotInUse)
+                            productsToSiteMap.Add((p.Id, true));
+                    }
+
+            }
             if (category.NotInUse)
-                AllNotInUse(_category.GetModels().Where(c => c.ParentId == category.Id));
+                await AllNotInUse(_category.GetModels().Where(c => c.ParentId == category.Id).ToList());
+            else
+            {
+                if (category.ParentId != 0)
+                {
+                    Category parent = await _category.GetModelAsync(category.ParentId);
+                    if (parent.NotInUse)
+                        category.NotInUse = parent.NotInUse;
+                }
+            }
             await _category.EditModelAsync(category, images, WIDTH, HEIGHT);
             await _category.AddCategoryAdLinksAsync(category.Id, adLinks);
             await EditActAsync(category.Id, category.NameRu);
+            if (_product.GetModels(new Dictionary<string, object>() { { ConstantsService.CATEGORY, new List<int> { category.Id } } }).Any())
+                CorrectProductsSiteMap(category.Id, category.NotInUse);
+            categoriesToSiteMap.Add((category.Id, !category.NotInUse));
+            await _entry.CorrectSiteMap(ConstantsService.CATEGORY, categoriesToSiteMap);
+            if (productsToSiteMap.Any())
+                await _entry.CorrectSiteMap(ConstantsService.PRODUCT, productsToSiteMap);
             return Result.Success;
         }
         [HttpDelete("{id}")]

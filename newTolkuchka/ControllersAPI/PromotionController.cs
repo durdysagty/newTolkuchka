@@ -76,7 +76,7 @@ namespace newTolkuchka.ControllersAPI
                 promotion.Quantity = 1;
             await _promotion.EditModelAsync(promotion, images, WIDTH, HEIGHT);
             await _promotion.AddPromotionProductsAsync(promotion.Id, products);
-            await EditActAsync(promotion.Id, promotion.NameRu);
+            await EditActAsync(promotion.Id, promotion.NameRu, !promotion.NotInUse);
             return Result.Success;
         }
         [HttpDelete("{id}")]

@@ -59,9 +59,14 @@ namespace newTolkuchka.Services.Abstracts
             object result = method.Invoke(_service, new object[] { id });
             TModel model = await (Task<TModel>)result;
             PropertyInfo property = modelType.GetProperty(key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-            property.SetValue(model, !(bool)property.GetValue(model));
+            bool value = (bool)property.GetValue(model);
+            property.SetValue(model, !value);
             if (modelType.Name == "Product")
+            {
                 await EditActAsync(id, IProduct.GetProductNameCounted(model as Product));
+                if (property.Name == "NotInUse")
+                    await _entry.CorrectSiteMap(ConstantsService.PRODUCT, new (int, bool)[] { (id, value) });
+            }
             else
             {
                 PropertyInfo nameProperty = modelType.GetProperty("Name");
@@ -76,9 +81,9 @@ namespace newTolkuchka.Services.Abstracts
         {
             await _entry.AddEntryAsync(Act.Add, _entity, entityId, entityName);
         }
-        private protected async Task EditActAsync(int entityId, string entityName)
+        private protected async Task EditActAsync(int entityId, string entityName, bool? siteMapToAdd = null)
         {
-            await _entry.AddEntryAsync(Act.Edit, _entity, entityId, entityName);
+            await _entry.AddEntryAsync(Act.Edit, _entity, entityId, entityName, siteMapToAdd);
         }
         private protected async Task DeleteActAsync(int entityId, string entityName)
         {

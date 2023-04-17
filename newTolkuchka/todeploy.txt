@@ -3,6 +3,7 @@
 Program.cs comment caching
 Login controller remove comments
 remove or edit connection string
+remove EntryService .Replace("7240", "")
 remove webconfig V2
 remove wwwroot or image folder
 DO NOT CHANGE IMAGE FOLDER, OR DO NOT CHANGE WWWROOT FOLDER

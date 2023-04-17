@@ -9,6 +9,7 @@
         string GetHtmlPinBodyPath();
         string GetHtmlRecoveryBodyPath();
         string GetHtmlNewPinBodyPath();
+        string GetSiteMap(string model);
         string GetHtmlAboutBodyPath(string lang);
         string GetHtmlDeliveryBodyPath(string lang);
         string GetLogo();

@@ -39,6 +39,10 @@ namespace newTolkuchka.Services
         {
             return Path.Combine(GetHtmlBodyPath(), "newpin.html");
         }
+        public string GetSiteMap(string model)
+        {
+            return Path.Combine(_environment.ContentRootPath, $"wwwroot/sitemap.{model}.txt");
+        }
         public string GetHtmlAboutBodyPath(string lang)
         {
             return lang switch

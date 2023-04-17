@@ -371,6 +371,7 @@ newTolkuchka/wwwroot/images/product/small/*.*
 newTolkuchka/wwwroot/images/promotion/*.*
 newTolkuchka/wwwroot/images/slide/*.*
 newTolkuchka/wwwroot/images/specsvalue/*.*
+newTolkuchka/wwwroot/sitemap.*
 
 # secretfiles
 Secrets.cs
