@@ -52,7 +52,7 @@ namespace newTolkuchka.ControllersAPI
             return headingIds;
         }
         [HttpPost]
-        public async Task<Result> Post([FromForm] Article article, [FromForm] IFormFile[] images, [FromForm] string headingsJson, [FromForm] IList<int> selectedHeadingIds, [FromForm] IList<int> deleteHeadingIds, Culture culture)
+        public async Task<Result> Post([FromForm] Article article, [FromForm] IFormFile[] images, [FromForm] string headingsJson, [FromForm] IList<int> selectedHeadingIds, [FromForm] IList<int> deleteHeadingIds, [FromForm] Culture culture)
         {
             IList<Heading> newHeadings = JsonService.Deserialize<IList<Heading>>(headingsJson);
             // selectedHeadingIds used for add new link headingarticle, newHeadings used also used for that, but they do not have Id, thus we need check both and add new headings, then add new link with them
@@ -67,7 +67,7 @@ namespace newTolkuchka.ControllersAPI
             article.Date = DateTime.Now.ToUniversalTime();
             await _article.AddModelAsync(article, images, WIDTH, HEIGHT);
             await ResolveHeadings(newHeadings, culture, article.Id, selectedHeadingIds);
-            await AddActAsync(article.Id, article.Name);
+            await AddActAsync(article.Id, article.Name, culture);
             return Result.Success;
         }
         [HttpPut]

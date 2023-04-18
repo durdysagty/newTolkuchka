@@ -77,13 +77,13 @@ namespace newTolkuchka.Services.Abstracts
             return Result.Success;
         }
 
-        private protected async Task AddActAsync(int entityId, string entityName)
+        private protected async Task AddActAsync(int entityId, string entityName, CultureProvider.Culture? culture = null)
         {
-            await _entry.AddEntryAsync(Act.Add, _entity, entityId, entityName);
+            await _entry.AddEntryAsync(Act.Add, _entity, entityId, entityName, null, culture);
         }
-        private protected async Task EditActAsync(int entityId, string entityName, bool? siteMapToAdd = null)
+        private protected async Task EditActAsync(int entityId, string entityName, bool? siteMapToAdd = null, CultureProvider.Culture? culture = null)
         {
-            await _entry.AddEntryAsync(Act.Edit, _entity, entityId, entityName, siteMapToAdd);
+            await _entry.AddEntryAsync(Act.Edit, _entity, entityId, entityName, siteMapToAdd, culture);
         }
         private protected async Task DeleteActAsync(int entityId, string entityName)
         {

@@ -18,7 +18,7 @@ namespace newTolkuchka.Services
             _path = path;
         }
 
-        public async Task AddEntryAsync(Act act, Entity entity, int entityId, string entityName, bool? siteMapToAdd = null)
+        public async Task AddEntryAsync(Act act, Entity entity, int entityId, string entityName, bool? siteMapToAdd = null, CultureProvider.Culture? culture = null)
         {
             Entry entry = new()
             {
@@ -34,9 +34,9 @@ namespace newTolkuchka.Services
             if (entity is Entity.Product or Entity.Promotion or Entity.Category or Entity.Brand or Entity.Article)
             {
                 if (act == Act.Add)
-                    await CorrectSiteMap(entity.ToString(), new (int, bool)[] { (entityId, true) });
+                    await CorrectSiteMap(entity.ToString(), new (int, bool)[] { (entityId, true) }, culture);
                 if (act == Act.Delete)
-                    await CorrectSiteMap(entity.ToString(), new (int, bool)[] { (entityId, false) });
+                    await CorrectSiteMap(entity.ToString(), new (int, bool)[] { (entityId, false) }, culture);
                 if (act == Act.Edit && siteMapToAdd != null)
                 {
                     if ((bool)siteMapToAdd)
@@ -75,7 +75,7 @@ namespace newTolkuchka.Services
         //    }
         //}
 
-        public async Task CorrectSiteMap(string entity, IList<(int, bool)> entities)
+        public async Task CorrectSiteMap(string entity, IList<(int, bool)> entities, CultureProvider.Culture? culture = null)
         {
             string model = entity.ToLower();
             string path = _path.GetSiteMap(model);
@@ -83,7 +83,20 @@ namespace newTolkuchka.Services
             foreach ((int, bool) e in entities)
             {
                 string modelUrl = $"/{PathService.GetModelUrl(model, e.Item1)}";
-                string[] urls = { $"{CultureProvider.SiteUrlRu}{modelUrl}", $"{CultureProvider.SiteUrlEn}{modelUrl}", $"{CultureProvider.SiteUrlTm}{modelUrl}" };
+                List<string> urls = new();
+                if (culture == null)
+                {
+                    urls = new List<string> { $"{CultureProvider.SiteUrlRu}{modelUrl}", $"{CultureProvider.SiteUrlEn}{modelUrl}", $"{CultureProvider.SiteUrlTm}{modelUrl}" };
+                }
+                else
+                {
+                    if (culture == CultureProvider.Culture.Ru)
+                        urls = new List<string> { $"{CultureProvider.SiteUrlRu}{modelUrl}" };
+                    if (culture == CultureProvider.Culture.En)
+                        urls = new List<string> { $"{CultureProvider.SiteUrlEn}{modelUrl}" };
+                    if (culture == CultureProvider.Culture.Tm)
+                        urls = new List<string> { $"{CultureProvider.SiteUrlTm}{modelUrl}" };
+                }
                 if (e.Item2)
                 {
                     if (!strings.Any(s => s == urls[0]))
