@@ -599,7 +599,7 @@ namespace newTolkuchka.Controllers
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 259200)]
         public async Task<IActionResult> Article(int id)
         {
-            Article article = await _article.GetModelAsync(id);
+            Article article = _article.GetModels(new Dictionary<string, object>() { { ConstantsService.CULTURE, CultureProvider.CurrentCulture } }).FirstOrDefault(a => a.Id == id);
             if (article == null)
                 return GetNotFoundPage();
             CreateMetaData(ConstantsService.ARTICLE, _breadcrumbs.GetModelBreadcrumbs(ConstantsService.ARTICLES), article.Name);
