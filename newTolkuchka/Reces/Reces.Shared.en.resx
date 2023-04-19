@@ -135,6 +135,9 @@
   <data name="add-to-cart" xml:space="preserve">
     <value>add to cart</value>
   </data>
+  <data name="addQ" xml:space="preserve">
+    <value>add 1</value>
+  </data>
   <data name="address" xml:space="preserve">
     <value>Address</value>
   </data>
@@ -399,6 +402,9 @@
   <data name="recommended" xml:space="preserve">
     <value>Recommended</value>
   </data>
+  <data name="removeQ" xml:space="preserve">
+    <value>remove 1</value>
+  </data>
   <data name="robot" xml:space="preserve">
     <value>You may not have checked the "I'm not a robot" checkbox.</value>
   </data>
@@ -440,6 +446,12 @@
   </data>
   <data name="time-elapsed1" xml:space="preserve">
     <value>Login Timed Out! Please try again!</value>
+  </data>
+  <data name="toLiked" xml:space="preserve">
+    <value>add to liked</value>
+  </data>
+  <data name="toСomparison" xml:space="preserve">
+    <value>add to comparison</value>
   </data>
   <data name="type" xml:space="preserve">
     <value>Type</value>

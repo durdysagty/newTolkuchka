@@ -145,13 +145,13 @@
                     </div>
                 }
             </div>
-            <div class="row justify-content-center">
+            <div class="row justify-content-center mb-2">
                 <div class="col-auto">
                     <a href="/">
-                        @Html.Raw(IImage.GetImageHtml("/logo.", 588, 76, "20rem", "auto", "logo"))
+                        @Html.Raw(IImage.GetImageHtml("/logo.", 588, 76, width < ConstantsService.MOBILEWIDTH ? "14rem" : "20rem", "auto", "logo"))
                     </a>
                 </div>
-                <div class="col-12 col-md align-self-center mb-1 m-md-0">
+                <div class="col-12 col-md align-self-end mb-1 m-md-0">
                     <form asp-action="search" method="get">
                         <div class="input-group justify-content-center justify-content-md-end">
                             <div class="form-outline w-75" id="search-form">

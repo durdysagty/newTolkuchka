@@ -135,6 +135,9 @@
   <data name="add-to-cart" xml:space="preserve">
     <value>sebete goş</value>
   </data>
+  <data name="addQ" xml:space="preserve">
+    <value>birini goş</value>
+  </data>
   <data name="address" xml:space="preserve">
     <value>Salgyňyz</value>
   </data>
@@ -402,6 +405,9 @@
   <data name="recommended" xml:space="preserve">
     <value>Maslahatlylar</value>
   </data>
+  <data name="removeQ" xml:space="preserve">
+    <value>birini aýyr</value>
+  </data>
   <data name="robot" xml:space="preserve">
     <value>"Men robot däl" belligini bellemedik bolmagyňyz mümkin.</value>
   </data>
@@ -443,6 +449,12 @@
   </data>
   <data name="time-elapsed1" xml:space="preserve">
     <value>Giriş wagty gutardy! Gaýtadan synanyşyp bilersiňiz!</value>
+  </data>
+  <data name="toLiked" xml:space="preserve">
+    <value>halanlaryma goş</value>
+  </data>
+  <data name="toСomparison" xml:space="preserve">
+    <value>deňeşdirmä goş</value>
   </data>
   <data name="type" xml:space="preserve">
     <value>Görnüş</value>

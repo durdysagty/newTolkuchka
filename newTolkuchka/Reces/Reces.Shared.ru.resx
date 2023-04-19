@@ -135,6 +135,9 @@
   <data name="add-to-cart" xml:space="preserve">
     <value>в корзину</value>
   </data>
+  <data name="addQ" xml:space="preserve">
+    <value>добавить 1</value>
+  </data>
   <data name="address" xml:space="preserve">
     <value>Адрес</value>
   </data>
@@ -411,6 +414,9 @@
   <data name="recommended" xml:space="preserve">
     <value>Рекомендуемые</value>
   </data>
+  <data name="removeQ" xml:space="preserve">
+    <value>отнять 1</value>
+  </data>
   <data name="search" xml:space="preserve">
     <value>Поиск</value>
   </data>
@@ -458,6 +464,12 @@
   </data>
   <data name="time-elapsed1" xml:space="preserve">
     <value>Время для логина истекло! Пожалуйста, попробуйте заново!</value>
+  </data>
+  <data name="toLiked" xml:space="preserve">
+    <value>добавить в понравивщиеся</value>
+  </data>
+  <data name="toСomparison" xml:space="preserve">
+    <value>добавить в сравнения</value>
   </data>
   <data name="type" xml:space="preserve">
     <value>Тип</value>

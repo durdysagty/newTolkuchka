@@ -4,8 +4,10 @@
 
 @if (Model != null)
 {
+    int? width = ViewBag.WindowWidth;
     int current = ViewBag.Current;
     int n = 0;
+    string badgeClass = width == null || width > ConstantsService.MOBILEWIDTH ? "h5" : "h6";
     foreach ((string name, Product p, IList<Promo> promos) in Model)
     {
         string id = $"pr{p.Id}";
@@ -13,6 +15,7 @@
         string currentProduct = p.Id == current ? "d-block" : "d-none";
         string buttonName = "order" + p.Id;
         string buttonLikeName = "like" + p.Id;
+        string buttonScaleName = "scale" + p.Id;
         string tabsId = $"tab{p.Id}";
         string contentId = $"content{p.Id}";
         string descTab = $"decTab{p.Id}";
@@ -31,6 +34,29 @@
         }
         <div id="@id" class="@currentProduct">
             <h4>@name</h4>
+            <div>
+                @if (p.IsRecommended)
+                {
+                    <div class="badge badge-danger mb-2">
+                        <a href="/@ConstantsService.RECOMMENDED" class="@badgeClass">@Localizer["recod"]</a>
+                    </div>
+                }
+                @if (p.IsNew)
+                {
+                    <div class="badge badge-secondary mb-2">
+                        <a href="/@ConstantsService.NOVELTIES" class="@badgeClass">@Localizer["newed"]</a>
+                    </div>
+                }
+                @if (p.PromotionProducts.Any())
+                {
+                    foreach (PromotionProduct pp in p.PromotionProducts)
+                    {
+                        <div class="badge badge-info mb-2">
+                            <a href="/@PathService.GetModelUrl(ConstantsService.PROMOTION, pp.PromotionId)" class="@badgeClass">@CultureProvider.GetLocalName(pp.Promotion.NameRu, pp.Promotion.NameEn, pp.Promotion.NameTm)</a>
+                        </div>
+                    }
+                }
+            </div>
             <div class="row justify-content-center justify-content-lg-start">
                 <div class="col-12 col-sm-6 col-md-4">
                     <div class="row">
@@ -55,6 +81,9 @@
                     }
                 </div>
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 d-flex flex-column justify-content-end">
+                    <a href="/@PathService.GetModelUrl(ConstantsService.BRAND, p.Model.BrandId)">
+                        @Html.Raw(IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.BRAND, p.Model.BrandId), 180, 60, "8rem", "auto", p.Model.Brand.Name))
+                    </a>
                     @if (Model.Count() > 1)
                     {
                         // only if model count more than 1 wee need selection buttons from list of models
@@ -148,7 +177,8 @@
                                                     string vn = specsValueMod.Id == 0 ? specsValue.Name : specsValueMod.Name;
                                                     if (spec.Is)
                                                     {
-                                                        @Html.Raw(IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.SPECSVALUE, specsValue.Id), 25, 25, "1.5rem", "auto", specsValue.Name, null, function, null, vn));
+                                                        @Html.Raw(IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.SPECSVALUE, specsValue.Id), 25, 25, "1.5rem", "auto", specsValue.Name, null, function, null, vn))
+                                                        ;
                                                     }
                                                     else
                                                     {
@@ -165,9 +195,9 @@
                     <div class="d-flex flex-column justify-content-end align-items-center align-items-md-start mb-3">
                         <div class="mb-2">
                             <p>@Localizer["quantity"]</p>
-                            <span role="button" class='pointer px-2 h3' onclick="quantity(@quantityId, false)">-</span>
+                            <span role="button" class='pointer px-2 h3' onclick="quantity(@quantityId, false)" aria-label="@Localizer["removeQ"]">-</span>
                             <span class="h2" id="@quantityId">1</span>
-                            <span role="button" class='pointer px-2 h3' onclick="quantity(@quantityId, true)">+</span>
+                            <span role="button" class='pointer px-2 h3' onclick="quantity(@quantityId, true)" aria-label="@Localizer["addQ"]">+</span>
                         </div>
                         @if (discount != null)
                         {
@@ -193,22 +223,12 @@
                         }
                         <div class="d-inline-flex">
                             <button name="@buttonName" onclick="productOrder(@p.Id, @quantityId)" type="button" class="btn btn-primary">@Localizer["add-to-cart"]</button>
-                            <button name="@buttonLikeName" onclick="like(@p.Id)" type="button" class="btn btn-primary ms-2"><i class="fas fa-heart"></i></button>
+                            <button name="@buttonLikeName" onclick="like(@p.Id)" type="button" class="btn btn-primary ms-2" aria-label="@Localizer["toLiked"]"><i class="fas fa-heart"></i></button>
+                            <button name="@buttonScaleName" onclick="scale(@p.Id)" type="button" class="btn btn-primary ms-2" aria-label="@Localizer["toСomparison"]"><i class="fas fa-scale-balanced"></i></button>
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-sm-12 col-md-4 col-lg-5 col-xl-6 d-flex flex-column justify-content-start align-items-center pt-2">
-                    @if (p.IsRecommended)
-                    {
-                        <div class="badge badge-primary me-1">@Localizer["recod"]</div>
-                    }
-                    @if (p.IsNew)
-                    {
-                        <div class="badge badge-secondary me-1">@Localizer["newed"]</div>
-                    }
-                    <a href="@PathService.GetModelUrl($"https://{CultureProvider.Host}/{ConstantsService.BRAND}", p.Model.BrandId)">
-                        @Html.Raw(IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.BRAND, p.Model.BrandId), 180, 60, "12rem", "auto", p.Model.Brand.Name))
-                    </a>
                     @foreach (Promo promo in promos.Where(pr => pr.Type != Tp.Discount))
                     {
                         @if (promo.Type == Tp.QuantityDiscount)
