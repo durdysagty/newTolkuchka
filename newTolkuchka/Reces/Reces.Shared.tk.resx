@@ -231,6 +231,9 @@
   <data name="enterorreg" xml:space="preserve">
     <value>Gir ya-da agza bol</value>
   </data>
+  <data name="filter" xml:space="preserve">
+    <value>filter</value>
+  </data>
   <data name="forfree" xml:space="preserve">
     <value>MUGT</value>
   </data>

@@ -107,7 +107,7 @@ namespace newTolkuchka.Services
                         strings.Remove(strings.FirstOrDefault(s => s == u));
             }
             // replace to remove
-            await File.WriteAllLinesAsync(path, strings.OrderByDescending(s => s.Replace("7240", ""), new CompareForSiteMapService()));
+            await File.WriteAllLinesAsync(path, strings.OrderByDescending(s => s, new CompareForSiteMapService()));
         }
     }
 }

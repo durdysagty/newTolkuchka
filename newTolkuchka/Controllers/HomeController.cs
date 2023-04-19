@@ -583,7 +583,7 @@ namespace newTolkuchka.Controllers
             string articles = string.Empty;
             foreach (Article a in preArticles)
             {
-                articles += $"<div class=\"col-{col} col-sm-{sm} col-lg-{lg} col-xxl-{xxl}\"><a href=\"/{ConstantsService.ARTICLE}/{a.Id}\"><div class=\"p-1 text-center vrw\">{IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.ARTICLE, a.Id), 0, 300, "auto", "120px", a.Name, "rounded-1")}</div><p>{a.Name}</p><div class=\"text-end\"><small>{a.Date.ToShortDateString()}</small></div></a></div>";
+                articles += $"<div class=\"col-{col} col-sm-{sm} col-lg-{lg} col-xxl-{xxl}\"><a href=\"/{ConstantsService.ARTICLE}/{a.Id}\"><div class=\"p-1 text-center vrw\">{IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.ARTICLE, a.Id), 0, 250, "auto", "120px", a.Name, "rounded-1")}</div><p>{a.Name}</p><div class=\"text-end\"><small>{a.Date.ToShortDateString()}</small></div></a></div>";
             }
             string pagination = _article.GetPagination(pp, total, preArticles.Count(), toSkip, out int lp);
             int lastPage = lp;
