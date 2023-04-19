@@ -231,7 +231,7 @@
                         <div class="@col">
                             <a href="/">
                                 &copy;
-                                <img class="img-fluid" width="300" height="60" style="max-width: 10rem; height: auto" src="/logo.png" alt="logo">
+                                @Html.Raw(IImage.GetImageHtml("/logo.", 588, 76, "100%", "auto", "logo", null, "8rem"))
                                 <p>2016 - @DateTime.Now.Year</p>
                             </a>
                         </div>
