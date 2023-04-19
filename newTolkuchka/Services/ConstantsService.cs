@@ -19,6 +19,7 @@ namespace newTolkuchka.Services
         public const string CURRENTPHONE = "+99365 561427";
         public const string INFOEMAIL = "info@";
         // viewdatas
+        public const int XLWIDTH = 1200;
         public const int MOBILEWIDTH = 992;
         public const int PHONEWIDTH = 768;
         public const string TITLE = "title";
