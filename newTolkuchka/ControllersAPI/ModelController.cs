@@ -57,7 +57,7 @@ namespace newTolkuchka.ControllersAPI
         [HttpPost]
         public async Task<Result> Post([FromForm] Model model, [FromForm] IList<int[]> specs, [FromForm] int[] adLinks)
         {
-            bool isExist = _model.IsExist(model, _model.GetModels().Where(x => x.LineId == model.LineId && x.TypeId == model.TypeId));
+            bool isExist = _model.IsExist(model, _model.GetModels().Where(x => x.LineId == model.LineId && x.BrandId == model.BrandId && x.TypeId == model.TypeId));
             if (isExist)
                 return Result.Already;
             await _model.AddModelAsync(model);
@@ -71,7 +71,7 @@ namespace newTolkuchka.ControllersAPI
         [HttpPut]
         public async Task<Result> Put([FromForm] Model model, [FromForm] IList<int[]> specs, [FromForm] int[] adLinks, [FromForm] IList<int[]> productSpecsValues, [FromForm] IList<int[]> productSpecsValueMods)
         {
-            bool isExist = _model.IsExist(model, _model.GetModels().Where(x => x.LineId == model.LineId && x.TypeId == model.TypeId && x.Id != model.Id));
+            bool isExist = _model.IsExist(model, _model.GetModels().Where(x => x.LineId == model.LineId && x.BrandId == model.BrandId && x.TypeId == model.TypeId && x.Id != model.Id));
             if (isExist)
                 return Result.Already;
             int[]productIds = _product.GetModels(new Dictionary<string, object>() { { ConstantsService.MODEL, model.Id } }).Select(p => p.Id).ToArray();
