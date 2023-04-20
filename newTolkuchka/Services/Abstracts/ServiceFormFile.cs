@@ -3,6 +3,7 @@ using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
 using newTolkuchka.Reces;
 using newTolkuchka.Services.Interfaces;
+using System.Reflection;
 using Type = System.Type;
 
 namespace newTolkuchka.Services.Abstracts
@@ -64,6 +65,13 @@ namespace newTolkuchka.Services.Abstracts
 
         public async Task EditModelAsync(T model, IFormFile[] images, int width, int height, int? divider = null)
         {
+            Type type = typeof(T);
+            PropertyInfo propertyInfo = type.GetProperty("Version");
+            if (propertyInfo != null)
+            {
+                int value = (int)propertyInfo.GetValue(model);
+                propertyInfo.SetValue(model, ++value);
+            }
             _con.Entry(model).State = EntityState.Modified;
             if (images.Any(i => i.Length > 0) || images.Any(i => i.FileName == "delete"))
                 await SetModelImages(model, images, width, height, divider);

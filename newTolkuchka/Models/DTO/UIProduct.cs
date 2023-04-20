@@ -2,9 +2,8 @@
 
 namespace newTolkuchka.Models.DTO
 {
-    public class UIProduct
+    public class UIProduct : MRP
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }

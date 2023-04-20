@@ -152,8 +152,8 @@ function setS() {
     $("span[name='s']").text(scaled.length)
 }
 if (navigator.userAgent.indexOf("Android") !== -1 && navigator.userAgent.indexOf("iPhone") !== -1 && navigator.userAgent.indexOf("iPad") !== -1) {
-    $('#social').html(`<a href="instagram://user?username=tolkuchka.bar" rel="noreferrer noopener"><img width='77' height='77' style='height: 30px; width: auto' src="/ig.png" alt="instagram" /></a><a href="vk://vk.com/club114989678" rel="noreferrer noopener" class="ps-2"><img width='77''height='73' style='height: 32px; width: auto' src="/vk.png" alt="vk" /></a>`)
+    $('#social').html(`<a href="instagram://user?username=tolkuchka.bar" rel="noreferrer noopener"><img width='77' height='77' style='height: 30px; width: auto' src="/ig.png?v=0" alt="instagram" /></a><a href="vk://vk.com/club114989678" rel="noreferrer noopener" class="ps-2"><img width='77''height='73' style='height: 32px; width: auto' src="/vk.png?v=0" alt="vk" /></a>`)
 }
 else {
-    $('#social').html(`<a href="https://instagram.com/tolkuchka.bar" rel="noreferrer noopener" target="_blank"><img width='77' height='77' style='height: 30px; width: auto' src="/ig.png" alt="instagram" /></a><a href="https://vk.com/club114989678" class="ps-2" rel="noreferrer noopener" target="_blank"><img width='77''height='73' style='height: 32px; width: auto' src="/vk.png" alt="vk" /></a>`)
+    $('#social').html(`<a href="https://instagram.com/tolkuchka.bar" rel="noreferrer noopener" target="_blank"><img width='77' height='77' style='height: 30px; width: auto' src="/ig.png?v=0" alt="instagram" /></a><a href="https://vk.com/club114989678" class="ps-2" rel="noreferrer noopener" target="_blank"><img width='77''height='73' style='height: 32px; width: auto' src="/vk.png?v=0" alt="vk" /></a>`)
 }

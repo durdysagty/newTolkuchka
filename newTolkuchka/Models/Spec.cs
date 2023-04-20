@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using newTolkuchka.Models.DTO;
+using System.ComponentModel.DataAnnotations;
 
 namespace newTolkuchka.Models
 {
-    public class Spec
+    public class Spec : MRP
     {
-        public int Id { get; set; }
         [Required, MaxLength(100)]
         public string NameRu { get; set; }
         [Required, MaxLength(100)]

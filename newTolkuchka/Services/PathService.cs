@@ -63,7 +63,7 @@ namespace newTolkuchka.Services
         }
         public string GetLogo()
         {
-            return $"{CultureProvider.SiteUrlRu}/logo.png";
+            return $"{CultureProvider.SiteUrlRu}/logo.png?v=0";
         }
         // statics
         public static string GetImageRelativePath(string folder, int id, int imageNumber = 0)

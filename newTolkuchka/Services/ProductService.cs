@@ -155,7 +155,8 @@ namespace newTolkuchka.Services
                             {
                                 Id = psv.SpecsValueId,
                                 Name = CultureProvider.GetLocalName(psv.SpecsValue.NameRu, psv.SpecsValue.NameEn, psv.SpecsValue.NameTm),
-                                Image = filter.IsImaged ? PathService.GetImageRelativePath(ConstantsService.SPECSVALUE, psv.SpecsValueId) : null
+                                Image = filter.IsImaged ? PathService.GetImageRelativePath(ConstantsService.SPECSVALUE, psv.SpecsValueId) : null,
+                                ImageVersion = filter.IsImaged ? psv.SpecsValue.Version : 0
                             });
                     }
                 }
@@ -370,7 +371,8 @@ namespace newTolkuchka.Services
                 ImageMain = PathService.GetImageRelativePath(ConstantsService.PRODUCT + "/small", p.Id),
                 Recommended = p.IsRecommended ? _localizer["recod"] : null,
                 New = p.IsNew ? _localizer["newed"] : null,
-                Promotions = p.PromotionProducts.Select(p => p.Promotion).ToList()
+                Promotions = p.PromotionProducts.Select(p => p.Promotion).ToList(),
+                Version = p.Version
             });
         }
 

@@ -1,11 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using newTolkuchka.Models.DTO;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace newTolkuchka.Models
 {
-    public class Purchase
+    public class Purchase : MRP
     {
-        public int Id { get; set; }
         [MaxLength(100)]
         public string SerialNumber { get; set; }
         [Required, Column(TypeName = "decimal(18,2)")]

@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using newTolkuchka.Models.DTO;
+using System.ComponentModel.DataAnnotations;
 
 namespace newTolkuchka.Models
 {
-    public class Brand
+    public class Brand: MRP
     {
-        public int Id { get; set; }
         [Required, MaxLength(100)]
         public string Name { get; set; }
         public bool IsForHome { get; set; }

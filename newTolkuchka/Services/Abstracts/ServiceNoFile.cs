@@ -3,6 +3,7 @@ using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
 using newTolkuchka.Reces;
 using newTolkuchka.Services.Interfaces;
+using System.Reflection;
 using Type = System.Type;
 
 namespace newTolkuchka.Services.Abstracts
@@ -28,6 +29,13 @@ namespace newTolkuchka.Services.Abstracts
 
         public virtual void EditModel(T model)
         {
+            Type type = typeof(T);
+            PropertyInfo propertyInfo = type.GetProperty("Version");
+            if (propertyInfo != null)
+            {
+                int value = (int)propertyInfo.GetValue(model);
+                propertyInfo.SetValue(model, ++value);
+            }
             _con.Entry(model).State = EntityState.Modified;
         }
 

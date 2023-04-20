@@ -59,7 +59,7 @@ namespace newTolkuchka.Controllers
         #endregion
         [Route(ConstantsService.SLASH)]
         [Route(ConstantsService.HOME)]
-        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 10800)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 180)]
         public async Task<IActionResult> Index()
         {
             ViewBag.PrCnt = await _product.GetModels().CountAsync();
@@ -67,7 +67,7 @@ namespace newTolkuchka.Controllers
             return View();
         }
         [Route($"{ConstantsService.INDEX}")]
-        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 7200)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 1800)]
         public async Task<JsonResult> Items()
         {
             #region stuff
@@ -116,13 +116,13 @@ namespace newTolkuchka.Controllers
             string brandsString = string.Empty;
             foreach (Brand b in brands)
             {
-                brandsString += $"<div class=\"keen-slider__slide text-center\"><a href=\"/{PathService.GetModelUrl(ConstantsService.BRAND, b.Id)}\">{IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.BRAND, b.Id), 180, 60, "100%", "auto", b.Name, "card-img-top rounded border border-primary px-1 py-2")}</a></div>";
+                brandsString += $"<div class=\"keen-slider__slide text-center\"><a href=\"/{PathService.GetModelUrl(ConstantsService.BRAND, b.Id)}\">{IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.BRAND, b.Id), b.Version, 180, 60, "100%", "auto", b.Name, "card-img-top rounded border border-primary px-1 py-2")}</a></div>";
             }
             IEnumerable<Slide> mainSlides = _slide.GetSlidesByLayoutAsync(Layout.Main).OrderByDescending(s => s.Id).Take(slidesCount);
             string slidesString = string.Empty;
             foreach (Slide s in mainSlides)
             {
-                slidesString += $"<div class=\"col-12 col-sm-6 col-md-4 p-1\"><a href=\"{s.Link}\">{IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.SLIDE, s.Id), 600, 300, "100%", "auto", s.Name, "card-img-top rounded")}</a></div>";
+                slidesString += $"<div class=\"col-12 col-sm-6 col-md-4 p-1\"><a href=\"{s.Link}\">{IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.SLIDE, s.Id), s.Version, 600, 300, "100%", "auto", s.Name, "card-img-top rounded")}</a></div>";
             }
             static IEnumerable<string> GetHtmlProducts(IList<IEnumerable<UIProduct>> products, int? sw)
             {
@@ -165,12 +165,12 @@ namespace newTolkuchka.Controllers
             foreach (Category c in indexCats)
             {
                 string locaName = CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm);
-                catsString += string.Format(catsTemplate, PathService.GetModelUrl(ConstantsService.CATEGORY, c.Id), IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.CATEGORY, c.Id), 450, 225, "100%", "auto", locaName, imageClasses), locaName, fontSize);
+                catsString += string.Format(catsTemplate, PathService.GetModelUrl(ConstantsService.CATEGORY, c.Id), IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.CATEGORY, c.Id), c.Version, 450, 225, "100%", "auto", locaName, imageClasses), locaName, fontSize);
             }
             foreach (Promotion p in promotions)
             {
                 string locaName = CultureProvider.GetLocalName(p.NameRu, p.NameEn, p.NameTm);
-                catsString += string.Format(catsTemplate, PathService.GetModelUrl(ConstantsService.PROMOTION, p.Id), IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.PROMOTION, p.Id), 600, 300, "100%", "auto", locaName, imageClasses), locaName, fontSize);
+                catsString += string.Format(catsTemplate, PathService.GetModelUrl(ConstantsService.PROMOTION, p.Id), IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.PROMOTION, p.Id), p.Version, 600, 300, "100%", "auto", locaName, imageClasses), locaName, fontSize);
             }
             IEnumerable<Article> articles = _article.GetModels(new Dictionary<string, object> { { ConstantsService.CULTURE, CultureProvider.CurrentCulture } }).OrderByDescending(a => a.Id).Take(count);
             string articleStrings = null;
@@ -179,7 +179,7 @@ namespace newTolkuchka.Controllers
                 string arts = string.Empty;
                 foreach (Article a in articles)
                 {
-                    arts += $"<div class=\"col-{col} col-xs-{xs} col-sm-{sm} col-md-{md} col-lg-{lg} col-xl-{xl} col-xxl-{xxl} col-xxxl-{xxxl}\"><a href=\"/{ConstantsService.ARTICLE}/{a.Id}\"><div class=\"p-1 text-center vrw\">{IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.ARTICLE, a.Id), 0, 250, "auto", "125px", a.Name, "rounded-1")}</div><div><small class=\"small text-center\">{a.Name}</small></div></a></div>";
+                    arts += $"<div class=\"col-{col} col-xs-{xs} col-sm-{sm} col-md-{md} col-lg-{lg} col-xl-{xl} col-xxl-{xxl} col-xxxl-{xxxl}\"><a href=\"/{ConstantsService.ARTICLE}/{a.Id}\"><div class=\"p-1 text-center vrw\">{IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.ARTICLE, a.Id), a.Version, 0, 250, "auto", "125px", a.Name, "rounded-1")}</div><div><small class=\"small text-center\">{a.Name}</small></div></a></div>";
                 }
                 articleStrings = $"<div class=\"row justify-content-center\">{arts}</div><div class=\"d-flex justify-content-end\"><a href=\"/{ConstantsService.ARTICLES}\"><small>{_localizer["all-articles"].Value}</small></a></div>";
             }
@@ -193,7 +193,7 @@ namespace newTolkuchka.Controllers
             });
         }
         [Route(ConstantsService.CATEGORIES)]
-        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 43200)]
         public async Task<IActionResult> Categories()
         {
             IEnumerable<CategoryTree> categories = await _category.GetCategoryTree();
@@ -201,7 +201,7 @@ namespace newTolkuchka.Controllers
             return View(categories);
         }
         [Route(ConstantsService.BRANDS)]
-        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 43200)]
         public IActionResult Brands()
         {
             IQueryable<Brand> brands = _brand.GetModels().Where(b => b.Models.Any());
@@ -209,7 +209,7 @@ namespace newTolkuchka.Controllers
             return View(brands);
         }
         [Route(ConstantsService.PROMOTIONS)]
-        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 172800)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 43200)]
         public IActionResult Promotions()
         {
             IQueryable<Promotion> promotions = _promotion.GetModels().Where(p => !p.NotInUse);
@@ -217,7 +217,7 @@ namespace newTolkuchka.Controllers
             return View(promotions);
         }
         [Route($"{ConstantsService.CATEGORY}/{{id}}")]
-        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 1800)]
         public async Task<IActionResult> Category(int id)
         {
             Category category = await _category.GetModelAsync(id);
@@ -229,7 +229,7 @@ namespace newTolkuchka.Controllers
             return View();
         }
         [Route($"{ConstantsService.BRAND}/{{id}}")]
-        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 1800)]
         public async Task<IActionResult> Brand(int id)
         {
             Brand brand = await _brand.GetModelAsync(id);
@@ -239,7 +239,7 @@ namespace newTolkuchka.Controllers
             return View();
         }
         [Route($"{ConstantsService.PROMOTION}/{{id}}")]
-        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 1800)]
         public async Task<IActionResult> Promotion(int id)
         {
             Promotion promotion = await _promotion.GetModelAsync(id);
@@ -255,7 +255,8 @@ namespace newTolkuchka.Controllers
                     await _promotion.SaveChangesAsync();
                     return GetNotFoundPage();
                 }
-                string additional = $"<h5><a href=\"/{PathService.GetModelUrl(ConstantsService.PRODUCT, product.Id)}\"><img class=\"img-fluid mx-2\" style=\"max-height: 50px\" src=\"{PathService.GetImageRelativePath(ConstantsService.PRODUCT, product.Id)}\" />{IProduct.GetProductNameCounted(product)}</a> - ";
+                string name = IProduct.GetProductNameCounted(product);
+                string additional = $"<h5><a href=\"/{PathService.GetModelUrl(ConstantsService.PRODUCT, product.Id)}\">{IImage.GetImageHtml(PathService.GetImageRelativePath($"{ConstantsService.PRODUCT}/small", product.Id), product.Version, 200, 200, "50px", "auto", name, "mx-2")}{name}</a> - ";
                 desc += additional;
                 string additional2 = promotion.Type == Tp.SpecialSetDiscount ? CultureProvider.GetLocalName($"СКИДКА {(int)promotion.Volume}%", $"{(int)promotion.Volume}% OFF", $"ARZANLADYŞ {(int)promotion.Volume}") : $"{_localizer["forfree"]}!</h5>";
                 desc += additional2;
@@ -277,7 +278,7 @@ namespace newTolkuchka.Controllers
             return View();
         }
         [Route(ConstantsService.SEARCH)]
-        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 43200)]
         public IActionResult Search(string search)
         {
             if (string.IsNullOrEmpty(search))
@@ -288,21 +289,21 @@ namespace newTolkuchka.Controllers
         //[Route($"{{special}}")]
         [Route(ConstantsService.NOVELTIES)]
         [Route(ConstantsService.RECOMMENDED)]
-        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 43200)]
         public IActionResult Special()
         {
             CreateMetaData(CultureProvider.Path.Remove(0, 1), _breadcrumbs.GetBreadcrumbs(), null, true);
             return View();
         }
         [Route(ConstantsService.LIKED)]
-        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 3600)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 1800)]
         public IActionResult Liked(string special)
         {
             CreateMetaData(special, _breadcrumbs.GetBreadcrumbs(), null, true);
             return View();
         }
         [Route($"{ConstantsService.PRODUCTS}")]
-        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 7200)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 1800)]
         public async Task<JsonResult> Products(string model, string id, bool productsOnly, int[] t, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp = 100, string search = null)
         {
             IList<Product> list = new List<Product>();
@@ -482,7 +483,8 @@ namespace newTolkuchka.Controllers
                         {
                             Id = sv.Id,
                             Name = CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm),
-                            List = new Collection<AdminSpecsValueMod>()
+                            List = new Collection<AdminSpecsValueMod>(),
+                            Version = sv.Version
                         };
                         spec.List.Add(specValue);
                     }
@@ -583,7 +585,7 @@ namespace newTolkuchka.Controllers
             string articles = string.Empty;
             foreach (Article a in preArticles)
             {
-                articles += $"<div class=\"col-{col} col-sm-{sm} col-lg-{lg} col-xxl-{xxl}\"><a href=\"/{ConstantsService.ARTICLE}/{a.Id}\"><div class=\"p-1 text-center vrw\">{IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.ARTICLE, a.Id), 0, 250, "auto", "120px", a.Name, "rounded-1")}</div><p>{a.Name}</p><div class=\"text-end\"><small>{a.Date.ToShortDateString()}</small></div></a></div>";
+                articles += $"<div class=\"col-{col} col-sm-{sm} col-lg-{lg} col-xxl-{xxl}\"><a href=\"/{ConstantsService.ARTICLE}/{a.Id}\"><div class=\"p-1 text-center vrw\">{IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.ARTICLE, a.Id), a.Version, 0, 250, "auto", "120px", a.Name, "rounded-1")}</div><p>{a.Name}</p><div class=\"text-end\"><small>{a.Date.ToShortDateString()}</small></div></a></div>";
             }
             string pagination = _article.GetPagination(pp, total, preArticles.Count(), toSkip, out int lp);
             int lastPage = lp;
@@ -596,7 +598,7 @@ namespace newTolkuchka.Controllers
             });
         }
         [Route($"{ConstantsService.ARTICLE}/{{id}}")]
-        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 259200)]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 518400)]
         public async Task<IActionResult> Article(int id)
         {
             Article article = await _article.GetModels(new Dictionary<string, object>() { { ConstantsService.CULTURE, CultureProvider.CurrentCulture } }).FirstOrDefaultAsync(a => a.Id == id);

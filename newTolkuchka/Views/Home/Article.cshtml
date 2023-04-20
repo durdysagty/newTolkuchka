@@ -6,7 +6,7 @@
 @model Article
 <div class="mb-3" style="text-align:justify">
     <p>
-        @Html.Raw(IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.ARTICLE, Model.Id), 0, 250, "auto", "100%", Model.Name, "p-3 float-start"))
+        @Html.Raw(IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.ARTICLE, Model.Id), Model.Version, 0, 250, "auto", "100%", Model.Name, "p-3 float-start"))
         @Html.Raw($"<p>{Regex.Replace(Model.Text, "\n", "</p><p>")}</p>")
     </p>
 </div>

@@ -1,12 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using newTolkuchka.Models.DTO;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using static newTolkuchka.Services.CultureProvider;
 
 namespace newTolkuchka.Models
 {
-    public class Invoice
+    public class Invoice : MRP
     {
-        public int Id { get; set; }
         [Required]
         public DateTimeOffset Date { get; set; }
         [Required, MaxLength(200)]

@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using newTolkuchka.Models.DTO;
+using System.ComponentModel.DataAnnotations;
 
 namespace newTolkuchka.Models
 {
-    public class Employee
+    public class Employee: MRP
     {
-        public int Id { get; set; }
         [Required, MaxLength(30)]
         public string Login { get; set; }
         [Required, MaxLength(100)]

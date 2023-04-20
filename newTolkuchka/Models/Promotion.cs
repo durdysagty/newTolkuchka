@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using newTolkuchka.Models.DTO;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace newTolkuchka.Models
 {
     public enum Tp { Discount, QuantityDiscount, QuantityFree, ProductFree, Set, SetDiscount, SpecialSetDiscount } // type, Discount - a line discount, QuantityDiscount - buy N quantity and get a discount, QuantityFree - buy N quantity get 1 for free, ProductFree - buy N quantity of the given product and get 1 subject for free, Set - buy all products in that set and get 1 subject product for free, SetDiscount - buy all products in that set and get discount for all of them, SpecialSetDiscount - buy all products in that set and get discount for 1 subject product
-    public class Promotion
+    public class Promotion : MRP
     {
-        public int Id { get; set; }
         [Required]
         public Tp Type { get; set; }
         [Column(TypeName = "decimal(18,2)")]

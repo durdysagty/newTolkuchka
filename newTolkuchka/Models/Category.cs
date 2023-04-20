@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using newTolkuchka.Models.DTO;
+using System.ComponentModel.DataAnnotations;
 
 namespace newTolkuchka.Models
 {
-    public class Category
+    public class Category: MRP
     {
-        public int Id { get; set; }
         public int Order { get; set; }
         //public int Level { get; set; }
         public int ParentId { get; set; }

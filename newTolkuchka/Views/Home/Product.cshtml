@@ -70,13 +70,13 @@
                 <div class="col-12 col-sm-6 col-md-4">
                     <div class="row">
                         <div class="col-auto col-xs-10 col-md-12 col-xl-10" role="button" onclick="showGalery(@n)">
-                            @Html.Raw(IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.PRODUCT, p.Id), 600, 600, "100%", "auto", name, null, null, imgId))
+                            @Html.Raw(IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.PRODUCT, p.Id), p.Version, 600, 600, "100%", "auto", name, null, null, imgId))
                         </div>
                         <div class="col-auto col-xs-2 col-md-auto col-xl-2 my-2 my-md-0 px-0 pt-1">
                             @for (int i = 0; i < imagePaths.Count; i++)
                             {
                                 <span>
-                                    @Html.Raw(IImage.GetImageHtml(imagePaths[i], 200, 200, smImageSize, "auto", p.Model.Brand.Name, null, $" role=\"button\" onclick=\"setImage({imgId}, {i})\""))
+                                    @Html.Raw(IImage.GetImageHtml(imagePaths[i], p.Version, 200, 200, smImageSize, "auto", name, null, $" role=\"button\" onclick=\"setImage({imgId}, {i})\""))
                                 </span>
                             }
                         </div>
@@ -87,13 +87,13 @@
                     {
                         string src = $"{imagePaths[i]}{ConstantsService.JPG}";
                         <a href="@src">
-                            @IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.BRAND, p.Model.Brand.Id), 180, 60, "100%", "auto", p.Model.Brand.Name)
+                            @IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.PRODUCT, p.Id), p.Version, 600, 600, "100%", "auto", name)
                         </a>
                     }
                 </div>
                 <div class="col-12 col-sm-6 col-md-5 col-lg-5 d-flex flex-column justify-content-end alig align-items-center">
                     <a href="/@PathService.GetModelUrl(ConstantsService.BRAND, p.Model.BrandId)" class="mt-1">
-                        @Html.Raw(IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.BRAND, p.Model.BrandId), 180, 60, "8rem", "auto", p.Model.Brand.Name))
+                        @Html.Raw(IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.BRAND, p.Model.BrandId), p.Model.Brand.Version, 180, 60, "8rem", "auto", p.Model.Brand.Name))
                     </a>
                     @if (Model.Count() > 1)
                     {
@@ -188,7 +188,7 @@
                                                     string vn = specsValueMod.Id == 0 ? specsValue.Name : specsValueMod.Name;
                                                     if (spec.Is)
                                                     {
-                                                        @Html.Raw(IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.SPECSVALUE, specsValue.Id), 25, 25, "1.5rem", "auto", specsValue.Name, null, function, null, vn))
+                                                        @Html.Raw(IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.SPECSVALUE, specsValue.Id), specsValue.Version, 25, 25, "1.5rem", "auto", specsValue.Name, null, function, null, vn))
                                                         ;
                                                     }
                                                     else

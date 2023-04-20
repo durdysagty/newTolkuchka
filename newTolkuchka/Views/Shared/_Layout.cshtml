@@ -64,26 +64,26 @@
                     {
                         case ConstantsService.EN:
                             <a href="@tk">
-                                <img src="~/turkmen.svg" class="img-fluid align-self-center mx-1" width="15" height="15" style="width: auto; height: 15px" alt="türkmençe" />
+                                @Html.Raw(File.ReadAllText($"{_pathService.GetSVGFolder()}/turkmen.svg"))
                             </a>
                             <a href="@ru">
-                                <img src="~/russian.svg" class="img-fluid align-self-center mx-1" width="15" height="15" style="width: auto; height: 15px" alt="русский" />
+                                @Html.Raw(File.ReadAllText($"{_pathService.GetSVGFolder()}/russian.svg"))
                             </a>
                             break;
                         case ConstantsService.TK:
                             <a href="@en">
-                                <img src="~/english.svg" class="img-fluid align-self-center mx-1" width="15" height="15" style="width: auto; height: 15px" alt="english" />
+                                @Html.Raw(File.ReadAllText($"{_pathService.GetSVGFolder()}/english.svg"))
                             </a>
                             <a href="@ru">
-                                <img src="~/russian.svg" class="img-fluid align-self-center mx-1" width="15" height="15" style="width: auto; height: 15px" alt="русский" />
+                                @Html.Raw(File.ReadAllText($"{_pathService.GetSVGFolder()}/russian.svg"))
                             </a>
                             break;
                         default:
                             <a href="@tk">
-                                <img src="~/turkmen.svg" class="img-fluid align-self-center mx-1" width="15" height="15" style="width: auto; height: 15px" alt="türkmençe" />
+                                @Html.Raw(File.ReadAllText($"{_pathService.GetSVGFolder()}/turkmen.svg"))
                             </a>
                             <a href="@en">
-                                <img src="~/english.svg" class="img-fluid align-self-center mx-1" width="15" height="15" style="width: auto; height: 15px" alt="english" />
+                                @Html.Raw(File.ReadAllText($"{_pathService.GetSVGFolder()}/english.svg"))
                             </a>
                             break;
                     }
@@ -148,7 +148,7 @@
             <div class="row justify-content-center">
                 <div class="col-auto mb-2">
                     <a href="/">
-                        @Html.Raw(IImage.GetImageHtml("/logo.", 588, 76, width < ConstantsService.MOBILEWIDTH ? "14rem" : "20rem", "auto", "logo"))
+                        @Html.Raw(IImage.GetImageHtml("/logo.", 0, 588, 76, width < ConstantsService.MOBILEWIDTH ? "14rem" : "20rem", "auto", "logo"))
                     </a>
                 </div>
                 <div class="col-12 col-md align-self-end mb-1 m-md-0">
@@ -231,7 +231,7 @@
                         <div class="@col">
                             <a href="/">
                                 &copy;
-                                @Html.Raw(IImage.GetImageHtml("/logo.", 588, 76, "8rem", "auto", "logo"))
+                                @Html.Raw(IImage.GetImageHtml("/logo.", 0, 588, 76, "8rem", "auto", "logo"))
                                 <p>2016 - @DateTime.Now.Year</p>
                             </a>
                         </div>
@@ -436,7 +436,7 @@
     </script>
     @if ((bool)filterScript)
     {
-        <link rel="stylesheet" href="~/lib/range/ion.rangeSlider.min.css" />
+        <link rel="stylesheet" href="~/lib/range/ion.rangeSlider.min.css" asp-append-version="true" />
         <script src="~/lib/range/ion.rangeSlider.min.js" asp-append-version="true"></script>
         <script src="~/js/filter.js" asp-append-version="true"></script>
     }

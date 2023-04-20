@@ -1,11 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using newTolkuchka.Models.DTO;
+using System.ComponentModel.DataAnnotations;
 
 namespace newTolkuchka.Models
 {
     public enum Layout { Main, Left }
-    public class Slide
+    public class Slide : MRP
     {
-        public int Id { get; set; }
         [Required, MaxLength(30)]
         public string Name { get; set; }
         [Required, MaxLength(70)]

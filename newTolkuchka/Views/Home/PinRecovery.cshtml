@@ -3,7 +3,7 @@
     <div class="text-center">
         <h6>@Model.Text</h6>
         <a href="/">
-            <img class="img-fluid" width="300" height="60" src='~/logo.png' alt="logo" />
+            @Html.Raw(IImage.GetImageHtml("/logo.", 0, 588, 76, "300px", "auto", "logo"))
         </a>
     </div>
 </div>

@@ -13,6 +13,7 @@ namespace newTolkuchka.Models.DTO
         [Column(TypeName = "decimal(18,2)")]
         public decimal Amount { get; set; }
         public string Image { get; set; }
+        public int ImageVersion { get; set; }
         public int? DiscountQuantity { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal? QuantityPrice { get; set; }

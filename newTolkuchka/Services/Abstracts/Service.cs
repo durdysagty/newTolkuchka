@@ -12,7 +12,6 @@ using System.Collections.ObjectModel;
 
 namespace newTolkuchka.Services.Abstracts
 {
-    //public enum LanVersion { Ru, En, Tm }
     public abstract class Service<T, TAdmin> : BaseService, IAction<T, TAdmin> where T : class where TAdmin : class
     {
         private protected readonly AppDbContext _con;

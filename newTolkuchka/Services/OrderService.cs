@@ -82,7 +82,8 @@ namespace newTolkuchka.Services
                     // setDiscount supposed to be more valurable then other discounts
                     cartOrder.Price = setDiscount != null ? IProduct.GetConvertedPrice((decimal)(product.Price - product.Price * setDiscount.Volume / 100)) : quantityDiscount != null && cartOrder.Quantity >= quantityDiscount.Quantity ? IProduct.GetConvertedPrice((decimal)(product.Price - product.Price * quantityDiscount.Volume / 100)) : GetOrderPrice(product);
                     cartOrder.Amount = cartOrder.Price * cartOrder.Quantity;
-                    cartOrder.Image = PathService.GetImageRelativePath(ConstantsService.PRODUCT + "/small", product.Id);
+                    cartOrder.Image = PathService.GetImageRelativePath($"{ConstantsService.PRODUCT}/small", product.Id);
+                    cartOrder.ImageVersion = product.Version;
                     cartOrder.DiscountQuantity = quantityDiscount?.Quantity;
                     cartOrder.QuantityPrice = quantityDiscount == null ? null : IProduct.GetConvertedPrice((decimal)(product.Price - product.Price * quantityDiscount.Volume / 100));
                     cartOrder.RegularPrice = quantityDiscount == null ? null : GetOrderPrice(product);

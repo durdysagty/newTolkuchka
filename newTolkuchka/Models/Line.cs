@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using newTolkuchka.Models.DTO;
+using System.ComponentModel.DataAnnotations;
 
 namespace newTolkuchka.Models
 {
-    public class Line
+    public class Line : MRP
     {
-        public int Id { get; set; }
         [Required, MaxLength(100)]
         public string Name { get; set; }
 

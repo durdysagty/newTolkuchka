@@ -1,8 +1,7 @@
 ﻿namespace newTolkuchka.Models.DTO
 {
-    public class ModelWithList<T>
+    public class ModelWithList<T>: MRP
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public bool Is { get; set; }
 
