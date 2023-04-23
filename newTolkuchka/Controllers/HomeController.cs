@@ -137,14 +137,23 @@ namespace newTolkuchka.Controllers
                 }
                 return products;
             }
-            IEnumerable<int> newModelIds = _model.GetModels().OrderByDescending(m => m.Id).Where(m => !m.Category.NotInUse && m.Products.Any(p => p.IsNew && !p.NotInUse)).Take(count).Select(m => m.Id);
+            int? sw = GetScreenWidth();
+            Category mobileCategory = await _category.GetModelAsync(11);
+            IEnumerable<int> mobileIds = _model.GetModels(new Dictionary<string, object>() { { ConstantsService.CATEGORY, mobileCategory.Id } }).OrderByDescending(m => m.Id).Where(m => !m.Category.NotInUse && m.Products.Any(p => !p.NotInUse)).Take(count).Select(m => m.Id);
+            List<IEnumerable<UIProduct>> mobileUIProducts = new();
+            foreach (int m in mobileIds)
+            {
+                Product[] mobileProducts = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.MODEL, m } }).Where(p => !p.NotInUse).ToArrayAsync();
+                mobileUIProducts.Add(_product.GetUIProduct(mobileProducts).ToList());
+            }
+            IEnumerable<int> newModelIds = _model.GetModels().OrderByDescending(m => m.Id).Where(m => !m.Category.NotInUse && m.CategoryId != mobileCategory.Id && m.Products.Any(p => p.IsNew && !p.NotInUse)).Take(count).Select(m => m.Id);
+            IEnumerable<string> mobileProductsHtml = GetHtmlProducts(mobileUIProducts, sw);
             List<IEnumerable<UIProduct>> newUIProducts = new();
             foreach (int m in newModelIds)
             {
                 Product[] newProducts = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.MODEL, m } }).Where(p => p.IsNew && !p.NotInUse).ToArrayAsync();
                 newUIProducts.Add(_product.GetUIProduct(newProducts).ToList());
             }
-            int? sw = GetScreenWidth();
             IEnumerable<string> newProductsHtml = GetHtmlProducts(newUIProducts, sw);
             IEnumerable<int> recModelIds = _model.GetModels().OrderByDescending(m => m.Id).Where(m => !m.Category.NotInUse && m.Products.Any(p => p.IsRecommended && !p.NotInUse)).Take(count).Select(m => m.Id);
             List<IEnumerable<UIProduct>> recUIProducts = new();
@@ -155,7 +164,8 @@ namespace newTolkuchka.Controllers
             }
             IEnumerable<string> recProductsHtml = GetHtmlProducts(recUIProducts, sw);
             string template = "<div class=\"fs-5 px-3 mb-3 border-bottom border-primary\"><a href=\"/{0}\">{1}<span class=\"ms-2\">{2}</span></a></div><div class=\"row justify-content-center\">{3}</div>";
-            string html = string.Format(template, ConstantsService.NOVELTIES, F.ReadAllText($"{_path.GetSVGFolder()}/new.svg"), _localizer[ConstantsService.NOVELTIES].Value, GetItems(newProductsHtml));
+            string html = string.Format(template, PathService.GetModelUrl(ConstantsService.CATEGORY, mobileCategory.Id), F.ReadAllText($"{_path.GetSVGFolder()}/{ConstantsService.CATEGORY}/{mobileCategory.Id}.svg"), CultureProvider.GetLocalName(mobileCategory.NameRu, mobileCategory.NameEn, mobileCategory.NameTm), GetItems(mobileProductsHtml));
+            html += string.Format(template, ConstantsService.NOVELTIES, F.ReadAllText($"{_path.GetSVGFolder()}/new.svg"), _localizer[ConstantsService.NOVELTIES].Value, GetItems(newProductsHtml));
             html += string.Format(template, ConstantsService.RECOMMENDED, F.ReadAllText($"{_path.GetSVGFolder()}/rec.svg"), _localizer[ConstantsService.RECOMMENDED].Value, GetItems(recProductsHtml));
             IEnumerable<Category> indexCats = _category.GetIndexCategories();
             IEnumerable<Promotion> promotions = _promotion.GetModels().Where(p => !p.NotInUse);

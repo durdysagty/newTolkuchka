@@ -102,6 +102,11 @@ namespace newTolkuchka.Services.Abstracts
                             int? lineId = value.ToString() == "null" ? null : int.Parse(value.ToString());
                             models2 = models2.Where(x => x.LineId == lineId);
                         }
+                        if (paramsList.TryGetValue(ConstantsService.CATEGORY, out value))
+                        {
+                            int categoryId = int.Parse(value.ToString());
+                            models2 = models2.Where(x => x.CategoryId == categoryId);
+                        }
                         models = (IQueryable<T>)models2;
                         break;
                     case ConstantsService.PRODUCT:
