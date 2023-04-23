@@ -207,3 +207,19 @@ a > .bg-primary {
 .z-index1{
     z-index: 1
 }
+
+    .accordion-h4:not(.collapsed)::after {
+        background-image: var(--mdb-accordion-btn-active-icon);
+        transform: var(--mdb-accordion-btn-icon-transform);
+    }
+
+.accordion-h4::after {
+    flex-shrink: 0;
+    width: var(--mdb-accordion-btn-icon-width);
+    height: var(--mdb-accordion-btn-icon-width);
+    content: "";
+    background-image: var(--mdb-accordion-btn-active-icon);
+    background-repeat: no-repeat;
+    background-size: var(--mdb-accordion-btn-icon-width);
+    transition: var(--mdb-accordion-btn-icon-transition);
+}

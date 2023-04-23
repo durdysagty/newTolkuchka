@@ -191,10 +191,6 @@ app.UseStaticFiles(new StaticFileOptions()
 {
     OnPrepareResponse = ctx =>
     {
-        // comment when upload
-        //if (ctx.Context.Request.Host.Value.Contains("localhost"))
-        //    ctx.Context.Response.Headers.Add("cache-control", "no-cache");
-        //else
             ctx.Context.Response.Headers.Add("Cache-Control", "public,max-age=31536000,immutable");
     }
 });

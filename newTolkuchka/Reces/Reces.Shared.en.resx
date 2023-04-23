@@ -237,6 +237,9 @@
   <data name="filter" xml:space="preserve">
     <value>filter</value>
   </data>
+  <data name="first" xml:space="preserve">
+    <value>First page</value>
+  </data>
   <data name="forfree" xml:space="preserve">
     <value>FOR FREE</value>
   </data>
@@ -251,6 +254,9 @@
   </data>
   <data name="items" xml:space="preserve">
     <value>More than {0} products</value>
+  </data>
+  <data name="last" xml:space="preserve">
+    <value>Last page</value>
   </data>
   <data name="liked" xml:space="preserve">
     <value>Liked</value>
@@ -296,6 +302,9 @@
   </data>
   <data name="newed" xml:space="preserve">
     <value>new</value>
+  </data>
+  <data name="nex" xml:space="preserve">
+    <value>Next page</value>
   </data>
   <data name="next" xml:space="preserve">
     <value>next</value>
@@ -362,6 +371,9 @@
   </data>
   <data name="position" xml:space="preserve">
     <value>Position</value>
+  </data>
+  <data name="prev" xml:space="preserve">
+    <value>Previous page</value>
   </data>
   <data name="price" xml:space="preserve">
     <value>price</value>

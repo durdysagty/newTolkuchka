@@ -1,6 +1,35 @@
-﻿@{
+﻿@model string
+@{
     IEnumerable<Category> categories = ViewBag.Categories;
     int? width = ViewBag.WindowWidth;
+}
+@if (Model != null)
+{
+
+    @if (categories != null && categories.Any() && width < ConstantsService.MOBILEWIDTH)
+    {
+        <div class="accordion accordion-borderless" id="accordion">
+            <div class="accordion-item">
+                <h4 class="accordion-h4 d-flex collapsed" role="button" data-mdb-toggle="collapse" data-mdb-target="#collapse" aria-expanded="true" aria-controls="collapse" id="heading">
+                    @Model
+                </h4>
+                <div id="collapse" class="accordion-collapse collapse" aria-labelledby="heading" data-mdb-parent="#accordion">
+                    <div class="accordion-body p-0">
+                        @foreach (Category c in categories)
+                        {
+                            <a class="d-block" href="/@ConstantsService.CATEGORY/@c.Id">@CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm)</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <h4>
+            @Model
+        </h4>
+    }
 }
 @if (width == null || width < ConstantsService.MOBILEWIDTH)
 {
@@ -12,7 +41,7 @@
                 <a class="d-block" href="/@ConstantsService.CATEGORY/@c.Id">@CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm)</a>
             }
         }
-        <strong>@Localizer["price2"] @CurrencyService.Currency.CodeName</strong>
+        <strong><label for="ran">@Localizer["price2"] @CurrencyService.Currency.CodeName</label></strong>
         <div id="slide-range"></div>
         <div id="types">
         </div>
@@ -36,7 +65,7 @@
                     <a class="d-block" href="/@ConstantsService.CATEGORY/@c.Id">@CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm)</a>
                 }
             }
-            <strong>@Localizer["price2"] @CurrencyService.Currency.CodeName</strong>
+            <strong><label for="ran">@Localizer["price2"] @CurrencyService.Currency.CodeName</label></strong>
             <div id="range"></div>
             <div id="types">
             </div>
@@ -48,7 +77,7 @@
     }
     <div class="col-12 col-lg-10 col-xl-10 ps-md-3">
         <div class="d-flex mb-4">
-            <strong>@Localizer["sort"]</strong>
+            <strong><label for="sortby">@Localizer["sort"]</label></strong>
             <div class="d-flex" id="sortby"></div>
         </div>
         <div class="row me-2 me-md-0" id="products">

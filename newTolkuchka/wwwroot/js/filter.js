@@ -12,7 +12,7 @@ const searchObj = {
 }
 $(window).on("popstate", function () {
     const search = new URLSearchParams(window.location.search.substring(1))
-    const priceFilter = "<input type=\"text\" class=\"jsRange\" name=\"m\" />"
+    const priceFilter = "<input type=\"text\" class=\"jsRange\" name=\"m\" id=\"ran\" />"
     if (searchObj.min !== '') {
         $("#range").html(priceFilter)
         $(".jsRange").ionRangeSlider({
@@ -107,7 +107,7 @@ async function setProducts(productsOnly) {
             if (data.min !== data.max) {
                 searchObj.min = data.min
                 searchObj.max = data.max
-                const priceFilter = "<input type=\"text\" class=\"jsRange\" name=\"m\" />"
+                const priceFilter = "<input type=\"text\" class=\"jsRange\" name=\"m\" id=\"ran\" />"
                 if (window.innerWidth > mobile)
                     $("#range").html(priceFilter)
                 else
@@ -135,9 +135,7 @@ async function setProducts(productsOnly) {
             const types = data.types.types.map(t => {
                 let id = `types${t.id}`
                 const i = searchObj.t.includes(`${t.id}`)
-                return `<div class="form-check d-flex">
-            <input class="form-check-input" name="filt" ${i ? `checked` : null} onclick="setFilters()" type="checkbox" value="${t.id}" id="${id}" />
-            <label class="form-check-label align-self-end" for="${id}">${t.name}</label></div>`
+                return `<div class="form-check d-flex"><input class="form-check-input" name="filt" ${i ? `checked` : null} onclick="setFilters()" type="checkbox" value="${t.id}" id="${id}" /><label class="form-check-label align-self-end" for="${id}">${t.name}</label></div>`
             })
             types.forEach(t => $("#typesList").append(t))
             //if (window.innerWidth > mobile)
@@ -155,10 +153,7 @@ async function setProducts(productsOnly) {
             const brands = data.brands.brands.map(b => {
                 let id = `brands${b.id}`
                 const i = searchObj.b.includes(`${b.id}`)
-                return `<div class="form-check d-flex">
-<input class="form-check-input" name="filb" ${i ? `checked` : null} onclick="setFilters()" type="checkbox" value="${b.id}" id="${id}" />
-<label class="form-check-label align-self-end" for="${id}">${b.name}</label>
-</div>`
+                return `<div class="form-check d-flex"><input class="form-check-input" name="filb" ${i ? `checked` : null} onclick="setFilters()" type="checkbox" value="${b.id}" id="${id}" /><label class="form-check-label align-self-end" for="${id}">${b.name}</label></div>`
             })
             brands.forEach(b => $("#brandsList").append(b))
         }
@@ -187,7 +182,7 @@ async function setProducts(productsOnly) {
             //else
             //    filters.forEach(b => $("#slide-filters").append(b))
         }
-        else if ((path[1] === 'brand' || path[1] === 'search')  && data.filters === null) {
+        else if ((path[1] === 'brand' || path[1] === 'search') && data.filters === null) {
             $("#filters").html('')
         }
         const sortby = data.sort.map((s, i) => {
@@ -204,10 +199,7 @@ async function setProducts(productsOnly) {
             // pagination
             $("#pagination").text('')
             $("#pagination").append(`${data.pagination}`)
-            $("#pagination").append(`<i class="fas fa-angle-double-left ps-2" role="button" onclick="setPage(0)"></i>`)
-            $("#pagination").append(`<i class="fas fa-angle-left ps-1" role="button" onclick="setPage(null, 0)"></i>`)
-            $("#pagination").append(`<i class="fas fa-angle-right ps-1" role="button" onclick="setPage(null, ${data.lastPage})"></i>`)
-            $("#pagination").append(`<i class="fas fa-angle-double-right ps-1" role="button" onclick="setPage(${data.lastPage})"></i>`)
+            $("#pagination").append(`${data.buttons}`)
             checkOrders()
         }
         else

@@ -9,6 +9,7 @@ namespace newTolkuchka.Services.Interfaces
         EditProduct GetEditProduct(int id);
         Task<Product> GetFullProductAsync(int id);
         Task<Product> GetFullProductAsNoTrackingWithIdentityResolutionAsync(int id);
+        Task<ApiProduct> GetApiProductAsync(int id);
         IList<IEnumerable<UIProduct>> GetUIData(bool productsOnly, bool brandsOnly, bool typesNeeded, IList<Product> products, int[] t, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp, out IList<AdminType> types, out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage);
         Task<bool> CheckProductSpecValues(int modelId, IList<int> specsValues, IList<int> specsValueMods, int productId = 0);
         bool IsSequencesEqual(int[] psvCheck, IEnumerable<int[]> psvs);
@@ -18,6 +19,13 @@ namespace newTolkuchka.Services.Interfaces
         void RemoveProductSpecValuesModelSpecRemovedAsync(int modelId, int specId);
         Task AddProductSpecValueModsAsync(int id, IList<int> productSpecsValueMods);
         IEnumerable<UIProduct> GetUIProduct(IList<Product> sameModels);
+
+        static decimal GetOrderPrice(Product product)
+        {
+            Promotion discountPromotion = product.PromotionProducts.FirstOrDefault(pp => pp.Promotion.Type == Tp.Discount)?.Promotion;
+            decimal orderPrice = IProduct.GetConvertedPrice(discountPromotion != null ? (decimal)(product.Price - product.Price * discountPromotion.Volume / 100) : product.NewPrice != null ? (decimal)product.NewPrice : product.Price);
+            return orderPrice;
+        }
 
         static decimal GetConvertedPrice(decimal price)
         {

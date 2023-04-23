@@ -68,26 +68,26 @@ namespace newTolkuchka.Services
             return categories;
         }
 
-        public IList<int> GetAllCategoryIdsHaveProductsByParentId(int parentId)
+        public async Task<IList<int>> GetAllCategoryIdsHaveProductsByParentId(int parentId)
         {
             IList<int> ids = new List<int>();
-            void GetAll(int catId)
+            async Task GetAll(int catId)
             {
-                IQueryable<Category> categories = GetActiveCategoriesByParentId(catId).Include(c => c.Models).ThenInclude(m => m.Products);
+                IList<Category> categories = await GetActiveCategoriesByParentId(catId).Include(c => c.Models).ThenInclude(m => m.Products).ToListAsync();
                 if (categories.Any())
                     foreach (Category c in categories)
                     {
                         if (c.Models.Select(m => m.Products).Any())
                             ids.Add(c.Id);
                         else
-                            GetAll(c.Id);
+                            await GetAll(c.Id);
                     }
             }
             IQueryable<Product> products = GetProducts(parentId);
             if (products.Any())
                 ids.Add(parentId);
             else
-                GetAll(parentId);
+                await GetAll(parentId);
             return ids;
         }
 

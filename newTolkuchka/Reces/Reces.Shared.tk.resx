@@ -237,6 +237,9 @@
   <data name="filter" xml:space="preserve">
     <value>filter</value>
   </data>
+  <data name="first" xml:space="preserve">
+    <value>Birinji sahypa</value>
+  </data>
   <data name="forfree" xml:space="preserve">
     <value>MUGT</value>
   </data>
@@ -251,6 +254,9 @@
   </data>
   <data name="items" xml:space="preserve">
     <value>{0} haryt</value>
+  </data>
+  <data name="last" xml:space="preserve">
+    <value>Soňky sahypa</value>
   </data>
   <data name="liked" xml:space="preserve">
     <value>Halanlaryňyz</value>
@@ -296,6 +302,9 @@
   </data>
   <data name="newed" xml:space="preserve">
     <value>täze</value>
+  </data>
+  <data name="nex" xml:space="preserve">
+    <value>Indiki sahypa</value>
   </data>
   <data name="next" xml:space="preserve">
     <value>giriz</value>
@@ -365,6 +374,9 @@
   </data>
   <data name="position" xml:space="preserve">
     <value>Iş ýer</value>
+  </data>
+  <data name="prev" xml:space="preserve">
+    <value>Öňündäki sahypa</value>
   </data>
   <data name="price" xml:space="preserve">
     <value>nyrh</value>

@@ -80,13 +80,13 @@ namespace newTolkuchka.Services
                     // we can not include check quantityDiscountPromotion to GetOrderPrice becouse we need quantityDiscountPromotion's properties
                     // also we need price without quantityDiscountPromotion
                     // setDiscount supposed to be more valurable then other discounts
-                    cartOrder.Price = setDiscount != null ? IProduct.GetConvertedPrice((decimal)(product.Price - product.Price * setDiscount.Volume / 100)) : quantityDiscount != null && cartOrder.Quantity >= quantityDiscount.Quantity ? IProduct.GetConvertedPrice((decimal)(product.Price - product.Price * quantityDiscount.Volume / 100)) : GetOrderPrice(product);
+                    cartOrder.Price = setDiscount != null ? IProduct.GetConvertedPrice((decimal)(product.Price - product.Price * setDiscount.Volume / 100)) : quantityDiscount != null && cartOrder.Quantity >= quantityDiscount.Quantity ? IProduct.GetConvertedPrice((decimal)(product.Price - product.Price * quantityDiscount.Volume / 100)) : IProduct.GetOrderPrice(product);
                     cartOrder.Amount = cartOrder.Price * cartOrder.Quantity;
                     cartOrder.Image = PathService.GetImageRelativePath($"{ConstantsService.PRODUCT}/small", product.Id);
                     cartOrder.ImageVersion = product.Version;
                     cartOrder.DiscountQuantity = quantityDiscount?.Quantity;
                     cartOrder.QuantityPrice = quantityDiscount == null ? null : IProduct.GetConvertedPrice((decimal)(product.Price - product.Price * quantityDiscount.Volume / 100));
-                    cartOrder.RegularPrice = quantityDiscount == null ? null : GetOrderPrice(product);
+                    cartOrder.RegularPrice = quantityDiscount == null ? null : IProduct.GetOrderPrice(product);
                     cartOrder.FreeQuantity = quantityFree?.Quantity;
                     cartOrder.FreeProductQuantity = productFree?.Quantity;
                     cartOrder.FreeProductName = productFree == null ? null : IProduct.GetProductNameCounted(_product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, new int[1] { (int)productFree.SubjectId } } }).FirstOrDefault());
@@ -199,7 +199,7 @@ namespace newTolkuchka.Services
                         {
                             ProductId = product.Id,
                             InvoiceId = invoiceId,
-                            OrderPrice = setDiscount != null ? IProduct.GetConvertedPrice((decimal)(product.Price - product.Price * setDiscount.Volume / 100)) : quantityDiscount != null && cartOrder.Quantity >= quantityDiscount.Quantity ? IProduct.GetConvertedPrice((decimal)(product.Price - product.Price * quantityDiscount.Volume / 100)) : GetOrderPrice(product)
+                            OrderPrice = setDiscount != null ? IProduct.GetConvertedPrice((decimal)(product.Price - product.Price * setDiscount.Volume / 100)) : quantityDiscount != null && cartOrder.Quantity >= quantityDiscount.Quantity ? IProduct.GetConvertedPrice((decimal)(product.Price - product.Price * quantityDiscount.Volume / 100)) : IProduct.GetOrderPrice(product)
                         };
                         orders.Add(order);
                         //await AddModelAsync(order);
@@ -361,13 +361,6 @@ namespace newTolkuchka.Services
                         }
                     }
                 }
-        }
-
-        private static decimal GetOrderPrice(Product product)
-        {
-            Promotion discountPromotion = product.PromotionProducts.FirstOrDefault(pp => pp.Promotion.Type == Tp.Discount)?.Promotion;
-            decimal orderPrice = IProduct.GetConvertedPrice(discountPromotion != null ? (decimal)(product.Price - product.Price * discountPromotion.Volume / 100) : product.NewPrice != null ? (decimal)product.NewPrice : product.Price);
-            return orderPrice;
         }
     }
 }

@@ -63,26 +63,26 @@
                     @switch (CultureProvider.Lang)
                     {
                         case ConstantsService.EN:
-                            <a href="@tk">
+                            <a href="@tk" aria-label="türkmençe">
                                 @Html.Raw(File.ReadAllText($"{_pathService.GetSVGFolder()}/turkmen.svg"))
                             </a>
-                            <a href="@ru">
+                            <a href="@ru" aria-label="русский">
                                 @Html.Raw(File.ReadAllText($"{_pathService.GetSVGFolder()}/russian.svg"))
                             </a>
                             break;
                         case ConstantsService.TK:
-                            <a href="@en">
+                            <a href="@en" aria-label="english">
                                 @Html.Raw(File.ReadAllText($"{_pathService.GetSVGFolder()}/english.svg"))
                             </a>
-                            <a href="@ru">
+                            <a href="@ru" aria-label="русский">
                                 @Html.Raw(File.ReadAllText($"{_pathService.GetSVGFolder()}/russian.svg"))
                             </a>
                             break;
                         default:
-                            <a href="@tk">
+                            <a href="@tk" aria-label="türkmençe">
                                 @Html.Raw(File.ReadAllText($"{_pathService.GetSVGFolder()}/turkmen.svg"))
                             </a>
-                            <a href="@en">
+                            <a href="@en" aria-label="english">
                                 @Html.Raw(File.ReadAllText($"{_pathService.GetSVGFolder()}/english.svg"))
                             </a>
                             break;

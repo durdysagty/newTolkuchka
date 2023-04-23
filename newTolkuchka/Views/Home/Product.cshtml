@@ -460,7 +460,15 @@
                                         SpecsValue sv = p.ProductSpecsValues.FirstOrDefault(x => x.SpecsValue.SpecId == ms.SpecId)?.SpecsValue; // if null
                                         @if (sv != null)
                                         {
-                                            <td>@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)</td>
+                                            SpecsValueMod svm = p.ProductSpecsValueMods.FirstOrDefault(x => x.SpecsValueMod.SpecsValueId == sv.Id)?.SpecsValueMod;
+                                            if (svm != null)
+                                            {
+                                                <td>@CultureProvider.GetLocalName(svm.NameRu, svm.NameEn, svm.NameTm)</td>
+                                            }
+                                            else
+                                            {
+                                                <td>@CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm)</td>
+                                            }
                                         }
                                         else
                                         {

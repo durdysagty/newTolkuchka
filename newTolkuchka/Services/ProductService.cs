@@ -50,6 +50,42 @@ namespace newTolkuchka.Services
         {
             return await GetFullModels().Include(p => p.Model).ThenInclude(m => m.Warranty).AsNoTrackingWithIdentityResolution().FirstOrDefaultAsync(p => p.Id == id);
         }
+
+        public async Task<ApiProduct> GetApiProductAsync(int id)
+        {
+            Product product = await GetFullModels(new Dictionary<string, object> { { ConstantsService.PRODUCT, new int[1] { id } } }).FirstOrDefaultAsync(p => p.Id == id);
+            if (product == null)
+                return null;
+            ApiProduct apiProduct = new()
+            {
+                Id = id,
+                Name = IProduct.GetProductNameCounted(product),
+                Price = IProduct.GetOrderPrice(product),
+                Desc = product.Model.DescRu + product.DescRu
+            };
+            string specs = $"<table><tbody>";
+            foreach (ModelSpec ms in product.Model.ModelSpecs.OrderBy(s => s.Spec.Order))
+            {
+                specs += $"<tr><td>{ms.Spec.NameRu}</td>";
+                SpecsValue sv = product.ProductSpecsValues.FirstOrDefault(x => x.SpecsValue.SpecId == ms.SpecId)?.SpecsValue;
+                if (sv != null)
+                {
+                    SpecsValueMod svm = product.ProductSpecsValueMods.FirstOrDefault(x => x.SpecsValueMod.SpecsValueId == sv.Id)?.SpecsValueMod;
+                    if (svm != null)
+                        specs += $"<td>{svm.NameRu}</td>";
+                    else
+                        specs += $"<td>{sv.NameRu}</td>";
+                }
+                else
+                {
+                    specs += $"<td> - </td>";
+                }
+                specs += "</tr>";
+            }
+            specs += "<tbody></table>";
+            apiProduct.Specs = specs;
+            return apiProduct;
+        }
         public IList<IEnumerable<UIProduct>> GetUIData(bool productsOnly, bool brandsOnly, bool typesNeeded, IList<Product> products, int[] t, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp, out IList<AdminType> types, out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage)
         {
             IList<Product> preProducts = new List<Product>();

@@ -240,6 +240,9 @@
   <data name="filter" xml:space="preserve">
     <value>фильтр</value>
   </data>
+  <data name="first" xml:space="preserve">
+    <value>Первая страница</value>
+  </data>
   <data name="forfree" xml:space="preserve">
     <value>БЕСПЛАТНО</value>
   </data>
@@ -254,6 +257,9 @@
   </data>
   <data name="items" xml:space="preserve">
     <value>Более {0} товаров</value>
+  </data>
+  <data name="last" xml:space="preserve">
+    <value>Последняя страница</value>
   </data>
   <data name="liked" xml:space="preserve">
     <value>Ваш выбор</value>
@@ -299,6 +305,9 @@
   </data>
   <data name="newed" xml:space="preserve">
     <value>новинка</value>
+  </data>
+  <data name="nex" xml:space="preserve">
+    <value>Следующая страница</value>
   </data>
   <data name="next" xml:space="preserve">
     <value>дальше</value>
@@ -365,6 +374,9 @@
   </data>
   <data name="position" xml:space="preserve">
     <value>Позиция</value>
+  </data>
+  <data name="prev" xml:space="preserve">
+    <value>Предыдущая страница</value>
   </data>
   <data name="price" xml:space="preserve">
     <value>цене</value>
