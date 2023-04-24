@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
+using newTolkuchka.Services;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 
@@ -13,9 +15,11 @@ namespace newTolkuchka.ControllersAPI
         private const int WIDTH = 180;
         private const int HEIGHT = 60;
         private readonly IBrand _brand;
-        public BrandController(IEntry entry, IBrand brand) : base(entry, Entity.Brand, brand)
+        private readonly ICacheClean _cacheClean;
+        public BrandController(IEntry entry, IBrand brand, ICacheClean cacheClean) : base(entry, Entity.Brand, brand)
         {
             _brand = brand;
+            _cacheClean = cacheClean;
         }
 
         [HttpGet("{id}")]
@@ -31,23 +35,25 @@ namespace newTolkuchka.ControllersAPI
         //    return brands;
         //}
         [HttpPost]
-        public async Task<Result> Post([FromForm]Brand brand, [FromForm] IFormFile[] images)
+        public async Task<Result> Post([FromForm] Brand brand, [FromForm] IFormFile[] images)
         {
             bool isExist = _brand.IsExist(brand, _brand.GetModels());
             if (isExist)
                 return Result.Already;
             await _brand.AddModelAsync(brand, images, WIDTH, HEIGHT);
             await AddActAsync(brand.Id, brand.Name);
+            _cacheClean.CleanBrands();
             return Result.Success;
         }
         [HttpPut]
         public async Task<Result> Put([FromForm] Brand brand, [FromForm] IFormFile[] images)
         {
-           bool isExist = _brand.IsExist(brand, _brand.GetModels().Where(x=>x.Id != brand.Id));
+            bool isExist = _brand.IsExist(brand, _brand.GetModels().Where(x => x.Id != brand.Id));
             if (isExist)
                 return Result.Already;
             await _brand.EditModelAsync(brand, images, WIDTH, HEIGHT);
             await EditActAsync(brand.Id, brand.Name);
+            _cacheClean.CleanBrands();
             return Result.Success;
         }
         [HttpDelete("{id}")]
@@ -59,6 +65,7 @@ namespace newTolkuchka.ControllersAPI
             Result result = await _brand.DeleteModelAsync(brand.Id, brand);
             if (result == Result.Success)
                 await DeleteActAsync(id, brand.Name);
+            _cacheClean.CleanBrands();
             return result;
         }
     }

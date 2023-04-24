@@ -10,7 +10,7 @@ namespace newTolkuchka.Services.Interfaces
         Task<IEnumerable<CategoryTree>> GetCategoryTree(int depth = 3);
         IQueryable<Category> GetCategoriesByParentId(int parentId);
         IQueryable<Category> GetActiveCategoriesByParentId(int parentId);
-        Task<IList<int>> GetAllCategoryIdsHaveProductsByParentId(int parentId);
+        Task<IList<int>> GetAllCategoryIdsHaveProductsByParentIdCachedAsync(int parentId);
         IEnumerable<Category> GetIndexCategories();
         Task<string[]> GetAdLinksAsync(int id);
         Task AddCategoryAdLinksAsync(int id, IList<int> adLinks);

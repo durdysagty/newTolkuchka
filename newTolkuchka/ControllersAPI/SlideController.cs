@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
+using newTolkuchka.Services;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 
@@ -15,9 +17,11 @@ namespace newTolkuchka.ControllersAPI
         private const int LEFTWIDTH = 220;
         private const int LEFTHEIGHT = 300;
         private readonly ISlide _slide;
-        public SlideController(IEntry entry, ISlide slide) : base(entry, Entity.Slide, slide)
+        private readonly ICacheClean _cacheClean;
+        public SlideController(IEntry entry, ISlide slide, ICacheClean cacheClean) : base(entry, Entity.Slide, slide)
         {
             _slide = slide;
+            _cacheClean = cacheClean;
         }
 
         [HttpGet("{id}")]
@@ -37,6 +41,7 @@ namespace newTolkuchka.ControllersAPI
             if (slide.Layout == Layout.Left)
                 await _slide.AddModelAsync(slide, images, LEFTWIDTH, LEFTHEIGHT);
             await AddActAsync(slide.Id, slide.Name);
+            _cacheClean.CleanSlides();
             return Result.Success;
         }
         [HttpPut]
@@ -50,6 +55,7 @@ namespace newTolkuchka.ControllersAPI
             if (slide.Layout == Layout.Left)
                 await _slide.EditModelAsync(slide, images, LEFTWIDTH, LEFTHEIGHT);
             await EditActAsync(slide.Id, slide.Name);
+            _cacheClean.CleanSlides();
             return Result.Success;
         }
 
@@ -62,17 +68,8 @@ namespace newTolkuchka.ControllersAPI
             Result result = await _slide.DeleteModelAsync(slide.Id, slide);
             if (result == Result.Success)
                 await DeleteActAsync(id, slide.Name);
+            _cacheClean.CleanSlides();
             return result;
         }
-        //[HttpGet($"{ConstantsService.NOTINUSE}/{{id}}")]
-        //public async Task<Result> ChangeNotInUse(int id)
-        //{
-        //    Slide slide = await _slide.GetModelAsync(id);
-        //    if (slide == null)
-        //        return Result.Fail;
-        //    slide.NotInUse = !slide.NotInUse;
-        //    await EditActAsync(slide.Id, slide.Name);
-        //    return Result.Success;
-        //}
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
@@ -12,9 +13,11 @@ namespace newTolkuchka.Services
     {
         // private const int PADDING = 2;
         private readonly IProduct _product;
-        public CategoryService(AppDbContext con, IStringLocalizer<Shared> localizer, IProduct product, IPath path, IImage image) : base(con, localizer, path, image, ConstantsService.UMAXIMAGE)
+        private readonly IMemoryCache _memoryCache;
+        public CategoryService(AppDbContext con, IProduct product, IMemoryCache memoryCache, IStringLocalizer<Shared> localizer, IPath path, IImage image) : base(con, localizer, path, image, ConstantsService.UMAXIMAGE)
         {
             _product = product;
+            _memoryCache = memoryCache;
         }
 
         public async Task<bool> HasProduct(int id)
@@ -64,30 +67,36 @@ namespace newTolkuchka.Services
 
         public IQueryable<Category> GetActiveCategoriesByParentId(int parentId)
         {
+            // no need to cache a query
             IQueryable<Category> categories = GetCategoriesByParentId(parentId).Where(c => !c.NotInUse);
             return categories;
         }
 
-        public async Task<IList<int>> GetAllCategoryIdsHaveProductsByParentId(int parentId)
+        public async Task<IList<int>> GetAllCategoryIdsHaveProductsByParentIdCachedAsync(int parentId)
         {
-            IList<int> ids = new List<int>();
-            async Task GetAll(int catId)
+            IList<int> ids = await _memoryCache.GetOrCreateAsync($"{ConstantsService.CATEGORYIDSGOTPRODUCTSBYPARENTID}{parentId}", async ce =>
             {
-                IList<Category> categories = await GetActiveCategoriesByParentId(catId).Include(c => c.Models).ThenInclude(m => m.Products).ToListAsync();
-                if (categories.Any())
-                    foreach (Category c in categories)
-                    {
-                        if (c.Models.Select(m => m.Products).Any())
-                            ids.Add(c.Id);
-                        else
-                            await GetAll(c.Id);
-                    }
-            }
-            IQueryable<Product> products = GetProducts(parentId);
-            if (products.Any())
-                ids.Add(parentId);
-            else
-                await GetAll(parentId);
+                ce.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(6);
+                IList<int> ids = new List<int>();
+                async Task GetAll(int catId)
+                {
+                    IList<Category> categories = await GetActiveCategoriesByParentId(catId).Include(c => c.Models).ThenInclude(m => m.Products).ToListAsync();
+                    if (categories.Any())
+                        foreach (Category c in categories)
+                        {
+                            if (c.Models.Select(m => m.Products).Any())
+                                ids.Add(c.Id);
+                            else
+                                await GetAll(c.Id);
+                        }
+                }
+                IQueryable<Product> products = GetProducts(parentId);
+                if (products.Any())
+                    ids.Add(parentId);
+                else
+                    await GetAll(parentId);
+                return ids;
+            });
             return ids;
         }
 

@@ -18,10 +18,13 @@ namespace newTolkuchka.ControllersAPI
         private const int HEIGHT = 250;
         private readonly IArticle _article;
         private readonly IActionNoFile<Heading, Heading> _heading;
-        public ArticleController(IEntry entry, IArticle article, IActionNoFile<Heading, Heading> heading) : base(entry, Entity.Article, article)
+        private readonly ICacheClean _cacheClean;
+
+        public ArticleController(IEntry entry, IArticle article, IActionNoFile<Heading, Heading> heading, ICacheClean cacheClean) : base(entry, Entity.Article, article)
         {
             _article = article;
             _heading = heading;
+            _cacheClean = cacheClean;
         }
 
         [HttpGet("{id}")]
@@ -68,6 +71,7 @@ namespace newTolkuchka.ControllersAPI
             await _article.AddModelAsync(article, images, WIDTH, HEIGHT);
             await ResolveHeadings(newHeadings, culture, article.Id, selectedHeadingIds);
             await AddActAsync(article.Id, article.Name, culture);
+            _cacheClean.CleanIndexArticles();
             return Result.Success;
         }
         [HttpPut]
@@ -86,6 +90,7 @@ namespace newTolkuchka.ControllersAPI
             await _article.EditModelAsync(article, images, WIDTH, HEIGHT);
             await ResolveHeadings(newHeadings, culture, article.Id, selectedHeadingIds);
             await EditActAsync(article.Id, article.Name);
+            _cacheClean.CleanIndexArticles();
             return Result.Success;
         }
         [HttpDelete("{id}")]
@@ -97,6 +102,7 @@ namespace newTolkuchka.ControllersAPI
             Result result = await _article.DeleteModelAsync(article.Id, article);
             if (result == Result.Success)
                 await DeleteActAsync(id, article.Name);
+            _cacheClean.CleanIndexArticles();
             return result;
         }
 

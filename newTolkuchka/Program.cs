@@ -64,6 +64,7 @@ builder.Services.AddScoped<IArticle, ArticleService>();
 builder.Services.AddScoped<IBrand, BrandService>();
 builder.Services.AddScoped<IBreadcrumbs, BreadcrumbsService>();
 builder.Services.AddScoped<ICategory, CategoryService>();
+builder.Services.AddScoped<ICacheClean, CacheCleanService>();
 builder.Services.AddScoped<IContent, ContentService>();
 builder.Services.AddScoped<ICrypto, CryptoService>();
 builder.Services.AddScoped<IActionNoFile<Currency, AdminCurrency>, CurrencyService>();

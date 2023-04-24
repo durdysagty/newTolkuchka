@@ -7,6 +7,21 @@ namespace newTolkuchka.Services
         public static string UserPinKey(int id) => $"{USER}{id}";
         public static string UserHashKey(int id) => $"{USER}{id}{HASH}";
         public static string EmpHashKey(int id) => $"{EMPLOYEE}{id}{HASH}";
+        // cache keys
+        public const string MODELEDPRODUCTSHASHKEYS = "hskeys";
+        public const string CATEGORIESGROUPBYPARENTID = "csgp";
+        public const string CATEGORYIDSGOTPRODUCTSBYPARENTID = "cidsgp";
+        public const string CATEGORIESCHILDRENBYPARENTID = "cschldn";
+        public const string HOMEBRANDS = "hbs";
+        public const string PRODUCTSCOUNT = "prcnt";
+        public const string HOMEARTICLES = "has";
+        public const string MAINSLIDES = "mslds";
+        public const string INDEXITEMS = "ixitms";
+        public const string PCW = "pclw";
+        public const string MOBILEW = "mblw";
+        public const string PHONEW = "phnw";
+        public const string INDEXCATS = "ixcts";
+        public readonly static string[] INDEXCATFONTSIZES = new string[] { "0.55", "0.7", "0.8", "1", "1.2" };
         // lang standarts
         public const string CULTURE = "culture";
         public const string RU = "ru";

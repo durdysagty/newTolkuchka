@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services;
@@ -15,10 +16,12 @@ namespace newTolkuchka.ControllersAPI
         private const int HEIGHT = 225;
         private readonly ICategory _category;
         private readonly IProduct _product;
-        public CategoryController(IEntry entry, ICategory category, IProduct product) : base(entry, Entity.Category, category)
+        private readonly ICacheClean _cacheClean;
+        public CategoryController(IEntry entry, ICategory category, IProduct product, ICacheClean cacheClean) : base(entry, Entity.Category, category)
         {
             _category = category;
             _product = product;
+            _cacheClean = cacheClean;
         }
 
         [HttpGet("{id}")]
@@ -71,6 +74,8 @@ namespace newTolkuchka.ControllersAPI
             await _category.AddModelAsync(category, images, WIDTH, HEIGHT);
             await _category.AddCategoryAdLinksAsync(category.Id, adLinks);
             await AddActAsync(category.Id, category.NameRu);
+            _cacheClean.CleanCategories(category.ParentId);
+            _cacheClean.CleanIndexCategoriesPromotions();
             return Result.Success;
         }
         [HttpPut]
@@ -133,6 +138,9 @@ namespace newTolkuchka.ControllersAPI
             await _entry.CorrectSiteMap(ConstantsService.CATEGORY, categoriesToSiteMap);
             if (productsToSiteMap.Any())
                 await _entry.CorrectSiteMap(ConstantsService.PRODUCT, productsToSiteMap);
+            _cacheClean.CleanCategory(category.Id);
+            _cacheClean.CleanCategories(category.ParentId);
+            _cacheClean.CleanIndexCategoriesPromotions();
             return Result.Success;
         }
         [HttpDelete("{id}")]
@@ -144,6 +152,9 @@ namespace newTolkuchka.ControllersAPI
             Result result = await _category.DeleteModelAsync(category.Id, category);
             if (result == Result.Success)
                 await DeleteActAsync(id, category.NameRu);
+            _cacheClean.CleanCategory(category.Id);
+            _cacheClean.CleanCategories(category.ParentId);
+            _cacheClean.CleanIndexCategoriesPromotions();
             return result;
         }
     }

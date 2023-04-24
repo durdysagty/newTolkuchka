@@ -15,7 +15,7 @@
                 @foreach (CategoryTree c1 in c.List)
                 {
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
-                        <a href="@PathService.GetModelUrl(ConstantsService.CATEGORY, c1.Id)" class="d-inline-flex text-black">
+                        <a href="@PathService.GetModelUrl(ConstantsService.CATEGORY, c1.Id)" class="d-inline-flex text-black mb-1 mb-md-0">
                             <strong>@c1.Name</strong>
                         </a>
                         <div class="ps-2">
@@ -23,7 +23,7 @@
                             {
                                 foreach (CategoryTree c2 in c1.List)
                                 {
-                                    <a href="@PathService.GetModelUrl(ConstantsService.CATEGORY, c2.Id)" class="d-flex">
+                                    <a href="@PathService.GetModelUrl(ConstantsService.CATEGORY, c2.Id)" class="d-flex mb-1 mb-md-0">
                                         <p>@c2.Name</p>
                                     </a>
                                 }

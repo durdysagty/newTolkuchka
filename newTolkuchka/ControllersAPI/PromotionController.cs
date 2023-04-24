@@ -13,9 +13,11 @@ namespace newTolkuchka.ControllersAPI
         private const int WIDTH = 450;
         private const int HEIGHT = 225;
         private readonly IPromotion _promotion;
-        public PromotionController(IEntry entry, IPromotion promotion) : base(entry, Entity.Promotion, promotion)
+        private readonly ICacheClean _cacheClean;
+        public PromotionController(IEntry entry, IPromotion promotion, ICacheClean cacheClean) : base(entry, Entity.Promotion, promotion)
         {
             _promotion = promotion;
+            _cacheClean = cacheClean;
         }
 
         [HttpGet("{id}")]
@@ -47,6 +49,7 @@ namespace newTolkuchka.ControllersAPI
             if (products.Any())
                 await _promotion.AddPromotionProductsAsync(promotion.Id, products);
             await AddActAsync(promotion.Id, promotion.NameRu);
+            _cacheClean.CleanIndexCategoriesPromotions();
             return Result.Success;
         }
         [HttpPut]
@@ -77,6 +80,7 @@ namespace newTolkuchka.ControllersAPI
             await _promotion.EditModelAsync(promotion, images, WIDTH, HEIGHT);
             await _promotion.AddPromotionProductsAsync(promotion.Id, products);
             await EditActAsync(promotion.Id, promotion.NameRu, !promotion.NotInUse);
+            _cacheClean.CleanIndexCategoriesPromotions();
             return Result.Success;
         }
         [HttpDelete("{id}")]
@@ -88,6 +92,7 @@ namespace newTolkuchka.ControllersAPI
             Result result = await _promotion.DeleteModelAsync(promotion.Id, promotion);
             if (result == Result.Success)
                 await DeleteActAsync(id, promotion.NameRu);
+            _cacheClean.CleanIndexCategoriesPromotions();
             return result;
         }
     }

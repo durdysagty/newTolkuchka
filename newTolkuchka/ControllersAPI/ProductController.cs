@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services;
@@ -16,9 +17,11 @@ namespace newTolkuchka.ControllersAPI
         private const int HEIGHT = 600;
         private const int DIVIDER = 3;
         private readonly IProduct _product;
-        public ProductController(IEntry entry, IProduct product) : base(entry, Entity.Product, product)
+        private readonly ICacheClean _cacheClean;
+        public ProductController(IEntry entry, IProduct product, ICacheClean cacheClean) : base(entry, Entity.Product, product)
         {
             _product = product;
+            _cacheClean = cacheClean;
         }
 
         [HttpGet("{id}")]
@@ -52,6 +55,8 @@ namespace newTolkuchka.ControllersAPI
             await _product.SaveChangesAsync();
             product = await _product.GetFullProductAsNoTrackingWithIdentityResolutionAsync(product.Id);
             await AddActAsync(product.Id, IProduct.GetProductNameCounted(product));
+            _cacheClean.CleanIndexItems();
+            _cacheClean.CleanAllModeledProducts();
             return Result.Success;
         }
         [HttpPut]
@@ -66,6 +71,8 @@ namespace newTolkuchka.ControllersAPI
             await _product.SaveChangesAsync();
             product = await _product.GetFullProductAsNoTrackingWithIdentityResolutionAsync(product.Id);
             await EditActAsync(product.Id, IProduct.GetProductNameCounted(product), !product.NotInUse);
+            _cacheClean.CleanIndexItems();
+            _cacheClean.CleanAllModeledProducts();
             return Result.Success;
         }
         [HttpDelete("{id}")]
@@ -94,6 +101,8 @@ namespace newTolkuchka.ControllersAPI
                     product.NewPrice = price == 0 ? null : price;
                 await EditActAsync(product.Id, IProduct.GetProductNameCounted(product));
             }
+            _cacheClean.CleanIndexItems();
+            _cacheClean.CleanAllModeledProducts();
             return Result.Success;
         }
     }
