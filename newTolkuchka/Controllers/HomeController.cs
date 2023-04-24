@@ -246,10 +246,10 @@ namespace newTolkuchka.Controllers
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 43200)]
         public async Task<IActionResult> Brands()
         {
-            IQueryable<Brand> brands = _memoryCache.GetOrCreate(ConstantsService.BRANDS, ce =>
+            IList<Brand> brands = await _memoryCache.GetOrCreateAsync(ConstantsService.BRANDS, async ce =>
             {
                 ce.SlidingExpiration = TimeSpan.FromDays(3);
-                return _brand.GetModels().Where(b => b.Models.Any());
+                return await _brand.GetModels().Where(b => b.Models.Any()).ToListAsync();
             }); 
             await CreateMetaData(ConstantsService.BRANDS, _breadcrumbs.GetBreadcrumbs());
             return View(brands);
