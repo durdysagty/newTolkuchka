@@ -11,51 +11,50 @@ namespace newTolkuchka.ControllersAPI
     [Authorize(Policy = "Level1")]
     public class TypeController : AbstractController<Type, AdminType, IType>
     {
-        private readonly IType _type;
-        public TypeController(IEntry entry, IType type) : base(entry, Entity.Type, type)
+        public TypeController(IEntry entry, IType type, ICacheClean cacheClean) : base(entry, Entity.Type, type, cacheClean)
         {
-            _type = type;
         }
 
         [HttpGet("{id}")]
         public async Task<Type> Get(int id)
         {
-            Type Type = await _type.GetModelAsync(id);
+            Type Type = await _service.GetModelAsync(id);
             return Type;
         }
         //[HttpGet]
         //public IEnumerable<AdminType> Get()
         //{
-        //    IEnumerable<AdminType> types = _type.GetAdminTypes();
+        //    IEnumerable<AdminType> types = _service.GetAdminTypes();
         //    return types;
         //}
         [HttpPost]
         public async Task<Result> Post(Type type)
         {
-            bool isExist = _type.IsExist(type, _type.GetModels());
+            bool isExist = _service.IsExist(type, _service.GetModels());
             if (isExist)
                 return Result.Already;
-            await _type.AddModelAsync(type);
+            await _service.AddModelAsync(type);
             await AddActAsync(type.Id, type.NameRu);
             return Result.Success;
         }
         [HttpPut]
         public async Task<Result> Put(Type type)
         {
-            bool isExist = _type.IsExist(type, _type.GetModels().Where(x => x.Id != type.Id));
+            bool isExist = _service.IsExist(type, _service.GetModels().Where(x => x.Id != type.Id));
             if (isExist)
                 return Result.Already;
-            _type.EditModel(type);
+            _service.EditModel(type);
             await EditActAsync(type.Id, type.NameRu);
+            _cacheClean.CleanProductPage();
             return Result.Success;
         }
         [HttpDelete("{id}")]
         public async Task<Result> Delete(int id)
         {
-            Type Type = await _type.GetModelAsync(id);
+            Type Type = await _service.GetModelAsync(id);
             if (Type == null)
                 return Result.Fail;
-            Result result = await _type.DeleteModelAsync(Type.Id, Type);
+            Result result = await _service.DeleteModelAsync(Type.Id, Type);
             if (result == Result.Success)
                 await DeleteActAsync(id, Type.NameRu);
             return result;

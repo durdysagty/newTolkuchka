@@ -8,16 +8,20 @@ namespace newTolkuchka.Services
         public static string UserHashKey(int id) => $"{USER}{id}{HASH}";
         public static string EmpHashKey(int id) => $"{EMPLOYEE}{id}{HASH}";
         // cache keys
-        public const string MODELEDPRODUCTSHASHKEYS = "hskeys";
+        public const string MODELEDPRODUCTSHASHKEYS = "hsptskeys";
+        public const string PRODUCTSHASHKEYS = "ptkeys";
+        public const string ADMINREPORTSHASHKEYS = "rprtskys";
         public const string CATEGORIESGROUPBYPARENTID = "csgp";
         public const string CATEGORYIDSGOTPRODUCTSBYPARENTID = "cidsgp";
         public const string CATEGORIESCHILDRENBYPARENTID = "cschldn";
         public const string HOMEBRANDS = "hbs";
+        public const string PRODUCTKEY = "prt";
         public const string PRODUCTSCOUNT = "prcnt";
         public const string HOMEARTICLES = "has";
         public const string MAINSLIDES = "mslds";
         public const string INDEXITEMS = "ixitms";
-        public const string PCW = "pclw";
+        public const string XLCW = "xlw";
+        public const string PCW = "pcw";
         public const string MOBILEW = "mblw";
         public const string PHONEW = "phnw";
         public const string INDEXCATS = "ixcts";
@@ -126,6 +130,8 @@ namespace newTolkuchka.Services
         public const string N404 = "404";
         public const string USER = "user";
         public const string HASH = "hash";
+        // DTO models 
+        public const string ADMINREPORTORDER = "AdminReportOrder";
         // images
         public const string WEBP = "webp";
         public const string JPG = "jpg";

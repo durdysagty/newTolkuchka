@@ -9,7 +9,7 @@ namespace newTolkuchka.ControllersAPI
     [Authorize(Policy = "Level1")]
     public class EntryController : AbstractController<Entry, AdminEntry, IEntry>
     {
-        public EntryController(IEntry entry) : base(entry, Entity.Default, entry)
+        public EntryController(IEntry entry, ICacheClean cacheClean) : base(entry, Entity.Default, entry, cacheClean)
         {
         }
     }

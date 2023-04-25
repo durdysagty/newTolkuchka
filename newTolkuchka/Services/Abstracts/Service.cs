@@ -402,14 +402,14 @@ namespace newTolkuchka.Services.Abstracts
                     else
                     {
                         IEnumerable<Invoice> preInvoicesForReport = preModels as IEnumerable<Invoice>;
-                        List<AdminReoprtOrder> reportOrders = new();
+                        List<AdminReportOrder> reportOrders = new();
                         foreach (Invoice invoice in preInvoicesForReport)
                         {
                             foreach (Order order in invoice.Orders)
                             {
                                 decimal soldPrice = Math.Round(order.OrderPrice / invoice.CurrencyRate, 2, MidpointRounding.AwayFromZero);
                                 decimal boughtPrice = Math.Round(order.Purchase.PurchasePrice / order.Purchase.PurchaseInvoice.CurrencyRate, 2, MidpointRounding.AwayFromZero);
-                                AdminReoprtOrder reoprtOrder = new()
+                                AdminReportOrder reoprtOrder = new()
                                 {
                                     Id = order.Id,
                                     InvoiceId = invoice.Id,

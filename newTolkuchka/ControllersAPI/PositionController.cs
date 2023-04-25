@@ -10,51 +10,49 @@ namespace newTolkuchka.ControllersAPI
     [Authorize(Policy = "Level3")]
     public class PositionController : AbstractController<Position, AdminPosition, IPosition>
     {
-        private readonly IPosition _position;
-        public PositionController(IEntry entry, IPosition position): base(entry, Entity.Position, position)
+        public PositionController(IEntry entry, IPosition position, ICacheClean cacheClean) : base(entry, Entity.Position, position, cacheClean)
         {
-            _position = position;
         }
 
         [HttpGet("{id}")]
         public async Task<Position> Get(int id)
         {
-            Position position = await _position.GetModelAsync(id);
+            Position position = await _service.GetModelAsync(id);
             return position;
         }
         //[HttpGet]
         //public IEnumerable<AdminPosition> Get()
         //{
-        //    IEnumerable<AdminPosition> positions = _position.GetAdminPositions();
+        //    IEnumerable<AdminPosition> positions = _service.GetAdminPositions();
         //    return positions;
         //}
         [HttpPost]
         public async Task<Result> Post(Position position)
         {
-            bool isExist = _position.IsExist(position, _position.GetModels());
+            bool isExist = _service.IsExist(position, _service.GetModels());
             if (isExist)
                 return Result.Already;
-            await _position.AddModelAsync(position); // no further action required
+            await _service.AddModelAsync(position); // no further action required
             await AddActAsync(position.Id, position.Name);
             return Result.Success;
         }
         [HttpPut]
         public async Task<Result> Put(Position position)
         {
-            bool isExist = _position.IsExist(position, _position.GetModels().Where(x => x.Id != position.Id));
+            bool isExist = _service.IsExist(position, _service.GetModels().Where(x => x.Id != position.Id));
             if (isExist)
                 return Result.Already;
-            _position.EditPosition(position);
+            _service.EditPosition(position);
             await EditActAsync(position.Id, position.Name);
             return Result.Success;
         }
         [HttpDelete("{id}")]
         public async Task<Result> Delete(int id)
         {
-            Position position = await _position.GetModelAsync(id);
+            Position position = await _service.GetModelAsync(id);
             if (position == null)
                 return Result.Fail;
-            Result result = await _position.DeleteModelAsync(position.Id, position);
+            Result result = await _service.DeleteModelAsync(position.Id, position);
             if (result == Result.Success)
                 await DeleteActAsync(id, position.Name);
             return result;

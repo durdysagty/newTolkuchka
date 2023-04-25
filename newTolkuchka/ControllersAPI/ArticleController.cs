@@ -16,21 +16,17 @@ namespace newTolkuchka.ControllersAPI
     {
         private const int WIDTH = 0;
         private const int HEIGHT = 250;
-        private readonly IArticle _article;
         private readonly IActionNoFile<Heading, Heading> _heading;
-        private readonly ICacheClean _cacheClean;
 
-        public ArticleController(IEntry entry, IArticle article, IActionNoFile<Heading, Heading> heading, ICacheClean cacheClean) : base(entry, Entity.Article, article)
+        public ArticleController(IEntry entry, IArticle article, ICacheClean cacheClean, IActionNoFile<Heading, Heading> heading) : base(entry, Entity.Article, article, cacheClean)
         {
-            _article = article;
             _heading = heading;
-            _cacheClean = cacheClean;
         }
 
         [HttpGet("{id}")]
         public async Task<Article> Get(int id)
         {
-            Article article = await _article.GetModelAsync(id);
+            Article article = await _service.GetModelAsync(id);
             return article;
         }
         [HttpGet("headings")]
@@ -64,11 +60,11 @@ namespace newTolkuchka.ControllersAPI
             Result deleteResult = await DeleteHeadings(deleteHeadingIds);
             if (deleteResult == Result.DeleteError)
                 return deleteResult;
-            bool isExist = _article.IsExist(article, _article.GetModels(new Dictionary<string, object>() { { ConstantsService.CULTURE, culture } }));
+            bool isExist = _service.IsExist(article, _service.GetModels(new Dictionary<string, object>() { { ConstantsService.CULTURE, culture } }));
             if (isExist)
                 return Result.Already;
             article.Date = DateTime.Now.ToUniversalTime();
-            await _article.AddModelAsync(article, images, WIDTH, HEIGHT);
+            await _service.AddModelAsync(article, images, WIDTH, HEIGHT);
             await ResolveHeadings(newHeadings, culture, article.Id, selectedHeadingIds);
             await AddActAsync(article.Id, article.Name, culture);
             _cacheClean.CleanIndexArticles();
@@ -84,10 +80,10 @@ namespace newTolkuchka.ControllersAPI
             Result deleteResult = await DeleteHeadings(deleteHeadingIds);
             if (deleteResult == Result.DeleteError)
                 return deleteResult;
-            bool isExist = _article.IsExist(article, _article.GetModels(new Dictionary<string, object>() { { ConstantsService.CULTURE, culture } }).Where(x => x.Id != article.Id));
+            bool isExist = _service.IsExist(article, _service.GetModels(new Dictionary<string, object>() { { ConstantsService.CULTURE, culture } }).Where(x => x.Id != article.Id));
             if (isExist)
                 return Result.Already;
-            await _article.EditModelAsync(article, images, WIDTH, HEIGHT);
+            await _service.EditModelAsync(article, images, WIDTH, HEIGHT);
             await ResolveHeadings(newHeadings, culture, article.Id, selectedHeadingIds);
             await EditActAsync(article.Id, article.Name);
             _cacheClean.CleanIndexArticles();
@@ -96,10 +92,10 @@ namespace newTolkuchka.ControllersAPI
         [HttpDelete("{id}")]
         public async Task<Result> Delete(int id)
         {
-            Article article = await _article.GetModelAsync(id);
+            Article article = await _service.GetModelAsync(id);
             if (article == null)
                 return Result.Fail;
-            Result result = await _article.DeleteModelAsync(article.Id, article);
+            Result result = await _service.DeleteModelAsync(article.Id, article);
             if (result == Result.Success)
                 await DeleteActAsync(id, article.Name);
             _cacheClean.CleanIndexArticles();
@@ -121,16 +117,16 @@ namespace newTolkuchka.ControllersAPI
             {
                 await AddHeadingArticle(headingId, articleId);
             }
-            IQueryable<HeadingArticle> headingArticlesToDelete = _article.GetHeadingArticles().Where(ha => ha.ArticleId == articleId && !selectedHeadingIds.Contains(ha.HeadingId));
+            IQueryable<HeadingArticle> headingArticlesToDelete = _service.GetHeadingArticles().Where(ha => ha.ArticleId == articleId && !selectedHeadingIds.Contains(ha.HeadingId));
             foreach (HeadingArticle hv in headingArticlesToDelete)
             {
-                _article.DeleteHeadingArticle(hv);
+                _service.DeleteHeadingArticle(hv);
             }
         }
 
         private async Task AddHeadingArticle(int headingId, int articleId)
         {
-            HeadingArticle headingArticle = await _article.GetHeadingArticleAsync(headingId, articleId);
+            HeadingArticle headingArticle = await _service.GetHeadingArticleAsync(headingId, articleId);
             if (headingArticle == null)
             {
                 headingArticle = new()
@@ -138,7 +134,7 @@ namespace newTolkuchka.ControllersAPI
                     HeadingId = headingId,
                     ArticleId = articleId,
                 };
-                await _article.AddHeadingArticle(headingArticle); ;
+                await _service.AddHeadingArticle(headingArticle); ;
             }
         }
 

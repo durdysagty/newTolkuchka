@@ -10,7 +10,8 @@ namespace newTolkuchka.Services.Interfaces
         void CleanCategory(int id);
         void CleanIndexItems();
         void CleanSlides();
-        void CleanAllModeledProducts();
         void CleanIndexArticles();
+        void CleanAllModeledProducts();
+        void CleanProductPage(int id = 0);
     }
 }

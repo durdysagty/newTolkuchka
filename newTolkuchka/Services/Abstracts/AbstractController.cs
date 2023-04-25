@@ -14,16 +14,23 @@ namespace newTolkuchka.Services.Abstracts
         //private protected readonly IAction<TModel, TAdminModel> _action;
         private protected readonly Entity _entity;
         private protected readonly TService _service;
-        public AbstractController(IEntry entry, Entity entity, TService service)
+        private protected readonly ICacheClean _cacheClean;
+        public AbstractController(IEntry entry, Entity entity, TService service, ICacheClean cacheClean)
         {
             _entry = entry;
             _entity = entity;
             _service = service;
+            _cacheClean = cacheClean;
         }
 
         [HttpGet]
         public ModelsFilters<TAdminModel> Get([FromQuery] string search, [FromQuery] string[] keys, [FromQuery] string[] values, [FromQuery] int page = 0, [FromQuery] int pp = 50)
         {
+            //string cacheKey = string.Empty;
+            //if (typeof(TAdminModel).Name == ConstantsService.ADMINREPORTORDER)
+            //{
+            //    cacheKey = $"{ConstantsService.ADMINREPORTORDER}-{values[0]}-{values[1]}";
+            //}
             Dictionary<string, object> paramsList = null;
             if (keys.Any())
             {
@@ -64,6 +71,7 @@ namespace newTolkuchka.Services.Abstracts
             property.SetValue(model, !value);
             if (modelType.Name == "Product")
             {
+                _cacheClean.CleanProductPage(id);
                 await EditActAsync(id, IProduct.GetProductNameCounted(model as Product));
                 if (property.Name == "NotInUse")
                     await _entry.CorrectSiteMap(ConstantsService.PRODUCT, new (int, bool)[] { (id, value) });

@@ -12,29 +12,25 @@ namespace newTolkuchka.ControllersAPI
     {
         private const int WIDTH = 450;
         private const int HEIGHT = 225;
-        private readonly IPromotion _promotion;
-        private readonly ICacheClean _cacheClean;
-        public PromotionController(IEntry entry, IPromotion promotion, ICacheClean cacheClean) : base(entry, Entity.Promotion, promotion)
+        public PromotionController(IEntry entry, IPromotion promotion, ICacheClean cacheClean) : base(entry, Entity.Promotion, promotion, cacheClean)
         {
-            _promotion = promotion;
-            _cacheClean = cacheClean;
         }
 
         [HttpGet("{id}")]
         public async Task<Promotion> Get(int id)
         {
-            Promotion promotion = await _promotion.GetModelAsync(id);
+            Promotion promotion = await _service.GetModelAsync(id);
             return promotion;
         }
         [HttpGet("products/{id}")]
         public async Task<int[]> GetProducts(int id)
         {
-            return await _promotion.GetProductsAsync(id);
+            return await _service.GetProductsAsync(id);
         }
         [HttpPost]
         public async Task<Result> Post([FromForm] Promotion promotion, [FromForm] IFormFile[] images, [FromForm] IList<int> products)
         {
-            bool isExist = _promotion.IsExist(promotion, _promotion.GetModels());
+            bool isExist = _service.IsExist(promotion, _service.GetModels());
             if (isExist)
                 return Result.Already;
             if (!products.Any())
@@ -45,9 +41,9 @@ namespace newTolkuchka.ControllersAPI
                 return Result.Fail;
             if (promotion.Type == Tp.QuantityDiscount && promotion.Quantity == null)
                 promotion.Quantity = 1;
-            await _promotion.AddModelAsync(promotion, images, WIDTH, HEIGHT);
+            await _service.AddModelAsync(promotion, images, WIDTH, HEIGHT);
             if (products.Any())
-                await _promotion.AddPromotionProductsAsync(promotion.Id, products);
+                await _service.AddPromotionProductsAsync(promotion.Id, products);
             await AddActAsync(promotion.Id, promotion.NameRu);
             _cacheClean.CleanIndexCategoriesPromotions();
             return Result.Success;
@@ -55,7 +51,7 @@ namespace newTolkuchka.ControllersAPI
         [HttpPut]
         public async Task<Result> Put([FromForm] EditPromotion editPromotion, [FromForm] IFormFile[] images, [FromForm] IList<int> products)
         {
-            Promotion promotion = await _promotion.GetModelAsync(editPromotion.Id);
+            Promotion promotion = await _service.GetModelAsync(editPromotion.Id);
             if (promotion.Type != editPromotion.Type)
                 return Result.Fail;
             promotion.Volume = editPromotion.Volume;
@@ -68,7 +64,7 @@ namespace newTolkuchka.ControllersAPI
             promotion.DescEn = editPromotion.DescEn;
             promotion.DescTm = editPromotion.DescTm;
             promotion.NotInUse = editPromotion.NotInUse;
-            bool isExist = _promotion.IsExist(promotion, _promotion.GetModels().Where(x => x.Id != promotion.Id));
+            bool isExist = _service.IsExist(promotion, _service.GetModels().Where(x => x.Id != promotion.Id));
             if (isExist)
                 return Result.Already;
             if (!products.Any())
@@ -77,8 +73,8 @@ namespace newTolkuchka.ControllersAPI
                 return Result.Fail;
             if (promotion.Type == Tp.QuantityDiscount && promotion.Quantity == null)
                 promotion.Quantity = 1;
-            await _promotion.EditModelAsync(promotion, images, WIDTH, HEIGHT);
-            await _promotion.AddPromotionProductsAsync(promotion.Id, products);
+            await _service.EditModelAsync(promotion, images, WIDTH, HEIGHT);
+            await _service.AddPromotionProductsAsync(promotion.Id, products);
             await EditActAsync(promotion.Id, promotion.NameRu, !promotion.NotInUse);
             _cacheClean.CleanIndexCategoriesPromotions();
             return Result.Success;
@@ -86,10 +82,10 @@ namespace newTolkuchka.ControllersAPI
         [HttpDelete("{id}")]
         public async Task<Result> Delete(int id)
         {
-            Promotion promotion = await _promotion.GetModelAsync(id);
+            Promotion promotion = await _service.GetModelAsync(id);
             if (promotion == null)
                 return Result.Fail;
-            Result result = await _promotion.DeleteModelAsync(promotion.Id, promotion);
+            Result result = await _service.DeleteModelAsync(promotion.Id, promotion);
             if (result == Result.Success)
                 await DeleteActAsync(id, promotion.NameRu);
             _cacheClean.CleanIndexCategoriesPromotions();

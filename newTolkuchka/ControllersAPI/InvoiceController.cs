@@ -11,25 +11,23 @@ namespace newTolkuchka.ControllersAPI
     [Authorize(Policy = "Level2")]
     public class InvoiceController : AbstractController<Invoice, AdminInvoice, IInvoice>
     {
-        private readonly IInvoice _invoice;
         private readonly IOrder _order;
-        public InvoiceController(IEntry entry, IInvoice invoice, IOrder order) : base(entry, Entity.Invoice, invoice)
+        public InvoiceController(IEntry entry, IInvoice invoice, IOrder order, ICacheClean cacheClean) : base(entry, Entity.Invoice, invoice, cacheClean)
         {
-            _invoice = invoice;
             _order = order;
         }
 
         [HttpGet("{id}")]
         public async Task<Invoice> Get(int id)
         {
-            Invoice invoice = await _invoice.GetModelAsync(id);
+            Invoice invoice = await _service.GetModelAsync(id);
             return invoice;
         }
         // used for InvoiceProcess in admin panel
         [HttpGet("currency/{id}")]
         public AdminInvoice GetCurrencyIncluded(int id)
         {
-            AdminInvoice invoice = _invoice.GetAdminInvoices().FirstOrDefault(i => i.Id == id);
+            AdminInvoice invoice = _service.GetAdminInvoices().FirstOrDefault(i => i.Id == id);
             return invoice;
         }
         // used for invoice & invoicePrint
@@ -50,14 +48,14 @@ namespace newTolkuchka.ControllersAPI
                 return Result.Fail;
             IList<AdminOrderExtended> adminOrders = JsonService.Deserialize<List<AdminOrderExtended>>(jsonOrders);
             await _order.CorrectOrdersAsync(invoice.Id, adminOrders);
-            _invoice.EditModel(invoice);
+            _service.EditModel(invoice);
             await EditActAsync(invoice.Id, CreateInvoiceName(invoice));
             return Result.Success;
         }
         [HttpPut("store/{id}")]
         public async Task<Result> PutOrdersPurchases(int id, [FromForm] IList<int?[]> orderPurchases, [FromForm] bool isDelivered, [FromForm] bool isPaid)
         {
-            Invoice invoice = await _invoice.GetModelAsync(id);
+            Invoice invoice = await _service.GetModelAsync(id);
             invoice.IsDelivered = isDelivered;
             invoice.IsPaid = isPaid;
             if (isPaid && invoice.PaidDate == null)
@@ -72,7 +70,7 @@ namespace newTolkuchka.ControllersAPI
                 if (order.PurchaseId != op[1])
                     order.PurchaseId = op[1];
             }
-            _invoice.EditModel(invoice);
+            _service.EditModel(invoice);
             await EditActAsync(invoice.Id, CreateInvoiceName(invoice));
             return Result.Success;
         }
@@ -80,10 +78,10 @@ namespace newTolkuchka.ControllersAPI
         [HttpDelete("{id}")]
         public async Task<Result> Delete(int id)
         {
-            Invoice invoice = await _invoice.GetModelAsync(id);
+            Invoice invoice = await _service.GetModelAsync(id);
             if (invoice == null)
                 return Result.Fail;
-            Result result = await _invoice.DeleteModelAsync(invoice.Id, invoice);
+            Result result = await _service.DeleteModelAsync(invoice.Id, invoice);
             if (result == Result.Success)
                 await DeleteActAsync(id, CreateInvoiceName(invoice));
             return result;

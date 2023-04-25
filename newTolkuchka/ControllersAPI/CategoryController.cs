@@ -14,56 +14,52 @@ namespace newTolkuchka.ControllersAPI
     {
         private const int WIDTH = 450;
         private const int HEIGHT = 225;
-        private readonly ICategory _category;
         private readonly IProduct _product;
-        private readonly ICacheClean _cacheClean;
-        public CategoryController(IEntry entry, ICategory category, IProduct product, ICacheClean cacheClean) : base(entry, Entity.Category, category)
+        public CategoryController(IEntry entry, ICategory category, ICacheClean cacheClean, IProduct product) : base(entry, Entity.Category, category, cacheClean)
         {
-            _category = category;
             _product = product;
-            _cacheClean = cacheClean;
         }
 
         [HttpGet("{id}")]
         public async Task<Category> Get(int id)
         {
-            Category category = await _category.GetModelAsync(id);
+            Category category = await _service.GetModelAsync(id);
             return category;
         }
         [HttpGet("hasproduct/{id}")]
         public async Task<bool> HasProduct(int id)
         {
-            return await _category.HasProduct(id);
+            return await _service.HasProduct(id);
         }
         [HttpGet("tree")]
         public async Task<IEnumerable<AdminCategoryTree>> GetTree()
         {
-            IEnumerable<AdminCategoryTree> categories = await _category.GetAdminCategoryTree();
+            IEnumerable<AdminCategoryTree> categories = await _service.GetAdminCategoryTree();
             return categories;
         }
         [HttpGet("adlinks/{id}")]
         public async Task<string[]> GetAdLinks(int id)
         {
-            return await _category.GetAdLinksAsync(id);
+            return await _service.GetAdLinksAsync(id);
         }
         [HttpGet("modeladlinks/{id}")]
         public async Task<string[]> GetModelAdLinks(int id)
         {
-            return await _category.GetModelAdLinksAsync(id);
+            return await _service.GetModelAdLinksAsync(id);
         }
         [HttpPost]
         public async Task<Result> Post([FromForm] Category category, [FromForm] int[] adLinks, [FromForm] IFormFile[] images)
         {
-            bool isExist = _category.IsExist(category, _category.GetCategoriesByParentId(category.ParentId));
+            bool isExist = _service.IsExist(category, _service.GetCategoriesByParentId(category.ParentId));
             if (isExist)
                 return Result.Already;
             if (category.IsForHome)
             {
-                bool isImaged = _category.IsCategoryImaged(images);
+                bool isImaged = _service.IsCategoryImaged(images);
                 if (!isImaged)
                     return Result.NoImage;
             }
-            Category parent = await _category.GetModelAsync(category.ParentId);
+            Category parent = await _service.GetModelAsync(category.ParentId);
             if (parent != null)
             {
                 if (parent.NotInUse)
@@ -71,8 +67,8 @@ namespace newTolkuchka.ControllersAPI
                     category.NotInUse = true;
                 }
             }
-            await _category.AddModelAsync(category, images, WIDTH, HEIGHT);
-            await _category.AddCategoryAdLinksAsync(category.Id, adLinks);
+            await _service.AddModelAsync(category, images, WIDTH, HEIGHT);
+            await _service.AddCategoryAdLinksAsync(category.Id, adLinks);
             await AddActAsync(category.Id, category.NameRu);
             _cacheClean.CleanCategories(category.ParentId);
             _cacheClean.CleanIndexCategoriesPromotions();
@@ -81,12 +77,12 @@ namespace newTolkuchka.ControllersAPI
         [HttpPut]
         public async Task<Result> Put([FromForm] Category category, [FromForm] int[] adLinks, [FromForm] IFormFile[] images)
         {
-            bool isExist = _category.IsExist(category, _category.GetModels().Where(x => x.Id != category.Id));
+            bool isExist = _service.IsExist(category, _service.GetModels().Where(x => x.Id != category.Id));
             if (isExist)
                 return Result.Already;
             if (category.IsForHome)
             {
-                bool isImaged = _category.IsCategoryImaged(images, category.Id);
+                bool isImaged = _service.IsCategoryImaged(images, category.Id);
                 if (!isImaged)
                     return Result.NoImage;
             }
@@ -101,7 +97,7 @@ namespace newTolkuchka.ControllersAPI
                         categoriesToSiteMap.Add((category.Id, !category.NotInUse));
                         if (_product.GetModels(new Dictionary<string, object>() { { ConstantsService.CATEGORY, new List<int> { category.Id } } }).Any())
                             CorrectProductsSiteMap(category.Id, category.NotInUse);
-                        await AllNotInUse(_category.GetModels().Where(c => c.ParentId == category.Id));
+                        await AllNotInUse(_service.GetModels().Where(c => c.ParentId == category.Id));
                     }
             }
             void CorrectProductsSiteMap(int categoryId, bool notInUse)
@@ -119,18 +115,18 @@ namespace newTolkuchka.ControllersAPI
 
             }
             if (category.NotInUse)
-                await AllNotInUse(_category.GetModels().Where(c => c.ParentId == category.Id).ToList());
+                await AllNotInUse(_service.GetModels().Where(c => c.ParentId == category.Id).ToList());
             else
             {
                 if (category.ParentId != 0)
                 {
-                    Category parent = await _category.GetModelAsync(category.ParentId);
+                    Category parent = await _service.GetModelAsync(category.ParentId);
                     if (parent.NotInUse)
                         category.NotInUse = parent.NotInUse;
                 }
             }
-            await _category.EditModelAsync(category, images, WIDTH, HEIGHT);
-            await _category.AddCategoryAdLinksAsync(category.Id, adLinks);
+            await _service.EditModelAsync(category, images, WIDTH, HEIGHT);
+            await _service.AddCategoryAdLinksAsync(category.Id, adLinks);
             await EditActAsync(category.Id, category.NameRu);
             if (_product.GetModels(new Dictionary<string, object>() { { ConstantsService.CATEGORY, new List<int> { category.Id } } }).Any())
                 CorrectProductsSiteMap(category.Id, category.NotInUse);
@@ -146,10 +142,10 @@ namespace newTolkuchka.ControllersAPI
         [HttpDelete("{id}")]
         public async Task<Result> Delete(int id)
         {
-            Category category = await _category.GetModelAsync(id);
+            Category category = await _service.GetModelAsync(id);
             if (category == null)
                 return Result.Fail;
-            Result result = await _category.DeleteModelAsync(category.Id, category);
+            Result result = await _service.DeleteModelAsync(category.Id, category);
             if (result == Result.Success)
                 await DeleteActAsync(id, category.NameRu);
             _cacheClean.CleanCategory(category.Id);

@@ -14,33 +14,29 @@ namespace newTolkuchka.ControllersAPI
     {
         private const int WIDTH = 180;
         private const int HEIGHT = 60;
-        private readonly IBrand _brand;
-        private readonly ICacheClean _cacheClean;
-        public BrandController(IEntry entry, IBrand brand, ICacheClean cacheClean) : base(entry, Entity.Brand, brand)
+        public BrandController(IEntry entry, IBrand brand, ICacheClean cacheClean) : base(entry, Entity.Brand, brand, cacheClean)
         {
-            _brand = brand;
-            _cacheClean = cacheClean;
         }
 
         [HttpGet("{id}")]
         public async Task<Brand> Get(int id)
         {
-            Brand brand = await _brand.GetModelAsync(id);
+            Brand brand = await _service.GetModelAsync(id);
             return brand;
         }
         //[HttpGet]
         //public IEnumerable<AdminBrand> Get()
         //{
-        //    IEnumerable<AdminBrand> brands = _brand.GetAdminBrands();
+        //    IEnumerable<AdminBrand> brands = _service.GetAdminBrands();
         //    return brands;
         //}
         [HttpPost]
         public async Task<Result> Post([FromForm] Brand brand, [FromForm] IFormFile[] images)
         {
-            bool isExist = _brand.IsExist(brand, _brand.GetModels());
+            bool isExist = _service.IsExist(brand, _service.GetModels());
             if (isExist)
                 return Result.Already;
-            await _brand.AddModelAsync(brand, images, WIDTH, HEIGHT);
+            await _service.AddModelAsync(brand, images, WIDTH, HEIGHT);
             await AddActAsync(brand.Id, brand.Name);
             _cacheClean.CleanBrands();
             return Result.Success;
@@ -48,21 +44,22 @@ namespace newTolkuchka.ControllersAPI
         [HttpPut]
         public async Task<Result> Put([FromForm] Brand brand, [FromForm] IFormFile[] images)
         {
-            bool isExist = _brand.IsExist(brand, _brand.GetModels().Where(x => x.Id != brand.Id));
+            bool isExist = _service.IsExist(brand, _service.GetModels().Where(x => x.Id != brand.Id));
             if (isExist)
                 return Result.Already;
-            await _brand.EditModelAsync(brand, images, WIDTH, HEIGHT);
+            await _service.EditModelAsync(brand, images, WIDTH, HEIGHT);
             await EditActAsync(brand.Id, brand.Name);
             _cacheClean.CleanBrands();
+            _cacheClean.CleanProductPage();
             return Result.Success;
         }
         [HttpDelete("{id}")]
         public async Task<Result> Delete(int id)
         {
-            Brand brand = await _brand.GetModelAsync(id);
+            Brand brand = await _service.GetModelAsync(id);
             if (brand == null)
                 return Result.Fail;
-            Result result = await _brand.DeleteModelAsync(brand.Id, brand);
+            Result result = await _service.DeleteModelAsync(brand.Id, brand);
             if (result == Result.Success)
                 await DeleteActAsync(id, brand.Name);
             _cacheClean.CleanBrands();

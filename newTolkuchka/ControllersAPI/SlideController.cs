@@ -16,30 +16,26 @@ namespace newTolkuchka.ControllersAPI
         private const int HEIGHT = 300;
         private const int LEFTWIDTH = 220;
         private const int LEFTHEIGHT = 300;
-        private readonly ISlide _slide;
-        private readonly ICacheClean _cacheClean;
-        public SlideController(IEntry entry, ISlide slide, ICacheClean cacheClean) : base(entry, Entity.Slide, slide)
+        public SlideController(IEntry entry, ISlide slide, ICacheClean cacheClean) : base(entry, Entity.Slide, slide, cacheClean)
         {
-            _slide = slide;
-            _cacheClean = cacheClean;
         }
 
         [HttpGet("{id}")]
         public async Task<Slide> Get(int id)
         {
-            Slide slide = await _slide.GetModelAsync(id);
+            Slide slide = await _service.GetModelAsync(id);
             return slide;
         }
         [HttpPost]
         public async Task<Result> Post([FromForm] Slide slide, [FromForm] IFormFile[] images)
         {
-            bool isExist = _slide.IsExist(slide, _slide.GetModels());
+            bool isExist = _service.IsExist(slide, _service.GetModels());
             if (isExist)
                 return Result.Already;
             if (slide.Layout == Layout.Main)
-                await _slide.AddModelAsync(slide, images, WIDTH, HEIGHT);
+                await _service.AddModelAsync(slide, images, WIDTH, HEIGHT);
             if (slide.Layout == Layout.Left)
-                await _slide.AddModelAsync(slide, images, LEFTWIDTH, LEFTHEIGHT);
+                await _service.AddModelAsync(slide, images, LEFTWIDTH, LEFTHEIGHT);
             await AddActAsync(slide.Id, slide.Name);
             _cacheClean.CleanSlides();
             return Result.Success;
@@ -47,13 +43,13 @@ namespace newTolkuchka.ControllersAPI
         [HttpPut]
         public async Task<Result> Put([FromForm] Slide slide, [FromForm] IFormFile[] images)
         {
-            bool isExist = _slide.IsExist(slide, _slide.GetModels().Where(x => x.Id != slide.Id));
+            bool isExist = _service.IsExist(slide, _service.GetModels().Where(x => x.Id != slide.Id));
             if (isExist)
                 return Result.Already;
             if (slide.Layout == Layout.Main)
-                await _slide.EditModelAsync(slide, images, WIDTH, HEIGHT);
+                await _service.EditModelAsync(slide, images, WIDTH, HEIGHT);
             if (slide.Layout == Layout.Left)
-                await _slide.EditModelAsync(slide, images, LEFTWIDTH, LEFTHEIGHT);
+                await _service.EditModelAsync(slide, images, LEFTWIDTH, LEFTHEIGHT);
             await EditActAsync(slide.Id, slide.Name);
             _cacheClean.CleanSlides();
             return Result.Success;
@@ -62,10 +58,10 @@ namespace newTolkuchka.ControllersAPI
         [HttpDelete("{id}")]
         public async Task<Result> Delete(int id)
         {
-            Slide slide = await _slide.GetModelAsync(id);
+            Slide slide = await _service.GetModelAsync(id);
             if (slide == null)
                 return Result.Fail;
-            Result result = await _slide.DeleteModelAsync(slide.Id, slide);
+            Result result = await _service.DeleteModelAsync(slide.Id, slide);
             if (result == Result.Success)
                 await DeleteActAsync(id, slide.Name);
             _cacheClean.CleanSlides();

@@ -250,7 +250,7 @@ namespace newTolkuchka.Controllers
             {
                 ce.SlidingExpiration = TimeSpan.FromDays(3);
                 return await _brand.GetModels().Where(b => b.Models.Any()).ToListAsync();
-            }); 
+            });
             await CreateMetaData(ConstantsService.BRANDS, _breadcrumbs.GetBreadcrumbs());
             return View(brands);
         }
@@ -364,6 +364,7 @@ namespace newTolkuchka.Controllers
             string key = $"{CultureProvider.CurrentCulture}{model}{id}{(sw <= ConstantsService.PHONEWIDTH ? ConstantsService.PHONEW : ConstantsService.PCW)}{productsOnly}t-{string.Join("", t)}b-{string.Join("", b)}v-{string.Join("", v)}{minp}{maxp}{sort}{page}{search}";
             JsonResult result = await _memoryCache.GetOrCreateAsync(key, async ce =>
             {
+                // all caches cleaned on any product changed
                 ce.SlidingExpiration = TimeSpan.FromHours(6);
                 if (!_memoryCache.TryGetValue(ConstantsService.MODELEDPRODUCTSHASHKEYS, out HashSet<string> modeledProducts))
                     modeledProducts = new HashSet<string>();
@@ -476,114 +477,131 @@ namespace newTolkuchka.Controllers
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 10800)]
         public async Task<IActionResult> Product(int id)
         {
-            Product product = await _product.GetModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, new int[1] { id } } }).Include(p => p.Model).ThenInclude(m => m.Category).FirstOrDefaultAsync();
-            if (product == null)
-                return await GetNotFoundPage();
-            if (product.NotInUse || product.Model.Category.NotInUse)
+            int? sw = GetScreenWidth();
+            string key = $"{CultureProvider.CurrentCulture}{ConstantsService.PRODUCTKEY}-{id}-{(sw > ConstantsService.MOBILEWIDTH ? sw > ConstantsService.XLWIDTH ? ConstantsService.XLCW : ConstantsService.PCW : ConstantsService.MOBILEW)}";
+            ViewResult viewResult = await _memoryCache.GetOrCreateAsync(key, async ce =>
             {
-                product = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, new int[1] { id } } }).FirstOrDefaultAsync();
-                string localName = IProduct.GetProductNameCounted(product);
-                await CreateMetaData(ConstantsService.PRODUCT, await _breadcrumbs.GetProductBreadcrumbs(product.Model.CategoryId), localName, false, false);
-                return View();
-            }
-            IList<Product> products = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.MODEL, product.ModelId } }).Where(p => !p.NotInUse).ToListAsync();
-            IList<(string, Product, IList<Promo>)> namedProducts = new List<(string, Product, IList<Promo>)>();
-            // to select Specs from any of product for change products by specs value
-            IList<ModelWithList<ModelWithList<AdminSpecsValueMod>>> nameUsedSpecs = products.FirstOrDefault().Model.ModelSpecs.Where(s => s.IsNameUse).OrderBy(s => s.Spec.NamingOrder).Select(ms => new ModelWithList<ModelWithList<AdminSpecsValueMod>>
-            {
-                Id = ms.Spec.Id,
-                Name = CultureProvider.GetLocalName(ms.Spec.NameRu, ms.Spec.NameEn, ms.Spec.NameTm),
-                Is = ms.Spec.IsImaged,
-                List = new Collection<ModelWithList<AdminSpecsValueMod>>()
-            }).ToList();
-            // ids of namedSpecs we need to select specsValues, which specId is in namedSpecIds, from products and we need them in Product page
-            IEnumerable<int> namedSpecIds = nameUsedSpecs.Select(ms => ms.Id);
-            foreach (Product p in products)
-            {
-                // preparing Promos of Product
-                List<Promo> promos = new();
-                foreach (Promotion promotion in p.PromotionProducts.Select(pp => pp.Promotion))
+                // removed in put & delete product, model
+                // removed on put type, specsValue, specsValueMod
+                ce.SlidingExpiration = TimeSpan.FromMinutes(10);
+                ce.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60);
+                if (!_memoryCache.TryGetValue(ConstantsService.PRODUCTSHASHKEYS, out HashSet<string> productKeys))
+                    productKeys = new HashSet<string>();
+                productKeys.Add(key);
+                _memoryCache.Set(ConstantsService.PRODUCTSHASHKEYS, productKeys, new MemoryCacheEntryOptions()
                 {
-                    Promo promo = new()
-                    {
-                        Id = promotion.Id,
-                        Type = promotion.Type,
-                        Volume = promotion.Volume,
-                        Quantity = promotion.Quantity,
-                        Name = CultureProvider.GetLocalName(promotion.NameRu, promotion.NameEn, promotion.NameTm)
-                    };
-                    if (promotion.Type is Tp.ProductFree or Tp.Set or Tp.SpecialSetDiscount)
-                    {
-                        Product subject = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, new int[1] { (int)promotion.SubjectId } } }).FirstOrDefaultAsync();
-                        // check is the subject active, if not promotion should to be not active also
-                        if (subject.NotInUse)
-                        {
-                            promotion.NotInUse = true;
-                            await _product.SaveChangesAsync();
-                            continue;
-                        }
-                        promo.Subject = subject;
-                    }
-                    if (promotion.Type is Tp.Set or Tp.SetDiscount or Tp.SpecialSetDiscount)
-                    {
-                        ICollection<Product> set = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PROMOTION, promo.Id } }).ToArrayAsync();
-                        if (set.Any(s => s.NotInUse))
-                        {
-                            promotion.NotInUse = true;
-                            await _product.SaveChangesAsync();
-                            continue;
-                        }
-                        promo.Products = set;
-                    }
-                    promos.Add(promo);
-                }
-                // selecting of named specsValues from the product
-                IEnumerable<SpecsValue> psvs = p.ProductSpecsValues.Select(psv => psv.SpecsValue).Where(x => namedSpecIds.Contains(x.SpecId));
-                string name = IProduct.GetProductNameSingle(p, psvs);
-                namedProducts.Add((name, p, promos));
-                // loop the specsValues to add them to nameUsedSpecs unique
-                foreach (SpecsValue sv in psvs)
+                    SlidingExpiration = TimeSpan.FromDays(3)
+                });
+                Product product = await _product.GetModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, new int[1] { id } } }).Include(p => p.Model).ThenInclude(m => m.Category).FirstOrDefaultAsync();
+                if (product == null)
+                    return (ViewResult)await GetNotFoundPage();
+                if (product.NotInUse || product.Model.Category.NotInUse)
                 {
-                    ModelWithList<ModelWithList<AdminSpecsValueMod>> spec = nameUsedSpecs.FirstOrDefault(s => s.Id == sv.SpecId);
-                    if (!spec.List.Any(s => s.Id == sv.Id))
+                    product = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, new int[1] { id } } }).FirstOrDefaultAsync();
+                    string localName = IProduct.GetProductNameCounted(product);
+                    await CreateMetaData(ConstantsService.PRODUCT, await _breadcrumbs.GetProductBreadcrumbs(product.Model.CategoryId), localName, false, false);
+                    return View();
+                }
+                IList<Product> products = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.MODEL, product.ModelId } }).Where(p => !p.NotInUse).ToListAsync();
+                IList<(string, Product, IList<Promo>)> namedProducts = new List<(string, Product, IList<Promo>)>();
+                // to select Specs from any of product for change products by specs value
+                IList<ModelWithList<ModelWithList<AdminSpecsValueMod>>> nameUsedSpecs = products.FirstOrDefault().Model.ModelSpecs.Where(s => s.IsNameUse).OrderBy(s => s.Spec.NamingOrder).Select(ms => new ModelWithList<ModelWithList<AdminSpecsValueMod>>
+                {
+                    Id = ms.Spec.Id,
+                    Name = CultureProvider.GetLocalName(ms.Spec.NameRu, ms.Spec.NameEn, ms.Spec.NameTm),
+                    Is = ms.Spec.IsImaged,
+                    List = new Collection<ModelWithList<AdminSpecsValueMod>>()
+                }).ToList();
+                // ids of namedSpecs we need to select specsValues, which specId is in namedSpecIds, from products and we need them in Product page
+                IEnumerable<int> namedSpecIds = nameUsedSpecs.Select(ms => ms.Id);
+                foreach (Product p in products)
+                {
+                    // preparing Promos of Product
+                    List<Promo> promos = new();
+                    foreach (Promotion promotion in p.PromotionProducts.Select(pp => pp.Promotion))
                     {
-                        ModelWithList<AdminSpecsValueMod> specValue = new()
+                        Promo promo = new()
                         {
-                            Id = sv.Id,
-                            Name = CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm),
-                            List = new Collection<AdminSpecsValueMod>(),
-                            Version = sv.Version
+                            Id = promotion.Id,
+                            Type = promotion.Type,
+                            Volume = promotion.Volume,
+                            Quantity = promotion.Quantity,
+                            Name = CultureProvider.GetLocalName(promotion.NameRu, promotion.NameEn, promotion.NameTm)
                         };
-                        spec.List.Add(specValue);
-                    }
-                    // check if a product has a specsValuMod (modification of specsValue)
-                    SpecsValueMod svm = p.ProductSpecsValueMods.FirstOrDefault(x => x.SpecsValueMod.SpecsValueId == sv.Id)?.SpecsValueMod;
-                    // if svm is null, that mean a product do not have a modification od this specsValue
-                    if (svm == null && !spec.List.FirstOrDefault(s => s.Id == sv.Id).List.Any(asvm => asvm.Id == 0))
-                    {
-                        // dispite of null we need to add 0 Id specsValueMod, to select Product without modificated specsValue in Product page
-                        spec.List.FirstOrDefault(s => s.Id == sv.Id).List.Add(new AdminSpecsValueMod
+                        if (promotion.Type is Tp.ProductFree or Tp.Set or Tp.SpecialSetDiscount)
                         {
-                            Id = 0
-                        });
-                    }
-                    else if (svm != null && !spec.List.FirstOrDefault(s => s.Id == sv.Id).List.Any(asvm => asvm.Id == svm.Id))
-                    {
-                        // unique adding of specsValueMod to List of specsValueMods of specsValue of Spec
-                        AdminSpecsValueMod adminSpecsValueMod = new()
+                            Product subject = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, new int[1] { (int)promotion.SubjectId } } }).FirstOrDefaultAsync();
+                            // check is the subject active, if not promotion should to be not active also
+                            if (subject.NotInUse)
+                            {
+                                promotion.NotInUse = true;
+                                await _product.SaveChangesAsync();
+                                continue;
+                            }
+                            promo.Subject = subject;
+                        }
+                        if (promotion.Type is Tp.Set or Tp.SetDiscount or Tp.SpecialSetDiscount)
                         {
-                            Id = svm.Id,
-                            Name = CultureProvider.GetLocalName(svm.NameRu, svm.NameEn, svm.NameTm)
-                        };
-                        spec.List.FirstOrDefault(s => s.Id == sv.Id).List.Add(adminSpecsValueMod);
+                            ICollection<Product> set = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PROMOTION, promo.Id } }).ToArrayAsync();
+                            if (set.Any(s => s.NotInUse))
+                            {
+                                promotion.NotInUse = true;
+                                await _product.SaveChangesAsync();
+                                continue;
+                            }
+                            promo.Products = set;
+                        }
+                        promos.Add(promo);
+                    }
+                    // selecting of named specsValues from the product
+                    IEnumerable<SpecsValue> psvs = p.ProductSpecsValues.Select(psv => psv.SpecsValue).Where(x => namedSpecIds.Contains(x.SpecId));
+                    string name = IProduct.GetProductNameSingle(p, psvs);
+                    namedProducts.Add((name, p, promos));
+                    // loop the specsValues to add them to nameUsedSpecs unique
+                    foreach (SpecsValue sv in psvs)
+                    {
+                        ModelWithList<ModelWithList<AdminSpecsValueMod>> spec = nameUsedSpecs.FirstOrDefault(s => s.Id == sv.SpecId);
+                        if (!spec.List.Any(s => s.Id == sv.Id))
+                        {
+                            ModelWithList<AdminSpecsValueMod> specValue = new()
+                            {
+                                Id = sv.Id,
+                                Name = CultureProvider.GetLocalName(sv.NameRu, sv.NameEn, sv.NameTm),
+                                List = new Collection<AdminSpecsValueMod>(),
+                                Version = sv.Version
+                            };
+                            spec.List.Add(specValue);
+                        }
+                        // check if a product has a specsValuMod (modification of specsValue)
+                        SpecsValueMod svm = p.ProductSpecsValueMods.FirstOrDefault(x => x.SpecsValueMod.SpecsValueId == sv.Id)?.SpecsValueMod;
+                        // if svm is null, that mean a product do not have a modification od this specsValue
+                        if (svm == null && !spec.List.FirstOrDefault(s => s.Id == sv.Id).List.Any(asvm => asvm.Id == 0))
+                        {
+                            // dispite of null we need to add 0 Id specsValueMod, to select Product without modificated specsValue in Product page
+                            spec.List.FirstOrDefault(s => s.Id == sv.Id).List.Add(new AdminSpecsValueMod
+                            {
+                                Id = 0
+                            });
+                        }
+                        else if (svm != null && !spec.List.FirstOrDefault(s => s.Id == sv.Id).List.Any(asvm => asvm.Id == svm.Id))
+                        {
+                            // unique adding of specsValueMod to List of specsValueMods of specsValue of Spec
+                            AdminSpecsValueMod adminSpecsValueMod = new()
+                            {
+                                Id = svm.Id,
+                                Name = CultureProvider.GetLocalName(svm.NameRu, svm.NameEn, svm.NameTm)
+                            };
+                            spec.List.FirstOrDefault(s => s.Id == sv.Id).List.Add(adminSpecsValueMod);
+                        }
                     }
                 }
-            }
-            await CreateMetaData(ConstantsService.PRODUCT, await _breadcrumbs.GetProductBreadcrumbs(product.Model.CategoryId), namedProducts.FirstOrDefault(x => x.Item2.Id == id).Item1, false, false);
-            ViewBag.Specs = nameUsedSpecs;
-            ViewBag.SpecIds = namedSpecIds;
-            ViewBag.Current = product.Id;
-            return View(namedProducts);
+                await CreateMetaData(ConstantsService.PRODUCT, await _breadcrumbs.GetProductBreadcrumbs(product.Model.CategoryId), namedProducts.FirstOrDefault(x => x.Item2.Id == id).Item1, false, false);
+                ViewBag.Specs = nameUsedSpecs;
+                ViewBag.SpecIds = namedSpecIds;
+                ViewBag.Current = product.Id;
+                return View(namedProducts);
+            });
+            return viewResult;
         }
         [Route(ConstantsService.COMPARISON)]
         public async Task<IActionResult> Comparison()

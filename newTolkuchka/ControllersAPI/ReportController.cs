@@ -7,18 +7,10 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [Authorize(Policy = "Level3")]
-    public class ReportController : AbstractController<Invoice, AdminReoprtOrder, IReport>
+    public class ReportController : AbstractController<Invoice, AdminReportOrder, IReport>
     {
-        //private readonly IReport _report;
-        public ReportController(IEntry entry, IReport report) : base(entry, Entity.Default, report)
+        public ReportController(IEntry entry, IReport report, ICacheClean cacheClean) : base(entry, Entity.Default, report, cacheClean)
         {
-            //_report = report;
         }
-
-        //[HttpGet]
-        //public async Task<IList<AdminReoprtOrder>> Get([FromQuery] string start, [FromQuery] string end)
-        //{
-        //    return await _report.CreatePeriodReport(DateTimeOffset.Parse(start), DateTimeOffset.Parse(end));
-        //}
     }
 }

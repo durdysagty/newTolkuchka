@@ -10,51 +10,49 @@ namespace newTolkuchka.ControllersAPI
     [Authorize(Policy = "Level2")]
     public class SupplierController : AbstractController<Supplier, AdminSupplier, ISupplier>
     {
-        private readonly ISupplier _supplier;
-        public SupplierController(IEntry entry, ISupplier supplier) : base(entry, Entity.Supplier, supplier)
+        public SupplierController(IEntry entry, ISupplier supplier, ICacheClean cacheClean) : base(entry, Entity.Supplier, supplier, cacheClean)
         {
-            _supplier = supplier;
         }
 
         [HttpGet("{id}")]
         public async Task<Supplier> Get(int id)
         {
-            Supplier supplier = await _supplier.GetModelAsync(id);
+            Supplier supplier = await _service.GetModelAsync(id);
             return supplier;
         }
         //[HttpGet]
         //public IEnumerable<AdminSupplier> Get()
         //{
-        //    IEnumerable<AdminSupplier> suppliers = _supplier.GetAdminSuppliers();
+        //    IEnumerable<AdminSupplier> suppliers = _service.GetAdminSuppliers();
         //    return suppliers;
         //}
         [HttpPost]
         public async Task<Result> Post(Supplier supplier)
         {
-            bool isExist = _supplier.IsExist(supplier, _supplier.GetModels());
+            bool isExist = _service.IsExist(supplier, _service.GetModels());
             if (isExist)
                 return Result.Already;
-            await _supplier.AddModelAsync(supplier);
+            await _service.AddModelAsync(supplier);
             await AddActAsync(supplier.Id, supplier.Name);
             return Result.Success;
         }
         [HttpPut]
         public async Task<Result> Put(Supplier supplier)
         {
-            bool isExist = _supplier.IsExist(supplier, _supplier.GetModels().Where(x => x.Id != supplier.Id));
+            bool isExist = _service.IsExist(supplier, _service.GetModels().Where(x => x.Id != supplier.Id));
             if (isExist)
                 return Result.Already;
-            _supplier.EditModel(supplier);
+            _service.EditModel(supplier);
             await EditActAsync(supplier.Id, supplier.Name);
             return Result.Success;
         }
         [HttpDelete("{id}")]
         public async Task<Result> Delete(int id)
         {
-            Supplier supplier = await _supplier.GetModelAsync(id);
+            Supplier supplier = await _service.GetModelAsync(id);
             if (supplier == null)
                 return Result.Fail;
-            Result result = await _supplier.DeleteModelAsync(supplier.Id, supplier);
+            Result result = await _service.DeleteModelAsync(supplier.Id, supplier);
             if (result == Result.Success)
                 await DeleteActAsync(id, supplier.Name);
             return result;

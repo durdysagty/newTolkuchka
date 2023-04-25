@@ -11,12 +11,10 @@ namespace newTolkuchka.ControllersAPI
     [Authorize(Policy = "Level1")]
     public class ModelController : AbstractController<Model, AdminModel, IModel>
     {
-        private readonly IModel _model;
         private readonly ICategory _category;
         private readonly IProduct _product;
-        public ModelController(IEntry entry, IModel model, ICategory category, IProduct product) : base(entry, Entity.Model, model)
+        public ModelController(IEntry entry, IModel model, ICacheClean cacheClean, ICategory category, IProduct product) : base(entry, Entity.Model, model, cacheClean)
         {
-            _model = model;
             _category = category;
             _product = product;
         }
@@ -24,45 +22,33 @@ namespace newTolkuchka.ControllersAPI
         [HttpGet("{id}")]
         public async Task<Model> Get(int id)
         {
-            Model model = await _model.GetModelAsync(id);
+            Model model = await _service.GetModelAsync(id);
             return model;
         }
-        //[HttpGet]
-        //public ModelsFilters<AdminModel> Get(/*[FromQuery] int[] brand, [FromQuery] int?[] line, */[FromQuery] int page = 0, [FromQuery] int pp = 50)
-        //{
-        //    IEnumerable<AdminModel> models = _model.GetAdminModels(/*brand, line, */page, pp, out int lastPage, out string pagination);
-        //    return new ModelsFilters<AdminModel>
-        //    {
-        //        //Filters = new string[2] { nameof(brand), $"{nameof(brand)}Id {nameof(line)}" }.OrderBy(c => c),
-        //        Models = models,
-        //        LastPage = lastPage,
-        //        Pagination = pagination
-        //    };
-        //}
         [HttpGet("specs/{id}")]
         public async Task<IList<int[]>> GetModelSpecs(int id)
         {
-            return await _model.GetModelSpecsForAdminAsync(id);
+            return await _service.GetModelSpecsForAdminAsync(id);
         }
         [HttpGet("specvalues/{id}")]
         public async Task<object[]> GetSpecValues(int id)
         {
-            return await _model.GetSpecValuesAsync(id);
+            return await _service.GetSpecValuesAsync(id);
         }
         [HttpGet("specvaluemods/{id}")]
         public async Task<object[]> GetSpecValueMods(int id)
         {
-            return await _model.GetSpecValueModsAsync(id);
+            return await _service.GetSpecValueModsAsync(id);
         }
         [HttpPost]
         public async Task<Result> Post([FromForm] Model model, [FromForm] IList<int[]> specs, [FromForm] int[] adLinks)
         {
-            bool isExist = _model.IsExist(model, _model.GetModels().Where(x => x.LineId == model.LineId && x.BrandId == model.BrandId && x.TypeId == model.TypeId));
+            bool isExist = _service.IsExist(model, _service.GetModels().Where(x => x.LineId == model.LineId && x.BrandId == model.BrandId && x.TypeId == model.TypeId));
             if (isExist)
                 return Result.Already;
-            await _model.AddModelAsync(model);
+            await _service.AddModelAsync(model);
             if (specs.Any())
-                await _model.AddModelSpecsAsync(model.Id, specs);
+                await _service.AddModelSpecsAsync(model.Id, specs);
             if (adLinks.Any())
                 await _category.AddCategoryModelAdLinksAsync(model.Id, adLinks);
             await AddActAsync(model.Id, model.Name);
@@ -71,7 +57,7 @@ namespace newTolkuchka.ControllersAPI
         [HttpPut]
         public async Task<Result> Put([FromForm] Model model, [FromForm] IList<int[]> specs, [FromForm] int[] adLinks, [FromForm] IList<int[]> productSpecsValues, [FromForm] IList<int[]> productSpecsValueMods)
         {
-            bool isExist = _model.IsExist(model, _model.GetModels().Where(x => x.LineId == model.LineId && x.BrandId == model.BrandId && x.TypeId == model.TypeId && x.Id != model.Id));
+            bool isExist = _service.IsExist(model, _service.GetModels().Where(x => x.LineId == model.LineId && x.BrandId == model.BrandId && x.TypeId == model.TypeId && x.Id != model.Id));
             if (isExist)
                 return Result.Already;
             int[]productIds = _product.GetModels(new Dictionary<string, object>() { { ConstantsService.MODEL, model.Id } }).Select(p => p.Id).ToArray();
@@ -84,6 +70,8 @@ namespace newTolkuchka.ControllersAPI
                 {
                     int[] specValueIds = productSpecsValues.Where(psv => psv[0] == id).Select(psv => psv[1]).ToArray();
                     productSpecsValuesCheck.Add((id, specValueIds));
+                    // clean cached pages
+                    _cacheClean.CleanProductPage(id);
                 }
                 // test if there are equal sequances of specsvalues
                 if (productIds.Length > 1)
@@ -112,8 +100,8 @@ namespace newTolkuchka.ControllersAPI
                     await _product.AddProductSpecValueModsAsync(psvm.Item1, psvm.Item2);
                 }
             }
-            _model.EditModel(model);
-            await _model.AddModelSpecsAsync(model.Id, specs);
+            _service.EditModel(model);
+            await _service.AddModelSpecsAsync(model.Id, specs);
             await _category.AddCategoryModelAdLinksAsync(model.Id, adLinks);
             await EditActAsync(model.Id, model.Name);
             return Result.Success;
@@ -121,10 +109,11 @@ namespace newTolkuchka.ControllersAPI
         [HttpDelete("{id}")]
         public async Task<Result> Delete(int id)
         {
-            Model model = await _model.GetModelAsync(id);
+            // do not need clean cache of products b.o. before delete model you have to delete all products of given model
+            Model model = await _service.GetModelAsync(id);
             if (model == null)
                 return Result.Fail;
-            Result result = await _model.DeleteModelAsync(model.Id, model);
+            Result result = await _service.DeleteModelAsync(model.Id, model);
             if (result == Result.Success)
                 await DeleteActAsync(id, model.Name);
             return result;

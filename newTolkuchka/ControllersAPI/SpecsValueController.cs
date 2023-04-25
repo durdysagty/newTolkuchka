@@ -13,22 +13,20 @@ namespace newTolkuchka.ControllersAPI
     {
         private const int WIDTH = 25;
         private const int HEIGHT = 25;
-        private readonly ISpecsValue _specsValue;
-        public SpecsValueController(IEntry entry, ISpecsValue specsValue) : base(entry, Entity.SpecsValue, specsValue)
+        public SpecsValueController(IEntry entry, ISpecsValue specsValue, ICacheClean cacheClean) : base(entry, Entity.SpecsValue, specsValue, cacheClean)
         {
-            _specsValue = specsValue;
         }
 
         [HttpGet("{id}")]
         public async Task<SpecsValue> Get(int id)
         {
-            SpecsValue specsValue = await _specsValue.GetModelAsync(id);
+            SpecsValue specsValue = await _service.GetModelAsync(id);
             return specsValue;
         }
         [HttpGet($"{ConstantsService.SPEC}/{{specId}}")]
         public ModelsFilters<AdminSpecsValue> GetBySpec(int specId, [FromQuery] int page = 0, [FromQuery] int pp = 50)
         {
-            IEnumerable<AdminSpecsValue> specsValues = _specsValue.GetAdminModels(page, pp, out int lastPage, out string pagination, new Dictionary<string, object> { { ConstantsService.SPEC, specId } });
+            IEnumerable<AdminSpecsValue> specsValues = _service.GetAdminModels(page, pp, out int lastPage, out string pagination, new Dictionary<string, object> { { ConstantsService.SPEC, specId } });
             return new ModelsFilters<AdminSpecsValue>
             {
                 Models = specsValues,
@@ -39,30 +37,31 @@ namespace newTolkuchka.ControllersAPI
         [HttpPost]
         public async Task<Result> Post([FromForm] SpecsValue specsValue, [FromForm] IFormFile[] images)
         {
-            bool isExist = _specsValue.IsExist(specsValue, _specsValue.GetModels().Where(x => x.SpecId == specsValue.SpecId));
+            bool isExist = _service.IsExist(specsValue, _service.GetModels().Where(x => x.SpecId == specsValue.SpecId));
             if (isExist)
                 return Result.Already;
-            await _specsValue.AddModelAsync(specsValue, images, WIDTH, HEIGHT);
+            await _service.AddModelAsync(specsValue, images, WIDTH, HEIGHT);
             await AddActAsync(specsValue.Id, specsValue.NameRu);
             return Result.Success;
         }
         [HttpPut]
         public async Task<Result> Put([FromForm] SpecsValue specsValue, [FromForm] IFormFile[] images)
         {
-            bool isExist = _specsValue.IsExist(specsValue, _specsValue.GetModels().Where(x => x.SpecId == specsValue.SpecId && x.Id != specsValue.Id));
+            bool isExist = _service.IsExist(specsValue, _service.GetModels().Where(x => x.SpecId == specsValue.SpecId && x.Id != specsValue.Id));
             if (isExist)
                 return Result.Already;
-            await _specsValue.EditModelAsync(specsValue, images, WIDTH, HEIGHT);
+            await _service.EditModelAsync(specsValue, images, WIDTH, HEIGHT);
             await EditActAsync(specsValue.Id, specsValue.NameRu);
+            _cacheClean.CleanProductPage();
             return Result.Success;
         }
         [HttpDelete("{id}")]
         public async Task<Result> Delete(int id)
         {
-            SpecsValue SpecsValue = await _specsValue.GetModelAsync(id);
+            SpecsValue SpecsValue = await _service.GetModelAsync(id);
             if (SpecsValue == null)
                 return Result.Fail;
-            Result result = await _specsValue.DeleteModelAsync(SpecsValue.Id, SpecsValue);
+            Result result = await _service.DeleteModelAsync(SpecsValue.Id, SpecsValue);
             if (result == Result.Success)
                 await DeleteActAsync(id, SpecsValue.NameRu);
             return result;

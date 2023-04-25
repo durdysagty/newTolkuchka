@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Services.Interfaces;
+using System.Linq;
 
 namespace newTolkuchka.Services
 {
@@ -75,6 +76,29 @@ namespace newTolkuchka.Services
                     _memoryCache.Remove(key);
                 }
                 _memoryCache.Remove(ConstantsService.MODELEDPRODUCTSHASHKEYS);
+            }
+        }
+
+        public void CleanProductPage(int id)
+        {
+            if (_memoryCache.TryGetValue(ConstantsService.PRODUCTSHASHKEYS, out HashSet<string> productsKeys))
+            {
+                if (id == 0)
+                {
+                    foreach (string key in productsKeys)
+                        _memoryCache.Remove(key);
+                    _memoryCache.Remove(ConstantsService.PRODUCTSHASHKEYS);
+                }
+                else
+                {
+                    IEnumerable<string> neededKeys = productsKeys.Where(pk => pk.Contains($"-{id}-"));
+                    foreach (string key in neededKeys)
+                    {
+                        _memoryCache.Remove(key);
+                        productsKeys.Remove(key);
+                    }
+                    _memoryCache.Set(ConstantsService.PRODUCTSHASHKEYS, productsKeys);
+                }
             }
         }
 

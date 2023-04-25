@@ -12,16 +12,14 @@ namespace newTolkuchka.ControllersAPI
     [Authorize(Policy = "Level1")]
     public class SpecController : AbstractController<Spec, AdminSpec, ISpec>
     {
-        private readonly ISpec _spec;
-        public SpecController(IEntry entry, ISpec spec) : base(entry, Entity.Spec, spec)
+        public SpecController(IEntry entry, ISpec spec, ICacheClean cacheClean) : base(entry, Entity.Spec, spec, cacheClean)
         {
-            _spec = spec;
         }
 
         [HttpGet("{id}")]
         public async Task<Spec> Get(int id)
         {
-            Spec spec = await _spec.GetModelAsync(id);
+            Spec spec = await _service.GetModelAsync(id);
             return spec;
         }
 
@@ -40,36 +38,36 @@ namespace newTolkuchka.ControllersAPI
                         paramsList.Add(keys[i], values[i]);
                 }
             }
-            IEnumerable<ModelWithList<ModelWithList<AdminSpecsValueMod>>> specWithValues = _spec.GetSpecWithValues(paramsList);
+            IEnumerable<ModelWithList<ModelWithList<AdminSpecsValueMod>>> specWithValues = _service.GetSpecWithValues(paramsList);
             return specWithValues;
         }
         [HttpPost]
         public async Task<Result> Post(Spec spec)
         {
-            bool isExist = _spec.IsExist(spec, _spec.GetModels());
+            bool isExist = _service.IsExist(spec, _service.GetModels());
             if (isExist)
                 return Result.Already;
-            await _spec.AddModelAsync(spec);
+            await _service.AddModelAsync(spec);
             await AddActAsync(spec.Id, spec.NameRu);
             return Result.Success;
         }
         [HttpPut]
         public async Task<Result> Put(Spec spec)
         {
-            bool isExist = _spec.IsExist(spec, _spec.GetModels().Where(x => x.Id != spec.Id));
+            bool isExist = _service.IsExist(spec, _service.GetModels().Where(x => x.Id != spec.Id));
             if (isExist)
                 return Result.Already;
-            _spec.EditModel(spec);
+            _service.EditModel(spec);
             await EditActAsync(spec.Id, spec.NameRu);
             return Result.Success;
         }
         [HttpDelete("{id}")]
         public async Task<Result> Delete(int id)
         {
-            Spec spec = await _spec.GetModelAsync(id);
+            Spec spec = await _service.GetModelAsync(id);
             if (spec == null)
                 return Result.Fail;
-            Result result = await _spec.DeleteModelAsync(spec.Id, spec);
+            Result result = await _service.DeleteModelAsync(spec.Id, spec);
             if (result == Result.Success)
                 await DeleteActAsync(id, spec.NameRu);
             return result;
@@ -77,7 +75,7 @@ namespace newTolkuchka.ControllersAPI
         [HttpGet("isimaged/{id}")]
         public async Task<bool> IsSpecImaged(int id)
         {
-            bool isImaged = await _spec.IsSpecImaged(id);
+            bool isImaged = await _service.IsSpecImaged(id);
             return isImaged;
         }
     }

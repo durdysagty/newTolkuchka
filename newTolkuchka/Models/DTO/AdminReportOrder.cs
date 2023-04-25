@@ -1,6 +1,6 @@
 ﻿namespace newTolkuchka.Models.DTO
 {
-    public class AdminReoprtOrder
+    public class AdminReportOrder
     {
         public int Id { get; set; }
         public int InvoiceId { get; set; }

@@ -20,23 +20,21 @@ namespace newTolkuchka.ControllersAPI
     [Authorize(Policy = "Level2")]
     public class ContentController : AbstractController<Content, Content, IContent>
     {
-        private readonly IContent _content;
-        public ContentController(IEntry entry, IContent content) : base(entry, Entity.Content, content)
+        public ContentController(IEntry entry, IContent content, ICacheClean cacheClean) : base(entry, Entity.Content, content, cacheClean)
         {
-            _content = content;
         }
 
         // in no ("edit") then AmbiguousMatchException. Abstract controller has same route.
         [HttpGet("edit")]
         public async Task<Content> Get()
         {
-            Content content = await _content.GetContent();
+            Content content = await _service.GetContent();
             return content;
         }
         [HttpPut]
         public async Task<Result> Put(Content content)
         {
-            await _content.EditContent(content);
+            await _service.EditContent(content);
             await EditActAsync(0, "Контент");
             return Result.Success;
         }
