@@ -226,7 +226,7 @@ namespace newTolkuchka.Services.Abstracts
                     break;
                 case ConstantsService.MODEL:
                     IQueryable<Model> models = fullModels as IQueryable<Model>;
-                    fullModels = (IQueryable<T>)models.Include(m => m.Brand).Include(l => l.Category).Include(l => l.Line).Include(l => l.Type).Include(l => l.Products);
+                    fullModels = (IQueryable<T>)models.Include(m => m.Brand).Include(m => m.Category).Include(m => m.Line).Include(m => m.Type).Include(m => m.Products);
                     break;
                 case ConstantsService.POSITION:
                     IQueryable<Position> positions = fullModels as IQueryable<Position>;
@@ -235,6 +235,10 @@ namespace newTolkuchka.Services.Abstracts
                 case ConstantsService.PRODUCT:
                     IQueryable<Product> products = fullModels as IQueryable<Product>;
                     fullModels = (IQueryable<T>)products.Include(p => p.Model).ThenInclude(m => m.Category).Include(p => p.Model).ThenInclude(m => m.Type).Include(p => p.Model).ThenInclude(m => m.Brand).Include(p => p.Model).ThenInclude(m => m.Line).Include(p => p.Model).ThenInclude(x => x.ModelSpecs).Include(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ThenInclude(x => x.Spec).Include(x => x.ProductSpecsValueMods).ThenInclude(x => x.SpecsValueMod).ThenInclude(x => x.SpecsValue).Include(x => x.PromotionProducts.Where(pp => !pp.Promotion.NotInUse)).ThenInclude(x => x.Promotion);
+                    break;
+                case ConstantsService.PROMOTION:
+                    IQueryable<Promotion> promotions = fullModels as IQueryable<Promotion>;
+                    fullModels = (IQueryable<T>)promotions.Include(p => p.PromotionProducts);
                     break;
                 case ConstantsService.PURCHASEINVOICE:
                     IQueryable<PurchaseInvoice> purchaseInvoices = fullModels as IQueryable<PurchaseInvoice>;
@@ -270,39 +274,46 @@ namespace newTolkuchka.Services.Abstracts
             return fullModels;
         }
 
-        public IList<TAdmin> GetAdminModels(int page, int pp, out int lastPage, out string pagination, Dictionary<string, object> paramsList = null)
+        public IEnumerable<TAdmin> GetAdminModels(int page, int pp, out int lastPage, out string pagination, Dictionary<string, object> paramsList = null)
         {
-            IQueryable<T> preModels = GetFullModels(paramsList);
+            IList<T> preModels = GetFullModels(paramsList).ToList();
             Type type = typeof(T);
             int toSkip = page * pp;
-            IList<TAdmin> adminModels = null;
-            bool isPaged = false;
+            IEnumerable<TAdmin> adminModels = null;
+            //bool isPaged = false;
+            string[] words = null;
+            pagination = null;
+            lastPage = 0;
+            int countBeforeSkip = 0;
+            if (paramsList != null && paramsList.TryGetValue(ConstantsService.SEARCH, out object search))
+            {
+                words = search.ToString().Trim().Split(" ");
+            }
             switch (type.Name.ToLower())
             {
                 case ConstantsService.ARTICLE:
                     IEnumerable<Article> preArticles = preModels as IEnumerable<Article>;
+                    if (words != null)
+                        foreach (string word in words)
+                        {
+                            if (preArticles.Any())
+                                preArticles = preArticles.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Date.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.HeadingArticles.Any(ha => ha.Heading.Name.Contains(word, StringComparison.OrdinalIgnoreCase)));
+                        }
                     preArticles = preArticles.OrderByDescending(x => x.Id);
-                    adminModels = (IList<TAdmin>)preArticles.Select(x => new AdminArticle
-                    {
-                        Id = x.Id,
-                        Name = x.Name,
-                        Headings = string.Join(", ", x.HeadingArticles.Select(h => h.Heading.Name))
-                    }).ToList();
+                    adminModels = (IEnumerable<TAdmin>)preArticles.Select(x => new AdminArticle { Id = x.Id, Name = x.Name, Headings = string.Join(", ", x.HeadingArticles.Select(h => h.Heading.Name)) });
                     break;
                 case ConstantsService.BRAND:
                     IEnumerable<Brand> preBrands = preModels as IEnumerable<Brand>;
-                    //preBrands = preBrands.OrderBy(x => x.Name);
-                    adminModels = (IList<TAdmin>)preBrands.Select(x => new AdminBrand
-                    {
-                        Id = x.Id,
-                        Name = x.Name,
-                        IsForHome = x.IsForHome,
-                        Models = x.Models.Count
-                    }).OrderBy(x => x.Name).ToList();
+                    if (words != null)
+                        foreach (string word in words)
+                        {
+                            if (preBrands.Any())
+                                preBrands = preBrands.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Name.Contains(word, StringComparison.OrdinalIgnoreCase));
+                        }
+                    adminModels = (IEnumerable<TAdmin>)preBrands.Select(x => new AdminBrand { Id = x.Id, Name = x.Name, IsForHome = x.IsForHome, Models = x.Models.Count }).OrderBy(x => x.Name);
                     break;
                 case ConstantsService.CATEGORY:
-                    // we use preCategories several times in recursive function below, thus we get all categories to memory before
-                    IEnumerable<Category> preCategories = preModels.ToList() as IEnumerable<Category>;
+                    IEnumerable<Category> preCategories = preModels as IEnumerable<Category>;
                     List<AdminCategory> categories = new();
                     const int PADDING = 2;
                     void GetCategoriesByOrder(IEnumerable<Category> parentList, int level)
@@ -320,28 +331,63 @@ namespace newTolkuchka.Services.Abstracts
                         }
                     }
                     GetCategoriesByOrder(preCategories.Where(x => x.ParentId == 0).OrderBy(x => x.Order), 0);
-                    adminModels = (IList<TAdmin>)categories;
+                    if (words != null)
+                        foreach (string word in words)
+                        {
+                            if (categories.Any())
+                                categories = categories.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Models.ToString().Contains(word, StringComparison.OrdinalIgnoreCase)).ToList();
+                        }
+                    adminModels = (IEnumerable<TAdmin>)categories;
                     break;
                 case ConstantsService.CURRENCY:
                     IEnumerable<Currency> preCurrencies = preModels as IEnumerable<Currency>;
-                    adminModels = (IList<TAdmin>)preCurrencies.Select(x => new AdminCurrency { Id = x.Id, PriceRate = x.PriceRate, RealRate = x.RealRate, CodeName = x.CodeName }).ToList();
+                    if (words != null)
+                        foreach (string word in words)
+                        {
+                            if (preCurrencies.Any())
+                                preCurrencies = preCurrencies.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.CodeName.Contains(word, StringComparison.OrdinalIgnoreCase) || p.PriceRate.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.RealRate.ToString().Contains(word, StringComparison.OrdinalIgnoreCase));
+                        }
+                    adminModels = (IEnumerable<TAdmin>)preCurrencies.Select(x => new AdminCurrency { Id = x.Id, PriceRate = x.PriceRate, RealRate = x.RealRate, CodeName = x.CodeName });
                     break;
                 case ConstantsService.EMPLOYEE:
                     IEnumerable<Employee> preEmployees = preModels as IEnumerable<Employee>;
-                    adminModels = (IList<TAdmin>)preEmployees.Select(x => new AdminEmployee { Id = x.Id, HumanName = x.Login, Position = x.Position.Name, Level = x.Position.Level }).ToList();
+                    if (words != null)
+                        foreach (string word in words)
+                        {
+                            if (preEmployees.Any())
+                                preEmployees = preEmployees.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Login.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Position.Name.Contains(word, StringComparison.OrdinalIgnoreCase));
+                        }
+                    adminModels = (IEnumerable<TAdmin>)preEmployees.Select(x => new AdminEmployee { Id = x.Id, HumanName = x.Login, Position = x.Position.Name, Level = x.Position.Level });
                     break;
                 case ConstantsService.ENTRY:
                     IEnumerable<Entry> preEntries = preModels as IEnumerable<Entry>;
+                    if (words != null)
+                        foreach (string word in words)
+                        {
+                            if (preEntries.Any())
+                                preEntries = preEntries.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Employee.Contains(word, StringComparison.OrdinalIgnoreCase) || _localizer[p.Act.ToString().ToLower()].Value.Contains(word, StringComparison.OrdinalIgnoreCase) || _localizer[p.Entity.ToString().ToLower()].Value.Contains(word, StringComparison.OrdinalIgnoreCase) || p.EntityId.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.EntityName.Contains(word, StringComparison.OrdinalIgnoreCase) || p.DateTime.ToString().Contains(word, StringComparison.OrdinalIgnoreCase));
+                        }
                     preEntries = preEntries.OrderByDescending(x => x.Id);
-                    adminModels = (IList<TAdmin>)preEntries.Select(x => new AdminEntry { Id = x.Id, Employee = x.Employee, Act = _localizer[x.Act.ToString().ToLower()], Entity = _localizer[x.Entity.ToString().ToLower()], EntityId = x.EntityId, EntityName = x.EntityName, Date = x.DateTime }).ToList();
-                    isPaged = true;
+                    countBeforeSkip = preEntries.Count();
+                    preEntries = preEntries.Skip(toSkip).Take(pp);
+                    pagination = GetPagination(pp, countBeforeSkip, preEntries.Count(), toSkip, out lastPage);
+                    adminModels = (IEnumerable<TAdmin>)preEntries.Select(x => new AdminEntry { Id = x.Id, Employee = x.Employee, Act = _localizer[x.Act.ToString().ToLower()], Entity = _localizer[x.Entity.ToString().ToLower()], EntityId = x.EntityId, EntityName = x.EntityName, Date = x.DateTime });
                     break;
                 case ConstantsService.INVOICE:
                     // in the invoice controller & in the report controller we use same Invoice as T model, thus we have to select
                     if (typeof(TAdmin).Name == "AdminInvoice")
                     {
-                        IQueryable<Invoice> preInvoices = preModels as IQueryable<Invoice>;
+                        IEnumerable<Invoice> preInvoices = preModels as IEnumerable<Invoice>;
+                        if (words != null)
+                            foreach (string word in words)
+                            {
+                                if (preInvoices.Any())
+                                    preInvoices = preInvoices.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Date.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.User.Email.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Buyer.Contains(word, StringComparison.OrdinalIgnoreCase) || p.InvoiceAddress.Contains(word, StringComparison.OrdinalIgnoreCase) || p.InvoicePhone.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Currency.CodeName.Contains(word, StringComparison.OrdinalIgnoreCase) || p.CurrencyRate.ToString().Contains(word, StringComparison.OrdinalIgnoreCase));
+                            }
                         preInvoices = preInvoices.OrderByDescending(x => x.Id);
+                        countBeforeSkip = preInvoices.Count();
+                        preInvoices = preInvoices.Skip(toSkip).Take(pp);
+                        pagination = GetPagination(pp, countBeforeSkip, preInvoices.Count(), toSkip, out lastPage);
                         IList<AdminInvoice> adminInvoices = new List<AdminInvoice>();
                         foreach (Invoice x in preInvoices)
                         {
@@ -374,9 +420,7 @@ namespace newTolkuchka.Services.Abstracts
                             }
                             adminInvoices.Add(adminInvoice);
                         }
-                        adminModels = (IList<TAdmin>)adminInvoices;
-                        isPaged = true;
-                        break;
+                        adminModels = (IEnumerable<TAdmin>)adminInvoices;
                     }
                     else
                     {
@@ -409,113 +453,196 @@ namespace newTolkuchka.Services.Abstracts
                                 reportOrders.Add(reoprtOrder);
                             }
                         }
-                        adminModels = (IList<TAdmin>)reportOrders;
-                        break;
+                        adminModels = (IEnumerable<TAdmin>)reportOrders;
                     }
+                    break;
                 // dependent from a brand, expected no more than 50 lines in the one brand, else skip will confuse
                 case ConstantsService.LINE:
                     IEnumerable<Line> preLines = preModels as IEnumerable<Line>;
+                    if (words != null)
+                        foreach (string word in words)
+                        {
+                            if (preLines.Any())
+                                preLines = preLines.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Brand.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Models.Count.ToString().Contains(word, StringComparison.OrdinalIgnoreCase));
+                        }
                     preLines = preLines.OrderBy(x => x.Name);
-                    adminModels = (IList<TAdmin>)preLines.Select(x => new AdminLine { Id = x.Id, Name = x.Name, Brand = x.Brand.Name, Models = x.Models.Count }).ToList();
-                    isPaged = true;
+                    countBeforeSkip = preLines.Count();
+                    preLines = preLines.Skip(toSkip).Take(pp);
+                    pagination = GetPagination(pp, countBeforeSkip, preLines.Count(), toSkip, out lastPage);
+                    adminModels = (IEnumerable<TAdmin>)preLines.Select(x => new AdminLine { Id = x.Id, Name = x.Name, Brand = x.Brand.Name, Models = x.Models.Count });
                     break;
                 case ConstantsService.MODEL:
-                    IQueryable<Model> preModels2 = preModels as IQueryable<Model>;
+                    IEnumerable<Model> preModels2 = preModels as IEnumerable<Model>;
+                    if (words != null)
+                        foreach (string word in words)
+                        {
+                            if (preModels2.Any())
+                                preModels2 = preModels2.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Category.NameRu.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Type.NameRu.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Brand.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Line.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Products.Count.ToString().Contains(word, StringComparison.OrdinalIgnoreCase));
+                        }
                     preModels2 = preModels2.OrderByDescending(x => x.Id);
-                    adminModels = (IList<TAdmin>)preModels2.Select(x => new AdminModel { Id = x.Id, Name = x.Name, Category = x.Category.NameRu, Type = x.Type.NameRu, Brand = x.Brand.Name, Line = x.Line.Name, Products = x.Products.Count }).ToList();
-                    isPaged = true;
+                    countBeforeSkip = preModels2.Count();
+                    preModels2 = preModels2.Skip(toSkip).Take(pp);
+                    pagination = GetPagination(pp, countBeforeSkip, preModels2.Count(), toSkip, out lastPage);
+                    adminModels = (IEnumerable<TAdmin>)preModels2.Select(x => new AdminModel { Id = x.Id, Name = x.Name, Category = x.Category.NameRu, Type = x.Type.NameRu, Brand = x.Brand.Name, Line = x.Line?.Name, Products = x.Products.Count });
                     break;
                 case ConstantsService.POSITION:
                     IEnumerable<Position> prePositions = preModels as IEnumerable<Position>;
-                    adminModels = (IList<TAdmin>)prePositions.Select(x => new AdminPosition { Id = x.Id, Name = x.Name, Level = x.Level, Employees = x.Employees.Count }).ToList();
+                    if (words != null)
+                        foreach (string word in words)
+                        {
+                            if (prePositions.Any())
+                                prePositions = prePositions.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Level.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Employees.Count.ToString().Contains(word, StringComparison.OrdinalIgnoreCase));
+                        }
+                    adminModels = (IEnumerable<TAdmin>)prePositions.Select(x => new AdminPosition { Id = x.Id, Name = x.Name, Level = x.Level, Employees = x.Employees.Count });
                     break;
                 case ConstantsService.PRODUCT:
-                    IQueryable<Product> preProducts = preModels as IQueryable<Product>;
+                    IEnumerable<Product> preProducts = preModels as IEnumerable<Product>;
+                    if (words != null)
+                        foreach (string word in words)
+                        {
+                            if (preProducts.Any())
+                                preProducts = preProducts.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Price.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.NewPrice.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Model.Type.NameRu.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Model.Brand.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Model.Line.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Model.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || p.ProductSpecsValues.Any(sv => sv.SpecsValue.NameRu.Contains(word, StringComparison.OrdinalIgnoreCase)) || p.ProductSpecsValueMods.Any(svm => svm.SpecsValueMod.NameRu.Contains(word, StringComparison.OrdinalIgnoreCase)));
+                        }
                     preProducts = preProducts.OrderByDescending(x => x.Id);
-                    adminModels = (IList<TAdmin>)preProducts.Select(x => new AdminProduct { Id = x.Id, Name = IProduct.GetProductNameCounted(x, 1), Category = x.Model.Category.NameRu, Price = x.Price, NewPrice = x.NewPrice, NotInUse = !x.NotInUse, IsRecommended = x.IsRecommended, IsNew = x.IsNew }).ToList();
-                    isPaged = true;
+                    countBeforeSkip = preProducts.Count();
+                    preProducts = preProducts.Skip(toSkip).Take(pp);
+                    pagination = GetPagination(pp, countBeforeSkip, preProducts.Count(), toSkip, out lastPage);
+                    adminModels = (IEnumerable<TAdmin>)preProducts.Select(x => new AdminProduct { Id = x.Id, Name = IProduct.GetProductNameCounted(x, 1), Category = x.Model.Category.NameRu, Price = x.Price, NewPrice = x.NewPrice, NotInUse = !x.NotInUse, IsRecommended = x.IsRecommended, IsNew = x.IsNew });
                     break;
                 case ConstantsService.PROMOTION:
-                    IQueryable<Promotion> prePromotions = preModels as IQueryable<Promotion>;
+                    IEnumerable<Promotion> prePromotions = preModels as IEnumerable<Promotion>;
+                    if (words != null)
+                        foreach (string word in words)
+                        {
+                            if (prePromotions.Any())
+                                prePromotions = prePromotions.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.NameRu.Contains(word, StringComparison.OrdinalIgnoreCase) || p.PromotionProducts.Count.ToString().Contains(word, StringComparison.OrdinalIgnoreCase));
+                        }
                     prePromotions = prePromotions.OrderByDescending(x => x.Id);
-                    adminModels = (IList<TAdmin>)prePromotions.Select(x => new AdminPromotion { Id = x.Id, Name = x.NameRu, Type = _localizer[x.Type.ToString()], Products = x.PromotionProducts.Count }).ToList();
-                    isPaged = true;
+                    countBeforeSkip = prePromotions.Count();
+                    prePromotions = prePromotions.Skip(toSkip).Take(pp);
+                    pagination = GetPagination(pp, countBeforeSkip, prePromotions.Count(), toSkip, out lastPage);
+                    adminModels = (IEnumerable<TAdmin>)prePromotions.Select(x => new AdminPromotion { Id = x.Id, Name = x.NameRu, Type = _localizer[x.Type.ToString()], Products = x.PromotionProducts.Count });
                     break;
                 case ConstantsService.PURCHASEINVOICE:
                     IEnumerable<PurchaseInvoice> prePurchaseInvoices = preModels as IEnumerable<PurchaseInvoice>;
+                    if (words != null)
+                        foreach (string word in words)
+                        {
+                            if (prePurchaseInvoices.Any())
+                                prePurchaseInvoices = prePurchaseInvoices.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Date.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Supplier.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Currency.CodeName.Contains(word, StringComparison.OrdinalIgnoreCase) || p.CurrencyRate.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Purchases.Count.ToString().Contains(word, StringComparison.OrdinalIgnoreCase));
+                        }
                     prePurchaseInvoices = prePurchaseInvoices.OrderByDescending(x => x.Id);
-                    adminModels = (IList<TAdmin>)prePurchaseInvoices.Select(x => new AdminPurchaseInvoice { Id = x.Id, Date = x.Date, SupplierName = x.Supplier.Name, CurrencyCodeName = x.Currency.CodeName, CurrencyRate = x.CurrencyRate, Purchases = x.Purchases.Count }).ToList();
-                    isPaged = true;
+                    countBeforeSkip = prePurchaseInvoices.Count();
+                    prePurchaseInvoices = prePurchaseInvoices.Skip(toSkip).Take(pp);
+                    pagination = GetPagination(pp, countBeforeSkip, prePurchaseInvoices.Count(), toSkip, out lastPage);
+                    adminModels = (IEnumerable<TAdmin>)prePurchaseInvoices.Select(x => new AdminPurchaseInvoice { Id = x.Id, Date = x.Date, SupplierName = x.Supplier.Name, CurrencyCodeName = x.Currency.CodeName, CurrencyRate = x.CurrencyRate, Purchases = x.Purchases.Count });
                     break;
                 case ConstantsService.SLIDE:
                     IEnumerable<Slide> preSlides = preModels as IEnumerable<Slide>;
+                    if (words != null)
+                        foreach (string word in words)
+                        {
+                            if (preSlides.Any())
+                                preSlides = preSlides.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Name.Contains(word, StringComparison.OrdinalIgnoreCase));
+                        }
                     preSlides = preSlides.OrderByDescending(x => x.Id);
-                    adminModels = (IList<TAdmin>)preSlides.Select(x => new AdminSlide { Id = x.Id, Name = x.Name, NotInUse = !x.NotInUse }).ToList();
-                    isPaged = true;
+                    countBeforeSkip = preSlides.Count();
+                    preSlides = preSlides.Skip(toSkip).Take(pp);
+                    pagination = GetPagination(pp, countBeforeSkip, preSlides.Count(), toSkip, out lastPage);
+                    adminModels = (IEnumerable<TAdmin>)preSlides.Select(x => new AdminSlide { Id = x.Id, Name = x.Name, NotInUse = !x.NotInUse });
                     break;
                 case ConstantsService.SPEC:
                     IEnumerable<Spec> preSpecs = preModels as IEnumerable<Spec>;
+                    if (words != null)
+                        foreach (string word in words)
+                        {
+                            if (preSpecs.Any())
+                                preSpecs = preSpecs.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.NameRu.Contains(word, StringComparison.OrdinalIgnoreCase) || p.SpecsValues.Count.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Order.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.NamingOrder.ToString().Contains(word, StringComparison.OrdinalIgnoreCase));
+                        }
                     preSpecs = preSpecs.OrderBy(x => x.Order);
-                    adminModels = (IList<TAdmin>)preSpecs.Select(x => new AdminSpec { Id = x.Id, Name = x.NameRu, Order = x.Order, NamingOrder = x.NamingOrder, SpecsValues = x.SpecsValues.Count, IsFilter = x.IsFilter }).ToList();
+                    countBeforeSkip = preSpecs.Count();
+                    preSpecs = preSpecs.Skip(toSkip).Take(pp);
+                    pagination = GetPagination(pp, countBeforeSkip, preSpecs.Count(), toSkip, out lastPage);
+                    adminModels = (IEnumerable<TAdmin>)preSpecs.Select(x => new AdminSpec { Id = x.Id, Name = x.NameRu, Order = x.Order, NamingOrder = x.NamingOrder, SpecsValues = x.SpecsValues.Count, IsFilter = x.IsFilter });
                     break;
                 case ConstantsService.SPECSVALUE:
                     IEnumerable<SpecsValue> preSpecsValues = preModels as IEnumerable<SpecsValue>;
+                    if (words != null)
+                        foreach (string word in words)
+                        {
+                            if (preSpecsValues.Any())
+                                preSpecsValues = preSpecsValues.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.NameRu.Contains(word, StringComparison.OrdinalIgnoreCase) || p.ProductSpecsValues.Count.ToString().Contains(word, StringComparison.OrdinalIgnoreCase));
+                        }
                     preSpecsValues = preSpecsValues.OrderBy(x => x.NameRu);
-                    adminModels = (IList<TAdmin>)preSpecsValues.Select(x => new AdminSpecsValue { Id = x.Id, Name = x.NameRu, Products = x.ProductSpecsValues.Count }).ToList();
+                    countBeforeSkip = preSpecsValues.Count();
+                    preSpecsValues = preSpecsValues.Skip(toSkip).Take(pp);
+                    pagination = GetPagination(pp, countBeforeSkip, preSpecsValues.Count(), toSkip, out lastPage);
+                    adminModels = (IEnumerable<TAdmin>)preSpecsValues.Select(x => new AdminSpecsValue { Id = x.Id, Name = x.NameRu, Products = x.ProductSpecsValues.Count });
                     break;
                 case ConstantsService.SPECSVALUEMOD:
                     IEnumerable<SpecsValueMod> preSpecsValueMods = preModels as IEnumerable<SpecsValueMod>;
+                    if (words != null)
+                        foreach (string word in words)
+                        {
+                            if (preSpecsValueMods.Any())
+                                preSpecsValueMods = preSpecsValueMods.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.NameRu.Contains(word, StringComparison.OrdinalIgnoreCase) || p.ProductSpecsValueMods.Count.ToString().Contains(word, StringComparison.OrdinalIgnoreCase));
+                        }
                     preSpecsValueMods = preSpecsValueMods.OrderBy(x => x.NameRu);
-                    adminModels = (IList<TAdmin>)preSpecsValueMods.Select(x => new AdminSpecsValueMod { Id = x.Id, Name = x.NameRu, Products = x.ProductSpecsValueMods.Count }).ToList();
+                    adminModels = (IEnumerable<TAdmin>)preSpecsValueMods.Select(x => new AdminSpecsValueMod { Id = x.Id, Name = x.NameRu, Products = x.ProductSpecsValueMods.Count });
                     break;
                 case ConstantsService.SUPPLIER:
                     IEnumerable<Supplier> preSuppliers = preModels as IEnumerable<Supplier>;
+                    if (words != null)
+                        foreach (string word in words)
+                        {
+                            if (preSuppliers.Any())
+                                preSuppliers = preSuppliers.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || p.PhoneMain.Contains(word, StringComparison.OrdinalIgnoreCase) || p.PurchaseInvoices.Count.ToString().Contains(word, StringComparison.OrdinalIgnoreCase));
+                        }
                     preSuppliers = preSuppliers.OrderBy(x => x.Name);
-                    adminModels = (IList<TAdmin>)preSuppliers.Select(x => new AdminSupplier { Id = x.Id, Name = x.Name, PhoneMain = x.PhoneMain, PurchaseInvoices = x.PurchaseInvoices.Count }).ToList();
+                    adminModels = (IEnumerable<TAdmin>)preSuppliers.Select(x => new AdminSupplier { Id = x.Id, Name = x.Name, PhoneMain = x.PhoneMain, PurchaseInvoices = x.PurchaseInvoices.Count });
                     break;
                 case ConstantsService.TYPE:
                     IEnumerable<ModelsType> preTypes = preModels as IEnumerable<ModelsType>;
+                    if (words != null)
+                        foreach (string word in words)
+                        {
+                            if (preTypes.Any())
+                                preTypes = preTypes.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.NameRu.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Models.Count.ToString().Contains(word, StringComparison.OrdinalIgnoreCase));
+                        }
                     preTypes = preTypes.OrderBy(x => x.NameRu);
-                    adminModels = (IList<TAdmin>)preTypes.Select(x => new AdminType { Id = x.Id, Name = x.NameRu, Models = x.Models.Count }).ToList();
+                    countBeforeSkip = preTypes.Count();
+                    preTypes = preTypes.Skip(toSkip).Take(pp);
+                    pagination = GetPagination(pp, countBeforeSkip, preTypes.Count(), toSkip, out lastPage);
+                    adminModels = (IEnumerable<TAdmin>)preTypes.Select(x => new AdminType { Id = x.Id, Name = x.NameRu, Models = x.Models.Count });
                     break;
                 case ConstantsService.USER:
                     IEnumerable<User> preUsers = preModels as IEnumerable<User>;
+                    if (words != null)
+                        foreach (string word in words)
+                        {
+                            if (preUsers.Any())
+                                preUsers = preUsers.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Email.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Phone.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Invoices.Count.ToString().Contains(word, StringComparison.OrdinalIgnoreCase));
+                        }
                     preUsers = preUsers.OrderBy(x => x.Email);
-                    adminModels = (IList<TAdmin>)preUsers.Select(x => new AdminUser { Id = x.Id, HumanName = x.Name, Email = x.Email, Phone = x.Phone, Invoices = x.Invoices.Count }).ToList();
-                    isPaged = true;
+                    countBeforeSkip = preUsers.Count();
+                    preUsers = preUsers.Skip(toSkip).Take(pp);
+                    pagination = GetPagination(pp, countBeforeSkip, preUsers.Count(), toSkip, out lastPage);
+                    adminModels = (IEnumerable<TAdmin>)preUsers.Select(x => new AdminUser { Id = x.Id, HumanName = x.Name, Email = x.Email, Phone = x.Phone, Invoices = x.Invoices.Count });
                     break;
                 case ConstantsService.WARRANTY:
                     IEnumerable<Warranty> preWarranties = preModels as IEnumerable<Warranty>;
+                    if (words != null)
+                        foreach (string word in words)
+                        {
+                            if (preWarranties.Any())
+                                preWarranties = preWarranties.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.NameRu.Contains(word, StringComparison.OrdinalIgnoreCase));
+                        }
                     preWarranties = preWarranties.OrderBy(x => x.NameRu);
-                    adminModels = (IList<TAdmin>)preWarranties.Select(x => new AdminWarranty { Id = x.Id, Name = x.NameRu }).ToList();
+                    adminModels = (IEnumerable<TAdmin>)preWarranties.Select(x => new AdminWarranty { Id = x.Id, Name = x.NameRu });
                     break;
                 default:
-                    adminModels = (IList<TAdmin>)preModels;
+                    adminModels = (IEnumerable<TAdmin>)preModels;
                     break;
-                    //throw new ArgumentOutOfRangeException(type.Name, $"Not expected type name: {type.Name}");
-            }
-            if (paramsList != null && paramsList.TryGetValue(ConstantsService.SEARCH, out object search))
-            {
-                string[] words = search.ToString().Trim().Split(" ");
-                // IEnumerable<PropertyInfo> propertiesTest = typeof(TAdmin).GetProperties();
-                IEnumerable<PropertyInfo> properties = typeof(TAdmin).GetProperties().Where(p => p.PropertyType.Name is "String" or "Int32" or "DateTimeOffset");
-                foreach (string word in words)
-                {
-                    if (adminModels.Any())
-                        adminModels = adminModels.Where(m => properties.Any(p => p.GetValue(m) != null && p.GetValue(m).ToString().Contains(word, StringComparison.OrdinalIgnoreCase))).ToList();
-                }
-            }
-            if (isPaged)
-            {
-                int countBeforeSkip = adminModels.Count;
-                adminModels = adminModels.Skip(toSkip).Take(pp).ToList();
-                pagination = GetPagination(pp, countBeforeSkip, adminModels.Count, toSkip, out int lp);
-                lastPage = lp;
-            }
-            else
-            {
-                pagination = null;
-                lastPage = 0;
             }
             return adminModels;
         }
@@ -591,7 +718,7 @@ namespace newTolkuchka.Services.Abstracts
                 case ConstantsService.PURCHASE:
                     return await _con.Orders.Where(x => x.PurchaseId == id).AnyAsync();
                 //case ConstantsService.INVOICE:
-                    //return await _con.Orders.Where(x => x.InvoiceId == id).AnyAsync();
+                //return await _con.Orders.Where(x => x.InvoiceId == id).AnyAsync();
                 case ConstantsService.CURRENCY:
                     // to be corrected
                     return true;
