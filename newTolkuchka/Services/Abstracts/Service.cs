@@ -270,35 +270,35 @@ namespace newTolkuchka.Services.Abstracts
             return fullModels;
         }
 
-        public IEnumerable<TAdmin> GetAdminModels(int page, int pp, out int lastPage, out string pagination, Dictionary<string, object> paramsList = null)
+        public IList<TAdmin> GetAdminModels(int page, int pp, out int lastPage, out string pagination, Dictionary<string, object> paramsList = null)
         {
             IQueryable<T> preModels = GetFullModels(paramsList);
             Type type = typeof(T);
             int toSkip = page * pp;
-            IEnumerable<TAdmin> adminModels = null;
+            IList<TAdmin> adminModels = null;
             bool isPaged = false;
             switch (type.Name.ToLower())
             {
                 case ConstantsService.ARTICLE:
                     IEnumerable<Article> preArticles = preModels as IEnumerable<Article>;
                     preArticles = preArticles.OrderByDescending(x => x.Id);
-                    adminModels = (IEnumerable<TAdmin>)preArticles.Select(x => new AdminArticle
+                    adminModels = (IList<TAdmin>)preArticles.Select(x => new AdminArticle
                     {
                         Id = x.Id,
                         Name = x.Name,
                         Headings = string.Join(", ", x.HeadingArticles.Select(h => h.Heading.Name))
-                    });
+                    }).ToList();
                     break;
                 case ConstantsService.BRAND:
                     IEnumerable<Brand> preBrands = preModels as IEnumerable<Brand>;
                     //preBrands = preBrands.OrderBy(x => x.Name);
-                    adminModels = (IEnumerable<TAdmin>)preBrands.Select(x => new AdminBrand
+                    adminModels = (IList<TAdmin>)preBrands.Select(x => new AdminBrand
                     {
                         Id = x.Id,
                         Name = x.Name,
                         IsForHome = x.IsForHome,
                         Models = x.Models.Count
-                    }).OrderBy(x => x.Name);
+                    }).OrderBy(x => x.Name).ToList();
                     break;
                 case ConstantsService.CATEGORY:
                     // we use preCategories several times in recursive function below, thus we get all categories to memory before
@@ -320,41 +320,20 @@ namespace newTolkuchka.Services.Abstracts
                         }
                     }
                     GetCategoriesByOrder(preCategories.Where(x => x.ParentId == 0).OrderBy(x => x.Order), 0);
-                    adminModels = (IEnumerable<TAdmin>)categories;
+                    adminModels = (IList<TAdmin>)categories;
                     break;
                 case ConstantsService.CURRENCY:
                     IEnumerable<Currency> preCurrencies = preModels as IEnumerable<Currency>;
-                    adminModels = (IEnumerable<TAdmin>)preCurrencies.Select(x => new AdminCurrency
-                    {
-                        Id = x.Id,
-                        PriceRate = x.PriceRate,
-                        RealRate = x.RealRate,
-                        CodeName = x.CodeName
-                    });
+                    adminModels = (IList<TAdmin>)preCurrencies.Select(x => new AdminCurrency { Id = x.Id, PriceRate = x.PriceRate, RealRate = x.RealRate, CodeName = x.CodeName }).ToList();
                     break;
                 case ConstantsService.EMPLOYEE:
                     IEnumerable<Employee> preEmployees = preModels as IEnumerable<Employee>;
-                    adminModels = (IEnumerable<TAdmin>)preEmployees.Select(x => new AdminEmployee
-                    {
-                        Id = x.Id,
-                        HumanName = x.Login,
-                        Position = x.Position.Name,
-                        Level = x.Position.Level
-                    });
+                    adminModels = (IList<TAdmin>)preEmployees.Select(x => new AdminEmployee { Id = x.Id, HumanName = x.Login, Position = x.Position.Name, Level = x.Position.Level }).ToList();
                     break;
                 case ConstantsService.ENTRY:
                     IEnumerable<Entry> preEntries = preModels as IEnumerable<Entry>;
                     preEntries = preEntries.OrderByDescending(x => x.Id);
-                    adminModels = (IEnumerable<TAdmin>)preEntries.Select(x => new AdminEntry
-                    {
-                        Id = x.Id,
-                        Employee = x.Employee,
-                        Act = _localizer[x.Act.ToString().ToLower()],
-                        Entity = _localizer[x.Entity.ToString().ToLower()],
-                        EntityId = x.EntityId,
-                        EntityName = x.EntityName,
-                        Date = x.DateTime,
-                    });
+                    adminModels = (IList<TAdmin>)preEntries.Select(x => new AdminEntry { Id = x.Id, Employee = x.Employee, Act = _localizer[x.Act.ToString().ToLower()], Entity = _localizer[x.Entity.ToString().ToLower()], EntityId = x.EntityId, EntityName = x.EntityName, Date = x.DateTime }).ToList();
                     isPaged = true;
                     break;
                 case ConstantsService.INVOICE:
@@ -395,7 +374,7 @@ namespace newTolkuchka.Services.Abstracts
                             }
                             adminInvoices.Add(adminInvoice);
                         }
-                        adminModels = (IEnumerable<TAdmin>)adminInvoices;
+                        adminModels = (IList<TAdmin>)adminInvoices;
                         isPaged = true;
                         break;
                     }
@@ -430,178 +409,88 @@ namespace newTolkuchka.Services.Abstracts
                                 reportOrders.Add(reoprtOrder);
                             }
                         }
-                        adminModels = (IEnumerable<TAdmin>)reportOrders;
+                        adminModels = (IList<TAdmin>)reportOrders;
                         break;
                     }
                 // dependent from a brand, expected no more than 50 lines in the one brand, else skip will confuse
                 case ConstantsService.LINE:
                     IEnumerable<Line> preLines = preModels as IEnumerable<Line>;
                     preLines = preLines.OrderBy(x => x.Name);
-                    adminModels = (IEnumerable<TAdmin>)preLines.Select(x => new AdminLine
-                    {
-                        Id = x.Id,
-                        Name = x.Name,
-                        Brand = x.Brand.Name,
-                        Models = x.Models.Count
-                    });
+                    adminModels = (IList<TAdmin>)preLines.Select(x => new AdminLine { Id = x.Id, Name = x.Name, Brand = x.Brand.Name, Models = x.Models.Count }).ToList();
                     isPaged = true;
                     break;
                 case ConstantsService.MODEL:
                     IQueryable<Model> preModels2 = preModels as IQueryable<Model>;
                     preModels2 = preModels2.OrderByDescending(x => x.Id);
-                    adminModels = (IEnumerable<TAdmin>)preModels2.Select(x => new AdminModel
-                    {
-                        Id = x.Id,
-                        Name = x.Name,
-                        Category = x.Category.NameRu,
-                        Type = x.Type.NameRu,
-                        Brand = x.Brand.Name,
-                        Line = x.Line.Name,
-                        Products = x.Products.Count
-                    });
+                    adminModels = (IList<TAdmin>)preModels2.Select(x => new AdminModel { Id = x.Id, Name = x.Name, Category = x.Category.NameRu, Type = x.Type.NameRu, Brand = x.Brand.Name, Line = x.Line.Name, Products = x.Products.Count }).ToList();
                     isPaged = true;
                     break;
                 case ConstantsService.POSITION:
                     IEnumerable<Position> prePositions = preModels as IEnumerable<Position>;
-                    adminModels = (IEnumerable<TAdmin>)prePositions.Select(x => new AdminPosition
-                    {
-                        Id = x.Id,
-                        Name = x.Name,
-                        Level = x.Level,
-                        Employees = x.Employees.Count,
-                    });
+                    adminModels = (IList<TAdmin>)prePositions.Select(x => new AdminPosition { Id = x.Id, Name = x.Name, Level = x.Level, Employees = x.Employees.Count }).ToList();
                     break;
                 case ConstantsService.PRODUCT:
                     IQueryable<Product> preProducts = preModels as IQueryable<Product>;
                     preProducts = preProducts.OrderByDescending(x => x.Id);
-                    adminModels = (IEnumerable<TAdmin>)preProducts.Select(x => new AdminProduct
-                    {
-                        Id = x.Id,
-                        Name = IProduct.GetProductNameCounted(x, 1),
-                        Category = x.Model.Category.NameRu,
-                        Price = x.Price,
-                        NewPrice = x.NewPrice,
-                        NotInUse = !x.NotInUse,
-                        IsRecommended = x.IsRecommended,
-                        IsNew = x.IsNew
-                    });
+                    adminModels = (IList<TAdmin>)preProducts.Select(x => new AdminProduct { Id = x.Id, Name = IProduct.GetProductNameCounted(x, 1), Category = x.Model.Category.NameRu, Price = x.Price, NewPrice = x.NewPrice, NotInUse = !x.NotInUse, IsRecommended = x.IsRecommended, IsNew = x.IsNew }).ToList();
                     isPaged = true;
                     break;
                 case ConstantsService.PROMOTION:
                     IQueryable<Promotion> prePromotions = preModels as IQueryable<Promotion>;
                     prePromotions = prePromotions.OrderByDescending(x => x.Id);
-                    adminModels = (IEnumerable<TAdmin>)prePromotions.Select(x => new AdminPromotion
-                    {
-                        Id = x.Id,
-                        Name = x.NameRu,
-                        Type = _localizer[x.Type.ToString()],
-                        Products = x.PromotionProducts.Count
-                    });
+                    adminModels = (IList<TAdmin>)prePromotions.Select(x => new AdminPromotion { Id = x.Id, Name = x.NameRu, Type = _localizer[x.Type.ToString()], Products = x.PromotionProducts.Count }).ToList();
                     isPaged = true;
                     break;
                 case ConstantsService.PURCHASEINVOICE:
                     IEnumerable<PurchaseInvoice> prePurchaseInvoices = preModels as IEnumerable<PurchaseInvoice>;
                     prePurchaseInvoices = prePurchaseInvoices.OrderByDescending(x => x.Id);
-                    adminModels = (IEnumerable<TAdmin>)prePurchaseInvoices.Select(x => new AdminPurchaseInvoice
-                    {
-                        Id = x.Id,
-                        Date = x.Date,
-                        SupplierName = x.Supplier.Name,
-                        CurrencyCodeName = x.Currency.CodeName,
-                        CurrencyRate = x.CurrencyRate,
-                        Purchases = x.Purchases.Count
-                    });
+                    adminModels = (IList<TAdmin>)prePurchaseInvoices.Select(x => new AdminPurchaseInvoice { Id = x.Id, Date = x.Date, SupplierName = x.Supplier.Name, CurrencyCodeName = x.Currency.CodeName, CurrencyRate = x.CurrencyRate, Purchases = x.Purchases.Count }).ToList();
                     isPaged = true;
                     break;
                 case ConstantsService.SLIDE:
                     IEnumerable<Slide> preSlides = preModels as IEnumerable<Slide>;
                     preSlides = preSlides.OrderByDescending(x => x.Id);
-                    adminModels = (IEnumerable<TAdmin>)preSlides.Select(x => new AdminSlide
-                    {
-                        Id = x.Id,
-                        Name = x.Name,
-                        NotInUse = !x.NotInUse
-                    });
+                    adminModels = (IList<TAdmin>)preSlides.Select(x => new AdminSlide { Id = x.Id, Name = x.Name, NotInUse = !x.NotInUse }).ToList();
                     isPaged = true;
                     break;
                 case ConstantsService.SPEC:
                     IEnumerable<Spec> preSpecs = preModels as IEnumerable<Spec>;
                     preSpecs = preSpecs.OrderBy(x => x.Order);
-                    adminModels = (IEnumerable<TAdmin>)preSpecs.Select(x => new AdminSpec
-                    {
-                        Id = x.Id,
-                        Name = x.NameRu,
-                        Order = x.Order,
-                        NamingOrder = x.NamingOrder,
-                        SpecsValues = x.SpecsValues.Count,
-                        IsFilter = x.IsFilter
-                    });
+                    adminModels = (IList<TAdmin>)preSpecs.Select(x => new AdminSpec { Id = x.Id, Name = x.NameRu, Order = x.Order, NamingOrder = x.NamingOrder, SpecsValues = x.SpecsValues.Count, IsFilter = x.IsFilter }).ToList();
                     break;
                 case ConstantsService.SPECSVALUE:
                     IEnumerable<SpecsValue> preSpecsValues = preModels as IEnumerable<SpecsValue>;
                     preSpecsValues = preSpecsValues.OrderBy(x => x.NameRu);
-                    adminModels = (IEnumerable<TAdmin>)preSpecsValues.Select(x => new AdminSpecsValue
-                    {
-                        Id = x.Id,
-                        Name = x.NameRu,
-                        Products = x.ProductSpecsValues.Count
-                    });
+                    adminModels = (IList<TAdmin>)preSpecsValues.Select(x => new AdminSpecsValue { Id = x.Id, Name = x.NameRu, Products = x.ProductSpecsValues.Count }).ToList();
                     break;
                 case ConstantsService.SPECSVALUEMOD:
                     IEnumerable<SpecsValueMod> preSpecsValueMods = preModels as IEnumerable<SpecsValueMod>;
                     preSpecsValueMods = preSpecsValueMods.OrderBy(x => x.NameRu);
-                    adminModels = (IEnumerable<TAdmin>)preSpecsValueMods.Select(x => new AdminSpecsValueMod
-                    {
-                        Id = x.Id,
-                        Name = x.NameRu,
-                        Products = x.ProductSpecsValueMods.Count
-                    });
+                    adminModels = (IList<TAdmin>)preSpecsValueMods.Select(x => new AdminSpecsValueMod { Id = x.Id, Name = x.NameRu, Products = x.ProductSpecsValueMods.Count }).ToList();
                     break;
                 case ConstantsService.SUPPLIER:
                     IEnumerable<Supplier> preSuppliers = preModels as IEnumerable<Supplier>;
                     preSuppliers = preSuppliers.OrderBy(x => x.Name);
-                    adminModels = (IEnumerable<TAdmin>)preSuppliers.Select(x => new AdminSupplier
-                    {
-                        Id = x.Id,
-                        Name = x.Name,
-                        PhoneMain = x.PhoneMain,
-                        PurchaseInvoices = x.PurchaseInvoices.Count
-                    });
+                    adminModels = (IList<TAdmin>)preSuppliers.Select(x => new AdminSupplier { Id = x.Id, Name = x.Name, PhoneMain = x.PhoneMain, PurchaseInvoices = x.PurchaseInvoices.Count }).ToList();
                     break;
                 case ConstantsService.TYPE:
                     IEnumerable<ModelsType> preTypes = preModels as IEnumerable<ModelsType>;
                     preTypes = preTypes.OrderBy(x => x.NameRu);
-                    adminModels = (IEnumerable<TAdmin>)preTypes.Select(x => new AdminType
-                    {
-                        Id = x.Id,
-                        Name = x.NameRu,
-                        Models = x.Models.Count
-                    });
+                    adminModels = (IList<TAdmin>)preTypes.Select(x => new AdminType { Id = x.Id, Name = x.NameRu, Models = x.Models.Count }).ToList();
                     break;
                 case ConstantsService.USER:
                     IEnumerable<User> preUsers = preModels as IEnumerable<User>;
                     preUsers = preUsers.OrderBy(x => x.Email);
-                    adminModels = (IEnumerable<TAdmin>)preUsers.Select(x => new AdminUser
-                    {
-                        Id = x.Id,
-                        HumanName = x.Name,
-                        Email= x.Email,
-                        Phone= x.Phone,
-                        Invoices = x.Invoices.Count
-                    });
+                    adminModels = (IList<TAdmin>)preUsers.Select(x => new AdminUser { Id = x.Id, HumanName = x.Name, Email = x.Email, Phone = x.Phone, Invoices = x.Invoices.Count }).ToList();
                     isPaged = true;
                     break;
                 case ConstantsService.WARRANTY:
                     IEnumerable<Warranty> preWarranties = preModels as IEnumerable<Warranty>;
                     preWarranties = preWarranties.OrderBy(x => x.NameRu);
-                    adminModels = (IEnumerable<TAdmin>)preWarranties.Select(x => new AdminWarranty
-                    {
-                        Id = x.Id,
-                        Name = x.NameRu
-                    });
+                    adminModels = (IList<TAdmin>)preWarranties.Select(x => new AdminWarranty { Id = x.Id, Name = x.NameRu }).ToList();
                     break;
                 default:
-                    adminModels = (IEnumerable<TAdmin>)preModels;
+                    adminModels = (IList<TAdmin>)preModels;
                     break;
                     //throw new ArgumentOutOfRangeException(type.Name, $"Not expected type name: {type.Name}");
             }
@@ -613,14 +502,14 @@ namespace newTolkuchka.Services.Abstracts
                 foreach (string word in words)
                 {
                     if (adminModels.Any())
-                        adminModels = adminModels.Where(m => properties.Any(p => p.GetValue(m) != null && p.GetValue(m).ToString().Contains(word, StringComparison.OrdinalIgnoreCase)));
+                        adminModels = adminModels.Where(m => properties.Any(p => p.GetValue(m) != null && p.GetValue(m).ToString().Contains(word, StringComparison.OrdinalIgnoreCase))).ToList();
                 }
             }
             if (isPaged)
             {
-                int countBeforeSkip = adminModels.Count();
-                adminModels = adminModels.Skip(toSkip).Take(pp);
-                pagination = GetPagination(pp, countBeforeSkip, adminModels.Count(), toSkip, out int lp);
+                int countBeforeSkip = adminModels.Count;
+                adminModels = adminModels.Skip(toSkip).Take(pp).ToList();
+                pagination = GetPagination(pp, countBeforeSkip, adminModels.Count, toSkip, out int lp);
                 lastPage = lp;
             }
             else
