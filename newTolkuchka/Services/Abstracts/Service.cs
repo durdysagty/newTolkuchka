@@ -382,7 +382,7 @@ namespace newTolkuchka.Services.Abstracts
                             foreach (string word in words)
                             {
                                 if (preInvoices.Any())
-                                    preInvoices = preInvoices.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Date.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.User.Email.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Buyer.Contains(word, StringComparison.OrdinalIgnoreCase) || p.InvoiceAddress.Contains(word, StringComparison.OrdinalIgnoreCase) || p.InvoicePhone.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Currency.CodeName.Contains(word, StringComparison.OrdinalIgnoreCase) || p.CurrencyRate.ToString().Contains(word, StringComparison.OrdinalIgnoreCase));
+                                    preInvoices = preInvoices.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Date.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || (p.User != null && p.User.Email.Contains(word, StringComparison.OrdinalIgnoreCase)) || p.Buyer.Contains(word, StringComparison.OrdinalIgnoreCase) || p.InvoiceAddress.Contains(word, StringComparison.OrdinalIgnoreCase) || p.InvoicePhone.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Currency.CodeName.Contains(word, StringComparison.OrdinalIgnoreCase) || p.CurrencyRate.ToString().Contains(word, StringComparison.OrdinalIgnoreCase));
                             }
                         preInvoices = preInvoices.OrderByDescending(x => x.Id);
                         countBeforeSkip = preInvoices.Count();
@@ -477,7 +477,7 @@ namespace newTolkuchka.Services.Abstracts
                         foreach (string word in words)
                         {
                             if (preModels2.Any())
-                                preModels2 = preModels2.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Category.NameRu.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Type.NameRu.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Brand.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Line.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Products.Count.ToString().Contains(word, StringComparison.OrdinalIgnoreCase));
+                                preModels2 = preModels2.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Category.NameRu.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Type.NameRu.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Brand.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || (p.Line != null && p.Line.Name.Contains(word, StringComparison.OrdinalIgnoreCase)) || p.Products.Count.ToString().Contains(word, StringComparison.OrdinalIgnoreCase));
                         }
                     preModels2 = preModels2.OrderByDescending(x => x.Id);
                     countBeforeSkip = preModels2.Count();
@@ -501,7 +501,7 @@ namespace newTolkuchka.Services.Abstracts
                         foreach (string word in words)
                         {
                             if (preProducts.Any())
-                                preProducts = preProducts.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Price.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.NewPrice.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Model.Type.NameRu.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Model.Brand.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Model.Line.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Model.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || p.ProductSpecsValues.Any(sv => sv.SpecsValue.NameRu.Contains(word, StringComparison.OrdinalIgnoreCase)) || p.ProductSpecsValueMods.Any(svm => svm.SpecsValueMod.NameRu.Contains(word, StringComparison.OrdinalIgnoreCase)));
+                                preProducts = preProducts.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Price.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.NewPrice.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Model.Type.NameRu.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Model.Brand.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || (p.Model.Line != null && p.Model.Line.Name.Contains(word, StringComparison.OrdinalIgnoreCase)) || p.Model.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || p.ProductSpecsValues.Any(sv => sv.SpecsValue.NameRu.Contains(word, StringComparison.OrdinalIgnoreCase)) || p.ProductSpecsValueMods.Any(svm => svm.SpecsValueMod.NameRu.Contains(word, StringComparison.OrdinalIgnoreCase)));
                         }
                     preProducts = preProducts.OrderByDescending(x => x.Id);
                     countBeforeSkip = preProducts.Count();
@@ -621,7 +621,7 @@ namespace newTolkuchka.Services.Abstracts
                         foreach (string word in words)
                         {
                             if (preUsers.Any())
-                                preUsers = preUsers.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Email.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Name.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Phone.Contains(word, StringComparison.OrdinalIgnoreCase) || p.Invoices.Count.ToString().Contains(word, StringComparison.OrdinalIgnoreCase));
+                                preUsers = preUsers.Where(p => p.Id.ToString().Contains(word, StringComparison.OrdinalIgnoreCase) || p.Email.Contains(word, StringComparison.OrdinalIgnoreCase) || (p.Name != null && p.Name.Contains(word, StringComparison.OrdinalIgnoreCase)) || (p.Phone != null && p.Phone.Contains(word, StringComparison.OrdinalIgnoreCase)) || p.Invoices.Count.ToString().Contains(word, StringComparison.OrdinalIgnoreCase));
                         }
                     preUsers = preUsers.OrderBy(x => x.Email);
                     countBeforeSkip = preUsers.Count();
