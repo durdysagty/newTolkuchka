@@ -343,10 +343,6 @@ namespace newTolkuchka.Services
                             await DeleteModelAsync(o.Id, o);
                         ordersToCheck = ordersToCheck.Except(ordersOutOfQuantity);
                     }
-                    //foreach (Order o in ordersToCheck)
-                    //{
-                    //    o.OrderPrice = ao.OrderPrice;
-                    //}
                     if (ordersToCheck.Count() < ao.Quantity)
                     {
                         for (int i = 0; i < ao.Quantity - ordersToCheck.Count(); i++)

@@ -1,6 +1,4 @@
-﻿using newTolkuchka.Models;
-
-namespace newTolkuchka.Services.Interfaces
+﻿namespace newTolkuchka.Services.Interfaces
 {
     public interface ICacheClean
     {
@@ -13,5 +11,6 @@ namespace newTolkuchka.Services.Interfaces
         void CleanIndexArticles();
         void CleanAllModeledProducts();
         void CleanProductPage(int id = 0);
+        void CleanAllReports();
     }
 }

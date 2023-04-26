@@ -102,6 +102,18 @@ namespace newTolkuchka.Services
             }
         }
 
+        public void CleanAllReports()
+        {
+            if (_memoryCache.TryGetValue(ConstantsService.ADMINREPORTSHASHKEYS, out HashSet<string> reportKeys))
+            {
+                foreach (string key in reportKeys)
+                {
+                    _memoryCache.Remove(key);
+                }
+                _memoryCache.Remove(ConstantsService.ADMINREPORTSHASHKEYS);
+            }
+        }
+
         private void CleanCulturedCaches(string key)
         {
             Array cultures = Enum.GetValues(typeof(CultureProvider.Culture));

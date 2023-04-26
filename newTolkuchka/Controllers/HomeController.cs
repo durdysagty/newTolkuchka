@@ -366,10 +366,10 @@ namespace newTolkuchka.Controllers
             {
                 // all caches cleaned on any product changed
                 ce.SlidingExpiration = TimeSpan.FromHours(6);
-                if (!_memoryCache.TryGetValue(ConstantsService.MODELEDPRODUCTSHASHKEYS, out HashSet<string> modeledProducts))
-                    modeledProducts = new HashSet<string>();
-                modeledProducts.Add(key);
-                _memoryCache.Set(ConstantsService.MODELEDPRODUCTSHASHKEYS, modeledProducts, new MemoryCacheEntryOptions()
+                if (!_memoryCache.TryGetValue(ConstantsService.MODELEDPRODUCTSHASHKEYS, out HashSet<string> modeledProductKeys))
+                    modeledProductKeys = new HashSet<string>();
+                modeledProductKeys.Add(key);
+                _memoryCache.Set(ConstantsService.MODELEDPRODUCTSHASHKEYS, modeledProductKeys, new MemoryCacheEntryOptions()
                 {
                     SlidingExpiration = TimeSpan.FromDays(3)
                 });
@@ -691,7 +691,7 @@ namespace newTolkuchka.Controllers
             if (article == null)
                 return await GetNotFoundPage();
             await CreateMetaData(ConstantsService.ARTICLE, _breadcrumbs.GetModelBreadcrumbs(ConstantsService.ARTICLES), article.Name);
-            ViewBag.ScreenWidth = GetScreenWidth() - 20;
+            //ViewBag.ScreenWidth = GetScreenWidth() - 20;
             return View(article);
         }
         [Route(ConstantsService.ABOUT)]
