@@ -23,17 +23,17 @@ namespace newTolkuchka.ControllersAPI
             SpecsValue specsValue = await _service.GetModelAsync(id);
             return specsValue;
         }
-        [HttpGet($"{ConstantsService.SPEC}/{{specId}}")]
-        public ModelsFilters<AdminSpecsValue> GetBySpec(int specId, [FromQuery] int page = 0, [FromQuery] int pp = 50)
-        {
-            IEnumerable<AdminSpecsValue> specsValues = _service.GetAdminModels(page, pp, out int lastPage, out string pagination, new Dictionary<string, object> { { ConstantsService.SPEC, specId } });
-            return new ModelsFilters<AdminSpecsValue>
-            {
-                Models = specsValues,
-                LastPage = lastPage,
-                Pagination = pagination
-            };
-        }
+        //[HttpGet($"{ConstantsService.SPEC}/{{specId}}")]
+        //public ModelsFilters<AdminSpecsValue> GetBySpec(int specId, [FromQuery] int page = 0, [FromQuery] int pp = 50)
+        //{
+        //    IEnumerable<AdminSpecsValue> specsValues = _service.GetAdminModels(page, pp, out int lastPage, out string pagination, new Dictionary<string, object> { { ConstantsService.SPEC, specId } });
+        //    return new ModelsFilters<AdminSpecsValue>
+        //    {
+        //        Models = specsValues,
+        //        LastPage = lastPage,
+        //        Pagination = pagination
+        //    };
+        //}
         [HttpPost]
         public async Task<Result> Post([FromForm] SpecsValue specsValue, [FromForm] IFormFile[] images)
         {
