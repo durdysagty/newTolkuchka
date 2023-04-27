@@ -6,7 +6,7 @@ using newTolkuchka.Services.Interfaces;
 namespace newTolkuchka.ControllersAPI
 {
     [ApiController]
-    public class HomeApiController
+    public class HomeApiController : ControllerBase
     {
         private readonly IProduct _product;
         public HomeApiController(IProduct product)
@@ -14,11 +14,16 @@ namespace newTolkuchka.ControllersAPI
             _product = product;
         }
 
+        [HttpGet]
         [Route($"a/{ConstantsService.PRODUCT}/{{id}}")]
-        public async Task<ApiProduct> Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             ApiProduct product = await _product.GetApiProductAsync(id);
-            return product;
+            if (product == null)
+            {
+                return NotFound("Not Found");
+            }
+            return Ok(product);
         }
     }
 }

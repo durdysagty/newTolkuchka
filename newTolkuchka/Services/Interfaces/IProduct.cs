@@ -23,7 +23,7 @@ namespace newTolkuchka.Services.Interfaces
         static decimal GetOrderPrice(Product product)
         {
             Promotion discountPromotion = product.PromotionProducts.FirstOrDefault(pp => pp.Promotion.Type == Tp.Discount)?.Promotion;
-            decimal orderPrice = IProduct.GetConvertedPrice(discountPromotion != null ? (decimal)(product.Price - product.Price * discountPromotion.Volume / 100) : product.NewPrice != null ? (decimal)product.NewPrice : product.Price);
+            decimal orderPrice = GetConvertedPrice(discountPromotion != null ? (decimal)(product.Price - product.Price * discountPromotion.Volume / 100) : product.NewPrice != null ? (decimal)product.NewPrice : product.Price);
             return orderPrice;
         }
 
