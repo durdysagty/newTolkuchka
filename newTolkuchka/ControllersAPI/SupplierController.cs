@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services.Abstracts;
@@ -10,7 +11,7 @@ namespace newTolkuchka.ControllersAPI
     [Authorize(Policy = "Level2")]
     public class SupplierController : AbstractController<Supplier, AdminSupplier, ISupplier>
     {
-        public SupplierController(IEntry entry, ISupplier supplier, ICacheClean cacheClean) : base(entry, Entity.Supplier, supplier, cacheClean)
+        public SupplierController(IEntry entry, ISupplier supplier, IMemoryCache memoryCache, ICacheClean cacheClean) : base(entry, Entity.Supplier, supplier, memoryCache, cacheClean)
         {
         }
 

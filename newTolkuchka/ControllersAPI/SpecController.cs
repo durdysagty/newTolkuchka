@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services;
@@ -12,7 +13,7 @@ namespace newTolkuchka.ControllersAPI
     [Authorize(Policy = "Level1")]
     public class SpecController : AbstractController<Spec, AdminSpec, ISpec>
     {
-        public SpecController(IEntry entry, ISpec spec, ICacheClean cacheClean) : base(entry, Entity.Spec, spec, cacheClean)
+        public SpecController(IEntry entry, ISpec spec, IMemoryCache memoryCache, ICacheClean cacheClean) : base(entry, Entity.Spec, spec, memoryCache, cacheClean)
         {
         }
 

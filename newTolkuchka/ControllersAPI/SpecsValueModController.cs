@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
-using newTolkuchka.Services;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 
@@ -11,7 +11,7 @@ namespace newTolkuchka.ControllersAPI
     [Authorize(Policy = "Level1")]
     public class SpecsValueModController : AbstractController<SpecsValueMod, AdminSpecsValueMod, ISpecsValueMod>
     {
-        public SpecsValueModController(IEntry entry, ISpecsValueMod specsValueMod, ICacheClean cacheClean) : base(entry, Entity.SpecsValueMod, specsValueMod, cacheClean)
+        public SpecsValueModController(IEntry entry, ISpecsValueMod specsValueMod, IMemoryCache memoryCache, ICacheClean cacheClean) : base(entry, Entity.SpecsValueMod, specsValueMod, memoryCache, cacheClean)
         {
         }
 

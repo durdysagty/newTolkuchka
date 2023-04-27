@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services;
@@ -13,7 +14,7 @@ namespace newTolkuchka.ControllersAPI
     {
         private readonly ICategory _category;
         private readonly IProduct _product;
-        public ModelController(IEntry entry, IModel model, ICacheClean cacheClean, ICategory category, IProduct product) : base(entry, Entity.Model, model, cacheClean)
+        public ModelController(IEntry entry, IModel model, IMemoryCache memoryCache, ICacheClean cacheClean, ICategory category, IProduct product) : base(entry, Entity.Model, model, memoryCache, cacheClean)
         {
             _category = category;
             _product = product;

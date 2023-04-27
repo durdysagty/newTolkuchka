@@ -1,10 +1,12 @@
 ﻿using Microsoft.Extensions.Localization;
 using newTolkuchka.Reces;
+using newTolkuchka.Services.Interfaces;
+
 namespace newTolkuchka.Services.Abstracts
 {
     public abstract class BaseService
     {
-        public readonly IStringLocalizer<Shared> _localizer;
+        private protected readonly IStringLocalizer<Shared> _localizer;
         public BaseService(IStringLocalizer<Shared> localizer)
         {
             _localizer = localizer;

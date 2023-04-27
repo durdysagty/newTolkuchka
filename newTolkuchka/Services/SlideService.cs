@@ -10,7 +10,7 @@ namespace newTolkuchka.Services
     public class SlideService : ServiceFormFile<Slide, AdminSlide>, ISlide
     {
         //private const int IMAGESMAX = 3;
-        public SlideService(AppDbContext con, IStringLocalizer<Shared> localizer, IPath path, IImage image) : base(con, localizer, path, image, ConstantsService.LOCALMAXIMAGE)
+        public SlideService(AppDbContext con, IStringLocalizer<Shared> localizer, IPath path, ICacheClean cacheClean, IImage image) : base(con, localizer, path, cacheClean, image, ConstantsService.LOCALMAXIMAGE)
         {
         }
 

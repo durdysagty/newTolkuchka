@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
-using System.Collections.Generic;
-using System.Text.Json;
 using static newTolkuchka.Services.CultureProvider;
 
 namespace newTolkuchka.ControllersAPI
@@ -18,7 +17,7 @@ namespace newTolkuchka.ControllersAPI
         private const int HEIGHT = 250;
         private readonly IActionNoFile<Heading, Heading> _heading;
 
-        public ArticleController(IEntry entry, IArticle article, ICacheClean cacheClean, IActionNoFile<Heading, Heading> heading) : base(entry, Entity.Article, article, cacheClean)
+        public ArticleController(IEntry entry, IArticle article, IMemoryCache memoryCache, ICacheClean cacheClean, IActionNoFile<Heading, Heading> heading) : base(entry, Entity.Article, article, memoryCache, cacheClean)
         {
             _heading = heading;
         }

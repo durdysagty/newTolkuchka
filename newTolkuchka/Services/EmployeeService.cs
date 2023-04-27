@@ -13,7 +13,7 @@ namespace newTolkuchka.Services
     {
         private readonly ICrypto _crypto;
         private readonly IMemoryCache _memoryCache;
-        public EmployeeService(AppDbContext con, IStringLocalizer<Shared> localizer, ICrypto crypto, IMemoryCache memoryCache) : base(con, localizer)
+        public EmployeeService(AppDbContext con, IStringLocalizer<Shared> localizer, ICacheClean cacheClean, ICrypto crypto, IMemoryCache memoryCache) : base(con, localizer, cacheClean)
         {
             _crypto = crypto;
             _memoryCache = memoryCache;

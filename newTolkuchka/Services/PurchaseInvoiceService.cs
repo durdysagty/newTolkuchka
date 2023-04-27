@@ -9,7 +9,7 @@ namespace newTolkuchka.Services
 {
     public class PurchaseInvoiceService : ServiceNoFile<PurchaseInvoice, AdminPurchaseInvoice>, IPurchaseInvoice
     {
-        public PurchaseInvoiceService(AppDbContext con, IStringLocalizer<Shared> localizer) : base(con, localizer)
+        public PurchaseInvoiceService(AppDbContext con, IStringLocalizer<Shared> localizer, ICacheClean cacheClean) : base(con, localizer, cacheClean)
         {
         }
     }

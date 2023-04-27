@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services;
@@ -12,7 +13,7 @@ namespace newTolkuchka.ControllersAPI
     public class InvoiceController : AbstractController<Invoice, AdminInvoice, IInvoice>
     {
         private readonly IOrder _order;
-        public InvoiceController(IEntry entry, IInvoice invoice, IOrder order, ICacheClean cacheClean) : base(entry, Entity.Invoice, invoice, cacheClean)
+        public InvoiceController(IEntry entry, IInvoice invoice, IOrder order, IMemoryCache memoryCache, ICacheClean cacheClean) : base(entry, Entity.Invoice, invoice, memoryCache, cacheClean)
         {
             _order = order;
         }

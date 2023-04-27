@@ -15,9 +15,11 @@ namespace newTolkuchka.Services.Abstracts
     public abstract class Service<T, TAdmin> : BaseService, IAction<T, TAdmin> where T : class where TAdmin : class
     {
         private protected readonly AppDbContext _con;
-        public Service(AppDbContext con, IStringLocalizer<Shared> localizer) : base(localizer)
+        private protected readonly ICacheClean _cacheClean;
+        public Service(AppDbContext con, IStringLocalizer<Shared> localizer, ICacheClean cacheClean ) : base(localizer)
         {
             _con = con;
+            _cacheClean = cacheClean;
         }
 
         public async Task<T> GetModelAsync(int id)

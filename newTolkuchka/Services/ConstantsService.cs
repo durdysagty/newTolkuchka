@@ -10,6 +10,7 @@ namespace newTolkuchka.Services
         // cache keys
         public const string MODELEDPRODUCTSHASHKEYS = "hsptskeys";
         public const string PRODUCTSHASHKEYS = "ptkeys";
+        public const string ADMINMODELSHASHKEYS = "mdlskys";
         public const string ADMINREPORTSHASHKEYS = "rprtskys";
         public const string CATEGORIESGROUPBYPARENTID = "csgp";
         public const string CATEGORYIDSGOTPRODUCTSBYPARENTID = "cidsgp";

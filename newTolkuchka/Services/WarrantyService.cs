@@ -9,7 +9,7 @@ namespace newTolkuchka.Services
 {
     public class WarrantyService : ServiceNoFile<Warranty, AdminWarranty>, IWarranty
     {
-        public WarrantyService(AppDbContext con, IStringLocalizer<Shared> localizer) : base(con, localizer)
+        public WarrantyService(AppDbContext con, IStringLocalizer<Shared> localizer, ICacheClean cacheClean) : base(con, localizer, cacheClean)
         {
         }
     }

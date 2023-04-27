@@ -10,7 +10,7 @@ namespace newTolkuchka.Services
     public class SpecsValueService : ServiceFormFile<SpecsValue, AdminSpecsValue>, ISpecsValue
     {
         private const int IMAGESMAX = 1;
-        public SpecsValueService(AppDbContext con, IStringLocalizer<Shared> localizer, IPath path, IImage image) : base(con, localizer, path, image, IMAGESMAX)
+        public SpecsValueService(AppDbContext con, IStringLocalizer<Shared> localizer, IPath path, ICacheClean cacheClean, IImage image) : base(con, localizer, path, cacheClean, image, IMAGESMAX)
         {
         }
     }

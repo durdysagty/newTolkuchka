@@ -10,7 +10,7 @@ namespace newTolkuchka.Services
 {
     public class PromotionService : ServiceFormFile<Promotion, AdminPromotion>, IPromotion
     {
-        public PromotionService(AppDbContext con, IPath path, IImage image, IStringLocalizer<Shared> localizer) : base(con, localizer, path, image, ConstantsService.LOCALMAXIMAGE)
+        public PromotionService(AppDbContext con, IPath path, ICacheClean cacheClean, IImage image, IStringLocalizer<Shared> localizer) : base(con, localizer, path, cacheClean, image, ConstantsService.LOCALMAXIMAGE)
         {
         }
 

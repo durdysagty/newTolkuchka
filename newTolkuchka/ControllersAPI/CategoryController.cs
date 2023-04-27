@@ -15,7 +15,7 @@ namespace newTolkuchka.ControllersAPI
         private const int WIDTH = 450;
         private const int HEIGHT = 225;
         private readonly IProduct _product;
-        public CategoryController(IEntry entry, ICategory category, ICacheClean cacheClean, IProduct product) : base(entry, Entity.Category, category, cacheClean)
+        public CategoryController(IEntry entry, ICategory category, ICacheClean cacheClean, IMemoryCache memoryCache, IProduct product) : base(entry, Entity.Category, category, memoryCache, cacheClean)
         {
             _product = product;
         }

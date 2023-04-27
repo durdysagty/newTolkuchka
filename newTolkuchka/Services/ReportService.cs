@@ -11,8 +11,7 @@ namespace newTolkuchka.Services
 {
     public class ReportService : ServiceNoFile<Invoice, AdminReportOrder>, IReport
     {
-        public ReportService(AppDbContext con, IStringLocalizer<Shared> localizer)
-            : base(con, localizer)
+        public ReportService(AppDbContext con, IStringLocalizer<Shared> localizer, ICacheClean cacheClean) : base(con, localizer, cacheClean)
         {
         }
     }

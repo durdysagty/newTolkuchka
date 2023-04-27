@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services;
@@ -15,7 +16,7 @@ namespace newTolkuchka.ControllersAPI
         private const int WIDTH = 600;
         private const int HEIGHT = 600;
         private const int DIVIDER = 3;
-        public ProductController(IEntry entry, IProduct product, ICacheClean cacheClean) : base(entry, Entity.Product, product, cacheClean)
+        public ProductController(IEntry entry, IProduct product, IMemoryCache memoryCache, ICacheClean cacheClean) : base(entry, Entity.Product, product, memoryCache, cacheClean)
         {
         }
 

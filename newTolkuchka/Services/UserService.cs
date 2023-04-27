@@ -13,7 +13,7 @@ namespace newTolkuchka.Services
     {
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICrypto _crypto;
-        public UserService(AppDbContext con, IStringLocalizer<Shared> localizer, IHttpContextAccessor contextAccessor, ICrypto crypto) : base(con, localizer)
+        public UserService(AppDbContext con, IStringLocalizer<Shared> localizer, ICacheClean cacheClean, IHttpContextAccessor contextAccessor, ICrypto crypto) : base(con, localizer, cacheClean)
         {
             _contextAccessor = contextAccessor;
             _crypto = crypto;

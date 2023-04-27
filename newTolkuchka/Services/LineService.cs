@@ -9,7 +9,7 @@ namespace newTolkuchka.Services
 {
     public class LineService : ServiceNoFile<Line, AdminLine>, ILine
     {
-        public LineService(AppDbContext con, IStringLocalizer<Shared> localizer) : base(con, localizer)
+        public LineService(AppDbContext con, IStringLocalizer<Shared> localizer, ICacheClean cacheClean) : base(con, localizer, cacheClean)
         {
         }
     }

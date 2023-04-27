@@ -12,5 +12,6 @@
         void CleanAllModeledProducts();
         void CleanProductPage(int id = 0);
         void CleanAllReports();
+        void CleanAdminModels(string model);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services.Abstracts;
@@ -12,7 +13,7 @@ namespace newTolkuchka.ControllersAPI
     {
         private const int WIDTH = 450;
         private const int HEIGHT = 225;
-        public PromotionController(IEntry entry, IPromotion promotion, ICacheClean cacheClean) : base(entry, Entity.Promotion, promotion, cacheClean)
+        public PromotionController(IEntry entry, IPromotion promotion, IMemoryCache memoryCache, ICacheClean cacheClean) : base(entry, Entity.Promotion, promotion, memoryCache, cacheClean)
         {
         }
 

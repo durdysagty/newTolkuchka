@@ -13,7 +13,7 @@ namespace newTolkuchka.Services
         //private const int IMAGESMAX = 5;
         private readonly ISpecsValue _specsValue;
         private readonly ISpecsValueMod _specsValueMod;
-        public ProductService(AppDbContext con, ISpecsValue specsValue, ISpecsValueMod specsValueMod, IStringLocalizer<Shared> localizer, IPath path, IImage image) : base(con, localizer, path, image, ConstantsService.PRODUCTMAXIMAGE)
+        public ProductService(AppDbContext con, ISpecsValue specsValue, ISpecsValueMod specsValueMod, IStringLocalizer<Shared> localizer, IPath path, ICacheClean cacheClean, IImage image) : base(con, localizer, path, cacheClean, image, ConstantsService.PRODUCTMAXIMAGE)
         {
             _specsValue = specsValue;
             _specsValueMod = specsValueMod;

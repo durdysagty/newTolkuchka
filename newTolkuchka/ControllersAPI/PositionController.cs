@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services.Abstracts;
@@ -10,7 +11,7 @@ namespace newTolkuchka.ControllersAPI
     [Authorize(Policy = "Level3")]
     public class PositionController : AbstractController<Position, AdminPosition, IPosition>
     {
-        public PositionController(IEntry entry, IPosition position, ICacheClean cacheClean) : base(entry, Entity.Position, position, cacheClean)
+        public PositionController(IEntry entry, IPosition position, IMemoryCache memoryCache, ICacheClean cacheClean) : base(entry, Entity.Position, position, memoryCache, cacheClean)
         {
         }
 

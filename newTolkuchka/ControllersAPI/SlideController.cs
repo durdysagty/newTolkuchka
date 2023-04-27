@@ -16,7 +16,7 @@ namespace newTolkuchka.ControllersAPI
         private const int HEIGHT = 300;
         private const int LEFTWIDTH = 220;
         private const int LEFTHEIGHT = 300;
-        public SlideController(IEntry entry, ISlide slide, ICacheClean cacheClean) : base(entry, Entity.Slide, slide, cacheClean)
+        public SlideController(IEntry entry, ISlide slide, IMemoryCache memoryCache, ICacheClean cacheClean) : base(entry, Entity.Slide, slide, memoryCache, cacheClean)
         {
         }
 

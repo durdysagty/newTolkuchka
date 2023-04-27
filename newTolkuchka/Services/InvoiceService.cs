@@ -14,7 +14,7 @@ namespace newTolkuchka.Services
     {
         private readonly IProduct _product;
         private readonly IOrder _order;
-        public InvoiceService(AppDbContext con, IProduct product, IOrder order, IStringLocalizer<Shared> localizer) : base(con, localizer)
+        public InvoiceService(AppDbContext con, IProduct product, IOrder order, IStringLocalizer<Shared> localizer, ICacheClean cacheClean) : base(con, localizer, cacheClean)
         {
             _product = product;
             _order = order;

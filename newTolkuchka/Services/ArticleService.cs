@@ -9,7 +9,7 @@ namespace newTolkuchka.Services
 {
     public class ArticleService : ServiceFormFile<Article, AdminArticle>, IArticle
     {
-        public ArticleService(AppDbContext con, IStringLocalizer<Shared> localizer, IPath path, IImage image) : base(con, localizer, path, image, ConstantsService.UMAXIMAGE)
+        public ArticleService(AppDbContext con, IStringLocalizer<Shared> localizer, IPath path, ICacheClean cacheClean, IImage image) : base(con, localizer, path, cacheClean, image, ConstantsService.UMAXIMAGE)
         {
         }
 

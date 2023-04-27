@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Services.Interfaces;
-using System.Linq;
 
 namespace newTolkuchka.Services
 {
@@ -97,7 +96,10 @@ namespace newTolkuchka.Services
                         _memoryCache.Remove(key);
                         productsKeys.Remove(key);
                     }
-                    _memoryCache.Set(ConstantsService.PRODUCTSHASHKEYS, productsKeys);
+                    _memoryCache.Set(ConstantsService.PRODUCTSHASHKEYS, productsKeys, new MemoryCacheEntryOptions()
+                    {
+                        SlidingExpiration = TimeSpan.FromDays(3)
+                    });
                 }
             }
         }
@@ -111,6 +113,23 @@ namespace newTolkuchka.Services
                     _memoryCache.Remove(key);
                 }
                 _memoryCache.Remove(ConstantsService.ADMINREPORTSHASHKEYS);
+            }
+        }
+
+        public void CleanAdminModels(string model)
+        {
+            if (_memoryCache.TryGetValue(ConstantsService.ADMINMODELSHASHKEYS, out HashSet<string> modelKeys))
+            {
+                IEnumerable<string> neededKeys = modelKeys.Where(mk => mk.Contains(model));
+                foreach (string key in neededKeys)
+                {
+                    _memoryCache.Remove(key);
+                    modelKeys.Remove(key);
+                }
+                _memoryCache.Set(ConstantsService.ADMINMODELSHASHKEYS, modelKeys, new MemoryCacheEntryOptions()
+                {
+                    SlidingExpiration = TimeSpan.FromDays(1)
+                });
             }
         }
 

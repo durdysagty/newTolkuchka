@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services.Abstracts;
@@ -10,7 +11,7 @@ namespace newTolkuchka.ControllersAPI
     [Authorize(Policy = "Level1")]
     public class WarrantyController : AbstractController<Warranty, AdminWarranty, IWarranty>
     {
-        public WarrantyController(IEntry entry, IWarranty warranty, ICacheClean cacheClean) : base(entry, Entity.Warranty, warranty, cacheClean)
+        public WarrantyController(IEntry entry, IWarranty warranty, IMemoryCache memoryCache, ICacheClean cacheClean) : base(entry, Entity.Warranty, warranty, memoryCache, cacheClean)
         {
         }
 

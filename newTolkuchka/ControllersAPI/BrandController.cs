@@ -14,7 +14,7 @@ namespace newTolkuchka.ControllersAPI
     {
         private const int WIDTH = 180;
         private const int HEIGHT = 60;
-        public BrandController(IEntry entry, IBrand brand, ICacheClean cacheClean) : base(entry, Entity.Brand, brand, cacheClean)
+        public BrandController(IEntry entry, IBrand brand, IMemoryCache memoryCache, ICacheClean cacheClean) : base(entry, Entity.Brand, brand, memoryCache, cacheClean)
         {
         }
 

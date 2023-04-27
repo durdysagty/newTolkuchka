@@ -9,7 +9,7 @@ namespace newTolkuchka.Services
 {
     public class SupplierService : ServiceNoFile<Supplier, AdminSupplier>, ISupplier
     {
-        public SupplierService(AppDbContext con, IStringLocalizer<Shared> localizer) : base(con, localizer)
+        public SupplierService(AppDbContext con, IStringLocalizer<Shared> localizer, ICacheClean cacheClean) : base(con, localizer, cacheClean)
         {
         }
     }

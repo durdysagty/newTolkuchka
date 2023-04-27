@@ -10,7 +10,7 @@ namespace newTolkuchka.Services
     public class PositionService : ServiceNoFile<Position, AdminPosition>, IPosition
     {
         private readonly IEmployee _employee;
-        public PositionService(AppDbContext con, IStringLocalizer<Shared> localizer, IEmployee employee) : base(con, localizer)
+        public PositionService(AppDbContext con, IStringLocalizer<Shared> localizer, IEmployee employee, ICacheClean cacheClean) : base(con, localizer, cacheClean)
         {
             _employee = employee;
         }

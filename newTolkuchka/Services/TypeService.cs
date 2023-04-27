@@ -10,7 +10,7 @@ namespace newTolkuchka.Services
 {
     public class TypeService : ServiceNoFile<Type, AdminType>, IType
     {
-        public TypeService(AppDbContext con, IStringLocalizer<Shared> localizer) : base(con, localizer)
+        public TypeService(AppDbContext con, IStringLocalizer<Shared> localizer, ICacheClean cacheClean) : base(con, localizer, cacheClean)
         {
         }
     }

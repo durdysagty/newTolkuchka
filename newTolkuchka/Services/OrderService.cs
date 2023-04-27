@@ -13,7 +13,7 @@ namespace newTolkuchka.Services
 
         private readonly IProduct _product;
 
-        public OrderService(AppDbContext con, IStringLocalizer<Shared> localizer, IProduct product) : base(con, localizer)
+        public OrderService(AppDbContext con, IStringLocalizer<Shared> localizer, IProduct product, ICacheClean cacheClean) : base(con, localizer, cacheClean)
         {
             _product = product;
         }

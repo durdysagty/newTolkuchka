@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services;
@@ -11,7 +12,7 @@ namespace newTolkuchka.ControllersAPI
     [Authorize(Policy = "Level1")]
     public class LineController : AbstractController<Line, AdminLine, ILine>
     {
-        public LineController(IEntry entry, ILine line, ICacheClean cacheClean) : base(entry, Entity.Line, line, cacheClean)
+        public LineController(IEntry entry, ILine line, IMemoryCache memoryCache, ICacheClean cacheClean) : base(entry, Entity.Line, line, memoryCache, cacheClean)
         {
         }
 

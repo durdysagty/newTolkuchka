@@ -11,7 +11,7 @@ namespace newTolkuchka.Services
     public class ModelService : ServiceNoFile<Model, AdminModel>, IModel
     {
         private readonly IProduct _product;
-        public ModelService(AppDbContext con, IProduct product, IStringLocalizer<Shared> localizer) : base(con, localizer)
+        public ModelService(AppDbContext con, IProduct product, IStringLocalizer<Shared> localizer, ICacheClean cacheClean) : base(con, localizer, cacheClean)
         {
             _product = product;
         }

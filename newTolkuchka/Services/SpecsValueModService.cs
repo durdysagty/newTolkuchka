@@ -9,7 +9,7 @@ namespace newTolkuchka.Services
 {
     public class SpecsValueModService : ServiceNoFile<SpecsValueMod, AdminSpecsValueMod>, ISpecsValueMod
     {
-        public SpecsValueModService(AppDbContext con, IStringLocalizer<Shared> localizer) : base(con, localizer)
+        public SpecsValueModService(AppDbContext con, IStringLocalizer<Shared> localizer, ICacheClean cacheClean) : base(con, localizer, cacheClean)
         {
         }
     }

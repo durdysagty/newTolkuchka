@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services.Abstracts;
@@ -9,7 +10,7 @@ namespace newTolkuchka.ControllersAPI
     [Authorize(Policy = "Level3")]
     public class ReportController : AbstractController<Invoice, AdminReportOrder, IReport>
     {
-        public ReportController(IEntry entry, IReport report, ICacheClean cacheClean) : base(entry, Entity.Default, report, cacheClean)
+        public ReportController(IEntry entry, IReport report, IMemoryCache memoryCache, ICacheClean cacheClean) : base(entry, Entity.Default, report, memoryCache, cacheClean)
         {
         }
     }

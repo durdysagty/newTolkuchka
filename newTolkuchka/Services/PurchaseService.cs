@@ -10,7 +10,7 @@ namespace newTolkuchka.Services
     public class PurchaseService : ServiceNoFile<Purchase, AdminPurchase>, IPurchase
     {
         private readonly IProduct _product;
-        public PurchaseService(AppDbContext con, IStringLocalizer<Shared> localizer, IProduct product) : base(con, localizer)
+        public PurchaseService(AppDbContext con, IStringLocalizer<Shared> localizer, IProduct product, ICacheClean cacheClean) : base(con, localizer, cacheClean)
         {
             _product = product;
         }

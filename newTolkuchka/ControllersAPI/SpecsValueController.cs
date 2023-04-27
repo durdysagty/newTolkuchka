@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
-using newTolkuchka.Services;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 
@@ -13,7 +13,7 @@ namespace newTolkuchka.ControllersAPI
     {
         private const int WIDTH = 25;
         private const int HEIGHT = 25;
-        public SpecsValueController(IEntry entry, ISpecsValue specsValue, ICacheClean cacheClean) : base(entry, Entity.SpecsValue, specsValue, cacheClean)
+        public SpecsValueController(IEntry entry, ISpecsValue specsValue, IMemoryCache memoryCache, ICacheClean cacheClean) : base(entry, Entity.SpecsValue, specsValue, memoryCache, cacheClean)
         {
         }
 

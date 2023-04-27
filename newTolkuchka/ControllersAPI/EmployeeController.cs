@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services.Abstracts;
@@ -10,7 +11,7 @@ namespace newTolkuchka.ControllersAPI
     [Authorize(Policy = "Level3")]
     public class EmployeeController : AbstractController<Employee, AdminEmployee, IEmployee>
     {
-        public EmployeeController(IEntry entry, IEmployee employee, ICacheClean cacheClean) : base(entry, Entity.Employee, employee, cacheClean)
+        public EmployeeController(IEntry entry, IEmployee employee, IMemoryCache memoryCache, ICacheClean cacheClean) : base(entry, Entity.Employee, employee, memoryCache, cacheClean)
         {
         }
 

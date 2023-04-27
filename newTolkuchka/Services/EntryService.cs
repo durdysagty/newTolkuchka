@@ -12,7 +12,7 @@ namespace newTolkuchka.Services
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IPath _path;
         //private readonly IEmployee _employee;
-        public EntryService(IHttpContextAccessor contextAccessor, IPath path, AppDbContext con,/* IEmployee employee,*/  IStringLocalizer<Shared> localizer) : base(con, localizer)
+        public EntryService(IHttpContextAccessor contextAccessor, IPath path, AppDbContext con,/* IEmployee employee,*/  IStringLocalizer<Shared> localizer, ICacheClean cacheClean) : base(con, localizer, cacheClean)
         {
             _contextAccessor = contextAccessor;
             _path = path;

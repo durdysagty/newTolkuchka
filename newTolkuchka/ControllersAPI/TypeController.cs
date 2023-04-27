@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services.Abstracts;
@@ -11,7 +12,7 @@ namespace newTolkuchka.ControllersAPI
     [Authorize(Policy = "Level1")]
     public class TypeController : AbstractController<Type, AdminType, IType>
     {
-        public TypeController(IEntry entry, IType type, ICacheClean cacheClean) : base(entry, Entity.Type, type, cacheClean)
+        public TypeController(IEntry entry, IType type, IMemoryCache memoryCache, ICacheClean cacheClean) : base(entry, Entity.Type, type, memoryCache, cacheClean)
         {
         }
 

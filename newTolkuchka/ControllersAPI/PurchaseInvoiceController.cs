@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services;
@@ -12,7 +13,7 @@ namespace newTolkuchka.ControllersAPI
     public class PurchaseInvoiceController : AbstractController<PurchaseInvoice, AdminPurchaseInvoice, IPurchaseInvoice>
     {
         private readonly IPurchase _purchase;
-        public PurchaseInvoiceController(IEntry entry, IPurchaseInvoice purchaseInvoice, ICacheClean cacheClean, IPurchase purchase) : base(entry, Entity.PurchaseInvoice, purchaseInvoice, cacheClean)
+        public PurchaseInvoiceController(IEntry entry, IPurchaseInvoice purchaseInvoice, ICacheClean cacheClean, IMemoryCache memoryCache, IPurchase purchase) : base(entry, Entity.PurchaseInvoice, purchaseInvoice, memoryCache, cacheClean)
         {
             _purchase = purchase;
         }

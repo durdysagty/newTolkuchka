@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services.Abstracts;
@@ -20,7 +21,7 @@ namespace newTolkuchka.ControllersAPI
     [Authorize(Policy = "Level2")]
     public class ContentController : AbstractController<Content, Content, IContent>
     {
-        public ContentController(IEntry entry, IContent content, ICacheClean cacheClean) : base(entry, Entity.Content, content, cacheClean)
+        public ContentController(IEntry entry, IContent content, IMemoryCache memoryCache, ICacheClean cacheClean) : base(entry, Entity.Content, content, memoryCache, cacheClean)
         {
         }
 

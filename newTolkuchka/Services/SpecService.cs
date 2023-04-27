@@ -10,7 +10,7 @@ namespace newTolkuchka.Services
 {
     public class SpecService : ServiceNoFile<Spec, AdminSpec>, ISpec
     {
-        public SpecService(AppDbContext con, IStringLocalizer<Shared> localizer) : base(con, localizer)
+        public SpecService(AppDbContext con, IStringLocalizer<Shared> localizer, ICacheClean cacheClean) : base(con, localizer, cacheClean)
         {
         }
         public IEnumerable<ModelWithList<ModelWithList<AdminSpecsValueMod>>> GetSpecWithValues(Dictionary<string, object> paramsList = null)

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services;
@@ -12,7 +13,7 @@ namespace newTolkuchka.ControllersAPI
     [Authorize(Policy = "Level2")]
     public class CurrencyController : AbstractController<Currency, AdminCurrency, IActionNoFile<Currency, AdminCurrency>>
     {
-        public CurrencyController(IEntry entry, IActionNoFile<Currency, AdminCurrency> currency, ICacheClean cacheClean) : base(entry, Entity.Currency, currency, cacheClean)
+        public CurrencyController(IEntry entry, IActionNoFile<Currency, AdminCurrency> currency, IMemoryCache memoryCache, ICacheClean cacheClean) : base(entry, Entity.Currency, currency, memoryCache, cacheClean)
         {
         }
 

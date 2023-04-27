@@ -15,22 +15,23 @@ namespace newTolkuchka.Services.Abstracts
         //private protected readonly IAction<TModel, TAdminModel> _action;
         private protected readonly Entity _entity;
         private protected readonly TService _service;
+        private protected readonly IMemoryCache _memoryCache;
         private protected readonly ICacheClean _cacheClean;
-        public AbstractController(IEntry entry, Entity entity, TService service, ICacheClean cacheClean)
+        public AbstractController(IEntry entry, Entity entity, TService service, IMemoryCache memoryCache, ICacheClean cacheClean)
         {
             _entry = entry;
             _entity = entity;
             _service = service;
+            _memoryCache = memoryCache;
             _cacheClean = cacheClean;
         }
 
         [HttpGet]
         public ModelsFilters<TAdminModel> Get([FromQuery] string search, [FromQuery] string[] keys, [FromQuery] string[] values, [FromQuery] int page = 0, [FromQuery] int pp = 50)
         {
+            string cacheKey = string.Empty;
             if (typeof(TAdminModel).Name == ConstantsService.ADMINREPORTORDER)
             {
-                IMemoryCache _memoryCache = HttpContext.RequestServices.GetService<IMemoryCache>();
-                string cacheKey = string.Empty;
                 cacheKey = $"{ConstantsService.ADMINREPORTORDER}-{values[0]}-{values[1]}";
                 return _memoryCache.GetOrCreate(cacheKey, ce =>
                 {
@@ -46,8 +47,34 @@ namespace newTolkuchka.Services.Abstracts
                     return response;
                 });
             }
-            ModelsFilters<TAdminModel> response = CreateResponse(search, keys, values, page, pp);
-            return response;
+            cacheKey = $"{typeof(TModel).Name}-{search}";
+            if (values.Any())
+                foreach (var value in values)
+                    cacheKey += $"-{value}";
+            cacheKey += $"-{page}-{pp}";
+            return _memoryCache.GetOrCreate(cacheKey, ce =>
+            {
+                if (typeof(TModel).Name == ConstantsService.USER)
+                {
+                    ce.SlidingExpiration = TimeSpan.FromMinutes(20);
+                    ce.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60);
+                }
+                else
+                {
+                    ce.SlidingExpiration = TimeSpan.FromHours(2);
+                    if (!_memoryCache.TryGetValue(ConstantsService.ADMINMODELSHASHKEYS, out HashSet<string> modelKeys))
+                        modelKeys = new HashSet<string>();
+                    modelKeys.Add(cacheKey);
+                    _memoryCache.Set(ConstantsService.ADMINMODELSHASHKEYS, modelKeys, new MemoryCacheEntryOptions()
+                    {
+                        SlidingExpiration = TimeSpan.FromDays(1)
+                    });
+                }
+                ModelsFilters<TAdminModel> response = CreateResponse(search, keys, values, page, pp);
+                return response;
+            });
+            //ModelsFilters<TAdminModel> response = CreateResponse(search, keys, values, page, pp);
+            //return response;
         }
 
         [HttpGet("{id}/{key}")]
