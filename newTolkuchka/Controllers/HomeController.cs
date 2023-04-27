@@ -358,8 +358,10 @@ namespace newTolkuchka.Controllers
         }
         [Route($"{ConstantsService.PRODUCTS}")]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 1800)]
-        public async Task<JsonResult> Products(string model, string id, bool productsOnly, int[] t, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp = 60, string search = null)
+        public async Task<IActionResult> Products(string model, string id, bool productsOnly, int[] t, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp = 60, string search = null)
         {
+            if (string.IsNullOrEmpty(model))
+                return await GetNotFoundPage();
             int? sw = GetScreenWidth();
             string key = $"{CultureProvider.CurrentCulture}{model}{id}{(sw <= ConstantsService.PHONEWIDTH ? ConstantsService.PHONEW : ConstantsService.PCW)}{productsOnly}t-{string.Join("", t)}b-{string.Join("", b)}v-{string.Join("", v)}{minp}{maxp}{sort}{page}{search}";
             JsonResult result = await _memoryCache.GetOrCreateAsync(key, async ce =>
