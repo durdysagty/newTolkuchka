@@ -28,6 +28,11 @@ namespace newTolkuchka.Services.Abstracts
             return model;
         }
 
+        public async Task<T> GetModelAsync(Guid? id)
+        {
+            T model = (T)await _con.FindAsync(typeof(T), id);
+            return model;
+        }
         public IQueryable<T> GetModels(Dictionary<string, object> paramsList = null)
         {
             IQueryable<T> models = _con.Set<T>();
@@ -80,6 +85,11 @@ namespace newTolkuchka.Services.Abstracts
                         {
                             int userId = int.Parse(value.ToString());
                             invoices = invoices.Where(x => x.UserId == userId);
+                        }
+                        if (paramsList.TryGetValue(ConstantsService.CUSTOMERGUID, out value))
+                        {
+                            Guid customerGiud = Guid.Parse(value.ToString());
+                            invoices = invoices.Where(x => x.CustomerGuidId == customerGiud);
                         }
                         models = (IQueryable<T>)invoices;
                         break;

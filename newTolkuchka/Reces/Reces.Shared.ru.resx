@@ -339,6 +339,9 @@
   <data name="noPromo" xml:space="preserve">
     <value>К сожалению, пока акций нет!</value>
   </data>
+  <data name="not-paid-orders" xml:space="preserve">
+    <value>К сожалению, не удалось оформить Ваш новый заказ, т.к. у Вас есть ранее не оплаченные заказы. В скором времени Вам позвонит наш менеджер, которому вы сможете объяснить любые изменения и пожелания по поводу вашего заказа. Спасибо за сотрудничество!</value>
+  </data>
   <data name="notAvailable" xml:space="preserve">
     <value>К сожалению, данного товара нет!</value>
   </data>

@@ -4,6 +4,7 @@
     public interface IAction<T, TAdmin>
     {        
         Task<T> GetModelAsync(int id);
+        Task<T> GetModelAsync(Guid? id);
         IQueryable<T> GetModels(Dictionary<string, object> paramsList = null);
         IQueryable<T> GetFullModels(Dictionary<string, object> paramsList = null);
         IEnumerable<TAdmin> GetAdminModels(int page, int pp, out int lastPage, out string pagination, Dictionary<string, object> paramsList = null);

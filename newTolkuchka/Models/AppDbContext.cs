@@ -18,6 +18,7 @@ namespace newTolkuchka.Models
         public DbSet<CategoryAdLink> CategoryAdLinks { get; set; }
         public DbSet<CategoryModelAdLink> CategoryModelAdLinks { get; set; }
         public DbSet<Currency> Currencies { get; set; }
+        public DbSet<CustomerGuid> CustomerGuids { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Entry> Entries { get; set; }
         public DbSet<Heading> Headings { get; set; }

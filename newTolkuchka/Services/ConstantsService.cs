@@ -130,6 +130,7 @@ namespace newTolkuchka.Services
         public const string NOTINUSE = "notinuse";
         public const string N404 = "404";
         public const string USER = "user";
+        public const string CUSTOMERGUID = "customerguid";
         public const string HASH = "hash";
         // DTO models 
         public const string ADMINREPORTORDER = "AdminReportOrder";

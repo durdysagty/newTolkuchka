@@ -31,6 +31,8 @@ namespace newTolkuchka.Models
         public Currency Currency { get; set; }
         public int? UserId { get; set; }
         public User User { get; set; }
+        public Guid? CustomerGuidId { get; set; }
+        public CustomerGuid CustomerGuid { get; set; }
         public ICollection<Order> Orders { get; set; }
     }
 }

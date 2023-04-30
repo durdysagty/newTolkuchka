@@ -336,6 +336,9 @@
   <data name="noPromo" xml:space="preserve">
     <value>Bagyşlaň, entäklikçe aksiýalar ýok!</value>
   </data>
+  <data name="not-paid-orders" xml:space="preserve">
+    <value>Gynansagam, täze sargydyňyzy ýerleşdirip bilmedik. Öň tölenmedik sargytlaryňyz bar. Dolandyryjymyz ýakyn wagtda size jaň eder, sargydyňyz bilen baglanyşykly islendik üýtgeşmeleri we islegleriňizi şoňa aýdyňlaşdyryp bilersiňiz. Hyzmatdaşlygyňyz üçin sag boluň!</value>
+  </data>
   <data name="notAvailable" xml:space="preserve">
     <value>Bagyşlaň, bu önüm elýeterli däl!</value>
   </data>

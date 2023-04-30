@@ -1,3 +1,4 @@
+using Azure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using newTolkuchka;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services;
+using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 using System.Globalization;
 using System.Text;
@@ -68,6 +70,7 @@ builder.Services.AddScoped<ICacheClean, CacheCleanService>();
 builder.Services.AddScoped<IContent, ContentService>();
 builder.Services.AddScoped<ICrypto, CryptoService>();
 builder.Services.AddScoped<IActionNoFile<Currency, AdminCurrency>, CurrencyService>();
+builder.Services.AddScoped<ICustomerGuid, CustomerGuidService>();
 builder.Services.AddScoped<IEntry, EntryService>();
 builder.Services.AddScoped<IEmployee, EmployeeService>();
 builder.Services.AddScoped<IActionNoFile<Heading, Heading>, HeadingService>();
@@ -127,16 +130,29 @@ app.UseRequestLocalization();
 app.UseCookiePolicy();
 app.Use(async (context, next) =>
 {
+    // used for exclude file paths
     if (!context.Request.Path.Value.Contains('.'))
+    {
         // for users
         if (!context.Request.Headers.Authorization.Any())
         {
+            ICrypto _crypto = context.RequestServices.GetService<ICrypto>();
+            string u = context.Request.Cookies[Secrets.userUniqCookie];
+            if (string.IsNullOrEmpty(u))
+                u = _crypto.CreateUserUniqCookie();
+            context.Response.Cookies.Append(Secrets.userUniqCookie, u, new CookieOptions
+            {
+                MaxAge = new TimeSpan(365, 0, 0, 0),
+                // remove on publish
+                //SameSite = SameSiteMode.Strict,
+                //Domain = CultureProvider.Host,
+                //Secure = true
+            });
             string t = context.Request.Cookies[Secrets.userTokenCookie];
             string h = context.Request.Cookies[Secrets.userHashCookie];
             if (!string.IsNullOrEmpty(t) && !string.IsNullOrEmpty(h))
             {
                 IMemoryCache _memoryCache = context.RequestServices.GetService<IMemoryCache>();
-                ICrypto _crypto = context.RequestServices.GetService<ICrypto>();
                 int userId = int.Parse(_crypto.DecryptString(h).Split(" ")[0]);
                 _memoryCache.TryGetValue(ConstantsService.UserHashKey(userId), out string testHash);
                 if (!string.IsNullOrEmpty(testHash))
@@ -178,8 +194,7 @@ app.Use(async (context, next) =>
                 _ = context.Request.Headers.Remove("Authorization");
 
         }
-    //if (CurrencyService.Currency == null)
-    //    _ = context.RequestServices.GetService<IActionNoFile<Currency, AdminCurrency>>();
+    }
     await next();
     if (context.Response.StatusCode == 404 && !context.Response.HasStarted)
     {

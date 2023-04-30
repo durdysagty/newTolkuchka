@@ -13,9 +13,11 @@ namespace newTolkuchka.ControllersAPI
     public class InvoiceController : AbstractController<Invoice, AdminInvoice, IInvoice>
     {
         private readonly IOrder _order;
-        public InvoiceController(IEntry entry, IInvoice invoice, IOrder order, IMemoryCache memoryCache, ICacheClean cacheClean) : base(entry, Entity.Invoice, invoice, memoryCache, cacheClean)
+        private readonly ICustomerGuid _customerGuid;
+        public InvoiceController(IEntry entry, IInvoice invoice, IMemoryCache memoryCache, ICacheClean cacheClean, IOrder order, ICustomerGuid customerGuid) : base(entry, Entity.Invoice, invoice, memoryCache, cacheClean)
         {
             _order = order;
+            _customerGuid = customerGuid;
         }
 
         [HttpGet("{id}")]
@@ -83,6 +85,20 @@ namespace newTolkuchka.ControllersAPI
             Invoice invoice = await _service.GetModelAsync(id);
             if (invoice == null)
                 return Result.Fail;
+            // check to remove after period of time
+            if (invoice.CustomerGuidId != null)
+            {
+                CustomerGuid customerGuid = await _customerGuid.GetModelAsync(invoice.CustomerGuidId);
+                customerGuid.DeniedInvoices++;
+                if (customerGuid.DeniedInvoices > 4)
+                {
+                    if (!_service.GetModels(new Dictionary<string, object> { { ConstantsService.CUSTOMERGUID, customerGuid.Id } }).Any(i => i.IsPaid))
+                    {
+                        customerGuid.IsBanned = true;
+                        customerGuid.BannedDate = DateTimeOffset.UtcNow;
+                    }
+                }
+            }
             Result result = await _service.DeleteModelAsync(invoice.Id, invoice);
             if (result == Result.Success)
                 await DeleteActAsync(id, CreateInvoiceName(invoice));

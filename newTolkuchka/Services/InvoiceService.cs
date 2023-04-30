@@ -19,7 +19,7 @@ namespace newTolkuchka.Services
             _product = product;
             _order = order;
         }
-        public async Task CreateInvoice(int? userId, CartOrder[] cartOrders, DeliveryData deliveryData)
+        public async Task CreateInvoice(int? userId, CartOrder[] cartOrders, DeliveryData deliveryData, Guid customerGuidId)
         {
 
             Invoice invoice = new()
@@ -32,6 +32,7 @@ namespace newTolkuchka.Services
                 CurrencyRate = CurrencyService.Currency.RealRate,
                 CurrencyId = CurrencyService.Currency.Id,
                 UserId = userId,
+                CustomerGuidId = customerGuidId,
                 Language = CultureProvider.CurrentCulture
             };
             await AddModelAsync(invoice, true);

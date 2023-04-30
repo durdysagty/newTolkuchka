@@ -4,10 +4,20 @@ using System.Text;
 
 namespace newTolkuchka.Services
 {
-    public class CryptoService: ICrypto
+    public class CryptoService : ICrypto
     {
         const string key = Secrets.key;
         const string iv = Secrets.iv;
+        public string CreateUserUniqCookie()
+        {
+            string uniqCookie = EncryptString($"{Secrets.uniqCookieTest}@{Guid.NewGuid()}@{DateTimeOffset.UtcNow}");
+            return uniqCookie;
+        }
+        public string GetUserUniqCookie(string cookie)
+        {
+            string uniqCookie = DecryptString(cookie);
+            return uniqCookie;
+        }
         public string EncryptString(string toEncrypt)
         {
             if (toEncrypt == null)

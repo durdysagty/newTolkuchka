@@ -336,6 +336,9 @@
   <data name="noPromo" xml:space="preserve">
     <value>Sorry, there are no promotions yet!</value>
   </data>
+  <data name="not-paid-orders" xml:space="preserve">
+    <value>Unfortunately, we were unable to place your new order. You have previously unpaid orders. Our manager will call you soon, to whom you can explain any changes and wishes regarding your order. Thank you for your cooperation!</value>
+  </data>
   <data name="notAvailable" xml:space="preserve">
     <value>Sorry, this item is not available!</value>
   </data>

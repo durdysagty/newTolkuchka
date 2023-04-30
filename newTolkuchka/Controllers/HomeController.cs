@@ -10,6 +10,7 @@ using newTolkuchka.Services;
 using newTolkuchka.Services.Interfaces;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Net;
 using System.Text.Json;
 using F = System.IO.File;
 #endregion
@@ -30,13 +31,17 @@ namespace newTolkuchka.Controllers
         private readonly IActionNoFile<Heading, Heading> _heading;
         private readonly IArticle _article;
         private readonly IUser _user;
+        private readonly ICustomerGuid _customerGuid;
         private readonly IInvoice _invoice;
         private readonly IOrder _order;
         private readonly ILogin _login;
         private readonly IActionNoFile<Currency, AdminCurrency> _currency;
         private readonly IMemoryCache _memoryCache;
+        private readonly ICrypto _crypto;
+        // to remove
+        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(IStringLocalizer<Shared> localizer, IBreadcrumbs breadcrumbs, IPath path, ICategory category, IBrand brand, IPromotion promotion, IModel model, IProduct product, ISlide slide, IActionNoFile<Heading, Heading> heading, IArticle article, IUser user, IInvoice invoice, IOrder order, ILogin login, IActionNoFile<Currency, AdminCurrency> currency, IMemoryCache memoryCache)
+        public HomeController(IStringLocalizer<Shared> localizer, IBreadcrumbs breadcrumbs, IPath path, ICategory category, IBrand brand, IPromotion promotion, IModel model, IProduct product, ISlide slide, IActionNoFile<Heading, Heading> heading, IArticle article, IUser user, ICustomerGuid customerGuid, IInvoice invoice, IOrder order, ILogin login, IActionNoFile<Currency, AdminCurrency> currency, IMemoryCache memoryCache, ICrypto crypto, ILogger<HomeController> logger)
         {
             _localizer = localizer;
             _breadcrumbs = breadcrumbs;
@@ -50,11 +55,14 @@ namespace newTolkuchka.Controllers
             _heading = heading;
             _article = article;
             _user = user;
+            _customerGuid = customerGuid;
             _order = order;
             _invoice = invoice;
             _login = login;
             _currency = currency;
             _memoryCache = memoryCache;
+            _crypto = crypto;
+            _logger = logger;
         }
         #endregion
         [Route(ConstantsService.SLASH)]
@@ -272,7 +280,7 @@ namespace newTolkuchka.Controllers
                 return await _category.GetModelAsync(id);
             });
             if (category == null || category.NotInUse)
-                return await GetNotFoundPage();
+                return await GetNotFoundPageAsync();
             string localName = CultureProvider.GetLocalName(category.NameRu, category.NameEn, category.NameTm);
             ViewBag.Categories = await _memoryCache.GetOrCreateAsync($"{ConstantsService.CATEGORIESCHILDRENBYPARENTID}{id}", async ce =>
             {
@@ -288,7 +296,7 @@ namespace newTolkuchka.Controllers
         {
             Brand brand = await _brand.GetModelAsync(id);
             if (brand == null)
-                return await GetNotFoundPage();
+                return await GetNotFoundPageAsync();
             await CreateMetaData(ConstantsService.BRAND, _breadcrumbs.GetModelBreadcrumbs(ConstantsService.BRANDS), brand.Name, true);
             return View();
         }
@@ -298,7 +306,7 @@ namespace newTolkuchka.Controllers
         {
             Promotion promotion = await _promotion.GetModelAsync(id);
             if (promotion == null || promotion.NotInUse)
-                return await GetNotFoundPage();
+                return await GetNotFoundPageAsync();
             string desc = $"<p class=\"mb-2\">{CultureProvider.GetLocalName(promotion.DescRu, promotion.DescEn, promotion.DescTm)}</p>";
             if (promotion.Type is Tp.ProductFree or Tp.Set or Tp.SpecialSetDiscount)
             {
@@ -307,7 +315,7 @@ namespace newTolkuchka.Controllers
                 {
                     promotion.NotInUse = true;
                     await _promotion.SaveChangesAsync();
-                    return await GetNotFoundPage();
+                    return await GetNotFoundPageAsync();
                 }
                 string name = IProduct.GetProductNameCounted(product);
                 string additional = $"<h5><a href=\"/{PathService.GetModelUrl(ConstantsService.PRODUCT, product.Id)}\">{IImage.GetImageHtml(PathService.GetImageRelativePath($"{ConstantsService.PRODUCT}/small", product.Id), product.Version, 200, 200, "50px", "auto", name, "mx-2")}{name}</a> - ";
@@ -322,12 +330,12 @@ namespace newTolkuchka.Controllers
                 {
                     promotion.NotInUse = true;
                     await _promotion.SaveChangesAsync();
-                    return await GetNotFoundPage();
+                    return await GetNotFoundPageAsync();
                 }
             }
             ViewBag.Desc = desc;
             if (promotion == null)
-                return await GetNotFoundPage();
+                return await GetNotFoundPageAsync();
             await CreateMetaData(ConstantsService.PROMOTION, _breadcrumbs.GetModelBreadcrumbs(ConstantsService.PROMOTIONS), CultureProvider.GetLocalName(promotion.NameRu, promotion.NameEn, promotion.NameTm), true);
             return View();
         }
@@ -361,7 +369,7 @@ namespace newTolkuchka.Controllers
         public async Task<IActionResult> Products(string model, string id, bool productsOnly, int[] t, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp = 60, string search = null)
         {
             if (string.IsNullOrEmpty(model))
-                return await GetNotFoundPage();
+                return await GetNotFoundPageAsync();
             int? sw = GetScreenWidth();
             string key = $"{CultureProvider.CurrentCulture}{model}{id}{(sw <= ConstantsService.PHONEWIDTH ? ConstantsService.PHONEW : ConstantsService.PCW)}{productsOnly}t-{string.Join("", t)}b-{string.Join("", b)}v-{string.Join("", v)}{minp}{maxp}{sort}{page}{search}";
             JsonResult result = await _memoryCache.GetOrCreateAsync(key, async ce =>
@@ -496,7 +504,7 @@ namespace newTolkuchka.Controllers
                 });
                 Product product = await _product.GetModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, new int[1] { id } } }).Include(p => p.Model).ThenInclude(m => m.Category).FirstOrDefaultAsync();
                 if (product == null)
-                    return (ViewResult)await GetNotFoundPage();
+                    return (ViewResult)await GetNotFoundPageAsync();
                 if (product.NotInUse || product.Model.Category.NotInUse)
                 {
                     product = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, new int[1] { id } } }).FirstOrDefaultAsync();
@@ -691,7 +699,7 @@ namespace newTolkuchka.Controllers
         {
             Article article = await _article.GetModels(new Dictionary<string, object>() { { ConstantsService.CULTURE, CultureProvider.CurrentCulture } }).FirstOrDefaultAsync(a => a.Id == id);
             if (article == null)
-                return await GetNotFoundPage();
+                return await GetNotFoundPageAsync();
             await CreateMetaData(ConstantsService.ARTICLE, _breadcrumbs.GetModelBreadcrumbs(ConstantsService.ARTICLES), article.Name);
             //ViewBag.ScreenWidth = GetScreenWidth() - 20;
             return View(article);
@@ -719,6 +727,9 @@ namespace newTolkuchka.Controllers
         [Route($"{ConstantsService.CART}")]
         public async Task<IActionResult> Cart()
         {
+            // to remove
+            IPAddress remoteIp = HttpContext.Connection.RemoteIpAddress;
+            _logger.LogInformation("{remoteIp}", remoteIp.ToString());
             await CreateMetaData(ConstantsService.CART, _breadcrumbs.GetBreadcrumbs(), _localizer[ConstantsService.CART].Value);
             User user = await _user.GetCurrentUser();
             if (user != null)
@@ -753,15 +764,62 @@ namespace newTolkuchka.Controllers
             });
         }
         [Route($"{ConstantsService.ORDER}"), HttpPost]
-        public async Task<JsonResult> Order([FromForm] string orders, [FromForm] DeliveryData deliveryData)
+        public async Task<IActionResult> Order([FromForm] string orders, [FromForm] DeliveryData deliveryData)
         {
+            string u = HttpContext.Request.Cookies[Secrets.userUniqCookie];
+            if (string.IsNullOrEmpty(u))
+                return BadRequest();
+            string test = _crypto.GetUserUniqCookie(u);
+            string[] parts = test.Split('@');
+
+            //IPAddress remoteIp = HttpContext.Connection.RemoteIpAddress;
+            //int count = _memoryCache.GetOrCreate(parts[1], ce =>
+            //{
+            //    ce.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(20);
+            //    return 0;
+            //});
+            //count++;
+            //_memoryCache.Set(parts[1], count, new MemoryCacheEntryOptions()
+            //{
+            //    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(20)
+            //});
+
+            if (parts[0] != Secrets.uniqCookieTest)
+                return BadRequest();
+            DateTimeOffset timeOfCookie = DateTimeOffset.Parse(parts[2]);
+            DateTimeOffset now = DateTimeOffset.UtcNow;
+            if (now - timeOfCookie < TimeSpan.FromMinutes(Secrets.timeBeforeOrder))
+                return BadRequest();
             CartOrder[] cartOrders = JsonService.Deserialize<CartOrder[]>(orders);
             if (cartOrders == null || !cartOrders.Any())
                 return new JsonResult(new
                 {
                     noOrders = true
                 });
-            await _invoice.CreateInvoice(_user.GetCurrentUser().Result?.Id, cartOrders, deliveryData);
+            Guid guid = Guid.Parse(parts[1]);
+            CustomerGuid customerGuid = await _customerGuid.GetModelAsync(guid);
+            if (customerGuid == null)
+            {
+                customerGuid = new()
+                {
+                    Id = guid
+                };
+                await _customerGuid.AddModelAsync(customerGuid);
+            }
+            if (customerGuid.IsBanned)
+                // actually no order will be prosessed but no information will be given to the joker
+                return new JsonResult(new
+                {
+                    success = _localizer["order-success"].Value
+                });
+            // if user by guid have 3 or more not paid invoices warning
+            Invoice[] notPaidInvoices = await _invoice.GetModels(new Dictionary<string, object> { { ConstantsService.CUSTOMERGUID, parts[1] } }).Where(i => i.IsPaid == false).ToArrayAsync();
+            if (notPaidInvoices.Length > 2)
+                return new JsonResult(new
+                {
+                    success = _localizer["not-paid-orders"].Value
+                });
+            await _invoice.CreateInvoice(_user.GetCurrentUser().Result?.Id, cartOrders, deliveryData, customerGuid.Id);
             return new JsonResult(new
             {
                 success = _localizer["order-success"].Value
@@ -807,11 +865,11 @@ namespace newTolkuchka.Controllers
         {
             LoginResponse loginResponse = await _login.NewPINAsync(guid);
             if (loginResponse.Result == LoginResponse.R.Error)
-                return await GetNotFoundPage();
+                return await GetNotFoundPageAsync();
             await CreateMetaData();
             return View(loginResponse);
         }
-        private async Task<IActionResult> GetNotFoundPage()
+        private async Task<IActionResult> GetNotFoundPageAsync()
         {
             await CreateMetaData();
             return View("NotFoundPage");

@@ -1,6 +1,6 @@
 ﻿change allow origin in startup
 
-Login controller remove comments
+Login controller, Programm.cs remove comments
 remove or edit connection string
 remove EntryService .Replace("7240", "")
 remove webconfig V2
