@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Primitives;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Reces;
@@ -727,9 +728,6 @@ namespace newTolkuchka.Controllers
         [Route($"{ConstantsService.CART}")]
         public async Task<IActionResult> Cart()
         {
-            // to remove
-            IPAddress remoteIp = HttpContext.Connection.RemoteIpAddress;
-            _logger.LogInformation("{remoteIp}", remoteIp.ToString());
             await CreateMetaData(ConstantsService.CART, _breadcrumbs.GetBreadcrumbs(), _localizer[ConstantsService.CART].Value);
             User user = await _user.GetCurrentUser();
             if (user != null)
@@ -766,24 +764,35 @@ namespace newTolkuchka.Controllers
         [Route($"{ConstantsService.ORDER}"), HttpPost]
         public async Task<IActionResult> Order([FromForm] string orders, [FromForm] DeliveryData deliveryData)
         {
+            IPAddress remoteIp = HttpContext.Connection.RemoteIpAddress;
+            StringValues agent = HttpContext.Request.Headers["User-Agent"];
+            string blockKey = $"{remoteIp}-{agent}";
+            if (_memoryCache.TryGetValue(blockKey, out bool value))
+                return BadRequest();
             string u = HttpContext.Request.Cookies[Secrets.userUniqCookie];
             if (string.IsNullOrEmpty(u))
                 return BadRequest();
             string test = _crypto.GetUserUniqCookie(u);
             string[] parts = test.Split('@');
-
-            //IPAddress remoteIp = HttpContext.Connection.RemoteIpAddress;
-            //int count = _memoryCache.GetOrCreate(parts[1], ce =>
-            //{
-            //    ce.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(20);
-            //    return 0;
-            //});
-            //count++;
-            //_memoryCache.Set(parts[1], count, new MemoryCacheEntryOptions()
-            //{
-            //    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(20)
-            //});
-
+            int count = _memoryCache.GetOrCreate(parts[1], ce =>
+            {
+                ce.Priority = CacheItemPriority.Low;
+                ce.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(20);
+                return 0;
+            });
+            count++;
+            if (count > 4)
+            {
+                _memoryCache.Set(blockKey, true, new MemoryCacheEntryOptions()
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1)
+                });
+            }
+            _memoryCache.Set(parts[1], count, new MemoryCacheEntryOptions()
+            {
+                Priority = CacheItemPriority.Low,
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(20)
+            });
             if (parts[0] != Secrets.uniqCookieTest)
                 return BadRequest();
             DateTimeOffset timeOfCookie = DateTimeOffset.Parse(parts[2]);

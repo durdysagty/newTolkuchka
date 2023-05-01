@@ -128,7 +128,8 @@ namespace newTolkuchka.Services
                 }
                 _memoryCache.Set(ConstantsService.ADMINMODELSHASHKEYS, modelKeys, new MemoryCacheEntryOptions()
                 {
-                    SlidingExpiration = TimeSpan.FromDays(1)
+                    Priority = CacheItemPriority.NeverRemove,
+                    SlidingExpiration = TimeSpan.FromDays(3)
                 });
             }
         }
