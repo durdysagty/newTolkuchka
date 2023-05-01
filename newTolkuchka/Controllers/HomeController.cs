@@ -767,13 +767,14 @@ namespace newTolkuchka.Controllers
             IPAddress remoteIp = HttpContext.Connection.RemoteIpAddress;
             StringValues agent = HttpContext.Request.Headers["User-Agent"];
             string blockKey = $"{remoteIp}-{agent}";
-            if (_memoryCache.TryGetValue(blockKey, out bool value))
+            if (_memoryCache.TryGetValue(blockKey, out bool _))
                 return BadRequest();
             string u = HttpContext.Request.Cookies[Secrets.userUniqCookie];
             if (string.IsNullOrEmpty(u))
                 return BadRequest();
             string test = _crypto.GetUserUniqCookie(u);
             string[] parts = test.Split('@');
+            // if uniqUser Guid try to access often than 20 second more than 4 times bolck by ip and agent
             int count = _memoryCache.GetOrCreate(parts[1], ce =>
             {
                 ce.Priority = CacheItemPriority.Low;
