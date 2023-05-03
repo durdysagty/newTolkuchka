@@ -136,14 +136,14 @@ namespace newTolkuchka.Controllers
                 }
                 return brandsString;
             });
-            string slidesString = _memoryCache.GetOrCreate($"{ConstantsService.MAINSLIDES}{slidesCount}", ce =>
+            string slidesString = _memoryCache.GetOrCreate($"{CultureProvider.CurrentCulture}{ConstantsService.MAINSLIDES}{slidesCount}", ce =>
             {
                 ce.SlidingExpiration = TimeSpan.FromDays(2);
                 IEnumerable<Slide> mainSlides = _slide.GetSlidesByLayoutAsync(Layout.Main).OrderByDescending(s => s.Id).Take(slidesCount);
                 string slidesString = string.Empty;
                 foreach (Slide s in mainSlides)
                 {
-                    slidesString += $"<div class=\"col-12 col-sm-6 col-md-4 p-1\"><a href=\"{s.Link}\">{IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.SLIDE, s.Id), s.Version, 600, 300, "100%", "auto", $"slide-{s.Id}", "card-img-top rounded")}</a></div>";
+                    slidesString += $"<div class=\"col-12 col-sm-6 col-md-4 p-1\"><a href=\"{s.Link}\">{IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.SLIDE, s.Id, (int)CultureProvider.CurrentCulture), s.Version, 600, 300, "100%", "auto", $"slide-{s.Id}", "card-img-top rounded")}</a></div>";
                 }
                 return slidesString;
             });

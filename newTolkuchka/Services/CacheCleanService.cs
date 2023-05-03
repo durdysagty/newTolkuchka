@@ -52,7 +52,7 @@ namespace newTolkuchka.Services
             int slidesCount = 3;
             for (int i = 1; i <= slidesCount; i++)
             {
-                _memoryCache.Remove($"{ConstantsService.MAINSLIDES}{slidesCount}");
+                CleanCulturedCaches($"{ConstantsService.MAINSLIDES}{slidesCount}");
             }
         }
 
