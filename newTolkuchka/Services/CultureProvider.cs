@@ -18,10 +18,10 @@ namespace newTolkuchka.Services
 
         public static string GetLocalName(string ru, string en, string tk)
         {
-            return Lang switch
+            return CurrentCulture switch
             {
-                ConstantsService.EN => en,
-                ConstantsService.TK => tk,
+                Culture.En => en,
+                Culture.Tm => tk,
                 _ => ru,
             };
         }
