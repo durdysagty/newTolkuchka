@@ -1,4 +1,3 @@
-using Azure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +7,6 @@ using newTolkuchka;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services;
-using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 using System.Globalization;
 using System.Text;

@@ -118,6 +118,8 @@ namespace newTolkuchka.Services
 
         public void CleanAdminModels(string model)
         {
+            if (model.Equals(ConstantsService.SLIDE, StringComparison.CurrentCultureIgnoreCase))
+                CleanSlides();
             if (_memoryCache.TryGetValue(ConstantsService.ADMINMODELSHASHKEYS, out HashSet<string> modelKeys))
             {
                 IEnumerable<string> neededKeys = modelKeys.Where(mk => mk.Contains(model));

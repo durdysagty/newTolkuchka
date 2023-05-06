@@ -104,6 +104,7 @@ namespace newTolkuchka.Services.Abstracts
                 if (nameProperty == null)
                     nameProperty = modelType.GetProperty("NameRu");
                 await EditActAsync(id, nameProperty.GetValue(model).ToString());
+                _cacheClean.CleanAdminModels(modelType.Name);
             }
             return Result.Success;
         }
@@ -123,7 +124,6 @@ namespace newTolkuchka.Services.Abstracts
         #endregion
         private ModelsFilters<TAdminModel> CreateResponse(string search, string[] keys, string[] values, int page, int pp)
         {
-
             Dictionary<string, object> paramsList = null;
             if (keys.Any())
             {
