@@ -70,7 +70,8 @@ namespace newTolkuchka.Services
         }
         public async Task<LoginResponse> LoginSecondStepAsync(string pinNumbers)
         {
-            GetUserIdPin(pinNumbers, out int id, out int p);
+            string[] data = pinNumbers.Split('-');
+            int id = int.Parse(data[0]);
             string key = ConstantsService.PIN + ConstantsService.USER + id;
             _memoryCache.TryGetValue(key, out int? count);
             if (count == 3)
@@ -78,6 +79,7 @@ namespace newTolkuchka.Services
             _memoryCache.TryGetValue(ConstantsService.USER + id, out int? pin);
             if (pin == null)
                 return CreateFailResult(_localizer["time-elapsed1"]);
+            int p = int.Parse(data[1]);
             if (pin != p)
             {
                 if (count == null)
@@ -101,9 +103,9 @@ namespace newTolkuchka.Services
             };
         }
 
-        public async Task<LoginResponse> RecoveryAsync(string pinNumbers)
+        public async Task<LoginResponse> RecoveryAsync(string userId)
         {
-            GetUserIdPin(pinNumbers, out int id, out int _);
+            int id = int.Parse(userId);
             User user = await _user.GetUserByIdAsync(id);
             if (user == null)
                 return CreateFailResult(_localizer["no-user"]);
@@ -170,13 +172,6 @@ namespace newTolkuchka.Services
             if (employee.Password != _crypto.EncryptString(loginRequest.Password))
                 return CreateFailResult();
             return CreateEmployeeSuccessResult(employee);
-        }
-
-        private static void GetUserIdPin(string pinNumbers, out int id, out int p)
-        {
-            id = int.Parse(pinNumbers.Remove(pinNumbers.Length - 4));
-            p = int.Parse(pinNumbers[^4..]);
-
         }
 
         private LoginResponse CreateEmployeeSuccessResult(Employee employee)

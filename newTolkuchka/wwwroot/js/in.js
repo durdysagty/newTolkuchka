@@ -13,7 +13,10 @@ function invalidloginHandler(e) {
     e.preventDefault()
     $('#loginForm').addClass('was-validated')
 }
+// userId
 let pin = []
+// actualPin
+let pin2 = []
 let interval = null
 async function loginHandler(e) {
     e.preventDefault()
@@ -72,7 +75,7 @@ async function forgotPassword(e) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(pin.join(''))
+            body: JSON.stringify(`${pin.join('')}`)
         })
         if (response.ok) {
             const result = await response.json()
@@ -93,7 +96,7 @@ async function forgotPassword(e) {
 
 async function inputPin(e) {
     let id = parseInt(e.target.id)
-    pin.push(e.target.value)
+    pin2.push(e.target.value)
     $(`#${id}`).attr('disabled', true)
     id++
     if (id < 4) {
@@ -107,7 +110,7 @@ async function inputPin(e) {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(pin.join(''))
+                body: JSON.stringify(`${pin.join('')}-${pin2.join('')}`)
             })
             if (response.ok) {
                 const result = await response.json()
@@ -119,7 +122,7 @@ async function inputPin(e) {
                         $(`#${i}`).val('').attr('disabled', true)
                     }
                     $(`#${0}`).removeAttr('disabled')
-                    pin = pin.slice(0, 1)
+                    pin2 = []
                     // $(`#${0}`).focus()
                 }
 
