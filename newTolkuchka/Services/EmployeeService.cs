@@ -30,12 +30,6 @@ namespace newTolkuchka.Services
             return employee;
         }
 
-        //public IQueryable<string> GetEmployeeNames(int[] ids)
-        //{
-        //    IQueryable<string> names = GetModels().Where(e => ids.Any(i => i == e.Id)).Select(e => e.Login);
-        //    return names;
-        //}
-
         public override bool IsExist(Employee employee, IEnumerable<Employee> list)
         {
             bool exist = false;
@@ -52,6 +46,7 @@ namespace newTolkuchka.Services
             await _con.Employees.AddAsync(employee);
             if (save)
                 _ = await _con.SaveChangesAsync();
+            _cacheClean.CleanAdminModels(nameof(Employee));
         }
         public async Task EditEmployeeAsync(EditEmployee editEmployee)
         {
@@ -64,6 +59,7 @@ namespace newTolkuchka.Services
                 EncryptPassword(employee);
             }
             EditModel(employee);
+            _cacheClean.CleanAdminModels(nameof(Employee));
         }
 
         public async Task<Employee> GetEmployeeWithPositionAsync(string login)

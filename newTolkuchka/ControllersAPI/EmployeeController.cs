@@ -21,12 +21,6 @@ namespace newTolkuchka.ControllersAPI
             EditEmployee employee = await _service.GetEditEmployeeAsync(id);
             return employee;
         }
-        //[HttpGet]
-        //public IEnumerable<AdminEmployee> Get()
-        //{
-        //    IEnumerable<AdminEmployee> employees = _service.GetAdminEmployees();
-        //    return employees;
-        //}
         [HttpPost]
         public async Task<Result> Post(Employee employee)
         {

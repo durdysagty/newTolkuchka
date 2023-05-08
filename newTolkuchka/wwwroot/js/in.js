@@ -79,8 +79,12 @@ async function forgotPassword(e) {
         })
         if (response.ok) {
             const result = await response.json()
-            if (result.result === r.success) 
+            if (result.result === r.success) {
                 $('#pinText').html(result.text)
+                setTimeout(() => {
+                    window.location.reload()
+                }, 15000)
+            }
             else if (result.result === r.fail)
                 $('#pinWrong').html(result.text)
             else
