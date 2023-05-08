@@ -453,7 +453,7 @@ namespace newTolkuchka.Controllers
                         noProduct = model == ConstantsService.SEARCH ? _localizer["noProductSearch"].Value : _localizer["noProductAbsolutly"].Value
                     });
                 IList<IEnumerable<UIProduct>> uiProducts = _product.GetUIData(productsOnly, brandsOnly, typesNeeded, list, t, b, v, minp, maxp, sort, page, pp, out IList<AdminType> types, out IList<Brand> brands, out IList<Filter> filters, out int min, out int max, out string pagination, out int lastPage);
-                IEnumerable<string> products = uiProducts.Select(p => IProduct.GetHtmlProduct(p, sw, 12, 6, 6, 4, 4, 3, 3, 3));
+                IEnumerable<string> products = uiProducts.Select(p => IProduct.GetHtmlProduct(p, sw, 12, 6, 6, 4, 4, 3, 3, 2));
                 string buttons = $"<i class=\"fas fa-angle-double-left ps-2\" role=\"button\" onclick=\"setPage(0)\" aria-label=\"{_localizer["first"].Value}\"></i><i class=\"fas fa-angle-left ps-1\" role=\"button\" onclick=\"setPage(null, 0)\" aria-label=\"{_localizer["prev"].Value}\"></i><i class=\"fas fa-angle-right ps-1\" role=\"button\" onclick=\"setPage(null, {lastPage})\" aria-label=\"{_localizer["nex"].Value}\"></i><i class=\"fas fa-angle-double-right ps-1\" role=\"button\" onclick=\"setPage({lastPage})\" aria-label=\"{_localizer["last"].Value}\"></i>";
                 return new JsonResult(new
                 {
