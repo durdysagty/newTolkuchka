@@ -127,7 +127,7 @@ async function setProducts(productsOnly) {
         }
         // types
         if (data.types.types !== null && data.types.types.length > 1) {
-            $("#types").append(`<strong>${data.types.name}</strong><div id="typesList" class="scList"></div>`)
+            $("[name='types']").append(`<strong>${data.types.name}</strong><div name="typesList" class="scList"></div>`)
             //if (window.innerWidth > mobile)
             //    $("#types").append(`<strong>${data.types.name}</strong>`)
             //else
@@ -137,7 +137,7 @@ async function setProducts(productsOnly) {
                 const i = searchObj.t.includes(`${t.id}`)
                 return `<div class="form-check d-flex"><input class="form-check-input" name="filt" ${i ? `checked` : null} onclick="setFilters()" type="checkbox" value="${t.id}" id="${id}" /><label class="form-check-label align-self-end" for="${id}">${t.name}</label></div>`
             })
-            types.forEach(t => $("#typesList").append(t))
+            types.forEach(t => $("[name='typesList']").append(t))
             //if (window.innerWidth > mobile)
             //    types.forEach(t => $("#filters").append(t))
             //else
@@ -145,7 +145,7 @@ async function setProducts(productsOnly) {
         }
         // brands
         if (data.brands.brands !== null && data.brands.brands.length > 1) {
-            $("#brands").append(`<strong>${data.brands.name}</strong><div id="brandsList" class="scList"></div>`)
+            $("[name='brands']").append(`<strong>${data.brands.name}</strong><div name="brandsList" class="scList"></div>`)
             //if (window.innerWidth > mobile)
             //    $("#filters").append(`<strong>${data.brands.name}</strong><div id="brands"></div>`)
             //else
@@ -155,7 +155,7 @@ async function setProducts(productsOnly) {
                 const i = searchObj.b.includes(`${b.id}`)
                 return `<div class="form-check d-flex"><input class="form-check-input" name="filb" ${i ? `checked` : null} onclick="setFilters()" type="checkbox" value="${b.id}" id="${id}" /><label class="form-check-label align-self-end" for="${id}">${b.name}</label></div>`
             })
-            brands.forEach(b => $("#brandsList").append(b))
+            brands.forEach(b => $("[name='brandsList']").append(b))
         }
         // filters
         if (data.filters !== null) {
@@ -175,15 +175,15 @@ async function setProducts(productsOnly) {
                 filterValues.forEach(fv => filter += fv)
                 return filter
             })
-            $("#filters").html('')
-            filters.forEach(b => $("#filters").append(b))
+            $("[name='filters']").html('')
+            filters.forEach(b => $("[name='filters']").append(b))
             //if (window.innerWidth > mobile)
             //    filters.forEach(b => $("#filters").append(b))
             //else
             //    filters.forEach(b => $("#slide-filters").append(b))
         }
         else if ((path[1] === 'brand' || path[1] === 'search') && data.filters === null) {
-            $("#filters").html('')
+            $("[name='filters']").html('')
         }
         const sortby = data.sort.map((s, i) => {
             if (Math.abs(searchObj.sort) === i)
