@@ -16,6 +16,7 @@ namespace newTolkuchka.Services
         public const string CATEGORYIDSGOTPRODUCTSBYPARENTID = "cidsgp";
         public const string CATEGORIESCHILDRENBYPARENTID = "cschldn";
         public const string HOMEBRANDS = "hbs";
+        public const string HOMEAPPBRANDS = "happbs";
         public const string PRODUCTKEY = "prt";
         public const string PRODUCTSCOUNT = "prcnt";
         public const string HOMEARTICLES = "has";

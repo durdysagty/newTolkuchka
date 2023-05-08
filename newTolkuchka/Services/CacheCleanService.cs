@@ -16,6 +16,7 @@ namespace newTolkuchka.Services
         {
             _memoryCache.Remove(ConstantsService.BRANDS);
             _memoryCache.Remove(ConstantsService.HOMEBRANDS);
+            _memoryCache.Remove(ConstantsService.HOMEAPPBRANDS);
         }
         public void CleanCategories(int id)
         {

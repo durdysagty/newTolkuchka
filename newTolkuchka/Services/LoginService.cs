@@ -48,7 +48,11 @@ namespace newTolkuchka.Services
                     Pin = _crypto.EncryptString(pin.ToString())
                 };
                 await _user.AddModelAsync(user);
-                _memoryCache.Set(ConstantsService.UserPinKey(user.Id), pin, TimeSpan.FromMinutes(5));
+                _memoryCache.Set(ConstantsService.UserPinKey(user.Id), pin, new MemoryCacheEntryOptions
+                {
+                    Priority = CacheItemPriority.NeverRemove,
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+                });
                 return new LoginResponse
                 {
                     Result = R.New,
@@ -66,12 +70,11 @@ namespace newTolkuchka.Services
         }
         public async Task<LoginResponse> LoginSecondStepAsync(string pinNumbers)
         {
-            int id = (int)char.GetNumericValue(pinNumbers[0]);
+            GetUserIdPin(pinNumbers, out int id, out int p);
             string key = ConstantsService.PIN + ConstantsService.USER + id;
             _memoryCache.TryGetValue(key, out int? count);
             if (count == 3)
                 return CreateFailResult(_localizer["attempts"]);
-            int p = int.Parse(pinNumbers[1..]);
             _memoryCache.TryGetValue(ConstantsService.USER + id, out int? pin);
             if (pin == null)
                 return CreateFailResult(_localizer["time-elapsed1"]);
@@ -100,7 +103,7 @@ namespace newTolkuchka.Services
 
         public async Task<LoginResponse> RecoveryAsync(string pinNumbers)
         {
-            int id = (int)char.GetNumericValue(pinNumbers[0]);
+            GetUserIdPin(pinNumbers, out int id, out int _);
             User user = await _user.GetUserByIdAsync(id);
             if (user == null)
                 return CreateFailResult(_localizer["no-user"]);
@@ -168,17 +171,13 @@ namespace newTolkuchka.Services
                 return CreateFailResult();
             return CreateEmployeeSuccessResult(employee);
         }
-        //public async Task<LoginResponse> CheckAuthedEmployeeAsync(HttpContext httpContext)
-        //{
-        //    string id = IContext.GetAthorizedUserId(httpContext);
-        //    Employee employee = await _employee.GetEmployeeWithPositionAsync(id);
-        //    if (employee == null)
-        //        return CreateFailResult();
-        //    string hash = IContext.GetAthorizedUserHash(httpContext);
-        //    if (employee.Hash != hash)
-        //        return CreateFailResult();
-        //    return CreateEmployeeSuccessResult(employee);
-        //}
+
+        private static void GetUserIdPin(string pinNumbers, out int id, out int p)
+        {
+            id = int.Parse(pinNumbers.Remove(pinNumbers.Length - 4));
+            p = int.Parse(pinNumbers[^4..]);
+
+        }
 
         private LoginResponse CreateEmployeeSuccessResult(Employee employee)
         {
