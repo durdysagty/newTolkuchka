@@ -366,7 +366,7 @@ namespace newTolkuchka.Controllers
             return View();
         }
         [Route($"{ConstantsService.PRODUCTS}")]
-        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 1800)]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Products(string model, string id, bool productsOnly, int[] t, int[] b, string[] v, int minp, int maxp, Sort sort, int page, int pp = 60, string search = null)
         {
             if (string.IsNullOrEmpty(model))

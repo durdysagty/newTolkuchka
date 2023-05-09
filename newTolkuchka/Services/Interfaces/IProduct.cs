@@ -79,7 +79,7 @@ namespace newTolkuchka.Services.Interfaces
                     string id = $"prod{p.Id}";
                     string[] ids = products.Where(x => x.Id != p.Id).Select(x => $"prod{x.Id}").ToArray();
                     string strIds = string.Join(", ", ids);
-                    int width = (products.Count() > 2 && sw <= ConstantsService.PHONEWIDTH) || (products.Count() > 2 && sw > ConstantsService.XXXLWIDTH) ? 50 : products.Count() > 4 ? 50 : 90;
+                    int width = (products.Count() > 2 && sw <= ConstantsService.PHONEWIDTH) || (products.Count() > 2 && (sw > ConstantsService.XXXLWIDTH || sw == null)) ? 50 : products.Count() > 4 ? 50 : 90;
                     string image = $"<span role=\"button\" onclick=\"changeImage({id}, [{strIds}])\">{IImage.GetImageHtml(p.ImageMain, p.Version, 200, 200, $"{width}%", "auto", p.Name, "pb-1")}</span>";
                     i += image;
                 }
