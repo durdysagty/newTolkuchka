@@ -440,7 +440,7 @@
     {
         <link rel="stylesheet" href="~/lib/range/ion.rangeSlider.min.css" asp-append-version="true" />
         <script src="~/lib/range/ion.rangeSlider.min.js" asp-append-version="true"></script>
-        <script src="~/js/filter.js" asp-append-version="true"></script>
+        <script src="~/js/filter.js?lg=@CultureProvider.CurrentCulture" asp-append-version="true"></script>
     }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
