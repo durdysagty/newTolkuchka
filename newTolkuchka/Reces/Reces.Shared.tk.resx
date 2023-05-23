@@ -201,14 +201,53 @@
   <data name="delivery" xml:space="preserve">
     <value>Eltip bermek</value>
   </data>
+  <data name="desc-about" xml:space="preserve">
+    <value>{0} hakynda sahypa.</value>
+  </data>
+  <data name="desc-account" xml:space="preserve">
+    <value>{0} saýtynda {1} akkaundyna degişli sahypa.</value>
+  </data>
+  <data name="desc-article" xml:space="preserve">
+    <value>{1} - {0} saýtynda gyzykly makala.</value>
+  </data>
+  <data name="desc-articles" xml:space="preserve">
+    <value>{0} saýtyndaky gyzykly makalalar.</value>
+  </data>
+  <data name="desc-brand" xml:space="preserve">
+    <value>{0} saýtynda {1} brendiniň önümlerini satyn al. Bu ýerde {1} brendiniň önümlerini amatly we elýeterli bahadan satyn alyp bolýar.</value>
+  </data>
+  <data name="desc-brands" xml:space="preserve">
+    <value>{0} saýtyndaky brendleriň katalogy.</value>
+  </data>
+  <data name="desc-cart" xml:space="preserve">
+    <value>Bu sahypada siz {0} saýtynda satyn aljak önümleriňizi sargyt edip bilersiňiz.</value>
+  </data>
   <data name="desc-categories" xml:space="preserve">
-    <value>{0} saýtynyň bölümleri</value>
+    <value>{0} saýtynyň kategoriýalar sahypasy.</value>
+  </data>
+  <data name="desc-category" xml:space="preserve">
+    <value>{0} saýtynda {1}. Bu ýerde siz {1} kategoriýasyna degişli harytlary iň arzan we amatly bahadan satyn alyp bilersiňiz.</value>
+  </data>
+  <data name="desc-delivery" xml:space="preserve">
+    <value>{0} saýtynyň harytlary satyn almak we eltip bermek düzgznleri we kadalary.</value>
   </data>
   <data name="desc-home" xml:space="preserve">
-    <value>Internet dükan {0}</value>
+    <value>{0} internet magazini.</value>
   </data>
-  <data name="desc-model" xml:space="preserve">
-    <value>{1} {0} saýtynda!</value>
+  <data name="desc-liked" xml:space="preserve">
+    <value>{0} saýtynda siziň halan harytlaryňyz.</value>
+  </data>
+  <data name="desc-product" xml:space="preserve">
+    <value>{0} saýtynda "{1}" harydyny satyn al. Bu ýerde "{1}" harydyny amatly we elýeterli bahadan satyn alyp bolýar.</value>
+  </data>
+  <data name="desc-promotion" xml:space="preserve">
+    <value>{0} saýtynda harytlary "{1}" aksiýasy boýunça satyn al! Bu ýerde "{1}" aksiýasy boýunça harytlary satyn alyp bolýar.</value>
+  </data>
+  <data name="desc-promotions" xml:space="preserve">
+    <value>{0} saýtynda amatly aksiýalar we arzanladyşyklar.</value>
+  </data>
+  <data name="desc-search" xml:space="preserve">
+    <value>{0} saýtynyň gözleg sahypasy . Aşgabatda harytlary tapmagyň amatly we ýeňil usuly!</value>
   </data>
   <data name="description" xml:space="preserve">
     <value>beýany</value>

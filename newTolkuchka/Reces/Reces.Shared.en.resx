@@ -201,14 +201,53 @@
   <data name="delivery" xml:space="preserve">
     <value>Delivery</value>
   </data>
+  <data name="desc-about" xml:space="preserve">
+    <value>Page about the site {0}.</value>
+  </data>
+  <data name="desc-account" xml:space="preserve">
+    <value>Account {1} on {0}.</value>
+  </data>
+  <data name="desc-article" xml:space="preserve">
+    <value>{1} - an interesting article on {0}.</value>
+  </data>
+  <data name="desc-articles" xml:space="preserve">
+    <value>Interesting articles on {0}.</value>
+  </data>
+  <data name="desc-brand" xml:space="preserve">
+    <value>Buy {1} brand products at {0}. Here you can buy {1} products at the best price in Ashgabat, Turkmenistan.</value>
+  </data>
+  <data name="desc-brands" xml:space="preserve">
+    <value>Catalog of brands of the online store {0}. The store is located in Ashgabat, Turkmenistan</value>
+  </data>
+  <data name="desc-cart" xml:space="preserve">
+    <value>Here you can make a purchase on {0}.</value>
+  </data>
   <data name="desc-categories" xml:space="preserve">
-    <value>Categories of {0} in Ashgabat, Turkmenistan</value>
+    <value>Categories of online store {0}. The store is located in Ashgabat, Turkmenistan.</value>
+  </data>
+  <data name="desc-category" xml:space="preserve">
+    <value>Buy {1} at {0} Here you can buy {1} at the best price in Ashgabat, Turkmenistan.</value>
+  </data>
+  <data name="desc-delivery" xml:space="preserve">
+    <value>Instructions for order and delivery of goods on {0}.</value>
   </data>
   <data name="desc-home" xml:space="preserve">
-    <value>Online shop {0} in Ashgabat, Turkmenistan</value>
+    <value>Online store {0} in Ashgabat, Turkmenistan.</value>
   </data>
-  <data name="desc-model" xml:space="preserve">
-    <value>{1} in Ashgabat, Turkmenistan. {1} on {0}!</value>
+  <data name="desc-liked" xml:space="preserve">
+    <value>Page of products you like on {0}.</value>
+  </data>
+  <data name="desc-product" xml:space="preserve">
+    <value>Buy {1} at {0}. Here you can buy {1} at the best price in Ashgabat, Turkmenistan.</value>
+  </data>
+  <data name="desc-promotion" xml:space="preserve">
+    <value>Buy goods on the "{1}" promotion on the site {0}. Here you can buy products for the promotion "{1}".</value>
+  </data>
+  <data name="desc-promotions" xml:space="preserve">
+    <value>Profitable promotions on {0}.</value>
+  </data>
+  <data name="desc-search" xml:space="preserve">
+    <value>Product search page on {0} A convenient way to find goods in Ashgabat, Turkmenistan!</value>
   </data>
   <data name="description" xml:space="preserve">
     <value>description</value>

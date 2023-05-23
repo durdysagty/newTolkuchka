@@ -201,14 +201,53 @@
   <data name="delivery" xml:space="preserve">
     <value>Доставка</value>
   </data>
+  <data name="desc-about" xml:space="preserve">
+    <value>Страница о сайте {0}.</value>
+  </data>
+  <data name="desc-account" xml:space="preserve">
+    <value>Кабинет {1} на сайте {0}.</value>
+  </data>
+  <data name="desc-article" xml:space="preserve">
+    <value>{1} - интересная статья на сайте {0}.</value>
+  </data>
+  <data name="desc-articles" xml:space="preserve">
+    <value>Интересные статьи на сайте {0}.</value>
+  </data>
+  <data name="desc-brand" xml:space="preserve">
+    <value>Купить продукцию бренда {1} на сайте {0}. Здесь можно купить продукцию {1} по самой лучшей цене в Ашхабаде, Туркменистан.</value>
+  </data>
+  <data name="desc-brands" xml:space="preserve">
+    <value>Каталог брендов интернет магазина {0}. Магазин находиться в Ашхабаде, Туркменистан</value>
+  </data>
+  <data name="desc-cart" xml:space="preserve">
+    <value>Здесь вы можете оформить покупку на сайте {0}.</value>
+  </data>
   <data name="desc-categories" xml:space="preserve">
-    <value>Категории инетернет магазина {0} в Ашхабаде, Туркменистан</value>
+    <value>Категории интернет магазина {0}. Магазин находиться в Ашхабаде, Туркменистан</value>
+  </data>
+  <data name="desc-category" xml:space="preserve">
+    <value>Купить {1} на сайте {0}. Здесь можно купить {1} по самой лучшей цене в Ашхабаде, Туркменистан.</value>
+  </data>
+  <data name="desc-delivery" xml:space="preserve">
+    <value>Инструкции по оформлению и доставке товаров на сайте {0}.</value>
   </data>
   <data name="desc-home" xml:space="preserve">
-    <value>Интернет магазин {0} в Ашхабаде, Туркменистан</value>
+    <value>Интернет магазин {0} в Ашхабаде, Туркменистан.</value>
   </data>
-  <data name="desc-model" xml:space="preserve">
-    <value>{1} в Ашхабаде, Туркменистан. {1} на сайте {0}!</value>
+  <data name="desc-liked" xml:space="preserve">
+    <value>Страница понравившихся вам товаров на сайте {0}.</value>
+  </data>
+  <data name="desc-product" xml:space="preserve">
+    <value>Купить {1} на сайте {0}. Здесь можно купить {1} по самой лучшей цене в Ашхабаде, Туркменистан.</value>
+  </data>
+  <data name="desc-promotion" xml:space="preserve">
+    <value>Купить товары по акции "{1}" на сайте {0}. Здесь можно купить продукцию по акции "{1}".</value>
+  </data>
+  <data name="desc-promotions" xml:space="preserve">
+    <value>Выгодные акции на сайте на сайте {0}.</value>
+  </data>
+  <data name="desc-search" xml:space="preserve">
+    <value>Страница поиска товаров на сайте {0}. Удобный способ найти товары в Ашхабаде, Туркменистан!</value>
   </data>
   <data name="description" xml:space="preserve">
     <value>описание</value>

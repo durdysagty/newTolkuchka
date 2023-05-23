@@ -360,9 +360,9 @@ namespace newTolkuchka.Controllers
         }
         [Route(ConstantsService.LIKED)]
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 1800)]
-        public async Task<IActionResult> Liked(string special)
+        public async Task<IActionResult> Liked()
         {
-            await CreateMetaData(special, _breadcrumbs.GetBreadcrumbs(), null, true);
+            await CreateMetaData(ConstantsService.LIKED, _breadcrumbs.GetBreadcrumbs(), null, true);
             return View();
         }
         [Route($"{ConstantsService.PRODUCTS}")]
@@ -716,11 +716,11 @@ namespace newTolkuchka.Controllers
             {
                 case ConstantsService.ABOUT:
                     await CreateMetaData(ConstantsService.ABOUT, _breadcrumbs.GetBreadcrumbs(), _localizer[ConstantsService.ABOUT].Value, false);
-                    content = await System.IO.File.ReadAllTextAsync(_path.GetHtmlAboutBodyPath(CultureProvider.Lang));
+                    content = await F.ReadAllTextAsync(_path.GetHtmlAboutBodyPath(CultureProvider.Lang));
                     break;
                 case ConstantsService.DELIVERY:
                     await CreateMetaData(ConstantsService.DELIVERY, _breadcrumbs.GetBreadcrumbs(), _localizer[ConstantsService.DELIVERY].Value, false);
-                    content = await System.IO.File.ReadAllTextAsync(_path.GetHtmlDeliveryBodyPath(CultureProvider.Lang));
+                    content = await F.ReadAllTextAsync(_path.GetHtmlDeliveryBodyPath(CultureProvider.Lang));
                     break;
             }
             return View(null, content);
@@ -898,8 +898,8 @@ namespace newTolkuchka.Controllers
                 return await _category.GetActiveCategoriesByParentId(0).ToListAsync();
             });
             ViewBag.MainCategories = mainCategories;
-            ViewData[ConstantsService.TITLE] = modelName != null ? $" - {modelName}".ToLower() : pageName != null ? $" - {_localizer[pageName]}".ToLower() : null;
-            ViewData[ConstantsService.DESCRIPTION] = string.Format(_localizer[$"desc-{(pageName == null ? "home" : "model")}"], CultureProvider.SiteName, modelName);
+            ViewData[ConstantsService.TITLE] = modelName != null ? $"{modelName} - ".ToLower() : pageName != null ? $"{_localizer[pageName]} - ".ToLower() : null;
+            ViewData[ConstantsService.DESCRIPTION] = string.Format(_localizer[$"desc-{pageName ?? "home"}"], CultureProvider.SiteName, pageName == ConstantsService.CATEGORY ? modelName.ToLower() : modelName);
             ViewData[ConstantsService.IMAGE] = _path.GetLogo();
             if (isPageName)
                 ViewData["PageName"] = modelName != null ? $"{modelName}" : pageName != null ? $"{_localizer[pageName]}" : null;

@@ -11,7 +11,7 @@ namespace newTolkuchka.Services.Interfaces
         IQueryable<Category> GetCategoriesByParentId(int parentId);
         IQueryable<Category> GetActiveCategoriesByParentId(int parentId);
         Task<IList<int>> GetAllCategoryIdsHaveProductsByParentIdCachedAsync(int parentId);
-        IEnumerable<Category> GetIndexCategories();
+        IOrderedQueryable<Category> GetIndexCategories();
         Task<string[]> GetAdLinksAsync(int id);
         Task AddCategoryAdLinksAsync(int id, IList<int> adLinks);
         Task<string[]> GetModelAdLinksAsync(int id);
