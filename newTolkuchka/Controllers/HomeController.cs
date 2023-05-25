@@ -898,7 +898,7 @@ namespace newTolkuchka.Controllers
                 return await _category.GetActiveCategoriesByParentId(0).ToListAsync();
             });
             ViewBag.MainCategories = mainCategories;
-            ViewData[ConstantsService.TITLE] = modelName != null ? $"{modelName} - ".ToLower() : pageName != null ? $"{_localizer[pageName]} - ".ToLower() : null;
+            ViewData[ConstantsService.TITLE] = modelName != null ? $"{modelName} - " : pageName != null ? $"{_localizer[pageName]} - " : null;
             ViewData[ConstantsService.DESCRIPTION] = string.Format(_localizer[$"desc-{pageName ?? "home"}"], CultureProvider.SiteName, pageName == ConstantsService.CATEGORY ? modelName.ToLower() : modelName);
             ViewData[ConstantsService.IMAGE] = _path.GetLogo();
             if (isPageName)

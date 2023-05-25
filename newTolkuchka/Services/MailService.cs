@@ -67,8 +67,9 @@ namespace newTolkuchka.Services
                 await client.DisconnectAsync(true);
                 return true;
             }
-            catch
+            catch (Exception ex) 
             {
+                Console.WriteLine(ex.ToString());
                 return false;
             }
         }
