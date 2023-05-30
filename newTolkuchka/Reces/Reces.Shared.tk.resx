@@ -339,6 +339,9 @@
   <data name="new-registered" xml:space="preserve">
     <value>Haýyş, elektron poçtaňyzy barlaň!</value>
   </data>
+  <data name="newbought" xml:space="preserve">
+    <value>Soňky satyn alynanlar</value>
+  </data>
   <data name="newed" xml:space="preserve">
     <value>täze</value>
   </data>

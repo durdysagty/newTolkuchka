@@ -339,6 +339,9 @@
   <data name="new-registered" xml:space="preserve">
     <value>Please check your email!</value>
   </data>
+  <data name="newbought" xml:space="preserve">
+    <value>Recently bought</value>
+  </data>
   <data name="newed" xml:space="preserve">
     <value>new</value>
   </data>

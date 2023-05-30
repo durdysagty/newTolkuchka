@@ -393,8 +393,24 @@ namespace newTolkuchka.Services
             }
         }
 
-        public IEnumerable<UIProduct> GetUIProduct(IList<Product> sameModels)
+        public IEnumerable<UIProduct> GetUIProduct(IList<Product> sameModels, bool notCollect = false)
         {
+            // to optimize, disclude two Selection
+            if (notCollect)
+            {
+                return sameModels.Select(p => new UIProduct()
+                {
+                    Id = p.Id,
+                    Name = IProduct.GetProductNameCounted(p),
+                    Price = IProduct.GetConvertedPrice(p.Price),
+                    NewPrice = p.PromotionProducts.Any(pp => pp.Promotion.Type == Tp.Discount) ? IProduct.GetConvertedPrice((decimal)(p.Price - p.Price * p.PromotionProducts.FirstOrDefault(pp => pp.Promotion.Type == Tp.Discount).Promotion.Volume / 100)) : p.NewPrice == null ? null : IProduct.GetConvertedPrice((decimal)p.NewPrice),
+                    ImageMain = PathService.GetImageRelativePath(ConstantsService.PRODUCT + "/small", p.Id),
+                    Recommended = p.IsRecommended ? _localizer["recod"] : null,
+                    New = p.IsNew ? _localizer["newed"] : null,
+                    Promotions = p.PromotionProducts.Select(p => p.Promotion).ToList(),
+                    Version = p.Version
+                });
+            }
             IEnumerable<Product> distinct1 = sameModels.Where(p => !p.ProductSpecsValueMods.Where(psv => psv.SpecsValueMod.SpecsValue.Spec.IsImaged).Any()).DistinctBy(p => p.ProductSpecsValues.Where(psv => psv.SpecsValue.Spec.IsImaged).Select(psv => psv.SpecsValue.Id).FirstOrDefault());
             IEnumerable<Product> distinct2 = sameModels.DistinctBy(p => p.ProductSpecsValueMods.Where(psv => psv.SpecsValueMod.SpecsValue.Spec.IsImaged).Select(psv => psv.SpecsValueMod.Id).FirstOrDefault());
             IEnumerable<Product> distinct = distinct1.Concat(distinct2).DistinctBy(p => p.Id);

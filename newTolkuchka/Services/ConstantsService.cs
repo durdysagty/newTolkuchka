@@ -127,6 +127,7 @@ namespace newTolkuchka.Services
         public const string NOVELTIES = "novelties";
         public const string RECOMMENDED = "recommended";
         public const string LIKED = "liked";
+        public const string NEWBOUGHT = "newbought";
         public const string NEW = "new";
         public const string START = "start";
         public const string END = "end";

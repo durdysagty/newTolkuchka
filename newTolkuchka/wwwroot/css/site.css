@@ -151,6 +151,10 @@ s {
     }
 }
 
+.product2 {
+    min-width: 11rem
+}
+
 #btn-filter {
     position: fixed;
     bottom: 4rem;
@@ -180,6 +184,11 @@ s {
 
 a > .bg-primary {
     color: #fff
+}
+
+
+.bg-primary a:hover {
+    color: white !important
 }
 
 .form-check-input {

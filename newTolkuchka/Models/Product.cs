@@ -30,6 +30,7 @@ namespace newTolkuchka.Models
         public ICollection<ProductSpecsValueMod> ProductSpecsValueMods { get; set; }
         public ICollection<PromotionProduct> PromotionProducts { get; set; }
         public ICollection<Purchase> Purchases { get; set; }
+        public ICollection<Order> Orders { get; set; }
         public ICollection<Wish> Wishes { get; set; }
     }
 }

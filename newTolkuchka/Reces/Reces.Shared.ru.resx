@@ -342,6 +342,9 @@
   <data name="new-registered" xml:space="preserve">
     <value>Пожалуйста, проверьте эл. почту!</value>
   </data>
+  <data name="newbought" xml:space="preserve">
+    <value>Недавно купили</value>
+  </data>
   <data name="newed" xml:space="preserve">
     <value>новинка</value>
   </data>

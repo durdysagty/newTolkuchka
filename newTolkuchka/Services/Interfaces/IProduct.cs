@@ -18,7 +18,7 @@ namespace newTolkuchka.Services.Interfaces
         Task AddProductSpecValuesAsync(int id, IList<int> productSpecsValues);
         void RemoveProductSpecValuesModelSpecRemovedAsync(int modelId, int specId);
         Task AddProductSpecValueModsAsync(int id, IList<int> productSpecsValueMods);
-        IEnumerable<UIProduct> GetUIProduct(IList<Product> sameModels);
+        IEnumerable<UIProduct> GetUIProduct(IList<Product> sameModels, bool notCollect = false);
 
         static decimal GetOrderPrice(Product product)
         {
@@ -69,7 +69,7 @@ namespace newTolkuchka.Services.Interfaces
         }
         #endregion
 
-        static string GetHtmlProduct(IEnumerable<UIProduct> products, int? sw, int col, int xs, int sm, int md, int lg, int xl, int xxl, int xxxl)
+        static string GetHtmlProduct(IEnumerable<UIProduct> products, int col, int xs, int sm, int md, int lg, int xl, int xxl, int xxxl)
         {
             string htmlProducts = string.Empty;
             string i = string.Empty;
@@ -95,12 +95,27 @@ namespace newTolkuchka.Services.Interfaces
                         promotions += $"<div class=\"badge badge-info me-1 mt-1\"><a href=\"/{ConstantsService.PROMOTION}/{promo.Id}\">{CultureProvider.GetLocalName(promo.NameRu, promo.NameEn, promo.NameTm)}</a></div>";
                     }
                 }
-                string ph = $"<div id=\"{id}\" class=\"{(q == 0 ? "d-block" : "d-none")}\"><div class=\"row\"><div class=\"col-10 col-xs-9 col-sm-10 col-xxxl-9 px-0 ps-1 product-image p-0\"><div class=\"badges\">{(p.Recommended != null ? $"<div class=\"badge badge-danger me-1 mt-1\"><a href=\"/{ConstantsService.RECOMMENDED}\">{p.Recommended}</a></div>" : null)}{(p.New != null ? $"<div class=\"badge badge-secondary me-1 mt-1\"><a href=\"/{ConstantsService.NOVELTIES}\">{p.New}</a></div>" : null)}{promotions?? promotions}</div><a href=\"/{ConstantsService.PRODUCT}/{p.Id}\"><div>{IImage.GetImageHtml(p.ImageMain, p.Version, 200, 200, "100%", "auto", p.Name, "pb-1")}</div><div class=\"px-0\"><div><p class=\"product-font product-name\">{p.Name}</p></div><div class=\"justify-content-end align-items-end\"><div class=\"text-end\">{(p.NewPrice != null ? $"<s class=\"product-oprice me-2\">{p.Price}</s><span class=\"fs-6 product-price\">{CurrencyService.Currency.CodeName} {p.NewPrice}</span>" : $"<p class=\"fs-6 product-price\">{CurrencyService.Currency.CodeName} {p.Price}</p>")}</div></div></div></a></div><div class=\"col-2 col-xs-3 col-sm-2 col-xxxl-3 px-0\"><div class=\"text-center\"><div class=\"buttons-list\"><div><button type=\"button\" aria-label=\"{CultureProvider.GetLocalName("добавить в корзину", "add to cart", "sebete goş")}\" name=\"order{p.Id}\" onclick=\"order({p.Id})\" class=\"btn btn-primary px-2 mb-1\"><i class=\"fas fa-cart-plus\"></i></button></div><div><button type=\"button\" aria-label=\"{CultureProvider.GetLocalName("добавить в понравивщиеся", "add to liked", "halanlaryma goş")}\" name=\"like{p.Id}\" onclick=\"like({p.Id})\" class=\"btn btn-primary px-2 mb-1\"><i class=\"fas fa-heart\"></i></button></div><div><button type=\"button\" aria-label=\"{CultureProvider.GetLocalName("добавить в сравнения", "add to comparison", "deňeşdirmä goş")}\" name=\"scale{p.Id}\" onclick=\"scale({p.Id})\" class=\"btn btn-primary px-2 mb-1\"><i class=\"fas fa-scale-balanced\"></i></button></div>{i}</div></div></div></div></div>";
+                string ph = $"<div id=\"{id}\" class=\"{(q == 0 ? "d-block" : "d-none")}\"><div class=\"row\"><div class=\"col-10 col-xs-9 col-sm-10 col-xxxl-9 px-0 ps-1 product-image p-0\"><div class=\"badges\">{(p.Recommended != null ? $"<div class=\"badge badge-danger me-1 mt-1\"><a href=\"/{ConstantsService.RECOMMENDED}\">{p.Recommended}</a></div>" : null)}{(p.New != null ? $"<div class=\"badge badge-secondary me-1 mt-1\"><a href=\"/{ConstantsService.NOVELTIES}\">{p.New}</a></div>" : null)}{promotions ?? promotions}</div><a href=\"/{ConstantsService.PRODUCT}/{p.Id}\"><div>{IImage.GetImageHtml(p.ImageMain, p.Version, 200, 200, "100%", "auto", p.Name, "pb-1")}</div><div class=\"px-0\"><div><p class=\"product-font product-name\">{p.Name}</p></div><div class=\"justify-content-end align-items-end\"><div class=\"text-end\">{(p.NewPrice != null ? $"<s class=\"product-oprice me-2\">{p.Price}</s><span class=\"fs-6 product-price\">{CurrencyService.Currency.CodeName} {p.NewPrice}</span>" : $"<p class=\"fs-6 product-price\">{CurrencyService.Currency.CodeName} {p.Price}</p>")}</div></div></div></a></div><div class=\"col-2 col-xs-3 col-sm-2 col-xxxl-3 px-0\"><div class=\"text-center\"><div class=\"buttons-list\"><div><button type=\"button\" aria-label=\"{CultureProvider.GetLocalName("добавить в корзину", "add to cart", "sebete goş")}\" name=\"order{p.Id}\" onclick=\"order({p.Id})\" class=\"btn btn-primary px-2 mb-1\"><i class=\"fas fa-cart-plus\"></i></button></div><div><button type=\"button\" aria-label=\"{CultureProvider.GetLocalName("добавить в понравивщиеся", "add to liked", "halanlaryma goş")}\" name=\"like{p.Id}\" onclick=\"like({p.Id})\" class=\"btn btn-primary px-2 mb-1\"><i class=\"fas fa-heart\"></i></button></div><div><button type=\"button\" aria-label=\"{CultureProvider.GetLocalName("добавить в сравнения", "add to comparison", "deňeşdirmä goş")}\" name=\"scale{p.Id}\" onclick=\"scale({p.Id})\" class=\"btn btn-primary px-2 mb-1\"><i class=\"fas fa-scale-balanced\"></i></button></div>{i}</div></div></div></div></div>";
                 htmlProducts += ph;
                 q++;
             }
-            string models = $"<div class=\"col-{col} col-xs-{xs} col-sm-{sm} col-md-{md} col-lg-{lg} col-xl-{xl} col-xxl-{xxl} col-xxxl-{xxxl} mb-4\">{htmlProducts}</div>";
+            string models = $"<div class=\"col-{col} col-xs-{xs} col-sm-{sm} col-md-{md} col-lg-{lg} col-xl-{xl} col-xxl-{xxl} col-xxxl-{xxxl} mb-2\">{htmlProducts}</div>";
             return models;
+        }
+
+        static string GetHtmlProduct2(UIProduct product)
+        {
+            string id = $"prod{product.Id}";
+            string promotions = null;
+            if (product.Promotions.Any())
+            {
+                foreach (Promotion promo in product.Promotions)
+                {
+                    promotions += $"<div class=\"badge badge-info me-1 mt-1\"><a href=\"/{ConstantsService.PROMOTION}/{promo.Id}\">{CultureProvider.GetLocalName(promo.NameRu, promo.NameEn, promo.NameTm)}</a></div>";
+                }
+            }
+            string htmlProduct = $"<div class=\"product2\" id=\"{id}\"><div class=\"px-0 ps-1 product-image p-0\"><div class=\"badges\">{(product.Recommended != null ? $"<div class=\"badge badge-danger me-1 mt-1\"><a href=\"/{ConstantsService.RECOMMENDED}\">{product.Recommended}</a></div>" : null)}{(product.New != null ? $"<div class=\"badge badge-secondary me-1 mt-1\"><a href=\"/{ConstantsService.NOVELTIES}\">{product.New}</a></div>" : null)}{promotions ?? promotions}</div><a href=\"/{ConstantsService.PRODUCT}/{product.Id}\"><div class=\"rounded p-2 bg-white\">{IImage.GetImageHtml(product.ImageMain, product.Version, 200, 200, "100%", "auto", product.Name, "pb-1")}</div><div class=\"px-0\"><div><p class=\"product-font product-name\">{product.Name}</p></div></div></a></div></div>";
+            return htmlProduct;
         }
     }
 }
