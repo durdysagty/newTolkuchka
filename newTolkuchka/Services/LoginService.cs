@@ -110,9 +110,9 @@ namespace newTolkuchka.Services
             if (user == null)
                 return CreateFailResult(_localizer["no-user"]);
             Guid guid = Guid.NewGuid();
-            //bool isSent = await _mail.SendRecoveryAsync(user.Email, guid);
-            //if (!isSent)
-            //    return CreateFailResult(_localizer["no-sent-email"]);
+            bool isSent = await _mail.SendRecoveryAsync(user.Email, guid);
+            if (!isSent)
+                return CreateFailResult(_localizer["no-sent-email"]);
             _memoryCache.Set(guid, user.Id, TimeSpan.FromDays(1));
             return new LoginResponse
             {
