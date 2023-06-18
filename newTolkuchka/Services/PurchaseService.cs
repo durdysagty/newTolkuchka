@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Reces;
@@ -10,7 +11,7 @@ namespace newTolkuchka.Services
     public class PurchaseService : ServiceNoFile<Purchase, AdminPurchase>, IPurchase
     {
         private readonly IProduct _product;
-        public PurchaseService(AppDbContext con, IStringLocalizer<Shared> localizer, IProduct product, ICacheClean cacheClean) : base(con, localizer, cacheClean)
+        public PurchaseService(AppDbContext con, IMemoryCache memoryCache, IStringLocalizer<Shared> localizer, IProduct product, ICacheClean cacheClean) : base(con, memoryCache, localizer, cacheClean)
         {
             _product = product;
         }

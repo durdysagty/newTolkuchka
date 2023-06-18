@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
 using newTolkuchka.Reces;
@@ -10,7 +11,7 @@ namespace newTolkuchka.Services.Abstracts
 {
     public abstract class ServiceNoFile<T, TAdmin> : Service<T, TAdmin>, IActionNoFile<T, TAdmin> where T : class where TAdmin : class
     {
-        public ServiceNoFile(AppDbContext con, IStringLocalizer<Shared> localizer, ICacheClean cacheClean) : base(con, localizer, cacheClean)
+        public ServiceNoFile(AppDbContext con, IMemoryCache memoryCache, IStringLocalizer<Shared> localizer, ICacheClean cacheClean) : base(con, memoryCache, cacheClean, localizer)
         {
         }
 
@@ -25,7 +26,7 @@ namespace newTolkuchka.Services.Abstracts
             await _con.Set<T>().AddAsync(model);
             if (save)
                 await _con.SaveChangesAsync();
-            _cacheClean.CleanAdminModels(type.Name);
+            //_cacheClean.CleanAdminModels(type);
         }
 
         public virtual void EditModel(T model)
@@ -38,7 +39,7 @@ namespace newTolkuchka.Services.Abstracts
                 propertyInfo.SetValue(model, ++value);
             }
             _con.Entry(model).State = EntityState.Modified;
-            _cacheClean.CleanAdminModels(type.Name);
+            //_cacheClean.CleanAdminModels(type);
         }
 
         public async Task<Result> DeleteModelAsync(int id, T model)
@@ -47,7 +48,7 @@ namespace newTolkuchka.Services.Abstracts
             if (isBinded)
                 return Result.Fail;
             _con.Set<T>().Remove(model);
-            _cacheClean.CleanAdminModels(typeof(T).Name);
+            //_cacheClean.CleanAdminModels(typeof(T));
             return Result.Success;
         }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Reces;
@@ -10,7 +11,7 @@ namespace newTolkuchka.Services
     public class PositionService : ServiceNoFile<Position, AdminPosition>, IPosition
     {
         private readonly IEmployee _employee;
-        public PositionService(AppDbContext con, IStringLocalizer<Shared> localizer, IEmployee employee, ICacheClean cacheClean) : base(con, localizer, cacheClean)
+        public PositionService(AppDbContext con, IMemoryCache memoryCache, IStringLocalizer<Shared> localizer, IEmployee employee, ICacheClean cacheClean) : base(con, memoryCache, localizer, cacheClean)
         {
             _employee = employee;
         }

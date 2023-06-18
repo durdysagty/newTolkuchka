@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
@@ -13,7 +14,7 @@ namespace newTolkuchka.Services
         //private const int IMAGESMAX = 5;
         private readonly ISpecsValue _specsValue;
         private readonly ISpecsValueMod _specsValueMod;
-        public ProductService(AppDbContext con, ISpecsValue specsValue, ISpecsValueMod specsValueMod, IStringLocalizer<Shared> localizer, IPath path, ICacheClean cacheClean, IImage image) : base(con, localizer, path, cacheClean, image, ConstantsService.PRODUCTMAXIMAGE)
+        public ProductService(AppDbContext con, IMemoryCache memoryCache, ISpecsValue specsValue, ISpecsValueMod specsValueMod, IStringLocalizer<Shared> localizer, IPath path, ICacheClean cacheClean, IImage image) : base(con, memoryCache , localizer, path, cacheClean, image, ConstantsService.PRODUCTMAXIMAGE)
         {
             _specsValue = specsValue;
             _specsValueMod = specsValueMod;

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
@@ -11,7 +12,7 @@ namespace newTolkuchka.Services
     public class ModelService : ServiceNoFile<Model, AdminModel>, IModel
     {
         private readonly IProduct _product;
-        public ModelService(AppDbContext con, IProduct product, IStringLocalizer<Shared> localizer, ICacheClean cacheClean) : base(con, localizer, cacheClean)
+        public ModelService(AppDbContext con, IMemoryCache memoryCache, IProduct product, IStringLocalizer<Shared> localizer, ICacheClean cacheClean) : base(con, memoryCache, localizer, cacheClean)
         {
             _product = product;
         }

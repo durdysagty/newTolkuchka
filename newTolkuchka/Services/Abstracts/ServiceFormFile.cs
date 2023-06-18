@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
 using newTolkuchka.Reces;
@@ -14,7 +15,7 @@ namespace newTolkuchka.Services.Abstracts
         private protected readonly IImage _image;
         private protected readonly int _imagesMax;
 
-        public ServiceFormFile(AppDbContext con, IStringLocalizer<Shared> localizer, IPath path, ICacheClean cacheClean, IImage image, int imagesMax) : base(con, localizer, cacheClean)
+        public ServiceFormFile(AppDbContext con, IMemoryCache memoryCache, IStringLocalizer<Shared> localizer, IPath path, ICacheClean cacheClean, IImage image, int imagesMax) : base(con, memoryCache, cacheClean, localizer)
         {
             _path = path;
             _image = image;
@@ -61,7 +62,7 @@ namespace newTolkuchka.Services.Abstracts
                         }
                 }
             }
-            _cacheClean.CleanAdminModels(type.Name);
+            //_cacheClean.CleanAdminModels(type);
         }
 
         public async Task EditModelAsync(T model, IFormFile[] images, int width, int height, int? divider = null)
@@ -76,7 +77,7 @@ namespace newTolkuchka.Services.Abstracts
             _con.Entry(model).State = EntityState.Modified;
             if (images.Any(i => i.Length > 0) || images.Any(i => i.FileName == "delete"))
                 await SetModelImages(model, images, width, height, divider);
-            _cacheClean.CleanAdminModels(type.Name);
+            //_cacheClean.CleanAdminModels(type);
         }
 
         public async Task SetModelImages(T model, IFormFile[] images, int width, int height, int? divider = null)
@@ -116,7 +117,7 @@ namespace newTolkuchka.Services.Abstracts
                     paths.Push(_path.GetImagePath($"{type.Name}/small", id, i));
             }
             _image.DeleteImages(paths);
-            _cacheClean.CleanAdminModels(type.Name);
+            //_cacheClean.CleanAdminModels(type);
             return Result.Success;
         }
         public async Task SaveChangesAsync()

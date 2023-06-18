@@ -75,7 +75,7 @@ namespace newTolkuchka.ControllersAPI
             }
             _service.EditModel(invoice);
             await EditActAsync(invoice.Id, CreateInvoiceName(invoice));
-            _cacheClean.CleanAllReports();
+            //_cacheClean.CleanAllReports();
             return Result.Success;
         }
         [Authorize(Policy = "Level3")]
@@ -102,7 +102,7 @@ namespace newTolkuchka.ControllersAPI
             Result result = await _service.DeleteModelAsync(invoice.Id, invoice);
             if (result == Result.Success)
                 await DeleteActAsync(id, CreateInvoiceName(invoice));
-            _cacheClean.CleanAllReports();
+            //_cacheClean.CleanAllReports();
             return result;
             //return result;
         }

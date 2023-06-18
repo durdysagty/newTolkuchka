@@ -12,11 +12,9 @@ namespace newTolkuchka.Services
     public class EmployeeService : ServiceNoFile<Employee, AdminEmployee>, IEmployee
     {
         private readonly ICrypto _crypto;
-        private readonly IMemoryCache _memoryCache;
-        public EmployeeService(AppDbContext con, IStringLocalizer<Shared> localizer, ICacheClean cacheClean, ICrypto crypto, IMemoryCache memoryCache) : base(con, localizer, cacheClean)
+        public EmployeeService(AppDbContext con, IMemoryCache memoryCache, IStringLocalizer<Shared> localizer, ICacheClean cacheClean, ICrypto crypto) : base(con, memoryCache, localizer, cacheClean)
         {
             _crypto = crypto;
-            _memoryCache = memoryCache;
         }
         public async Task<EditEmployee> GetEditEmployeeAsync(int id)
         {
@@ -46,7 +44,7 @@ namespace newTolkuchka.Services
             await _con.Employees.AddAsync(employee);
             if (save)
                 _ = await _con.SaveChangesAsync();
-            _cacheClean.CleanAdminModels(nameof(Employee));
+            //_cacheClean.CleanAdminModels(typeof(Employee));
         }
         public async Task EditEmployeeAsync(EditEmployee editEmployee)
         {
@@ -59,7 +57,7 @@ namespace newTolkuchka.Services
                 EncryptPassword(employee);
             }
             EditModel(employee);
-            _cacheClean.CleanAdminModels(nameof(Employee));
+            //_cacheClean.CleanAdminModels(typeof(Employee));
         }
 
         public async Task<Employee> GetEmployeeWithPositionAsync(string login)

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Reces;
@@ -9,7 +10,8 @@ namespace newTolkuchka.Services
 {
     public class ArticleService : ServiceFormFile<Article, AdminArticle>, IArticle
     {
-        public ArticleService(AppDbContext con, IStringLocalizer<Shared> localizer, IPath path, ICacheClean cacheClean, IImage image) : base(con, localizer, path, cacheClean, image, ConstantsService.UMAXIMAGE)
+
+        public ArticleService(AppDbContext con, IMemoryCache memoryCache, IStringLocalizer<Shared> localizer, IPath path, ICacheClean cacheClean, IImage image) : base(con, memoryCache, localizer, path, cacheClean, image, ConstantsService.UMAXIMAGE)
         {
         }
 

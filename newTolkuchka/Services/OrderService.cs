@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Models.Migs;
@@ -13,7 +14,7 @@ namespace newTolkuchka.Services
 
         private readonly IProduct _product;
 
-        public OrderService(AppDbContext con, IStringLocalizer<Shared> localizer, IProduct product, ICacheClean cacheClean) : base(con, localizer, cacheClean)
+        public OrderService(AppDbContext con, IMemoryCache memoryCache, IStringLocalizer<Shared> localizer, IProduct product, ICacheClean cacheClean) : base(con, memoryCache, localizer, cacheClean)
         {
             _product = product;
         }
