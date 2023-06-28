@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Reces;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
+using Org.BouncyCastle.Asn1.X509;
 using System.Collections.ObjectModel;
 
 namespace newTolkuchka.Services
@@ -14,7 +14,7 @@ namespace newTolkuchka.Services
     {
         private readonly IProduct _product;
         private readonly IOrder _order;
-        public InvoiceService(AppDbContext con, IMemoryCache memoryCache, IProduct product, IOrder order, IStringLocalizer<Shared> localizer, ICacheClean cacheClean) : base(con, memoryCache, localizer, cacheClean)
+        public InvoiceService(AppDbContext con, IProduct product, IOrder order, IStringLocalizer<Shared> localizer, ICacheClean cacheClean) : base(con, localizer, cacheClean)
         {
             _product = product;
             _order = order;

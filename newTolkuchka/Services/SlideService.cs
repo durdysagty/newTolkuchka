@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Localization;
+﻿using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Reces;
@@ -11,7 +10,7 @@ namespace newTolkuchka.Services
     public class SlideService : ServiceFormFile<Slide, AdminSlide>, ISlide
     {
         //private const int IMAGESMAX = 3;
-        public SlideService(AppDbContext con, IMemoryCache memoryCache, IStringLocalizer<Shared> localizer, IPath path, ICacheClean cacheClean, IImage image) : base(con, memoryCache, localizer, path, cacheClean, image, ConstantsService.LOCALMAXIMAGE)
+        public SlideService(AppDbContext con, IStringLocalizer<Shared> localizer, IPath path, ICacheClean cacheClean, IImage image) : base(con, localizer, path, cacheClean, image, ConstantsService.LOCALMAXIMAGE)
         {
         }
 

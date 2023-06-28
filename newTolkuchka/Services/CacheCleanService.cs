@@ -1,7 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Services.Interfaces;
-using System.Reflection;
 
 namespace newTolkuchka.Services
 {
@@ -107,38 +105,37 @@ namespace newTolkuchka.Services
             }
         }
 
-        //public void CleanAllReports()
-        //{
-        //    if (_memoryCache.TryGetValue(ConstantsService.ADMINREPORTSHASHKEYS, out HashSet<string> reportKeys))
-        //    {
-        //        foreach (string key in reportKeys)
-        //        {
-        //            _memoryCache.Remove(key);
-        //        }
-        //        _memoryCache.Remove(ConstantsService.ADMINREPORTSHASHKEYS);
-        //    }
-        //}
+        public void CleanAllReports()
+        {
+            if (_memoryCache.TryGetValue(ConstantsService.ADMINREPORTSHASHKEYS, out HashSet<string> reportKeys))
+            {
+                foreach (string key in reportKeys)
+                {
+                    _memoryCache.Remove(key);
+                }
+                _memoryCache.Remove(ConstantsService.ADMINREPORTSHASHKEYS);
+            }
+        }
 
-        //public void CleanAdminModels(Type type)
-        //{
-        //    //if (model.Equals(ConstantsService.SLIDE, StringComparison.CurrentCultureIgnoreCase))
-        //    //    CleanSlides();
-        //    //_memoryCache.Remove($"{ConstantsService.ADMINMODELS}-{model}");
-        //    if (_memoryCache.TryGetValue(ConstantsService.ADMINREPORTSHASHKEYS, out HashSet<string> modelKeys))
-        //    {
-        //        PropertyInfo[] properties = type.GetProperties();
-        //        IEnumerable<string> neededKeys = modelKeys.Where(mk => mk.Contains(type.Name));
-        //        foreach (string key in neededKeys)
-        //        {
-        //            modelKeys.Remove(key);
-        //            _memoryCache.Remove(key);
-        //        }
-        //        _memoryCache.Set(ConstantsService.ADMINREPORTSHASHKEYS, modelKeys, new MemoryCacheEntryOptions()
-        //        {
-        //            Priority = CacheItemPriority.NeverRemove
-        //        });
-        //    }
-        //}
+        public void CleanAdminModels(string model)
+        {
+            if (model.Equals(ConstantsService.SLIDE, StringComparison.CurrentCultureIgnoreCase))
+                CleanSlides();
+            if (_memoryCache.TryGetValue(ConstantsService.ADMINMODELSHASHKEYS, out HashSet<string> modelKeys))
+            {
+                IEnumerable<string> neededKeys = modelKeys.Where(mk => mk.Contains(model));
+                foreach (string key in neededKeys)
+                {
+                    _memoryCache.Remove(key);
+                    modelKeys.Remove(key);
+                }
+                _memoryCache.Set(ConstantsService.ADMINMODELSHASHKEYS, modelKeys, new MemoryCacheEntryOptions()
+                {
+                    Priority = CacheItemPriority.NeverRemove,
+                    SlidingExpiration = TimeSpan.FromDays(3)
+                });
+            }
+        }
 
         private void CleanCulturedCaches(string key)
         {

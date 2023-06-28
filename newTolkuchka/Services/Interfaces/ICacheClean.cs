@@ -11,7 +11,7 @@
         void CleanIndexArticles();
         void CleanAllModeledProducts();
         void CleanProductPage(int id = 0);
-        //void CleanAllReports();
-        //void CleanAdminModels(Type type);
+        void CleanAllReports();
+        void CleanAdminModels(string model);
     }
 }

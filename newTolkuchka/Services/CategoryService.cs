@@ -13,9 +13,11 @@ namespace newTolkuchka.Services
     {
         // private const int PADDING = 2;
         private readonly IProduct _product;
-        public CategoryService(AppDbContext con, IMemoryCache memoryCache, IProduct product, IStringLocalizer<Shared> localizer, IPath path, ICacheClean cacheClean, IImage image) : base(con, memoryCache, localizer, path, cacheClean, image, ConstantsService.UMAXIMAGE)
+        private readonly IMemoryCache _memoryCache;
+        public CategoryService(AppDbContext con, IProduct product, IMemoryCache memoryCache, IStringLocalizer<Shared> localizer, IPath path, ICacheClean cacheClean, IImage image) : base(con, localizer, path, cacheClean, image, ConstantsService.UMAXIMAGE)
         {
             _product = product;
+            _memoryCache = memoryCache;
         }
 
         public async Task<bool> HasProduct(int id)

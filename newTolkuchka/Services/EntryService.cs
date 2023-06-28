@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Localization;
+﻿using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Reces;
@@ -13,7 +12,7 @@ namespace newTolkuchka.Services
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IPath _path;
         //private readonly IEmployee _employee;
-        public EntryService(IHttpContextAccessor contextAccessor, IPath path, AppDbContext con, IMemoryCache memoryCache, IStringLocalizer<Shared> localizer, ICacheClean cacheClean) : base(con, memoryCache, localizer, cacheClean)
+        public EntryService(IHttpContextAccessor contextAccessor, IPath path, AppDbContext con,/* IEmployee employee,*/  IStringLocalizer<Shared> localizer, ICacheClean cacheClean) : base(con, localizer, cacheClean)
         {
             _contextAccessor = contextAccessor;
             _path = path;

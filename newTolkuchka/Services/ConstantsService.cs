@@ -10,7 +10,7 @@ namespace newTolkuchka.Services
         // cache keys
         public const string MODELEDPRODUCTSHASHKEYS = "hsptskeys";
         public const string PRODUCTSHASHKEYS = "ptkeys";
-        public const string ADMINMODELS = "mdlskys";
+        public const string ADMINMODELSHASHKEYS = "mdlskys";
         public const string ADMINREPORTSHASHKEYS = "rprtskys";
         public const string CATEGORIESGROUPBYPARENTID = "csgp";
         public const string CATEGORYIDSGOTPRODUCTSBYPARENTID = "cidsgp";
@@ -137,7 +137,7 @@ namespace newTolkuchka.Services
         public const string CUSTOMERGUID = "customerguid";
         public const string HASH = "hash";
         // DTO models 
-        //public const string ADMINREPORTORDER = "AdminReportOrder";
+        public const string ADMINREPORTORDER = "AdminReportOrder";
         // images
         public const string WEBP = "webp";
         public const string JPG = "jpg";

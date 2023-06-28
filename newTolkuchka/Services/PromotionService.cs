@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Localization;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
@@ -11,7 +10,7 @@ namespace newTolkuchka.Services
 {
     public class PromotionService : ServiceFormFile<Promotion, AdminPromotion>, IPromotion
     {
-        public PromotionService(AppDbContext con, IMemoryCache memoryCache, IPath path, ICacheClean cacheClean, IImage image, IStringLocalizer<Shared> localizer) : base(con, memoryCache, localizer, path, cacheClean, image, ConstantsService.LOCALMAXIMAGE)
+        public PromotionService(AppDbContext con, IPath path, ICacheClean cacheClean, IImage image, IStringLocalizer<Shared> localizer) : base(con, localizer, path, cacheClean, image, ConstantsService.LOCALMAXIMAGE)
         {
         }
 

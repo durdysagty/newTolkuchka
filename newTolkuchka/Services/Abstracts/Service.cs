@@ -9,21 +9,16 @@ using Type = System.Type;
 using ModelsType = newTolkuchka.Models.Type;
 using static newTolkuchka.Services.CultureProvider;
 using System.Collections.ObjectModel;
-using Microsoft.Extensions.Caching.Memory;
-using System.Text;
-using System.Collections.Generic;
 
 namespace newTolkuchka.Services.Abstracts
 {
     public abstract class Service<T, TAdmin> : BaseService, IAction<T, TAdmin> where T : class where TAdmin : class
     {
         private protected readonly AppDbContext _con;
-        private protected readonly IMemoryCache _memoryCache;
         private protected readonly ICacheClean _cacheClean;
-        public Service(AppDbContext con, IMemoryCache memoryCache, ICacheClean cacheClean, IStringLocalizer<Shared> localizer) : base(localizer)
+        public Service(AppDbContext con, IStringLocalizer<Shared> localizer, ICacheClean cacheClean ) : base(localizer)
         {
             _con = con;
-            _memoryCache = memoryCache;
             _cacheClean = cacheClean;
         }
 
@@ -225,21 +220,18 @@ namespace newTolkuchka.Services.Abstracts
                     fullModels = (IQueryable<T>)employees.Include(e => e.Position);
                     break;
                 case ConstantsService.INVOICE:
-                    IQueryable<Invoice> invoices = fullModels as IQueryable<Invoice>;
-                    fullModels = (IQueryable<T>)invoices.Include(i => i.Currency).Include(i => i.User).Include(i => i.Orders).ThenInclude(o => o.Purchase).ThenInclude(p => p.PurchaseInvoice).ThenInclude(pi => pi.Currency).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.Model).ThenInclude(m => m.Type).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.Model).ThenInclude(m => m.Brand).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.Model).ThenInclude(m => m.Line).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.Model).ThenInclude(x => x.ModelSpecs).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ThenInclude(x => x.Spec).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(x => x.ProductSpecsValueMods).ThenInclude(x => x.SpecsValueMod).ThenInclude(x => x.SpecsValue);
-                    break;
-                //if (typeof(TAdmin).Name == "AdminInvoice")
-                //{
-                //    IQueryable<Invoice> invoices = fullModels as IQueryable<Invoice>;
-                //    fullModels = (IQueryable<T>)invoices.Include(i => i.Currency).Include(i => i.User).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.Model).ThenInclude(m => m.Type).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.Model).ThenInclude(m => m.Brand).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.Model).ThenInclude(m => m.Line).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.Model).ThenInclude(x => x.ModelSpecs).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ThenInclude(x => x.Spec).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(x => x.ProductSpecsValueMods).ThenInclude(x => x.SpecsValueMod).ThenInclude(x => x.SpecsValue);
-                //    break;
-                //}
-                //else
-                //{
-                //    IQueryable<Invoice> invoicesForReport = fullModels as IQueryable<Invoice>;
-                //    fullModels = (IQueryable<T>)invoicesForReport.Include(i => i.Currency).Include(i => i.Orders).ThenInclude(o => o.Purchase).ThenInclude(p => p.PurchaseInvoice).ThenInclude(pi => pi.Currency).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.Model).ThenInclude(m => m.Type).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.Model).ThenInclude(m => m.Brand).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.Model).ThenInclude(m => m.Line).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.Model).ThenInclude(x => x.ModelSpecs).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ThenInclude(x => x.Spec).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(x => x.ProductSpecsValueMods).ThenInclude(x => x.SpecsValueMod);
-                //    break;
-                //}
+                    if (typeof(TAdmin).Name == "AdminInvoice")
+                    {
+                        IQueryable<Invoice> invoices = fullModels as IQueryable<Invoice>;
+                        fullModels = (IQueryable<T>)invoices.Include(i => i.Currency).Include(i => i.User).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.Model).ThenInclude(m => m.Type).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.Model).ThenInclude(m => m.Brand).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.Model).ThenInclude(m => m.Line).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.Model).ThenInclude(x => x.ModelSpecs).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ThenInclude(x => x.Spec).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(x => x.ProductSpecsValueMods).ThenInclude(x => x.SpecsValueMod).ThenInclude(x => x.SpecsValue);
+                        break;
+                    }
+                    else
+                    {
+                        IQueryable<Invoice> invoicesForReport = fullModels as IQueryable<Invoice>;
+                        fullModels = (IQueryable<T>)invoicesForReport.Include(i => i.Currency).Include(i => i.Orders).ThenInclude(o => o.Purchase).ThenInclude(p => p.PurchaseInvoice).ThenInclude(pi => pi.Currency).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.Model).ThenInclude(m => m.Type).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.Model).ThenInclude(m => m.Brand).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.Model).ThenInclude(m => m.Line).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.Model).ThenInclude(x => x.ModelSpecs).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(p => p.ProductSpecsValues).ThenInclude(x => x.SpecsValue).ThenInclude(x => x.Spec).Include(i => i.Orders).ThenInclude(o => o.Product).ThenInclude(x => x.ProductSpecsValueMods).ThenInclude(x => x.SpecsValueMod);
+                        break;
+                    }
                 case ConstantsService.LINE:
                     IQueryable<Line> lines = fullModels as IQueryable<Line>;
                     fullModels = (IQueryable<T>)lines.Include(l => l.Models).Include(l => l.Brand);
@@ -298,36 +290,6 @@ namespace newTolkuchka.Services.Abstracts
         {
             IList<T> preModels = GetFullModels(paramsList).ToList();
             Type type = typeof(T);
-            //// get all keys in memory that is used for get admin models, if not then create
-            //_memoryCache.TryGetValue(ConstantsService.ADMINREPORTSHASHKEYS, out HashSet<string> modelKeys);
-            //modelKeys ??= new HashSet<string>();
-            //// create key that will be used to get admin models
-            //StringBuilder keyBuilder = new($"{ConstantsService.ADMINMODELS}-{type.Name}");
-            //if (paramsList != null)
-            //    foreach (var p in paramsList)
-            //        keyBuilder.Append(p.Value);
-            //string key = keyBuilder.ToString();
-            //// check is the key are included to modelKeys and try get the models from cache
-            //if (!(modelKeys.Contains(key) && _memoryCache.TryGetValue(key, out IList<T> preModels)))
-            //{
-            //    // if not in modelKeys or not in cache memory then get from db
-            //    preModels = GetFullModels(paramsList).ToList();
-            //    _memoryCache.Set(key, preModels, new MemoryCacheEntryOptions()
-            //    {
-            //        SlidingExpiration = TimeSpan.FromHours(1)
-            //    });
-            //    // also have to add the key to modelKeys & set keys to memory again
-            //    modelKeys.Add(key);
-            //    _memoryCache.Set(ConstantsService.ADMINREPORTSHASHKEYS, modelKeys, new MemoryCacheEntryOptions()
-            //    {
-            //        Priority = CacheItemPriority.NeverRemove
-            //    });
-            //}
-            //IList<T> preModels = _memoryCache.GetOrCreate($"{ConstantsService.ADMINMODELS}-{type.Name}", ce =>
-            //{
-            //    ce.SlidingExpiration = TimeSpan.FromHours(1);
-            //    return GetFullModels(paramsList).ToList();
-            //});
             int toSkip = page * pp;
             IEnumerable<TAdmin> adminModels = null;
             //bool isPaged = false;
