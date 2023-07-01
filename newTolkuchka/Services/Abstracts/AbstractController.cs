@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Services.Interfaces;
 using System.Reflection;
+using System.Text;
 using Type = System.Type;
 
 namespace newTolkuchka.Services.Abstracts
@@ -30,53 +32,70 @@ namespace newTolkuchka.Services.Abstracts
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public ModelsFilters<TAdminModel> Get([FromQuery] string search, [FromQuery] string[] keys, [FromQuery] string[] values, [FromQuery] int page = 0, [FromQuery] int pp = 50)
         {
-            string cacheKey = string.Empty;
+            bool isKeysExist;
+            string cacheKey;
             if (typeof(TAdminModel).Name == ConstantsService.ADMINREPORTORDER)
             {
-                cacheKey = $"{ConstantsService.ADMINREPORTORDER}-{values[0]}-{values[1]}";
-                return _memoryCache.GetOrCreate(cacheKey, ce =>
+                // create a key that will be used to get a report
+                StringBuilder reportKeyBuilder = new($"{ConstantsService.ADMINREPORTORDER}-{values[0]}-{values[1]}");
+                cacheKey = reportKeyBuilder.ToString();
+                // get all keys in memory that is used for get adminreport models, if not then create
+                isKeysExist = _memoryCache.TryGetValue(ConstantsService.ADMINREPORTSHASHKEYS, out HashSet<string> reportKeys);
+                if (!isKeysExist)
+                    reportKeys = new HashSet<string>();
+                // check is the key are included to reportKeys and try get the models from cache
+                if (!(reportKeys.Contains(cacheKey) && _memoryCache.TryGetValue(cacheKey, out ModelsFilters<TAdminModel> report)))
                 {
-                    ce.SlidingExpiration = TimeSpan.FromDays(3);
-                    ModelsFilters<TAdminModel> response = CreateResponse(search, keys, values, page, pp);
-                    if (!_memoryCache.TryGetValue(ConstantsService.ADMINREPORTSHASHKEYS, out HashSet<string> reportKeys))
-                        reportKeys = new HashSet<string>();
+                    // if not in modelKeys or not in cache memory
+                    report = CreateResponse(search, keys, values, page, pp);
+                    _memoryCache.Set(cacheKey, report, new MemoryCacheEntryOptions()
+                    {
+                        SlidingExpiration = TimeSpan.FromDays(3)
+                    });
+                    // also have to add the key to modelKeys & set keys to memory again
                     reportKeys.Add(cacheKey);
                     _memoryCache.Set(ConstantsService.ADMINREPORTSHASHKEYS, reportKeys, new MemoryCacheEntryOptions()
                     {
-                        SlidingExpiration = TimeSpan.FromDays(10)
+                        Priority = CacheItemPriority.NeverRemove
                     });
-                    return response;
-                });
+                }
+                return report;
             }
-            cacheKey = $"{typeof(TModel).Name}-{search}";
+            // create a key that will be used to get models
+            StringBuilder stringBuilder = new($"{typeof(TModel).Name}-{search}");
             if (values.Any())
                 foreach (var value in values)
-                    cacheKey += $"-{value}";
-            cacheKey += $"-{page}-{pp}";
-            return _memoryCache.GetOrCreate(cacheKey, ce =>
+                    stringBuilder.Append($"-{value}");
+            stringBuilder.Append($"-{page}-{pp}");
+            cacheKey = stringBuilder.ToString();
+            // get all keys in memory that is used for get models, if not then create
+            isKeysExist = _memoryCache.TryGetValue(ConstantsService.ADMINMODELSHASHKEYS, out HashSet<string> modelKeys);
+            if (!isKeysExist)
+                modelKeys = new HashSet<string>();
+            // check is the key are included to modelKeys and try get the models from cache
+            if (!(modelKeys.Contains(cacheKey) && _memoryCache.TryGetValue(cacheKey, out ModelsFilters<TAdminModel> response)))
             {
+                // if not in modelKeys or not in cache memory
+                response = CreateResponse(search, keys, values, page, pp);
+                MemoryCacheEntryOptions cacheEntryOptions = new();
                 if (typeof(TModel).Name == ConstantsService.USER)
                 {
-                    ce.SlidingExpiration = TimeSpan.FromMinutes(20);
-                    ce.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60);
+                    cacheEntryOptions.SlidingExpiration = TimeSpan.FromMinutes(20);
+                    cacheEntryOptions.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60);
                 }
                 else
                 {
-                    ce.SlidingExpiration = TimeSpan.FromHours(2);
-                    if (!_memoryCache.TryGetValue(ConstantsService.ADMINMODELSHASHKEYS, out HashSet<string> modelKeys))
-                        modelKeys = new HashSet<string>();
-                    modelKeys.Add(cacheKey);
-                    _memoryCache.Set(ConstantsService.ADMINMODELSHASHKEYS, modelKeys, new MemoryCacheEntryOptions()
-                    {
-                        Priority = CacheItemPriority.NeverRemove,
-                        SlidingExpiration = TimeSpan.FromDays(3)
-                    });
+                    cacheEntryOptions.SlidingExpiration = TimeSpan.FromHours(2);
                 }
-                ModelsFilters<TAdminModel> response = CreateResponse(search, keys, values, page, pp);
-                return response;
-            });
-            //ModelsFilters<TAdminModel> response = CreateResponse(search, keys, values, page, pp);
-            //return response;
+                _memoryCache.Set(cacheKey, response, cacheEntryOptions);
+                // also have to add the key to modelKeys & set keys to memory again
+                modelKeys.Add(cacheKey);
+                _memoryCache.Set(ConstantsService.ADMINMODELSHASHKEYS, modelKeys, new MemoryCacheEntryOptions()
+                {
+                    Priority = CacheItemPriority.NeverRemove
+                });
+            }
+            return response;
         }
 
         [HttpGet("{id}/{key}")]

@@ -12,8 +12,10 @@ namespace newTolkuchka.ControllersAPI
     [Authorize(Policy = "Level1")]
     public class LineController : AbstractController<Line, AdminLine, ILine>
     {
-        public LineController(IEntry entry, ILine line, IMemoryCache memoryCache, ICacheClean cacheClean) : base(entry, Entity.Line, line, memoryCache, cacheClean)
+        private readonly IProduct _product;
+        public LineController(IEntry entry, ILine line, IMemoryCache memoryCache, ICacheClean cacheClean, IProduct product) : base(entry, Entity.Line, line, memoryCache, cacheClean)
         {
+            _product = product;
         }
 
         [HttpGet("{id}")]
@@ -46,7 +48,9 @@ namespace newTolkuchka.ControllersAPI
                 return Result.Already;
             _service.EditModel(line);
             await EditActAsync(line.Id, line.Name);
-            _cacheClean.CleanProductPage();
+            int[] productIds = _product.GetModels(new Dictionary<string, object>() { { ConstantsService.LINE, line.Id } }).Select(p => p.Id).ToArray();
+            foreach (int id in productIds)
+                _cacheClean.CleanProductPage(id);
             return Result.Success;
         }
         [HttpDelete("{id}")]

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
+using newTolkuchka.Services;
 using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 using Type = newTolkuchka.Models.Type;
@@ -12,8 +13,10 @@ namespace newTolkuchka.ControllersAPI
     [Authorize(Policy = "Level1")]
     public class TypeController : AbstractController<Type, AdminType, IType>
     {
-        public TypeController(IEntry entry, IType type, IMemoryCache memoryCache, ICacheClean cacheClean) : base(entry, Entity.Type, type, memoryCache, cacheClean)
+        private readonly IProduct _product;
+        public TypeController(IEntry entry, IType type, IMemoryCache memoryCache, ICacheClean cacheClean, IProduct product) : base(entry, Entity.Type, type, memoryCache, cacheClean)
         {
+            _product = product;
         }
 
         [HttpGet("{id}")]
@@ -46,7 +49,12 @@ namespace newTolkuchka.ControllersAPI
                 return Result.Already;
             _service.EditModel(type);
             await EditActAsync(type.Id, type.NameRu);
-            _cacheClean.CleanProductPage();
+            // clean cached Products Page
+            _cacheClean.CleanAllModeledProducts();
+            // clean cached Products Page
+            int[] productIds = _product.GetModels(new Dictionary<string, object>() { { ConstantsService.TYPE, type.Id } }).Select(p => p.Id).ToArray();
+            foreach (int id in productIds)
+                _cacheClean.CleanProductPage(id);
             return Result.Success;
         }
         [HttpDelete("{id}")]

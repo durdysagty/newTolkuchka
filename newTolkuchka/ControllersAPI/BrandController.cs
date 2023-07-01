@@ -14,8 +14,10 @@ namespace newTolkuchka.ControllersAPI
     {
         private const int WIDTH = 180;
         private const int HEIGHT = 60;
-        public BrandController(IEntry entry, IBrand brand, IMemoryCache memoryCache, ICacheClean cacheClean) : base(entry, Entity.Brand, brand, memoryCache, cacheClean)
+        private readonly IProduct _product;
+        public BrandController(IEntry entry, IBrand brand, IMemoryCache memoryCache, ICacheClean cacheClean, IProduct product) : base(entry, Entity.Brand, brand, memoryCache, cacheClean)
         {
+            _product = product;
         }
 
         [HttpGet("{id}")]
@@ -49,8 +51,11 @@ namespace newTolkuchka.ControllersAPI
                 return Result.Already;
             await _service.EditModelAsync(brand, images, WIDTH, HEIGHT);
             await EditActAsync(brand.Id, brand.Name);
+            // clean cached Products Page
+            int[] productIds = _product.GetModels(new Dictionary<string, object>() { { ConstantsService.BRAND, new int[1] { brand.Id } } }).Select(p => p.Id).ToArray();
+            foreach (int id in productIds)
+                _cacheClean.CleanProductPage(id);
             _cacheClean.CleanBrands();
-            _cacheClean.CleanProductPage();
             return Result.Success;
         }
         [HttpDelete("{id}")]

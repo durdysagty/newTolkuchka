@@ -64,6 +64,8 @@ namespace newTolkuchka.ControllersAPI
             int[]productIds = _product.GetModels(new Dictionary<string, object>() { { ConstantsService.MODEL, model.Id } }).Select(p => p.Id).ToArray();
             if (productIds.Any())
             {
+                // clean cached Products Page
+                _cacheClean.CleanAllModeledProducts();
                 // get product ids from all productSpecsValues
                 // create productId with specsvalues
                 IList<(int, int[])> productSpecsValuesCheck = new List<(int, int[])>();

@@ -67,6 +67,7 @@ namespace newTolkuchka.Services
             }
         }
 
+        // used to clean Home Products
         public void CleanAllModeledProducts()
         {
             if (_memoryCache.TryGetValue(ConstantsService.MODELEDPRODUCTSHASHKEYS, out HashSet<string> modeledProductsKeys))
@@ -79,6 +80,7 @@ namespace newTolkuchka.Services
             }
         }
 
+        // used for clean Home Product
         public void CleanProductPage(int id)
         {
             if (_memoryCache.TryGetValue(ConstantsService.PRODUCTSHASHKEYS, out HashSet<string> productsKeys))
@@ -135,6 +137,8 @@ namespace newTolkuchka.Services
                     SlidingExpiration = TimeSpan.FromDays(3)
                 });
             }
+            if (model.ToLower() is ConstantsService.TYPE or ConstantsService.BRAND or ConstantsService.LINE or ConstantsService.MODEL or ConstantsService.SPECSVALUE or ConstantsService.SPECSVALUEMOD)
+                CleanAdminModels("Product");
         }
 
         private void CleanCulturedCaches(string key)
