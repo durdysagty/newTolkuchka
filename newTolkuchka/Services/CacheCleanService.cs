@@ -26,6 +26,7 @@ namespace newTolkuchka.Services
 
         public void CleanIndexCategoriesPromotions()
         {
+            _memoryCache.Remove(ConstantsService.INDEXAPPCATS);
             foreach (string fontSize in ConstantsService.INDEXCATFONTSIZES)
             {
                 CleanCulturedCaches($"{ConstantsService.INDEXCATS}{fontSize}");

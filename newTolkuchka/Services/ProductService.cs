@@ -407,7 +407,15 @@ namespace newTolkuchka.Services
                     ImageMain = PathService.GetImageRelativePath(ConstantsService.PRODUCT + "/small", p.Id),
                     Recommended = p.IsRecommended ? _localizer["recod"] : null,
                     New = p.IsNew ? _localizer["newed"] : null,
-                    Promotions = p.PromotionProducts.Select(p => p.Promotion).ToList(),
+                    Promotions = p.PromotionProducts.Select(p => new UIPromotion
+                    {
+                        Id = p.Promotion.Id,
+                        Volume = p.Promotion.Volume,
+                        Quantity = p.Promotion.Quantity,
+                        SubjectId = p.Promotion.SubjectId,
+                        Name = CultureProvider.GetLocalName(p.Promotion.NameRu, p.Promotion.NameEn, p.Promotion.NameTm),
+                        Desc = CultureProvider.GetLocalName(p.Promotion.DescRu, p.Promotion.DescEn, p.Promotion.DescTm)
+                    }).ToList(),
                     Version = p.Version
                 });
             }
@@ -423,7 +431,14 @@ namespace newTolkuchka.Services
                 ImageMain = PathService.GetImageRelativePath(ConstantsService.PRODUCT + "/small", p.Id),
                 Recommended = p.IsRecommended ? _localizer["recod"] : null,
                 New = p.IsNew ? _localizer["newed"] : null,
-                Promotions = p.PromotionProducts.Select(p => p.Promotion).ToList(),
+                Promotions = p.PromotionProducts.Select(p => new UIPromotion {
+                    Id = p.Promotion.Id,
+                    Volume = p.Promotion.Volume,
+                    Quantity = p.Promotion.Quantity,
+                    SubjectId = p.Promotion.SubjectId,
+                    Name = CultureProvider.GetLocalName(p.Promotion.NameRu, p.Promotion.NameEn, p.Promotion.NameTm),
+                    Desc = CultureProvider.GetLocalName(p.Promotion.DescRu, p.Promotion.DescEn, p.Promotion.DescTm)
+                }).ToList(),
                 Version = p.Version
             });
         }

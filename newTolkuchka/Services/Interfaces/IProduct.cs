@@ -90,9 +90,9 @@ namespace newTolkuchka.Services.Interfaces
                 string promotions = null;
                 if (p.Promotions.Any())
                 {
-                    foreach (Promotion promo in p.Promotions)
+                    foreach (UIPromotion promo in p.Promotions)
                     {
-                        promotions += $"<div class=\"badge badge-info me-1 mt-1\"><a href=\"/{ConstantsService.PROMOTION}/{promo.Id}\">{CultureProvider.GetLocalName(promo.NameRu, promo.NameEn, promo.NameTm)}</a></div>";
+                        promotions += $"<div class=\"badge badge-info me-1 mt-1\"><a href=\"/{ConstantsService.PROMOTION}/{promo.Id}\">{promo.Name}</a></div>";
                     }
                 }
                 string ph = $"<div id=\"{id}\" class=\"{(q == 0 ? "d-block" : "d-none")}\"><div class=\"row\"><div class=\"col-10 col-xs-9 col-sm-10 col-xxxl-9 px-0 ps-1 product-image p-0\"><div class=\"badges\">{(p.Recommended != null ? $"<div class=\"badge badge-danger me-1 mt-1\"><a href=\"/{ConstantsService.RECOMMENDED}\">{p.Recommended}</a></div>" : null)}{(p.New != null ? $"<div class=\"badge badge-secondary me-1 mt-1\"><a href=\"/{ConstantsService.NOVELTIES}\">{p.New}</a></div>" : null)}{promotions ?? promotions}</div><a href=\"/{ConstantsService.PRODUCT}/{p.Id}\"><div>{IImage.GetImageHtml(p.ImageMain, p.Version, 200, 200, "100%", "auto", p.Name, "pb-1")}</div><div class=\"px-0\"><div><p class=\"product-font product-name\">{p.Name}</p></div><div class=\"justify-content-end align-items-end\"><div class=\"text-end\">{(p.NewPrice != null ? $"<s class=\"product-oprice me-2\">{p.Price}</s><span class=\"fs-6 product-price\">{CurrencyService.Currency.CodeName} {p.NewPrice}</span>" : $"<p class=\"fs-6 product-price\">{CurrencyService.Currency.CodeName} {p.Price}</p>")}</div></div></div></a></div><div class=\"col-2 col-xs-3 col-sm-2 col-xxxl-3 px-0\"><div class=\"text-center\"><div class=\"buttons-list\"><div><button type=\"button\" aria-label=\"{CultureProvider.GetLocalName("добавить в корзину", "add to cart", "sebete goş")}\" name=\"order{p.Id}\" onclick=\"order({p.Id})\" class=\"btn btn-primary px-2 mb-1\"><i class=\"fas fa-cart-plus\"></i></button></div><div><button type=\"button\" aria-label=\"{CultureProvider.GetLocalName("добавить в понравивщиеся", "add to liked", "halanlaryma goş")}\" name=\"like{p.Id}\" onclick=\"like({p.Id})\" class=\"btn btn-primary px-2 mb-1\"><i class=\"fas fa-heart\"></i></button></div><div><button type=\"button\" aria-label=\"{CultureProvider.GetLocalName("добавить в сравнения", "add to comparison", "deňeşdirmä goş")}\" name=\"scale{p.Id}\" onclick=\"scale({p.Id})\" class=\"btn btn-primary px-2 mb-1\"><i class=\"fas fa-scale-balanced\"></i></button></div>{i}</div></div></div></div></div>";
@@ -109,9 +109,9 @@ namespace newTolkuchka.Services.Interfaces
             string promotions = null;
             if (product.Promotions.Any())
             {
-                foreach (Promotion promo in product.Promotions)
+                foreach (UIPromotion promo in product.Promotions)
                 {
-                    promotions += $"<div class=\"badge badge-info me-1 mt-1\"><a href=\"/{ConstantsService.PROMOTION}/{promo.Id}\">{CultureProvider.GetLocalName(promo.NameRu, promo.NameEn, promo.NameTm)}</a></div>";
+                    promotions += $"<div class=\"badge badge-info me-1 mt-1\"><a href=\"/{ConstantsService.PROMOTION}/{promo.Id}\">{promo.Name}</a></div>";
                 }
             }
             string htmlProduct = $"<div class=\"product2\" id=\"{id}\"><div class=\"px-0 ps-1 product-image p-0\"><div class=\"badges\">{(product.Recommended != null ? $"<div class=\"badge badge-danger me-1 mt-1\"><a href=\"/{ConstantsService.RECOMMENDED}\">{product.Recommended}</a></div>" : null)}{(product.New != null ? $"<div class=\"badge badge-secondary me-1 mt-1\"><a href=\"/{ConstantsService.NOVELTIES}\">{product.New}</a></div>" : null)}{promotions ?? promotions}</div><a href=\"/{ConstantsService.PRODUCT}/{product.Id}\"><div class=\"rounded p-2 bg-white\">{IImage.GetImageHtml(product.ImageMain, product.Version, 200, 200, "100%", "auto", product.Name, "pb-1")}</div><div class=\"px-0\"><div><p class=\"product-font product-name\">{product.Name}</p></div></div></a></div></div>";

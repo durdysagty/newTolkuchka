@@ -77,7 +77,7 @@ namespace newTolkuchka.ControllersAPI
         [HttpPut]
         public async Task<Result> Put([FromForm] Category category, [FromForm] int[] adLinks, [FromForm] IFormFile[] images)
         {
-            bool isExist = _service.IsExist(category, _service.GetModels().Where(x => x.Id != category.Id));
+            bool isExist = _service.IsExist(category, _service.GetCategoriesByParentId(category.ParentId).Where(x => x.Id != category.Id));
             if (isExist)
                 return Result.Already;
             if (category.IsForHome)

@@ -22,12 +22,14 @@ namespace newTolkuchka.Services
         public const string PRODUCTSCOUNT = "prcnt";
         public const string HOMEARTICLES = "has";
         public const string MAINSLIDES = "mslds";
+        public const string HOMEAPPSLIDES = "happsls";
         public const string INDEXITEMS = "ixitms";
         public const string XLCW = "xlw";
         public const string PCW = "pcw";
         public const string MOBILEW = "mblw";
         public const string PHONEW = "phnw";
         public const string INDEXCATS = "ixcts";
+        public const string INDEXAPPCATS = "ixcts";
         public readonly static string[] INDEXCATFONTSIZES = new string[] { "0.55", "0.7", "0.8", "1", "1.2" };
         // lang standarts
         public const string CULTURE = "culture";

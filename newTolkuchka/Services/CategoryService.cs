@@ -100,9 +100,9 @@ namespace newTolkuchka.Services
             return ids;
         }
 
-        public IOrderedQueryable<Category> GetIndexCategories()
+        public async Task<IList<Category>> GetIndexCategories()
         {
-            IOrderedQueryable<Category> categories = GetModels().Where(c => c.IsForHome && !c.NotInUse).OrderBy(c => c.ParentId).ThenBy(c => c.Order);
+            IList<Category> categories = await GetModels().Where(c => c.IsForHome && !c.NotInUse).OrderBy(c => c.ParentId).ThenBy(c => c.Order).ToListAsync();
             return categories;
         }
         public async Task<string[]> GetAdLinksAsync(int id)

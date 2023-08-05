@@ -8,6 +8,7 @@ using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
 using newTolkuchka.Reces;
 using newTolkuchka.Services;
+using newTolkuchka.Services.Abstracts;
 using newTolkuchka.Services.Interfaces;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -17,53 +18,11 @@ using F = System.IO.File;
 #endregion
 namespace newTolkuchka.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : AbstractHomeController
     {
         #region staff
-        private readonly IStringLocalizer<Shared> _localizer;
-        private readonly IBreadcrumbs _breadcrumbs;
-        private readonly IPath _path;
-        private readonly ICategory _category;
-        private readonly IBrand _brand;
-        private readonly IPromotion _promotion;
-        private readonly IModel _model;
-        private readonly IProduct _product;
-        private readonly ISlide _slide;
-        private readonly IActionNoFile<Heading, Heading> _heading;
-        private readonly IArticle _article;
-        private readonly IUser _user;
-        private readonly ICustomerGuid _customerGuid;
-        private readonly IInvoice _invoice;
-        private readonly IOrder _order;
-        private readonly ILogin _login;
-        private readonly IActionNoFile<Currency, AdminCurrency> _currency;
-        private readonly IMemoryCache _memoryCache;
-        private readonly ICrypto _crypto;
-        // to remove
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(IStringLocalizer<Shared> localizer, IBreadcrumbs breadcrumbs, IPath path, ICategory category, IBrand brand, IPromotion promotion, IModel model, IProduct product, ISlide slide, IActionNoFile<Heading, Heading> heading, IArticle article, IUser user, ICustomerGuid customerGuid, IInvoice invoice, IOrder order, ILogin login, IActionNoFile<Currency, AdminCurrency> currency, IMemoryCache memoryCache, ICrypto crypto, ILogger<HomeController> logger)
+        public HomeController(IStringLocalizer<Shared> localizer, IBreadcrumbs breadcrumbs, IPath path, ICategory category, IBrand brand, IPromotion promotion, IModel model, IProduct product, ISlide slide, IActionNoFile<Heading, Heading> heading, IArticle article, IUser user, ICustomerGuid customerGuid, IInvoice invoice, IOrder order, ILogin login, IActionNoFile<Currency, AdminCurrency> currency, IMemoryCache memoryCache, ICrypto crypto, ILogger<HomeController> logger) : base(localizer, breadcrumbs, path, category, brand, promotion, model, product, slide, heading, article, user,customerGuid, invoice, order, login, currency,memoryCache, crypto, logger)
         {
-            _localizer = localizer;
-            _breadcrumbs = breadcrumbs;
-            _path = path;
-            _category = category;
-            _brand = brand;
-            _promotion = promotion;
-            _model = model;
-            _product = product;
-            _slide = slide;
-            _heading = heading;
-            _article = article;
-            _user = user;
-            _customerGuid = customerGuid;
-            _order = order;
-            _invoice = invoice;
-            _login = login;
-            _currency = currency;
-            _memoryCache = memoryCache;
-            _crypto = crypto;
-            _logger = logger;
         }
         #endregion
         [Route(ConstantsService.SLASH)]
@@ -108,11 +67,13 @@ namespace newTolkuchka.Controllers
             }
             else if (width < 992)
             {
+                slidesCount = 2;
                 count = 4;
                 fontSize = ConstantsService.INDEXCATFONTSIZES[4];
             }
             else if (width < 1200)
             {
+                slidesCount = 2;
                 count = 4;
                 fontSize = ConstantsService.INDEXCATFONTSIZES[1];
             }
@@ -143,7 +104,7 @@ namespace newTolkuchka.Controllers
                 string slidesString = string.Empty;
                 foreach (Slide s in mainSlides)
                 {
-                    slidesString += $"<div class=\"col-12 col-sm-6 col-md-4 p-1\"><a href=\"{s.Link}\">{IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.SLIDE, s.Id, (int)CultureProvider.CurrentCulture), s.Version, 600, 300, "100%", "auto", $"slide-{s.Id}", "card-img-top rounded")}</a></div>";
+                    slidesString += $"<div class=\"col-12 col-sm-6 col-xl-4 p-1\"><a href=\"{s.Link}\">{IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.SLIDE, s.Id, (int)CultureProvider.CurrentCulture), s.Version, 600, 300, "100%", "auto", $"slide-{s.Id}", "card-img-top rounded")}</a></div>";
                 }
                 return slidesString;
             });
@@ -165,35 +126,15 @@ namespace newTolkuchka.Controllers
             {
                 // clean when product change
                 ce.SlidingExpiration = TimeSpan.FromDays(2);
-                Category mobileCategory = await _category.GetModelAsync(11);
-                IEnumerable<int> mobileIds = _model.GetModels(new Dictionary<string, object>() { { ConstantsService.CATEGORY, mobileCategory.Id } }).OrderByDescending(m => m.Id).Where(m => !m.Category.NotInUse && m.Products.Any(p => !p.NotInUse)).Take(count).Select(m => m.Id);
-                List<IEnumerable<UIProduct>> mobileUIProducts = new();
-                foreach (int m in mobileIds)
-                {
-                    Product[] mobileProducts = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.MODEL, m } }).Where(p => !p.NotInUse).ToArrayAsync();
-                    mobileUIProducts.Add(_product.GetUIProduct(mobileProducts).ToList());
-                }
+                List<IEnumerable<UIProduct>> mobileUIProducts = await GetIndexSelectedCatProducts(count);
                 IEnumerable<string> mobileProductsHtml = GetHtmlProducts(mobileUIProducts);
-                IEnumerable<int> newModelIds = _model.GetModels().OrderByDescending(m => m.Id).Where(m => !m.Category.NotInUse && m.CategoryId != mobileCategory.Id && m.Products.Any(p => p.IsNew && !p.NotInUse)).Take(count).Select(m => m.Id);
-                List<IEnumerable<UIProduct>> newUIProducts = new();
-                foreach (int m in newModelIds)
-                {
-                    Product[] newProducts = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.MODEL, m } }).Where(p => p.IsNew && !p.NotInUse).ToArrayAsync();
-                    newUIProducts.Add(_product.GetUIProduct(newProducts).ToList());
-                }
+                List<IEnumerable<UIProduct>> newUIProducts = await GetIndexNewProducts(count);
                 IEnumerable<string> newProductsHtml = GetHtmlProducts(newUIProducts);
-                IEnumerable<int> recModelIds = _model.GetModels().OrderByDescending(m => m.Id).Where(m => !m.Category.NotInUse && m.Products.Any(p => p.IsRecommended && !p.NotInUse)).Take(count).Select(m => m.Id);
-                List<IEnumerable<UIProduct>> recUIProducts = new();
-                foreach (int m in recModelIds)
-                {
-                    Product[] recProducts = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.MODEL, m } }).Where(p => p.IsRecommended && !p.NotInUse).ToArrayAsync();
-                    recUIProducts.Add(_product.GetUIProduct(recProducts).ToList());
-                }
+                List<IEnumerable<UIProduct>> recUIProducts = await GetIndexRecProducts(count);
                 IEnumerable<string> recProductsHtml = GetHtmlProducts(recUIProducts);
                 string template = "<div class=\"fs-5 px-3 mb-3 border-bottom border-primary\"><a href=\"/{0}\">{1}<span class=\"ms-2\">{2}</span></a></div><div class=\"row justify-content-center\">{3}</div>";
-                string html = string.Format(template, PathService.GetModelUrl(ConstantsService.CATEGORY, mobileCategory.Id), F.ReadAllText($"{_path.GetSVGFolder()}/{ConstantsService.CATEGORY}/{mobileCategory.Id}.svg"), CultureProvider.GetLocalName(mobileCategory.NameRu, mobileCategory.NameEn, mobileCategory.NameTm), GetItems(mobileProductsHtml));
-
-
+                Category selectedCategory = await _category.GetModelAsync(selectedCategoryId);
+                string html = string.Format(template, PathService.GetModelUrl(ConstantsService.CATEGORY, selectedCategoryId), F.ReadAllText($"{_path.GetSVGFolder()}/{ConstantsService.CATEGORY}/{selectedCategoryId}.svg"), CultureProvider.GetLocalName(selectedCategory.NameRu, selectedCategory.NameEn, selectedCategory.NameTm), GetItems(mobileProductsHtml));
                 int[] orderedProducts = _order.GetModels().OrderByDescending(o => o.Id).Take(count * 5).ToArray().Select(o => o.ProductId).Distinct().ToArray();
                 Product[] orderProducts = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, orderedProducts } }).Where(p => !p.NotInUse).ToArrayAsync();
                 List<Product> products = new();
@@ -206,19 +147,16 @@ namespace newTolkuchka.Controllers
                 IEnumerable<UIProduct> orderedUIProducts = _product.GetUIProduct(products, true);
                 IEnumerable<string> orderedProductsHtml = orderedUIProducts.Select(u => IProduct.GetHtmlProduct2(u));
                 html += $"<div class=\"bg-primary rounded mb-2 px-1\"><div><p class=\"text-white ps-4\">{_localizer[ConstantsService.NEWBOUGHT].Value}</p></div><div class=\"d-flex justify-content-start overflow-x-scroll scroll-none\">{GetItems(orderedProductsHtml)}</div></div>";
-
-
-
-                html += string.Format(template, ConstantsService.NOVELTIES, F.ReadAllText($"{_path.GetSVGFolder()}/new.svg"), _localizer[ConstantsService.NOVELTIES].Value, GetItems(newProductsHtml));
-                html += string.Format(template, ConstantsService.RECOMMENDED, F.ReadAllText($"{_path.GetSVGFolder()}/rec.svg"), _localizer[ConstantsService.RECOMMENDED].Value, GetItems(recProductsHtml));
+                html += string.Format(template, ConstantsService.NOVELTIES, F.ReadAllText($"{_path.GetSVGFolder()}/{ConstantsService.NOVELTIES}.svg"), _localizer[ConstantsService.NOVELTIES].Value, GetItems(newProductsHtml));
+                html += string.Format(template, ConstantsService.RECOMMENDED, F.ReadAllText($"{_path.GetSVGFolder()}/{ConstantsService.RECOMMENDED}.svg"), _localizer[ConstantsService.RECOMMENDED].Value, GetItems(recProductsHtml));
                 return html;
             });
-            string catsString = _memoryCache.GetOrCreate($"{CultureProvider.CurrentCulture}{ConstantsService.INDEXCATS}{fontSize}", ce =>
+            string catsString = await _memoryCache.GetOrCreate($"{CultureProvider.CurrentCulture}{ConstantsService.INDEXCATS}{fontSize}", async ce =>
             {
                 ce.SlidingExpiration = TimeSpan.FromDays(2);
                 string catsTemplate = "<div class=\"col-12 col-xs-6 col-lg-3 p-1\"><a href=\"/{0}\">{1}<div style=\"font-size: {3}rem\" class=\"bg-primary p-1 rounded-bottom\">{2}</div></a></div>";
                 string imageClasses = "card-img-top rounded-top";
-                IEnumerable<Category> indexCats = _category.GetIndexCategories();
+                IList<Category> indexCats = await _category.GetIndexCategories();
                 string catsString = string.Empty;
                 foreach (Category c in indexCats)
                 {
