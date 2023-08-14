@@ -142,9 +142,11 @@ app.Use(async (context, next) =>
             {
                 MaxAge = new TimeSpan(365, 0, 0, 0),
                 // remove on publish
-                //SameSite = SameSiteMode.Strict,
-                //Domain = CultureProvider.Host,
-                //Secure = true
+#if !DEBUG
+                SameSite = SameSiteMode.Strict,
+                Domain = CultureProvider.Host,
+                Secure = true
+#endif
             });
             string t = context.Request.Cookies[Secrets.userTokenCookie];
             string h = context.Request.Cookies[Secrets.userHashCookie];

@@ -31,18 +31,20 @@ namespace newTolkuchka.ControllersAPI
                 HttpContext.Response.Cookies.Append(Secrets.userTokenCookie, loginResponse.Data, new CookieOptions
                 {
                     MaxAge = new TimeSpan(29, 0, 0, 0),
-                    // remove on publish
-                    //SameSite = SameSiteMode.Strict,
-                    //Domain = CultureProvider.Host,
-                    //Secure = true
+#if !DEBUG
+                    SameSite = SameSiteMode.Strict,
+                    Domain = CultureProvider.Host,
+                    Secure = true
+#endif
                 });
                 HttpContext.Response.Cookies.Append(Secrets.userHashCookie, loginResponse.Text, new CookieOptions
                 {
                     MaxAge = new TimeSpan(28, 0, 0, 0),
-                    // remove on publish
-                    //SameSite = SameSiteMode.Strict,
-                    //Domain = CultureProvider.Host,
-                    //Secure = true
+#if !DEBUG
+                    SameSite = SameSiteMode.Strict,
+                    Domain = CultureProvider.Host,
+                    Secure = true
+#endif
                 });
             }
             return loginResponse;
@@ -53,17 +55,19 @@ namespace newTolkuchka.ControllersAPI
         {
             HttpContext.Response.Cookies.Delete(Secrets.userHashCookie, new CookieOptions
             {
-                // remove on publish
-                //SameSite = SameSiteMode.Strict,
-                //Domain = CultureProvider.Host,
-                //Secure = true
+#if !DEBUG
+                SameSite = SameSiteMode.Strict,
+                Domain = CultureProvider.Host,
+                Secure = true
+#endif
             });
             HttpContext.Response.Cookies.Delete(Secrets.userTokenCookie, new CookieOptions
             {
-                // remove on publish
-                //SameSite = SameSiteMode.Strict,
-                //Domain = CultureProvider.Host,
-                //Secure = true
+#if !DEBUG
+                SameSite = SameSiteMode.Strict,
+                Domain = CultureProvider.Host,
+                Secure = true
+#endif
             });
         }
 
