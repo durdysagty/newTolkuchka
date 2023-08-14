@@ -28,10 +28,13 @@
 <!DOCTYPE html>
 <html lang="@CultureProvider.Lang">
 <head>
+    @if (Context.Request.Path == "/404"){
+        <meta name="robots" content="noindex">
+    }
     <meta charset="utf-8" />
     <link type="image/x-icon" href="/favicon.ico" rel="icon">
     <link rel="apple-touch-icon" href="/logo192.png" />
-    <link rel="manifest" href="/manifest.json" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData[ConstantsService.TITLE]@CultureProvider.SiteName</title>
     <meta name="description" content="@ViewData[ConstantsService.DESCRIPTION]" />

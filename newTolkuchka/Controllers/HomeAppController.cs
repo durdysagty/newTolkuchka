@@ -59,7 +59,7 @@ namespace newTolkuchka.Controllers
                 IList<Slide> slides = await _slide.GetSlidesByLayoutAsync(Layout.Main).OrderByDescending(s => s.Id).Take(2).ToListAsync();
                 return slides;
             });
-            int count = 4;
+            int count = 7;
             IList<AppIndexItem> appIndexItems = new List<AppIndexItem>();
             List<IEnumerable<UIProduct>> mobileUIProducts = await GetIndexSelectedCatProducts(count);
             Category selectedCategory = await _category.GetModelAsync(selectedCategoryId);
