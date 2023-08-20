@@ -115,7 +115,7 @@ namespace newTolkuchka.Services.Abstracts
                 _cacheClean.CleanProductPage(id);
                 await EditActAsync(id, IProduct.GetProductNameCounted(model as Product));
                 if (property.Name == "NotInUse")
-                    await _entry.CorrectSiteMap(ConstantsService.PRODUCT, new (int, bool)[] { (id, value) });
+                    _entry.CacheForSiteMap(ConstantsService.PRODUCT, new (int, bool, CultureProvider.Culture?)[] { (id, value, null) });
             }
             else
             {

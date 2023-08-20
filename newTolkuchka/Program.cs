@@ -60,6 +60,8 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddMemoryCache();
 builder.Services.AddHttpContextAccessor();
 #region myservices
+builder.Services.AddHostedService<WeeklyTaskService>();
+builder.Services.AddSingleton<IPath, PathService>();
 builder.Services.AddScoped<IArticle, ArticleService>();
 builder.Services.AddScoped<IBrand, BrandService>();
 builder.Services.AddScoped<IBreadcrumbs, BreadcrumbsService>();
@@ -80,7 +82,6 @@ builder.Services.AddScoped<ILogin, LoginService>();
 builder.Services.AddScoped<IMail, MailService>();
 builder.Services.AddScoped<IModel, ModelService>();
 builder.Services.AddScoped<IOrder, OrderService>();
-builder.Services.AddScoped<IPath, PathService>();
 builder.Services.AddScoped<IPosition, PositionService>();
 builder.Services.AddScoped<IPurchase, PurchaseService>();
 builder.Services.AddScoped<IPurchaseInvoice, PurchaseInvoiceService>();

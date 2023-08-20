@@ -43,35 +43,41 @@ namespace newTolkuchka.Services
         }
         public override Task<ProviderCultureResult> DetermineProviderCultureResult(HttpContext httpContext)
         {
-            StringValues host = httpContext.Request.Headers.Host;
-            Host = host[0];
-            Path = httpContext.Request.Path;
-            if (Host.Contains($"{ConstantsService.EN}."))
+            // used for exclude file paths
+            if (!httpContext.Request.Path.Value.Contains('.'))
             {
-                Lang = ConstantsService.EN;
-                LangState = ConstantsService.ENST;
-                CurrentCulture = Culture.En;
-                SiteName = host[0].Replace($"{ConstantsService.EN}.", "");
+                StringValues host = httpContext.Request.Headers.Host;
+                Host = host[0];
+                Path = httpContext.Request.Path;
+                if (Host.Contains($"{ConstantsService.EN}."))
+                {
+                    Lang = ConstantsService.EN;
+                    LangState = ConstantsService.ENST;
+                    CurrentCulture = Culture.En;
+                    SiteName = host[0].Replace($"{ConstantsService.EN}.", "");
+                }
+                else if (Host.Contains($"{ConstantsService.TM}."))
+                {
+                    Lang = ConstantsService.TK;
+                    LangState = ConstantsService.TMST;
+                    CurrentCulture = Culture.Tm;
+                    SiteName = host[0].Replace($"{ConstantsService.TM}.", "");
+                }
+                else
+                {
+                    Lang = ConstantsService.RU;
+                    LangState = ConstantsService.RUST;
+                    CurrentCulture = Culture.Ru;
+                    SiteName = host[0];
+                }
+                SiteName = SiteName.Replace("www.", "");
+                SiteUrlRu = $"https://{SiteName}";
+                SiteUrlEn = $"https://en.{SiteName}";
+                SiteUrlTm = $"https://tm.{SiteName}";
+                ProviderCultureResult result = new(Lang);
+                return Task.FromResult(result);
             }
-            else if (Host.Contains($"{ConstantsService.TM}."))
-            {
-                Lang = ConstantsService.TK;
-                LangState = ConstantsService.TMST;
-                CurrentCulture = Culture.Tm;
-                SiteName = host[0].Replace($"{ConstantsService.TM}.", "");
-            }
-            else
-            {
-                Lang = ConstantsService.RU;
-                LangState = ConstantsService.RUST;
-                CurrentCulture = Culture.Ru;
-                SiteName = host[0];
-            }
-            SiteUrlRu = $"https://{SiteName}";
-            SiteUrlEn = $"https://en.{SiteName}";
-            SiteUrlTm = $"https://tm.{SiteName}";
-            ProviderCultureResult result = new(Lang);
-            return Task.FromResult(result);
+            return Task.FromResult(new ProviderCultureResult(ConstantsService.RU));
         }
     }
 }

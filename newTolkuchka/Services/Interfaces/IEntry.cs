@@ -1,5 +1,6 @@
 ﻿using newTolkuchka.Models;
 using newTolkuchka.Models.DTO;
+using static newTolkuchka.Services.CultureProvider;
 
 namespace newTolkuchka.Services.Interfaces
 {
@@ -7,6 +8,6 @@ namespace newTolkuchka.Services.Interfaces
     {
         Task AddEntryAsync(Act act, Entity entity, int entityId, string entityName, bool? siteMapToAdd = null, CultureProvider.Culture? culture = null);
         //void CorrectSiteMap(string entity, int entityId, bool add);
-        Task CorrectSiteMap(string entity, IList<(int, bool)> entities, CultureProvider.Culture? culture = null);
+        void CacheForSiteMap(string entity, IList<(int, bool, Culture?)> entities);
     }
 }

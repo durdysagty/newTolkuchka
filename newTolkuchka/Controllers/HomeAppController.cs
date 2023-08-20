@@ -105,6 +105,18 @@ namespace newTolkuchka.Controllers
             });
         }
 
+
+        //[ResponseCache(Location = ResponseCacheLocation.Any, Duration = 43200)]
+        public async Task<IEnumerable<CategoryTree>> Categories()
+        {
+            IEnumerable<CategoryTree> categories = await _memoryCache.GetOrCreateAsync(ConstantsService.CATEGORIES, async ce =>
+            {
+                ce.SlidingExpiration = TimeSpan.FromDays(3);
+                return await _category.GetCategoryTree();
+            });
+            return categories;
+        }
+
         //[HttpGet("{id}")]
         //[ResponseCache(Location = ResponseCacheLocation.Any, Duration = 1800)]
         //public async Task<ContentResult> GetSvg(int id)

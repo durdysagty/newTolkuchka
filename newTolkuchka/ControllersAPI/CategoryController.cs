@@ -86,15 +86,15 @@ namespace newTolkuchka.ControllersAPI
                 if (!isImaged)
                     return Result.NoImage;
             }
-            IList<(int, bool)> categoriesToSiteMap = new List<(int, bool)>();
-            IList<(int, bool)> productsToSiteMap = new List<(int, bool)>();
+            IList<(int, bool, CultureProvider.Culture?)> categoriesToSiteMap = new List<(int, bool, CultureProvider.Culture?)>();
+            IList<(int, bool, CultureProvider.Culture?)> productsToSiteMap = new List<(int, bool, CultureProvider.Culture?)>();
             async Task AllNotInUse(IEnumerable<Category> categories)
             {
                 if (categories.Any())
                     foreach (Category category in categories)
                     {
                         category.NotInUse = true;
-                        categoriesToSiteMap.Add((category.Id, !category.NotInUse));
+                        categoriesToSiteMap.Add((category.Id, !category.NotInUse, null));
                         if (_product.GetModels(new Dictionary<string, object>() { { ConstantsService.CATEGORY, new List<int> { category.Id } } }).Any())
                             CorrectProductsSiteMap(category.Id, category.NotInUse);
                         await AllNotInUse(_service.GetModels().Where(c => c.ParentId == category.Id));
@@ -105,12 +105,12 @@ namespace newTolkuchka.ControllersAPI
                 Product[] products = _product.GetModels(new Dictionary<string, object>() { { ConstantsService.CATEGORY, new List<int> { categoryId } } }).ToArray();
                 if (notInUse)
                     foreach (Product p in products)
-                        productsToSiteMap.Add((p.Id, false));
+                        productsToSiteMap.Add((p.Id, false, null));
                 else
                     foreach (Product p in products)
                     {
                         if (!p.NotInUse)
-                            productsToSiteMap.Add((p.Id, true));
+                            productsToSiteMap.Add((p.Id, true, null));
                     }
 
             }
@@ -130,10 +130,10 @@ namespace newTolkuchka.ControllersAPI
             await EditActAsync(category.Id, category.NameRu);
             if (_product.GetModels(new Dictionary<string, object>() { { ConstantsService.CATEGORY, new List<int> { category.Id } } }).Any())
                 CorrectProductsSiteMap(category.Id, category.NotInUse);
-            categoriesToSiteMap.Add((category.Id, !category.NotInUse));
-            await _entry.CorrectSiteMap(ConstantsService.CATEGORY, categoriesToSiteMap);
+            categoriesToSiteMap.Add((category.Id, !category.NotInUse, null));
+            _entry.CacheForSiteMap(ConstantsService.CATEGORY, categoriesToSiteMap);
             if (productsToSiteMap.Any())
-                await _entry.CorrectSiteMap(ConstantsService.PRODUCT, productsToSiteMap);
+                _entry.CacheForSiteMap(ConstantsService.PRODUCT, productsToSiteMap);
             _cacheClean.CleanCategory(category.Id);
             _cacheClean.CleanCategories(category.ParentId);
             _cacheClean.CleanIndexCategoriesPromotions();
