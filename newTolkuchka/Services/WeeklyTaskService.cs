@@ -23,8 +23,8 @@ namespace newTolkuchka.Services
             DateTime currentTime = DateTime.Now;
             DateTime nextRunTime = GetNextSunday1AM(currentTime);
             TimeSpan initialDelay = nextRunTime - currentTime;
-            //_timer = new Timer(PerformOperation, null, initialDelay, TimeSpan.FromDays(7));
-            _timer = new Timer(PerformOperation, null, TimeSpan.FromMinutes(3), TimeSpan.FromMinutes(3));
+            _timer = new Timer(PerformOperation, null, initialDelay, TimeSpan.FromDays(7));
+            //_timer = new Timer(PerformOperation, null, TimeSpan.FromMinutes(3), TimeSpan.FromMinutes(3));
             return Task.CompletedTask;
         }
 

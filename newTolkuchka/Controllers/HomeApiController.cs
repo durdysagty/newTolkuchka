@@ -9,9 +9,11 @@ namespace newTolkuchka.ControllersAPI
     public class HomeApiController : ControllerBase
     {
         private readonly IProduct _product;
-        public HomeApiController(IProduct product)
+        private readonly ISiteMap _siteMap;
+        public HomeApiController(IProduct product, ISiteMap siteMap)
         {
             _product = product;
+            _siteMap = siteMap;
         }
 
         [HttpGet]
@@ -24,6 +26,22 @@ namespace newTolkuchka.ControllersAPI
                 return NotFound("Not Found");
             }
             return Ok(product);
+        }
+
+        // to update all sitemaps
+        [HttpGet]
+        [Route("a/sitemaprenew")]
+        public async Task<IActionResult> SiteMapRenew(int id)
+        {
+            try
+            {
+                await _siteMap.RenewSiteMap();
+                return Ok("Все файлы обновлены");
+            }
+            catch (Exception ex)
+            {
+                return Ok($"Произошла ошибка обновления: {ex}");
+            }
         }
     }
 }
