@@ -19,8 +19,11 @@ namespace newTolkuchka.Controllers
         {
         }
 
-        //[ResponseCache(Location = ResponseCacheLocation.Any, Duration = 1800)]
+#if !DEBUG
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 1800)]
+#else
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+#endif
         public async Task<IList<Category>> Main()
         {
             //HttpContext.Request.Cookies.TryGetValue("w", out string width);
@@ -32,8 +35,11 @@ namespace newTolkuchka.Controllers
             return categories;
         }
 
-        //[ResponseCache(Location = ResponseCacheLocation.Any, Duration = 1800)]
+#if !DEBUG
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 1800)]
+#else
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+#endif
         public async Task<JsonResult> Items()
         {
             // cleaned at CleanIndexCategoriesPromotions()
@@ -105,8 +111,9 @@ namespace newTolkuchka.Controllers
             });
         }
 
-
-        //[ResponseCache(Location = ResponseCacheLocation.Any, Duration = 43200)]
+#if !DEBUG
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
+#endif
         public async Task<IEnumerable<CategoryTree>> Categories()
         {
             IEnumerable<CategoryTree> categories = await _memoryCache.GetOrCreateAsync(ConstantsService.CATEGORIES, async ce =>
@@ -115,6 +122,19 @@ namespace newTolkuchka.Controllers
                 return await _category.GetCategoryTree();
             });
             return categories;
+        }
+
+#if !DEBUG
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 43200)]
+#endif
+        public async Task<IList<Brand>> Brands()
+        {
+            IList<Brand> brands = await _memoryCache.GetOrCreateAsync(ConstantsService.BRANDS, async ce =>
+            {
+                ce.SlidingExpiration = TimeSpan.FromDays(3);
+                return await _brand.GetModels().Where(b => b.Models.Any()).ToListAsync();
+            });
+            return brands;
         }
 
         //[HttpGet("{id}")]
