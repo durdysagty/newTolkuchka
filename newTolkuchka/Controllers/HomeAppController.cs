@@ -11,7 +11,7 @@ using newTolkuchka.Services.Interfaces;
 
 namespace newTolkuchka.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/[controller]/[action]/{id?}")]
     [ApiController]
     public class HomeAppController : AbstractHomeController
     {
@@ -137,12 +137,23 @@ namespace newTolkuchka.Controllers
             return brands;
         }
 
-        //[HttpGet("{id}")]
-        //[ResponseCache(Location = ResponseCacheLocation.Any, Duration = 1800)]
-        //public async Task<ContentResult> GetSvg(int id)
-        //{
-        //    string svg = await F.ReadAllTextAsync($"{_path.GetSVGFolder()}/category/{id}.svg");
-        //    return base.Content($"<html style=\"width: fit-content; height: fit-content; margin: 0\"><head><meta name\"viewport\" content=\"width=fit-content, initial-scale=1.0\" ></head><body style=\"width: fit-content; height: fit-content; margin: 0\">{svg}</body></html>", "text/html");
-        //}
+
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+        public async Task<JsonResult> Products([FromQuery] string model, [FromQuery] string id, [FromQuery] bool productsOnly, [FromQuery] int[] t, [FromQuery] int[] b, [FromQuery] string[] v, [FromQuery] int minp, [FromQuery] int maxp, [FromQuery] Sort sort, [FromQuery] int page, [FromQuery] int pp = 60, [FromQuery] string search = null)
+        {
+            JsonResult result = await ProductsBase(model, id, productsOnly, t, b, v, minp, maxp, sort, page, pp, search, true);
+            return result;
+        }
+
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 86400)]
+        public async Task<IList<Category>> ChildCategories(int id)
+        {
+            IList<Category> categories = await _memoryCache.GetOrCreateAsync($"{ConstantsService.CATEGORIESCHILDRENBYPARENTID}{id}", async ce =>
+            {
+                ce.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(6);
+                return await _category.GetActiveCategoriesByParentId(id).ToListAsync();
+            });
+            return categories;
+        }
     }
 }
