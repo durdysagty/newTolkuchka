@@ -22,7 +22,7 @@ namespace newTolkuchka.Services
             _memoryCache = memoryCache;
         }
 
-        public async Task AddEntryAsync(Act act, Entity entity, int entityId, string entityName, bool? siteMapToAdd = null, CultureProvider.Culture? culture = null)
+        public async Task AddEntryAsync(Act act, Entity entity, int entityId, string entityName, bool? siteMapToAdd = null, Culture? culture = null)
         {
             Entry entry = new()
             {

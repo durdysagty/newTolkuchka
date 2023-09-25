@@ -123,8 +123,8 @@ namespace newTolkuchka.Services.Abstracts
                 if (nameProperty == null)
                     nameProperty = modelType.GetProperty("NameRu");
                 await EditActAsync(id, nameProperty.GetValue(model).ToString());
-                _cacheClean.CleanAdminModels(modelType.Name);
             }
+            _cacheClean.CleanAdminModels(modelType.Name);
             return Result.Success;
         }
         #region actions
