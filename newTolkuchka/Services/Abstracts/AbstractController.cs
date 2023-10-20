@@ -113,6 +113,8 @@ namespace newTolkuchka.Services.Abstracts
             if (modelType.Name == "Product")
             {
                 _cacheClean.CleanProductPage(id);
+                _cacheClean.CleanIndexItems();
+                _cacheClean.CleanAllModeledProducts();
                 await EditActAsync(id, IProduct.GetProductNameCounted(model as Product));
                 if (property.Name == "NotInUse")
                     _entry.CacheForSiteMap(ConstantsService.PRODUCT, new (int, bool, CultureProvider.Culture?)[] { (id, value, null) });

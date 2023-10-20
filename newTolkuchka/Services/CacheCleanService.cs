@@ -44,8 +44,8 @@ namespace newTolkuchka.Services
             // 3 b.o. index pages products count never less than 3 and not more than 6
             for (int i = 3; i <= count; i++)
             {
-                CleanCulturedCaches($"{ConstantsService.INDEXITEMS}{ConstantsService.PCW}{count}");
-                CleanCulturedCaches($"{ConstantsService.INDEXITEMS}{ConstantsService.PHONEW}{count}");
+                CleanCulturedCaches($"{ConstantsService.INDEXITEMS}{ConstantsService.PCW}{i}");
+                CleanCulturedCaches($"{ConstantsService.INDEXITEMS}{ConstantsService.PHONEW}{i}");
             }
         }
 
