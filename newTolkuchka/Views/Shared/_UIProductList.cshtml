@@ -5,7 +5,6 @@
 }
 @if (Model != null)
 {
-
     @if (categories != null && categories.Any() && width < ConstantsService.MOBILEWIDTH)
     {
         <div class="accordion accordion-borderless" id="accordion">
@@ -33,7 +32,7 @@
 }
 @if (width == null || width < ConstantsService.MOBILEWIDTH)
 {
-    <div id="slide-filters" class="sidenav px-5 py-3">
+    <div id="slide-filters" class="sidenav px-5">
         @if (categories != null && categories.Any())
         {
             foreach (Category c in categories)

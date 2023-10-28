@@ -177,6 +177,11 @@ s {
     font-size: 0.6rem
 }
 
+.sidenav {
+    padding-top: 1rem !important;
+    padding-bottom: 7rem !important
+}
+
 .scList {
     max-height: 15rem;
     overflow-y: scroll
