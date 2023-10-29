@@ -35,3 +35,24 @@ jobs:
             ls -l newTolkuchka/bin/Release/net7.0/publish
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Deploy to server
+      if: success()
+      env:
+        DEPLOY_SSH_KEY: ${{ secrets.SSH_KEY }}
+        SERVER_IP: ${{ secrets.IP }}        
+        USER: ${{ secrets.USER }}
+        SERVER_DEST: ${{ secrets.DEST }}
+      run: |
+        # Install SSH client
+        sudo apt-get install -y openssh-client
+
+        # Write the SSH key to a file
+        echo "$DEPLOY_SSH_KEY" > deploy_key.pem
+        chmod 400 deploy_key.pem
+
+        # Use SCP to copy the build output to the server
+        scp -i deploy_key.pem -o StrictHostKeyChecking=no -r newTolkuchka/bin/Release/net7.0/publish/* $SERVER_DEST
+        ssh -o StrictHostKeyChecking=no -i deploy_key.pem $USER@$SERVER_IP 'sudo /bin/systemctl restart kestrel-tolkuchka.service'
+
+        # Cleanup
+        rm -f deploy_key
