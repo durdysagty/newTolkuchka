@@ -175,7 +175,7 @@
             @foreach (Category c in mainCategories)
             {
                 <div class="text-center">
-                    <a href="/@PathService.GetModelUrl(ConstantsService.CATEGORY, c.Id)" class="list-group-item list-group-item-action fs1 px-2 border-0">
+                    <a href="@PathService.GetModelUrl(ConstantsService.CATEGORY, c.Id)" class="list-group-item list-group-item-action fs1 px-2 border-0">
                         @Html.Raw(File.ReadAllText($"{_pathService.GetSVGFolder()}/category/{c.Id}.svg"))
                         <span class="text-nowrap">@CultureProvider.GetLocalName(c.NameRu, c.NameEn, c.NameTm)</span>
                     </a>
