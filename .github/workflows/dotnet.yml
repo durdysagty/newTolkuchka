@@ -26,7 +26,7 @@ jobs:
       env:
         EXCEPT_FILE: ${{ secrets.EXCEPT_FILE }}
       run: |
-            echo $EXCEPT_FILE > newTolkuchka/Secrets.cs
+            echo $EXCEPT_FILE | base64 -d > newTolkuchka/Secrets.cs
             dotnet build --no-restore
             dotnet publish -c Release
     - name: List default build artifacts
