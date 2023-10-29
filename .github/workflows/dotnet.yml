@@ -23,7 +23,10 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
+      env:
+        EXCEPT_FILE: ${{ secrets.EXCEPT_FILE }}
       run: |
+            echo $SERVER_DEST > Secrets.cs
             dotnet build --no-restore
             dotnet publish -c Release
     - name: List default build artifacts
