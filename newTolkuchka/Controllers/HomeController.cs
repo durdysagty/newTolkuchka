@@ -93,7 +93,7 @@ namespace newTolkuchka.Controllers
                 string brandsString = string.Empty;
                 foreach (Brand b in brands)
                 {
-                    brandsString += $"<div class=\"keen-slider__slide text-center\"><a href=\"/{PathService.GetModelUrl(ConstantsService.BRAND, b.Id)}\">{IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.BRAND, b.Id), b.Version, 180, 60, "100%", "auto", b.Name, "card-img-top rounded border border-primary px-1 py-2")}</a></div>";
+                    brandsString += $"<div class=\"keen-slider__slide text-center\"><a href=\"{PathService.GetModelUrl(ConstantsService.BRAND, b.Id)}\">{IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.BRAND, b.Id), b.Version, 180, 60, "100%", "auto", b.Name, "card-img-top rounded border border-primary px-1 py-2")}</a></div>";
                 }
                 return brandsString;
             });
