@@ -51,7 +51,7 @@ jobs:
         chmod 400 deploy_key.pem
 
         # Use SCP to copy the build output to the server
-        scp -i deploy_key.pem -o StrictHostKeyChecking=no -r newTolkuchka/bin/Release/net7.0/publish/* $SERVER_DEST
+        scp -i deploy_key.pem -o StrictHostKeyChecking=no -r newTolkuchka/bin/Release/net7.0/publish/* $USER@$SERVER_IP:$SERVER_DEST
         ssh -o StrictHostKeyChecking=no -i deploy_key.pem $USER@$SERVER_IP 'sudo /bin/systemctl restart kestrel-tolkuchka.service'
 
         # Cleanup
