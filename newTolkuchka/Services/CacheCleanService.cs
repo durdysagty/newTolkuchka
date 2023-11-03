@@ -64,7 +64,7 @@ namespace newTolkuchka.Services
             // 3 b.o. index pages articles count never less than 3 and not more than 6
             for (int i = 3; i <= count; i++)
             {
-                CleanCulturedCaches($"{ConstantsService.HOMEARTICLES}{count}");
+                CleanCulturedCaches($"{ConstantsService.HOMEARTICLES}{i}");
             }
         }
 
