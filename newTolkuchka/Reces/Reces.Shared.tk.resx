@@ -214,7 +214,7 @@
     <value>{0} saýtyndaky gyzykly makalalar.</value>
   </data>
   <data name="desc-brand" xml:space="preserve">
-    <value>{0} saýtynda {1} brendiniň önümlerini satyn al. Bu ýerde {1} brendiniň önümlerini amatly we elýeterli bahadan satyn alyp bolýar.</value>
+    <value>{1} brendiniň önümlerini Aşgabatda satyn al. {0} saýtynda {1} brendiniň önümlerini amatly we elýeterli bahadan satyn alyp bolýar.</value>
   </data>
   <data name="desc-brands" xml:space="preserve">
     <value>{0} saýtyndaky brendleriň katalogy.</value>
@@ -226,7 +226,7 @@
     <value>{0} saýtynyň kategoriýalar sahypasy.</value>
   </data>
   <data name="desc-category" xml:space="preserve">
-    <value>{0} saýtynda {1}. Bu ýerde siz {1} kategoriýasyna degişli harytlary iň arzan we amatly bahadan satyn alyp bilersiňiz.</value>
+    <value>{1} Aşgabatda satyn al. {0} saýtynda {1} kategoriýasyna degişli harytlary iň arzan we amatly bahadan satyn alyp bilersiňiz.</value>
   </data>
   <data name="desc-delivery" xml:space="preserve">
     <value>{0} saýtynyň harytlary satyn almak we eltip bermek düzgznleri we kadalary.</value>
@@ -238,10 +238,10 @@
     <value>{0} saýtynda siziň halan harytlaryňyz.</value>
   </data>
   <data name="desc-product" xml:space="preserve">
-    <value>{0} saýtynda "{1}" harydyny satyn al. Bu ýerde "{1}" harydyny amatly we elýeterli bahadan satyn alyp bolýar.</value>
+    <value>"{1}" harydyny Aşgabatda satyn al. {0} saýtynda "{1}" harydyny amatly we elýeterli bahadan satyn alyp bolýar.</value>
   </data>
   <data name="desc-promotion" xml:space="preserve">
-    <value>{0} saýtynda harytlary "{1}" aksiýasy boýunça satyn al! Bu ýerde "{1}" aksiýasy boýunça harytlary satyn alyp bolýar.</value>
+    <value>Aşgabatda harytlary "{1}" aksiýasy boýunça satyn al! {0} saýtynda "{1}" aksiýasy boýunça harytlary satyn alyp bolýar.</value>
   </data>
   <data name="desc-promotions" xml:space="preserve">
     <value>{0} saýtynda amatly aksiýalar we arzanladyşyklar.</value>

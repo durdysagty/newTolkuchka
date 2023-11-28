@@ -79,7 +79,7 @@ namespace newTolkuchka.Services
         }
         public static string GetModelUrl(string modelName, int id)
         {
-            return $"/{modelName}/{id}";
+            return $"{modelName}/{id}";
         }
     }
 }

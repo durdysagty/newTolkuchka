@@ -214,7 +214,7 @@
     <value>Interesting articles on {0}.</value>
   </data>
   <data name="desc-brand" xml:space="preserve">
-    <value>Buy {1} brand products at {0}. Here you can buy {1} products at the best price in Ashgabat, Turkmenistan.</value>
+    <value>Buy {1} brand products in Ashgabat. At {0} you can buy {1} products at the best price in Ashgabat, Turkmenistan.</value>
   </data>
   <data name="desc-brands" xml:space="preserve">
     <value>Catalog of brands of the online store {0}. The store is located in Ashgabat, Turkmenistan</value>
@@ -226,7 +226,7 @@
     <value>Categories of online store {0}. The store is located in Ashgabat, Turkmenistan.</value>
   </data>
   <data name="desc-category" xml:space="preserve">
-    <value>Buy {1} at {0} Here you can buy {1} at the best price in Ashgabat, Turkmenistan.</value>
+    <value>Buy {1} in Ashgabat.  At {0} can buy {1} at the best price in Ashgabat, Turkmenistan.</value>
   </data>
   <data name="desc-delivery" xml:space="preserve">
     <value>Instructions for order and delivery of goods on {0}.</value>
@@ -238,10 +238,10 @@
     <value>Page of products you like on {0}.</value>
   </data>
   <data name="desc-product" xml:space="preserve">
-    <value>Buy {1} at {0}. Here you can buy {1} at the best price in Ashgabat, Turkmenistan.</value>
+    <value>Buy {1} in Ashgabat. At {0} you can buy {1} at the best price in Ashgabat, Turkmenistan.</value>
   </data>
   <data name="desc-promotion" xml:space="preserve">
-    <value>Buy goods on the "{1}" promotion on the site {0}. Here you can buy products for the promotion "{1}".</value>
+    <value>Buy goods on the "{1}" promotion in Ashgabat. At {0} you can buy products for the promotion "{1}".</value>
   </data>
   <data name="desc-promotions" xml:space="preserve">
     <value>Profitable promotions on {0}.</value>
