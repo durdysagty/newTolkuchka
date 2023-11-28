@@ -154,7 +154,7 @@ namespace newTolkuchka.Controllers
             string catsString = await _memoryCache.GetOrCreate($"{CultureProvider.CurrentCulture}{ConstantsService.INDEXCATS}{fontSize}", async ce =>
             {
                 ce.SlidingExpiration = TimeSpan.FromDays(2);
-                string catsTemplate = "<div class=\"col-12 col-xs-6 col-lg-3 p-1\"><a href=\"/{0}\">{1}<div style=\"font-size: {3}rem\" class=\"bg-primary p-1 rounded-bottom\">{2}</div></a></div>";
+                string catsTemplate = "<div class=\"col-12 col-xs-6 col-lg-3 p-1\"><a href=\"{0}\">{1}<div style=\"font-size: {3}rem\" class=\"bg-primary p-1 rounded-bottom\">{2}</div></a></div>";
                 string imageClasses = "card-img-top rounded-top";
                 IList<Category> indexCats = await _category.GetIndexCategories();
                 string catsString = string.Empty;
