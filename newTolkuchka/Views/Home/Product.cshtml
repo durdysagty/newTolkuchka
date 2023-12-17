@@ -92,12 +92,12 @@
                     }
                 </div>
                 <div class="col-12 col-sm-6 col-md-5 col-lg-5 d-flex flex-column justify-content-end alig align-items-center">
-                    <a href="/@PathService.GetModelUrl(ConstantsService.BRAND, p.Model.BrandId)" class="mt-1">
+                    <a href="@PathService.GetModelUrl(ConstantsService.BRAND, p.Model.BrandId)" class="mt-1">
                         @Html.Raw(IImage.GetImageHtml(PathService.GetImageRelativePath(ConstantsService.BRAND, p.Model.BrandId), p.Model.Brand.Version, 180, 60, "8rem", "auto", p.Model.Brand.Name))
                     </a>
                     @if (Model.Count() > 1)
                     {
-                        // only if model count more than 1 wee need selection buttons from list of models
+                        // only if model count more than 1 we need selection buttons from list of models
                         IEnumerable<Product> products = Model.Select(m => m.product);
                         // to select specs from
                         IList<ModelWithList<ModelWithList<AdminSpecsValueMod>>> nameUsedSpecs = ViewBag.Specs;
