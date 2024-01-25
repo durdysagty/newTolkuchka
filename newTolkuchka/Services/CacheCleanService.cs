@@ -54,7 +54,7 @@ namespace newTolkuchka.Services
             int slidesCount = 3;
             for (int i = 1; i <= slidesCount; i++)
             {
-                CleanCulturedCaches($"{ConstantsService.MAINSLIDES}{slidesCount}");
+                CleanCulturedCaches($"{ConstantsService.MAINSLIDES}{i}");
             }
         }
 
