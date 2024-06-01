@@ -135,7 +135,7 @@ namespace newTolkuchka.Controllers
                 string template = "<div class=\"fs-5 px-3 mb-3 border-bottom border-primary\"><a href=\"{0}\">{1}<span class=\"ms-2\">{2}</span></a></div><div class=\"row justify-content-center\">{3}</div>";
                 Category selectedCategory = await _category.GetModelAsync(selectedCategoryId);
                 string html = string.Format(template, PathService.GetModelUrl(ConstantsService.CATEGORY, selectedCategoryId), F.ReadAllText($"{_path.GetSVGFolder()}/{ConstantsService.CATEGORY}/{selectedCategoryId}.svg"), CultureProvider.GetLocalName(selectedCategory.NameRu, selectedCategory.NameEn, selectedCategory.NameTm), GetItems(mobileProductsHtml));
-                int[] orderedProducts = _order.GetModels().OrderByDescending(o => o.Id).Take(count * 5).ToArray().Select(o => o.ProductId).Distinct().ToArray();
+                int[] orderedProducts = _order.GetModels().OrderByDescending(o => o.Id).Take(count * 10).ToArray().Select(o => o.ProductId).Distinct().ToArray();
                 Product[] orderProducts = await _product.GetFullModels(new Dictionary<string, object>() { { ConstantsService.PRODUCT, orderedProducts } }).Where(p => !p.NotInUse).ToArrayAsync();
                 List<Product> products = new();
                 foreach (int o in orderedProducts)
