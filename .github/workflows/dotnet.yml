@@ -32,7 +32,7 @@ jobs:
     - name: List default build artifacts
       run: |
             echo "Listing contents of the default build output directory:"
-            ls -l newTolkuchka/bin/Release/net7.0/publish
+            ls -l newTolkuchka/bin/Release/net8.0/publish
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Deploy to server
