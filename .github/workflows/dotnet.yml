@@ -19,7 +19,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: 8.0.x
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -52,7 +52,7 @@ jobs:
         chmod 400 deploy_key.pem
 
         # Use SCP to copy the build output to the server
-        scp -i deploy_key.pem -o StrictHostKeyChecking=no -P $SERVER_PORT -r newTolkuchka/bin/Release/net7.0/publish/* $USER@$SERVER_IP:$SERVER_DEST
+        scp -i deploy_key.pem -o StrictHostKeyChecking=no -P $SERVER_PORT -r newTolkuchka/bin/Release/net8.0/publish/* $USER@$SERVER_IP:$SERVER_DEST
         ssh -o StrictHostKeyChecking=no -i deploy_key.pem -p $SERVER_PORT $USER@$SERVER_IP 'sudo /bin/systemctl restart kestrel-tolkuchka.service'
 
         # Cleanup
