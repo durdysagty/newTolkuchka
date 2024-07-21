@@ -1,12 +1,12 @@
-﻿using newTolkuchka.Models;
-
-namespace newTolkuchka.Services
+﻿namespace newTolkuchka.Services
 {
     public static class ConstantsService
     {
         public static string UserPinKey(int id) => $"{USER}{id}";
         public static string UserHashKey(int id) => $"{USER}{id}{HASH}";
         public static string EmpHashKey(int id) => $"{EMPLOYEE}{id}{HASH}";
+
+        public static byte Test { get; set; } = 1;
         // cache keys
         public const string MODELEDPRODUCTSHASHKEYS = "hsptskeys";
         public const string PRODUCTSHASHKEYS = "ptkeys";
@@ -30,7 +30,7 @@ namespace newTolkuchka.Services
         public const string PHONEW = "phnw";
         public const string INDEXCATS = "ixcts";
         public const string INDEXAPPCATS = "ixcts";
-        public readonly static string[] INDEXCATFONTSIZES = new string[] { "0.55", "0.7", "0.8", "1", "1.2" };
+        public readonly static string[] INDEXCATFONTSIZES = ["0.55", "0.7", "0.8", "1", "1.2"];
         // lang standarts
         public const string CULTURE = "culture";
         public const string RU = "ru";

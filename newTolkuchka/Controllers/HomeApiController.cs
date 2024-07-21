@@ -43,5 +43,13 @@ namespace newTolkuchka.ControllersAPI
                 return Ok($"Произошла ошибка обновления: {ex}");
             }
         }
+
+        [HttpGet]
+        [Route($"a/test/{{x}}")]
+        public IActionResult SetTest(byte x)
+        {
+            ConstantsService.Test = x;
+            return Ok(ConstantsService.Test);
+        }
     }
 }

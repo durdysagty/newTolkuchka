@@ -130,6 +130,8 @@ app.UseRequestLocalization();
 app.UseCookiePolicy();
 app.Use(async (context, next) =>
 {
+    if (ConstantsService.Test > 1)
+        context.Abort();
     // used for exclude file paths
     if (!context.Request.Path.Value.Contains('.'))
     {
@@ -160,7 +162,7 @@ app.Use(async (context, next) =>
                 if (!string.IsNullOrEmpty(testHash))
                 {
                     if (h == testHash)
-                        context.Request.Headers.Add("Authorization", "Bearer " + t);
+                        context.Request.Headers.Append("Authorization", "Bearer " + t);
                     else
                     {
                         context.Response.Cookies.Delete(Secrets.userTokenCookie);
@@ -209,7 +211,7 @@ app.UseStaticFiles(new StaticFileOptions()
 {
     OnPrepareResponse = ctx =>
     {
-        ctx.Context.Response.Headers.Add("Cache-Control", "public,max-age=31536000,immutable");
+        ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=31536000,immutable");
     }
 });
 app.UseRouting();
